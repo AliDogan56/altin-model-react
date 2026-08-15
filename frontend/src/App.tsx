@@ -127,6 +127,127 @@ const SEO_ARTICLES = [
       'Model doğruluğu sabit değildir. Piyasa rejimi değiştiğinde geçmişte öğrenilen ilişkiler zayıflayabilir. Sistem bu nedenle gerçekleşen fiyat ile önceki tahmini karşılaştırır, hataları kaydeder ve yeterli yeni gözlem oluştuğunda yeniden eğitim sürecine veri sağlar. Kullanıcı yine de tahmin bandını ve risk yönetimini dikkate almalıdır.'
     ],
     points:['Model sonucunu kesinlik değil senaryo olarak görün.','Gerçekleşen hata ve model tarihini kontrol edin.','Tahmin bandını pozisyon riskine dahil edin.']
+  },
+  {
+    id:'ons-altin-neden-yukseliyor',
+    keyword:'ons altın neden yükseliyor',
+    title:'Ons Altın Bugün Neden Yükseliyor?',
+    summary:'Ons altındaki yükseliş; faiz beklentileri, doların yönü, güvenli liman talebi ve teknik kırılımların aynı anda etkili olmasıyla oluşabilir.',
+    paragraphs:[
+      '“Ons altın neden yükseliyor?” sorusunun cevabı güne göre değişir. ABD tahvil getirilerinin veya reel faizin gerilemesi, doların zayıflaması ve faiz indirimi beklentisinin güçlenmesi altının fırsat maliyetini azaltabilir. Jeopolitik gerilim, finansal stres veya merkez bankası talebi de güvenli liman alımlarını artırabilir.',
+      'Fiyatın bir direnç bölgesini yüksek momentumla aşması kısa vadeli alımları hızlandırabilir. Ancak tek bir başlık yerine dolar endeksi, tahvil getirileri, VIX, ekonomik veri sürprizi ve fiyat momentumunu birlikte değerlendirmek gerekir. Panel bu değişkenleri aynı ekranda karşılaştırarak hareketin olası kaynaklarını görünür kılar.'
+    ],
+    points:['Reel faiz ve doların aynı yöndeki etkisini kontrol edin.','Haber saatini fiyat hareketinin başlangıcıyla karşılaştırın.','Tek günlük yükselişi uzun vadeli trend olarak kabul etmeyin.']
+  },
+  {
+    id:'ons-altin-neden-dusuyor',
+    keyword:'ons altın neden düşüyor',
+    title:'Ons Altın Bugün Neden Düşüyor?',
+    summary:'Ons altındaki düşüş çoğunlukla güçlenen dolar, yükselen reel faiz, azalan risk talebi veya teknik desteklerin kırılmasıyla ilişkilidir.',
+    paragraphs:[
+      'Ons altında satış baskısı, piyasanın faizlerin daha uzun süre yüksek kalacağını fiyatlamasıyla artabilir. Güçlü ekonomik veri tahvil getirilerini ve doları yukarı taşıdığında faiz getirisi olmayan altının göreli cazibesi azalabilir. Risk iştahının toparlanması da güvenli liman pozisyonlarının çözülmesine yol açabilir.',
+      'Teknik tarafta önemli desteğin altında kapanış, zarar kesme emirlerini ve kısa vadeli satışı hızlandırabilir. Yine de her geri çekilme kalıcı düşüş değildir. Hareketin devamlılığı için reel faiz, dolar endeksi, oynaklık ve sonraki günün fiyat teyidi birlikte izlenmelidir.'
+    ],
+    points:['Ekonomik verinin beklentiye göre sürprizini inceleyin.','Destek kırılımında kapanış teyidi arayın.','Fiyat düşerken risk göstergelerinin davranışını karşılaştırın.']
+  },
+  {
+    id:'bir-ons-altin-kac-gram',
+    keyword:'1 ons altın kaç gram',
+    title:'1 Ons Altın Kaç Gramdır?',
+    summary:'Kıymetli maden piyasasında kullanılan bir troy ons 31,1034768 grama eşittir; piyasa hesaplarında çoğunlukla 31,10 gram kullanılır.',
+    paragraphs:[
+      'Altın piyasasında standart ağırlık birimi troy onstur. Bir troy ons tam olarak yaklaşık 31,1034768 gramdır. Günlük hesaplamalarda bu değer 31,10 gram olarak yuvarlanabilir. XAUUSD kotasyonu, bir troy ons saf altının ABD doları cinsinden fiyatını ifade eder.',
+      'Ons fiyatını yalnızca 31,10’a bölmek bir gram altının dolar karşılığını verir. Türkiye’de gram altının teorik TL değerine ulaşmak için sonuç USD/TRY kuru ile çarpılır. Saflık, piyasa primi ve alış-satış farkı nedeniyle gerçek işlem fiyatı teorik değerden ayrılabilir.'
+    ],
+    points:['1 troy ons yaklaşık 31,1035 gramdır.','Ons ve standart ağırlık onsunu karıştırmayın.','Yerel gram fiyatında kur ve piyasa marjını hesaba katın.']
+  },
+  {
+    id:'ons-gram-altin-hesaplama',
+    keyword:'ons gram altın hesaplama',
+    title:'Ons Fiyatından Gram Altın Nasıl Hesaplanır?',
+    summary:'Teorik gram altın fiyatı, ons fiyatının 31,1035’e bölünüp dolar/TL kuru ile çarpılmasıyla hesaplanır.',
+    paragraphs:[
+      'Temel formül “gram altın (TL) = ons altın (USD) × USD/TRY ÷ 31,1035” şeklindedir. Örneğin ons fiyatı ve dolar kuru bilindiğinde önce bir gram saf altının dolar değeri, ardından TL karşılığı bulunur. Bu hesap küresel referans fiyatın yerel para birimine dönüşümüdür.',
+      'Kuyumcu, banka veya serbest piyasa fiyatı formül sonucuyla birebir aynı olmayabilir. Saflık oranı, işlem saati, arz-talep dengesi, fiziki ürün primi ve alış-satış makası gerçek fiyatı değiştirir. Bu nedenle hesaplanan değer karşılaştırma referansı olarak kullanılmalıdır.'
+    ],
+    points:['Formülde troy ons için 31,1035 kullanın.','Anlık ve doğru USD/TRY kurunu esas alın.','Teorik değer ile işlem fiyatı arasındaki makası ölçün.']
+  },
+  {
+    id:'altin-alim-zamani-nasil-belirlenir',
+    keyword:'altın alım zamanı nasıl belirlenir',
+    title:'Altın Alım Zamanı Nasıl Değerlendirilir?',
+    summary:'Altın için alım zamanı tek bir göstergeyle değil; trend, destek bölgeleri, reel faiz, dolar ve kişisel risk planıyla değerlendirilmelidir.',
+    paragraphs:[
+      'Altın alım zamanı arayan bir yatırımcı önce vadesini ve kabul edebileceği kaybı belirlemelidir. Kısa vadeli işlemde momentum, oynaklık ve destek bölgeleri daha önemliyken uzun vadede reel faiz döngüsü, enflasyon beklentisi ve portföy çeşitlendirmesi öne çıkar. Tek seferde işlem yapmak yerine kademeli yaklaşım zamanlama riskini azaltabilir.',
+      'Modelin alt bandı kesin dip, üst bandı kesin tepe değildir. Bu seviyeler geçmiş hata ve mevcut oynaklığa göre olası senaryoları gösterir. Karar verirken fiyatın senaryoyu geçersiz kılacağı risk seviyesi ile beklenen getiri birlikte düşünülmelidir. İçerik kişisel yatırım tavsiyesi değildir.'
+    ],
+    points:['Önce vade ve azami kayıp sınırını belirleyin.','Tek fiyat yerine kademeli senaryoları değerlendirin.','Tahmin bandını garanti olarak yorumlamayın.']
+  },
+  {
+    id:'ons-altin-yil-sonu-tahmini',
+    keyword:'ons altın yıl sonu tahmini',
+    title:'Ons Altın Yıl Sonu Tahmini Nasıl Okunmalı?',
+    summary:'Yıl sonu altın tahmini tek rakamdan ziyade faiz, dolar, enflasyon ve risk senaryolarına bağlı bir fiyat aralığı olarak okunmalıdır.',
+    paragraphs:[
+      'Yıl sonu tahminleri uzun vade nedeniyle yüksek belirsizlik taşır. Merkez senaryo mevcut faiz patikası, dolar eğilimi ve fiyat momentumunun kademeli devamını varsayabilir. Alt senaryo güçlü dolar ve yüksek reel faizleri; üst senaryo ise faiz gevşemesi, merkez bankası talebi veya artan güvenli liman ihtiyacını temsil edebilir.',
+      'Takvim ilerledikçe açıklanan her enflasyon, istihdam ve merkez bankası kararı başlangıç varsayımlarını değiştirir. Bu nedenle yıl sonu hedefi sabit bir rakam olarak değil, yeni verilerle daralan veya yer değiştiren olasılık bandı olarak takip edilmelidir.'
+    ],
+    points:['Tahmini alt, merkez ve üst senaryoyla okuyun.','Her önemli veri sonrasında varsayımları güncelleyin.','Uzun vadede hata payının büyüdüğünü hesaba katın.']
+  },
+  {
+    id:'merkez-bankalari-altin-alimi',
+    keyword:'merkez bankaları altın alımı',
+    title:'Merkez Bankalarının Altın Alımları Fiyatı Nasıl Etkiler?',
+    summary:'Merkez bankalarının rezerv çeşitlendirmesi amacıyla yaptığı kalıcı alımlar, fiziksel altın talebini ve uzun vadeli fiyat algısını destekleyebilir.',
+    paragraphs:[
+      'Merkez bankaları rezervlerini çeşitlendirmek, döviz riskini azaltmak veya güvenli varlık payını artırmak için altın alabilir. Bu talep kısa vadeli spekülatif akıştan farklı olarak daha uzun soluklu olabilir ve küresel fiziksel talebin önemli bir bölümünü oluşturabilir.',
+      'Bununla birlikte açıklanan alım verileri gecikmeli olabilir ve fiyat üzerinde tek başına belirleyici değildir. Reel faiz, dolar ve yatırım fonu akımları ters yönde güçlü hareket ederse merkez bankası talebinin kısa vadeli etkisi sınırlı kalabilir. Veri, daha geniş makro çerçeve içinde okunmalıdır.'
+    ],
+    points:['Rezerv verilerinin açıklanma gecikmesini dikkate alın.','Net alımı tek aylık rakam yerine eğilim olarak izleyin.','Makro fiyatlama ile fiziksel talebi birlikte değerlendirin.']
+  },
+  {
+    id:'altin-rsi-nedir',
+    keyword:'altın RSI nedir',
+    title:'Altında RSI Göstergesi Nasıl Yorumlanır?',
+    summary:'RSI, fiyat hareketinin hızını ölçen 0–100 arası momentum göstergesidir; aşırı alım veya satım sinyali tek başına dönüş garantisi vermez.',
+    paragraphs:[
+      'Göreceli Güç Endeksi olarak bilinen RSI genellikle 14 dönem üzerinden hesaplanır. 70 üzeri değerler güçlü veya aşırı alım, 30 altı değerler zayıf veya aşırı satım bölgesi olarak değerlendirilir. Güçlü trendlerde RSI uzun süre uç bölgelerde kalabileceği için yalnızca bu eşiklerle ters pozisyon almak risklidir.',
+      'RSI; fiyat trendi, destek-direnç ve oynaklık göstergeleriyle birlikte kullanıldığında daha anlamlıdır. Fiyat yeni zirve yaparken RSI’ın daha düşük zirve üretmesi momentum kaybına işaret edebilir; ancak ayrışmanın fiyat tarafından teyit edilmesi gerekir.'
+    ],
+    points:['RSI seviyesini mevcut trend bağlamında okuyun.','Uyumsuzluklarda fiyat teyidi bekleyin.','RSI’ı tek başına alım-satım kararı olarak kullanmayın.']
+  },
+  {
+    id:'altin-atr-oynaklik',
+    keyword:'altın ATR oynaklık',
+    title:'Altında ATR ve Oynaklık Ne Anlama Gelir?',
+    summary:'ATR fiyat yönünü değil, belirli dönemdeki tipik hareket genişliğini ölçer ve tahmin bandı ile risk mesafesini değerlendirmeye yardımcı olur.',
+    paragraphs:[
+      'Average True Range (ATR), gün içi yüksek-düşük aralığını ve fiyat boşluklarını hesaba katarak piyasanın ne kadar hareketli olduğunu ölçer. ATR yükseliyorsa günlük fiyat salınımı genişliyor, düşüyorsa piyasa daha dar bir bantta hareket ediyor olabilir. Gösterge yön tahmini üretmez.',
+      'Oynaklık yükseldiğinde aynı fiyat hedefi için daha geniş hata bandı ve daha uzak risk kesme mesafesi gerekebilir. Panel ATR yüzdesini ve 20 günlük oynaklığı model girdisi olarak kullanarak tahmin belirsizliğini piyasa koşullarına uyarlamaya çalışır.'
+    ],
+    points:['ATR’ın yön değil hareket genişliği ölçtüğünü bilin.','Yüksek oynaklıkta pozisyon riskini küçültün.','Farklı fiyat dönemlerini ATR yüzdesiyle karşılaştırın.']
+  },
+  {
+    id:'hafta-sonu-altin-fiyati',
+    keyword:'hafta sonu altın fiyatı neden farklı',
+    title:'Hafta Sonu Altın Fiyatı Neden Farklı Görünür?',
+    summary:'Klasik XAUUSD piyasası kapalıyken dijital altın ürünlerinin işlem görmesi, düşük likidite ve genişleyen makas hafta sonu fiyat farkı oluşturabilir.',
+    paragraphs:[
+      'Küresel spot altın piyasasının kapalı olduğu hafta sonunda son XAUUSD kotasyonu sabit kalabilir. Buna karşılık günün her saati işlem görebilen altına bağlı dijital varlıklarda fiyat değişmeye devam eder. Emir defteri derinliğinin azalması ve yeni haberlerin fiyatlanması iki gösterge arasında geçici fark yaratabilir.',
+      'Piyasa yeniden açıldığında farkın kapanması garanti değildir; spot fiyat yeni bilgiye göre dijital ürüne yaklaşabilir veya dijital üründeki hafta sonu hareketi geri alınabilir. Karşılaştırmada zaman damgası, USDT/dolar farkı ve alış-satış makası mutlaka kontrol edilmelidir.'
+    ],
+    points:['Karşılaştırılan fiyatların zaman damgasına bakın.','Düşük likiditede makasın genişleyebileceğini unutmayın.','Hafta sonu farkını kesin arbitraj fırsatı saymayın.']
+  },
+  {
+    id:'altin-guvenli-liman',
+    keyword:'altın güvenli liman mı',
+    title:'Altın Neden Güvenli Liman Olarak Görülür?',
+    summary:'Altın kredi riski taşımayan, küresel kabul gören ve sınırlı arzlı bir varlık olduğu için belirsizlik dönemlerinde güvenli liman talebi görebilir.',
+    paragraphs:[
+      'Altının uzun geçmişi, küresel likiditesi ve herhangi bir şirket ya da devletin ödeme vaadine dayanmaması güvenli liman algısını destekler. Jeopolitik gerilim, bankacılık stresi veya para birimlerine güvenin zayıfladığı dönemlerde yatırımcılar portföy çeşitlendirmesi amacıyla altına yönelebilir.',
+      'Güvenli liman niteliği fiyatın her kriz gününde yükseleceği anlamına gelmez. Nakit ihtiyacının arttığı dönemlerde altın da satılabilir; güçlü dolar ve yükselen reel faiz fiyatı baskılayabilir. Koruma etkisi yatırım vadesine ve portföy içindeki ağırlığa bağlıdır.'
+    ],
+    points:['Güvenli limanı kısa vadeli yükseliş garantisi sanmayın.','Likidite ve reel faiz koşullarını izleyin.','Altını portföy bağlamında değerlendirin.']
   }
 ];
 const avg = a => a.reduce((s,v)=>s+v,0)/a.length;
@@ -242,9 +363,9 @@ function SeoContent() {
   return <section className="seo-hub" id="rehberler" aria-labelledby="rehberler-baslik">
     <div className="seo-intro"><span className="eyebrow">Altın Bilgi Merkezi</span><h2 id="rehberler-baslik">Ons Altın Analizi ve Tahmin Rehberleri</h2><p>Canlı fiyatı doğru okumak, modeli değerlendirmek ve altını etkileyen ekonomik göstergeleri anlamak için hazırlanan özgün rehberler.</p></div>
     <nav className="topic-pills" aria-label="Rehber konuları">{SEO_ARTICLES.map(article=><a key={article.id} href={`/rehber/${article.id}`}>{article.keyword}</a>)}</nav>
-    <div className="seo-articles">{SEO_ARTICLES.map((article,index)=><article id={article.id} key={article.id} className="seo-article">
+    <div className="seo-articles">{SEO_ARTICLES.map((article,index)=><article id={article.id} key={article.id} className="seo-article seo-card">
       <header><span>{String(index+1).padStart(2,'0')}</span><div><small>Odak konu: {article.keyword}</small><h2>{article.title}</h2><p>{article.summary}</p></div></header>
-      <div className="article-body"><div>{article.paragraphs.map((paragraph,i)=><p key={i}>{paragraph}</p>)}</div><aside aria-label={`${article.title} kısa notlar`}><h3>Kısa notlar</h3><ul>{article.points.map(point=><li key={point}>{point}</li>)}</ul><a href="/#panel">Canlı panelde incele <span aria-hidden="true">↑</span></a><a href={`/rehber/${article.id}`}>Rehberi ayrı sayfada aç <span aria-hidden="true">→</span></a></aside></div>
+      <a className="seo-read-more" href={`/rehber/${article.id}`} aria-label={`${article.title} rehberini oku`}>Rehberi oku <span aria-hidden="true">→</span></a>
     </article>)}</div>
   </section>;
 }
