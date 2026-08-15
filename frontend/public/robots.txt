@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: http://5.75.148.203/sitemap.xml
+Sitemap: https://onsaltinanaliz.com/sitemap.xml

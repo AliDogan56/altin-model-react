@@ -7,7 +7,7 @@ services:
       MODEL_SERVICE_URL: http://model-service:8002
       MARKET_SERVICE_URL: http://market-service:8001
       DATABASE_PATH: /data/gold_platform_production.sqlite3
-      CORS_ORIGINS: http://5.75.148.203
+      CORS_ORIGINS: https://onsaltinanaliz.com,https://www.onsaltinanaliz.com
     volumes:
       - gold-data:/data
     networks: [gold-network]
@@ -64,7 +64,7 @@ services:
     build: ./frontend
     restart: unless-stopped
     ports:
-      - "80:80"
+      - "127.0.0.1:8080:80"
     networks: [gold-network]
     depends_on:
       api-gateway:
