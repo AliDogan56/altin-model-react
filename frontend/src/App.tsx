@@ -11,7 +11,7 @@ const GROUPS: ParameterGroup[] = [
   ['Risk ve emtia', [['VIXCLS','VIX',''],['DCOILWTICO','WTI petrol','USD']]],
   ['Makroekonomi', [['CPIAUCSL_yoy_pct','TÜFE yıllık','%'],['CPILFESL_yoy_pct','Çekirdek TÜFE','%'],['PCEPI_yoy_pct','PCE yıllık','%'],['UNRATE','İşsizlik','%'],['RSAFS_mom_pct','Perakende satış aylık','%']]],
 ];
-const API_BASE=(import.meta.env.VITE_API_BASE||'http://{host}:8000').replace('{host}',window.location.hostname).replace(/\/$/,'');
+const API_BASE=(import.meta.env.VITE_API_BASE||'http://{host}:8000').replace('{origin}',window.location.origin).replace('{host}',window.location.hostname).replace(/\/$/,'');
 const MARKET_API=`${API_BASE}/market-service`;
 const MODEL_API=`${API_BASE}/model-service`;
 const LABELS = {7:'1 Hafta',30:'1 Ay',90:'3 Ay',180:'6 Ay'};
