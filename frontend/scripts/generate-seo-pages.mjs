@@ -18,6 +18,15 @@ const literal = source.slice(start + 'const SEO_ARTICLES = '.length, end + 2);
 const articles = Function(`"use strict"; return (${literal});`)();
 const rawBaseHtml = await readFile(join(root, 'dist/index.html'), 'utf8');
 const today = new Date().toISOString().slice(0, 10);
+const linkedInUrl = 'https://www.linkedin.com/in/ali-do%C4%9Fan-86b57721a/';
+const creator = {
+  '@type': 'Person',
+  '@id': `${siteUrl}/#creator`,
+  name: 'Ali Doğan',
+  url: siteUrl,
+  sameAs: [linkedInUrl],
+  jobTitle: 'Yaratıcı ve geliştirici'
+};
 const itemListPattern = /\s*<script type="application\/ld\+json">\s*\{\s*"@context":\s*"https:\/\/schema\.org",\s*"@type":\s*"ItemList"[\s\S]*?<\/script>/i;
 const baseHtml = rawBaseHtml.replace(itemListPattern, '');
 
@@ -56,7 +65,7 @@ for (const article of articles) {
         mainEntityOfPage: url,
         url,
         image: `${siteUrl}/social-preview-v1.png`,
-        author: { '@type': 'Organization', name: 'Ons Altın Analiz', url: siteUrl },
+        author: { '@id': `${siteUrl}/#creator` },
         publisher: { '@type': 'Organization', name: 'Ons Altın Analiz', url: siteUrl },
         datePublished: today,
         dateModified: today,
@@ -71,7 +80,8 @@ for (const article of articles) {
           { '@type': 'ListItem', position: 2, name: 'Altın Rehberi', item: `${siteUrl}/#rehberler` },
           { '@type': 'ListItem', position: 3, name: article.title, item: url }
         ]
-      }
+      },
+      creator
     ]
   };
   const fallback = `<main class="seo-prerender" data-seo-page="${escapeHtml(article.id)}">
@@ -82,6 +92,7 @@ for (const article of articles) {
         <section><h2>${escapeHtml(article.title)}: Kısa Notlar</h2><ul>${article.points.map(point => `<li>${escapeHtml(point)}</li>`).join('')}</ul></section>
       </article>
       <nav aria-label="İlgili rehberler"><h2>İlgili Ons Altın Rehberleri</h2><ul>${related.map(item => `<li><a href="/rehber/${escapeHtml(item.id)}">${escapeHtml(item.title)}</a></li>`).join('')}</ul></nav>
+      <footer><p>Bu platform eğitim ve araştırma amaçlıdır; kişisel yatırım tavsiyesi değildir.</p><p>Projenin yaratıcısı: <a href="${linkedInUrl}" rel="me">Ali Doğan — LinkedIn</a></p><nav aria-label="Footer bağlantıları"><a href="/">Canlı ons paneli</a> · <a href="/#rehberler">Altın rehberleri</a> · <a href="/sitemap.xml">Sitemap</a></nav></footer>
     </main>`;
 
   let html = baseHtml
@@ -121,7 +132,8 @@ const homeItemList = {
     url: `${siteUrl}/rehber/${article.id}`
   }))
 };
-const homeHtml = rawBaseHtml.replace(itemListPattern, `\n    <script type="application/ld+json">${JSON.stringify(homeItemList).replaceAll('</script', '<\\/script')}</script>`);
+const creatorScript = `<script type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', ...creator }).replaceAll('</script', '<\\/script')}</script>`;
+const homeHtml = rawBaseHtml.replace(itemListPattern, `\n    <script type="application/ld+json">${JSON.stringify(homeItemList).replaceAll('</script', '<\\/script')}</script>`).replace('</head>', `    ${creatorScript}\n  </head>`);
 await writeFile(join(root, 'dist/index.html'), homeHtml);
 await writeFile(join(root, 'dist/sitemap.xml'), sitemap);
 console.log(`${articles.length} statik SEO sayfası ve sitemap oluşturuldu.`);
