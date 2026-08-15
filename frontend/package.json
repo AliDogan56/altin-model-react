@@ -1,0 +1,32 @@
+{
+  "name": "altin-model-react",
+  "private": true,
+  "version": "1.0.0",
+  "packageManager": "pnpm@11.19.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --mode localhost",
+    "dev:localhost": "vite --mode localhost",
+    "dev:development": "vite --mode development",
+    "dev:production": "vite --mode production",
+    "build": "vite build",
+    "build:localhost": "vite build --mode localhost",
+    "build:development": "vite build --mode development",
+    "build:production": "vite build --mode production",
+    "typecheck": "tsc --noEmit",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "latest",
+    "vite": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "socket.io-client": "latest"
+  },
+  "devDependencies": {
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "sass": "latest",
+    "typescript": "latest"
+  }
+}

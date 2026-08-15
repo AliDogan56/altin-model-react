@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/altin-model-react.iml" filepath="$PROJECT_DIR$/.idea/altin-model-react.iml" />
+      <module fileurl="file://$PROJECT_DIR$/backend/api-gateway/api-gateway.iml" filepath="$PROJECT_DIR$/backend/api-gateway/api-gateway.iml" group="altin-model-react/backend" />
+      <module fileurl="file://$PROJECT_DIR$/frontend/frontend.iml" filepath="$PROJECT_DIR$/frontend/frontend.iml" group="altin-model-react" />
+      <module fileurl="file://$PROJECT_DIR$/backend/market-service/market-service.iml" filepath="$PROJECT_DIR$/backend/market-service/market-service.iml" group="altin-model-react/backend" />
+      <module fileurl="file://$PROJECT_DIR$/backend/model-service/model-service.iml" filepath="$PROJECT_DIR$/backend/model-service/model-service.iml" group="altin-model-react/backend" />
+    </modules>
+  </component>
+</project>

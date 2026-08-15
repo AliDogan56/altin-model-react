@@ -1,0 +1,11 @@
+node_modules/
+dist/
+backend/.venv/
+backend/data/*.sqlite3*
+backend/models/*.joblib
+backend/models/active.json
+__pycache__/
+.pytest_cache/
+
+# Project exclude paths
+/backend/model-service/data/

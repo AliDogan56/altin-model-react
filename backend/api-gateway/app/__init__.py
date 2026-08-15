@@ -1,0 +1,1 @@
+"""Altın model API Gateway."""
