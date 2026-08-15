@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Altın Model Paneli">
+  <defs>
+    <linearGradient id="g" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffe08a"/>
+      <stop offset=".5" stop-color="#d6a83e"/>
+      <stop offset="1" stop-color="#8f6516"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="#0b1220"/>
+  <circle cx="32" cy="32" r="22" fill="url(#g)"/>
+  <circle cx="32" cy="32" r="17" fill="#121d31" stroke="#ffe08a" stroke-width="2"/>
+  <path d="M18 40l9-9 6 5 13-14" fill="none" stroke="#ffe08a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M40 22h6v6" fill="none" stroke="#ffe08a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

@@ -49,16 +49,16 @@
 .live-chart-price circle { fill:var(--teal); stroke:#fff; stroke-width:2; filter:drop-shadow(0 0 5px var(--teal)); }
 .live-chart-price rect { fill:#174c42; stroke:var(--teal); }
 .live-chart-price text { fill:#fff; font-size:13px; font-weight:900; }
-.live-chart-price .harem-line-label { fill:var(--teal); font-size:11px; letter-spacing:.03em; }
-.binance-chart-price line { stroke:var(--blue); stroke-width:1; stroke-dasharray:6 5; opacity:.75; }
-.binance-chart-price text { fill:var(--blue); font-size:9px; }
-.binance-chart-price circle { fill:var(--blue); stroke:#fff; stroke-width:1.5; }
+.live-chart-price .ons-line-label { fill:var(--teal); font-size:11px; letter-spacing:.03em; }
+.token-chart-price line { stroke:var(--blue); stroke-width:1; stroke-dasharray:6 5; opacity:.75; }
+.token-chart-price text { fill:var(--blue); font-size:9px; }
+.token-chart-price circle { fill:var(--blue); stroke:#fff; stroke-width:1.5; }
 .chart-legend { display:flex; justify-content:center; gap:15px; flex-wrap:wrap; color:var(--muted); font-size:10px; }
 .chart-legend span { display:flex; align-items:center; gap:5px; }
 .chart-legend i { display:inline-block; width:18px; height:4px; border-radius:4px; }
 .history-key { background:var(--blue); }
-.binance-key { background:var(--blue); }
-.harem-key { background:var(--teal); }
+.token-key { background:var(--blue); }
+.ons-key { background:var(--teal); }
 .forecast-key { background:var(--gold); }
 .band-key { background:#8d7848; }
 .buy-key { background:#2b745f; }
@@ -108,8 +108,8 @@
 .live-price strong { font-size:22px; margin-top:3px; }
 .live-price b { font-size:10px; }
 .live-price small { color:var(--muted); font-size:9px; margin-top:2px; }
-.harem-price { border-color:#397b68; background:linear-gradient(145deg,#103129,#0c201d); }
-.binance-price { border-color:#356d9f; background:linear-gradient(145deg,#102b45,#0b1c2f); }
+.ons-price { border-color:#397b68; background:linear-gradient(145deg,#103129,#0c201d); }
+.token-price { border-color:#356d9f; background:linear-gradient(145deg,#102b45,#0b1c2f); }
 .bid-ask { display:flex; justify-content:space-between; gap:12px; margin:3px 0; }
 .bid-ask b { font-size:9px; color:#cbe8df; }
 .tick-row { display:flex; justify-content:space-between; gap:12px; align-items:center; }
