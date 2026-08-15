@@ -151,7 +151,7 @@
 .loan-head { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; }
 .loan-head p { margin:6px 0 0; color:var(--muted); font-size:11px; }
 .loan-scenarios { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:15px; }
-.loan-inputs { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:15px; }
+.loan-inputs { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; margin-top:15px; }
 .loan-inputs label,.loan-inputs > div { padding:10px 12px; border:1px solid var(--line); border-radius:10px; background:#071321aa; color:var(--muted); font-size:10px; display:grid; gap:6px; }
 .loan-inputs input { width:100%; min-width:0; background:#0d2033; border:1px solid #31516f; border-radius:7px; padding:8px; color:#fff; font-size:14px; font-weight:800; }
 .loan-inputs span { color:var(--muted); }
@@ -193,6 +193,7 @@
 .live-price small { color:var(--muted); font-size:9px; margin-top:2px; }
 .ons-price { border-color:#397b68; background:linear-gradient(145deg,#103129,#0c201d); }
 .token-price { border-color:#356d9f; background:linear-gradient(145deg,#102b45,#0b1c2f); }
+.fx-price { min-width:170px; border-color:#8a7132; background:linear-gradient(145deg,#332b16,#1c190f); }
 .bid-ask { display:flex; justify-content:space-between; gap:12px; margin:3px 0; }
 .bid-ask b { font-size:9px; color:#cbe8df; }
 .tick-row { display:flex; justify-content:space-between; gap:12px; align-items:center; }
@@ -202,6 +203,13 @@
 .tick-spark.up polyline { stroke:var(--teal); }
 .tick-spark.down polyline { stroke:var(--red); }
 .tick-empty { height:34px; display:flex; align-items:center; color:var(--muted); font-size:9px; }
+@media (min-width:651px) and (max-width:1180px) {
+  #panel { align-items:flex-start; flex-direction:column; }
+  .header-market { width:100%; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .live-price { min-width:0; }
+  .header-market .status { grid-column:1 / -1; display:flex; align-items:center; justify-content:space-between; text-align:left; }
+  .header-market .status button { margin:0; }
+}
 @media (max-width:650px) {
   body { background:#07111f; }
   .app { padding:8px 8px calc(18px + env(safe-area-inset-bottom)); }
