@@ -231,25 +231,47 @@ function TickSparkline({ticks}) {
 
 function SiteNav() {
   return <nav className="site-nav" aria-label="Ana menü">
-    <a className="brand" href="#panel" aria-label="Altın Model Paneli ana bölüm"><img src="/favicon.svg" alt=""/><span>Altın Model</span></a>
-    <div className="desktop-links"><a href="#panel">Canlı Panel</a><a href="#tahmin">Tahmin</a><a href="#rehberler">Altın Rehberi</a><a href="#risk-notu">Risk Notu</a></div>
-    <details className="guide-menu"><summary>Rehberler <span aria-hidden="true">⌄</span></summary><div>{SEO_ARTICLES.map(article=><a key={article.id} href={`#${article.id}`}>{article.title}</a>)}</div></details>
-    <details className="mobile-menu"><summary aria-label="Menüyü aç"><span/><span/><span/></summary><div><a href="#panel">Canlı Panel</a><a href="#tahmin">Tahminler</a><a href="#rehberler">Altın Rehberi</a>{SEO_ARTICLES.map(article=><a key={article.id} href={`#${article.id}`}>{article.title}</a>)}<a href="#risk-notu">Risk Notu</a></div></details>
+    <a className="brand" href="/#panel" aria-label="Altın Model Paneli ana bölüm"><img src="/favicon.svg" alt=""/><span>Altın Model</span></a>
+    <div className="desktop-links"><a href="/#panel">Canlı Panel</a><a href="/#tahmin">Tahmin</a><a href="/#rehberler">Altın Rehberi</a><a href="/#risk-notu">Risk Notu</a></div>
+    <details className="guide-menu"><summary>Rehberler <span aria-hidden="true">⌄</span></summary><div>{SEO_ARTICLES.map(article=><a key={article.id} href={`/rehber/${article.id}`}>{article.title}</a>)}</div></details>
+    <details className="mobile-menu"><summary aria-label="Menüyü aç"><span/><span/><span/></summary><div><a href="/#panel">Canlı Panel</a><a href="/#tahmin">Tahminler</a><a href="/#rehberler">Altın Rehberi</a>{SEO_ARTICLES.map(article=><a key={article.id} href={`/rehber/${article.id}`}>{article.title}</a>)}<a href="/#risk-notu">Risk Notu</a></div></details>
   </nav>;
 }
 
 function SeoContent() {
   return <section className="seo-hub" id="rehberler" aria-labelledby="rehberler-baslik">
     <div className="seo-intro"><span className="eyebrow">Altın Bilgi Merkezi</span><h2 id="rehberler-baslik">Ons Altın Analizi ve Tahmin Rehberleri</h2><p>Canlı fiyatı doğru okumak, modeli değerlendirmek ve altını etkileyen ekonomik göstergeleri anlamak için hazırlanan özgün rehberler.</p></div>
-    <nav className="topic-pills" aria-label="Rehber konuları">{SEO_ARTICLES.map(article=><a key={article.id} href={`#${article.id}`}>{article.keyword}</a>)}</nav>
+    <nav className="topic-pills" aria-label="Rehber konuları">{SEO_ARTICLES.map(article=><a key={article.id} href={`/rehber/${article.id}`}>{article.keyword}</a>)}</nav>
     <div className="seo-articles">{SEO_ARTICLES.map((article,index)=><article id={article.id} key={article.id} className="seo-article">
       <header><span>{String(index+1).padStart(2,'0')}</span><div><small>Odak konu: {article.keyword}</small><h2>{article.title}</h2><p>{article.summary}</p></div></header>
-      <div className="article-body"><div>{article.paragraphs.map((paragraph,i)=><p key={i}>{paragraph}</p>)}</div><aside aria-label={`${article.title} kısa notlar`}><h3>Kısa notlar</h3><ul>{article.points.map(point=><li key={point}>{point}</li>)}</ul><a href="#panel">Canlı panelde incele <span aria-hidden="true">↑</span></a></aside></div>
+      <div className="article-body"><div>{article.paragraphs.map((paragraph,i)=><p key={i}>{paragraph}</p>)}</div><aside aria-label={`${article.title} kısa notlar`}><h3>Kısa notlar</h3><ul>{article.points.map(point=><li key={point}>{point}</li>)}</ul><a href="/#panel">Canlı panelde incele <span aria-hidden="true">↑</span></a><a href={`/rehber/${article.id}`}>Rehberi ayrı sayfada aç <span aria-hidden="true">→</span></a></aside></div>
     </article>)}</div>
   </section>;
 }
 
-function App() {
+function ArticlePage({article}) {
+  useEffect(()=>{
+    const url=`${window.location.origin}/rehber/${article.id}`;
+    const title=`${article.title} | Altın Model Paneli`;
+    document.title=title;
+    const set=(selector,value,attribute='content')=>{const node=document.querySelector(selector);if(node)node.setAttribute(attribute,value);};
+    set('meta[name="description"]',article.summary);
+    set('link[rel="canonical"]',url,'href');
+    set('meta[property="og:title"]',title);
+    set('meta[property="og:description"]',article.summary);
+    set('meta[property="og:url"]',url);
+    set('meta[name="twitter:title"]',title);
+    set('meta[name="twitter:description"]',article.summary);
+  },[article]);
+  return <main className="app article-page"><SiteNav/><article className="standalone-article">
+    <nav className="breadcrumbs" aria-label="İçerik yolu"><a href="/">Ana Sayfa</a><span>/</span><a href="/#rehberler">Altın Rehberi</a><span>/</span><b>{article.title}</b></nav>
+    <header><span className="eyebrow">{article.keyword}</span><h1>{article.title}</h1><p>{article.summary}</p></header>
+    <div className="standalone-body">{article.paragraphs.map((paragraph,i)=><p key={i}>{paragraph}</p>)}<section><h2>Bu konuda dikkat edilmesi gerekenler</h2><ul>{article.points.map(point=><li key={point}>{point}</li>)}</ul></section><div className="article-cta"><div><span className="eyebrow">Canlı model</span><h2>Verileri güncel tahminle karşılaştırın</h2><p>Canlı fiyatı, model bandını ve parametre katkılarını tek ekranda inceleyin.</p></div><a href="/#panel">Canlı panele git <span aria-hidden="true">→</span></a></div></div>
+    <nav className="related-guides" aria-label="Diğer altın rehberleri"><h2>Diğer rehberler</h2><div>{SEO_ARTICLES.filter(item=>item.id!==article.id).slice(0,4).map(item=><a href={`/rehber/${item.id}`} key={item.id}><small>{item.keyword}</small><b>{item.title}</b><span aria-hidden="true">→</span></a>)}</div></nav>
+  </article><footer id="risk-notu">Bu içerik eğitim ve araştırma amaçlıdır; kişisel yatırım tavsiyesi değildir.</footer></main>;
+}
+
+function DashboardApp() {
   const [mobile,setMobile]=useState(()=>typeof window!=='undefined'&&window.matchMedia('(max-width: 720px)').matches);
   const [values,setValues]=useState(fieldDefaults);
   const [live,setLive]=useState<Record<string,number>>({});
@@ -308,6 +330,12 @@ function App() {
         <footer id="risk-notu">Karar destek ve araştırma aracıdır; kâr garantisi veya kişisel yatırım tavsiyesi değildir.</footer>
       </section></div>
   </main>;
+}
+
+function App() {
+  const match=window.location.pathname.match(/^\/rehber\/([a-z0-9-]+)\/?$/);
+  const article=match?SEO_ARTICLES.find(item=>item.id===match[1]):null;
+  return article?<ArticlePage article={article}/>:<DashboardApp/>;
 }
 
 export default App;
