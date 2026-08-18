@@ -1,7 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { io } from 'socket.io-client';
 import model from './data/model.json';
+import seoArticles from './data/seo-articles.json';
 
+const SEO_ARTICLES = seoArticles as SeoArticle[];
+
+type SeoSection = { heading: string; paragraphs: string[] };
+type SeoFaq = { q: string; a: string };
+type SeoArticle = { id: string; keyword: string; title: string; seoTitle?: string; updated: string; summary: string; intro: string; category: string; sections: SeoSection[]; points: string[]; faq: SeoFaq[] };
 type ParameterItem = [id: string, label: string, unit: string];
 type ParameterGroup = [title: string, items: ParameterItem[]];
 
@@ -17,239 +24,6 @@ const MODEL_API=`${API_BASE}/model-service`;
 const LABELS = {7:'1 Hafta',30:'1 Ay',90:'3 Ay',180:'6 Ay'};
 const BAND_COVERAGE=70,BAND_SCALE=.81;
 const PCT_FIELDS = new Set(['gold_atr14_pct','gold_return_20d','gold_volatility_20d']);
-const SEO_ARTICLES = [
-  {
-    id:'canli-ons-altin-fiyati',
-    keyword:'canlı ons altın fiyatı',
-    title:'Canlı Ons Altın Fiyatı Nasıl Okunur?',
-    summary:'ONS/XAUUSD fiyatı, bir troy ons altının ABD doları cinsinden değerini gösterir. Paneldeki canlı fiyatı günlük değişim, alış-satış farkı ve model eğilimiyle birlikte okuyun.',
-    paragraphs:[
-      'Canlı ons altın fiyatı tek başına yalnızca o anki piyasa seviyesini anlatır. Sağlıklı bir değerlendirme için fiyatın son günlerdeki yönü, oynaklığı, önemli destek ve direnç bölgeleri ile doların gücü birlikte incelenmelidir. Kısa süreli fiyat hareketleri haber akışı ve likidite nedeniyle sertleşebilir; bu nedenle tek bir saniyelik değişim uzun vadeli eğilim olarak yorumlanmamalıdır.',
-      'Bu panel ONS/XAUUSD akışını PAXG/USDT verisiyle karşılaştırır. İki fiyat arasında piyasa saati, işlem yoğunluğu ve alış-satış farkı nedeniyle küçük sapmalar görülebilir. Grafik üzerindeki canlı çizgiler mevcut seviyeyi, tahmin eğrisi ise modelin olasılıksal fiyat yolunu gösterir.'
-    ],
-    points:['Fiyatı günlük yüzde değişimle birlikte değerlendirin.','Canlı fiyat ile model tahminini birbirinden ayırın.','Makas ve veri zamanı farkını hesaba katın.']
-  },
-  {
-    id:'ons-altin-tahmini',
-    keyword:'ons altın tahmini',
-    title:'Ons Altın Tahmini Nasıl Yapılır?',
-    summary:'Altın tahmini; fiyat momentumu, reel faiz, dolar, enflasyon, risk iştahı ve oynaklık gibi değişkenlerin birlikte değerlendirilmesini gerektirir.',
-    paragraphs:[
-      'Ons altın tahmini kesin bir fiyat söylemekten çok, farklı koşullarda oluşabilecek olası yolları ölçme çalışmasıdır. Model; geçmiş fiyat davranışını makroekonomik göstergelerle birleştirerek 1, 3 ve 6 aylık merkez tahmin üretir. Sarı tahmin bandı ise aynı dönemde oluşabilecek makul sapma alanını ifade eder.',
-      'Bir tahmini kullanırken merkez değerin yanında alt ve üst bandı da incelemek gerekir. Yeni enflasyon verisi, merkez bankası kararı veya jeopolitik gelişme model girdilerini değiştirdiğinde projeksiyon da güncellenir. Bu nedenle eski bir tahmin, güncel parametrelerle yeniden değerlendirilmelidir.'
-    ],
-    points:['Tek fiyat yerine olasılık bandını okuyun.','Tahmin vadesi uzadıkça belirsizliğin arttığını unutmayın.','Yeni veri geldiğinde projeksiyonu yeniden kontrol edin.']
-  },
-  {
-    id:'altin-fiyatini-etkileyen-faktorler',
-    keyword:'altın fiyatını etkileyen faktörler',
-    title:'Altın Fiyatını Etkileyen Temel Faktörler',
-    summary:'Reel faiz, dolar endeksi, enflasyon beklentisi, merkez bankaları, jeopolitik risk ve piyasa oynaklığı ons altın üzerinde birlikte etkili olur.',
-    paragraphs:[
-      'Altın fiyatını etkileyen faktörler arasında ABD reel faizleri ve doların yönü çoğu dönemde öne çıkar. Reel faiz yükseldiğinde faiz getirisi olmayan altını elde tutmanın fırsat maliyeti artabilir. Dolar güçlendiğinde ise dolar dışındaki para birimlerini kullanan yatırımcılar için ons altın daha pahalı hale gelebilir.',
-      'Bununla birlikte ilişki her gün aynı kuvvette çalışmaz. Enflasyon endişesi, merkez bankası alımları, finansal stres ve jeopolitik risk güvenli liman talebini artırabilir. Paneldeki parametre katkısı alanı, mevcut model tahmininde hangi değişkenlerin daha belirleyici olduğunu karşılaştırmalı olarak gösterir.'
-    ],
-    points:['Reel faiz ve doları birlikte izleyin.','Risk dönemlerinde VIX ve haber akışına bakın.','Tek bir göstergeye dayanarak karar vermeyin.']
-  },
-  {
-    id:'reel-faiz-altin-iliskisi',
-    keyword:'reel faiz altın ilişkisi',
-    title:'Reel Faiz ile Altın Arasındaki İlişki',
-    summary:'Reel faiz, nominal tahvil faizinden enflasyon beklentisinin çıkarılmasıyla düşünülür ve altının fırsat maliyetini anlamaya yardımcı olur.',
-    paragraphs:[
-      'Reel faiz ile altın ilişkisi genellikle ters yönlüdür: reel getiri yükseldiğinde tahvil gibi faiz taşıyan araçlar daha çekici hale gelebilir; reel getiri düştüğünde altının göreli cazibesi artabilir. Ancak bu, her gün geçerli mekanik bir kural değildir. Piyasanın geleceğe ilişkin beklentisi, açıklanan seviyeden daha güçlü fiyatlama yaratabilir.',
-      'Panel 10 yıllık reel faiz seviyesini ve kısa dönem değişimini model girdisi olarak kullanır. Burada önemli olan yalnızca faizin seviyesi değil, ne hızla ve hangi beklentiyle değiştiğidir. Beklenmedik bir düşüş altın momentumunu destekleyebilirken hızlı yükseliş tahmin üzerinde baskı oluşturabilir.'
-    ],
-    points:['Nominal faiz ile reel faizi karıştırmayın.','Seviyeden çok değişim hızını da izleyin.','Enflasyon beklentisini yorumun içine katın.']
-  },
-  {
-    id:'dolar-endeksi-altin',
-    keyword:'dolar endeksi altın ilişkisi',
-    title:'Dolar Endeksi Yükselirse Altın Ne Olur?',
-    summary:'Ons altın dolar cinsinden fiyatlandığı için dolar endeksindeki hareketler küresel talep ve fiyatlama üzerinde önemli bir değişken olabilir.',
-    paragraphs:[
-      'Dolar endeksi yükseldiğinde ons altın üzerinde baskı oluşması sık görülen bir ilişkidir. Güçlü dolar, diğer para birimleriyle altın alan yatırımcıların maliyetini artırabilir. Buna karşılık dolar zayıfladığında ons fiyatı için daha destekleyici bir zemin oluşabilir.',
-      'Yine de dolar ve altın aynı anda yükselebilir. Küresel riskin arttığı dönemlerde hem dolar likiditesine hem güvenli liman olarak altına talep gelebilir. Bu nedenle panel doların beş günlük getirisini, VIX’i, faizleri ve altın momentumunu aynı tahmin çerçevesinde ele alır.'
-    ],
-    points:['Dolar hareketini faizlerle birlikte okuyun.','Korelasyonun dönemsel değişebileceğini kabul edin.','Küresel risk talebini ayrıca değerlendirin.']
-  },
-  {
-    id:'enflasyon-fed-altin',
-    keyword:'FED faiz kararı altın etkisi',
-    title:'Enflasyon ve FED Kararları Altını Nasıl Etkiler?',
-    summary:'Enflasyon verisi ve para politikası, faiz beklentilerini ve doları değiştirerek ons altının kısa ve orta vadeli yönünü etkileyebilir.',
-    paragraphs:[
-      'Beklentinin üzerinde gelen enflasyon ilk anda faizlerin daha uzun süre yüksek kalacağı düşüncesini güçlendirebilir. Bu senaryo reel faiz ve dolar üzerinden altını baskılayabilir. Ancak yüksek enflasyonun kalıcı görülmesi, korunma talebi yoluyla orta vadede altına destek de sağlayabilir.',
-      'FED kararında yalnızca açıklanan faiz oranı değil, karar metni ve gelecek dönem yönlendirmesi de önemlidir. Piyasa çoğu zaman karardan önce beklentiyi fiyatlar. Panel; politika faizi, tahvil getirileri ve enflasyon göstergelerindeki değişimi model tahminine yansıtarak yeni veri sonrasında projeksiyonu yeniler.'
-    ],
-    points:['Veriyi piyasa beklentisiyle karşılaştırın.','Karar metni ve yönlendirmeyi gözden kaçırmayın.','İlk fiyat tepkisini kalıcı eğilim sanmayın.']
-  },
-  {
-    id:'altin-destek-direnc',
-    keyword:'ons altın destek direnç seviyeleri',
-    title:'Ons Altında Destek, Direnç ve Momentum Bölgeleri',
-    summary:'Destek ve direnç tek bir kesin rakam değil, alıcı veya satıcı davranışının yoğunlaşabileceği fiyat bölgeleridir.',
-    paragraphs:[
-      'Ons altın destek ve direnç seviyeleri geçmiş dönüşler, oynaklık ve momentum kullanılarak bölge şeklinde değerlendirilmelidir. Fiyatın bir direnci kısa süreli aşması tek başına kırılım anlamına gelmez; işlem hacmi, kapanış ve takip eden hareket teyit için önemlidir.',
-      'Grafikteki alım ve kâr alma bölgeleri modelin merkez tahmini ile hata bandından türetilir. Momentum eşiği aşıldığında hareket hızlanabilir, fakat yanlış kırılım riski de büyür. Risk kesme seviyesi bu nedenle senaryonun geçersiz hale geldiği alanı tanımlamak için kullanılır.'
-    ],
-    points:['Seviyeleri çizgi yerine bölge kabul edin.','Kırılımda kapanış ve devam hareketini arayın.','Pozisyon boyutunu risk kesme mesafesine göre ayarlayın.']
-  },
-  {
-    id:'paxg-usdt-nedir',
-    keyword:'PAXG USDT nedir',
-    title:'PAXG/USDT Fiyatı ile Ons Altın Neden Farklılaşır?',
-    summary:'PAXG/USDT, altına bağlı dijital varlığın USDT karşısındaki piyasa fiyatıdır; klasik ons kotasyonuyla birebir aynı anda ve aynı likiditede işlem görmeyebilir.',
-    paragraphs:[
-      'PAXG/USDT fiyatı ile ONS/XAUUSD arasında küçük farklar görülmesi olağandır. İşlem saatleri, hafta sonu likiditesi, emir defteri derinliği, USDT’nin dolar karşısındaki değeri ve piyasa katılımcılarının kısa süreli talebi bu farkı büyütebilir veya daraltabilir.',
-      'Panelin modeli tutarlılık için geçmiş eğitim ve tahminde PAXG/USDT serisini referans alır. ONS/XAUUSD akışı ise canlı karşılaştırma amacıyla gösterilir. Böylece model hatası ile iki farklı piyasa fiyatı arasındaki doğal fark birbirine karıştırılmaz.'
-    ],
-    points:['İki akışın zaman damgasını karşılaştırın.','Hafta sonu ve düşük likidite farklarını dikkate alın.','Model performansını eğitim referansıyla ölçün.']
-  },
-  {
-    id:'xauusd-nedir',
-    keyword:'XAUUSD nedir',
-    title:'XAUUSD Nedir ve Ons Fiyatı Ne Anlama Gelir?',
-    summary:'XAUUSD, altının ABD doları karşısındaki uluslararası fiyat gösterimidir; XAU altını, USD ise fiyatlama para birimini temsil eder.',
-    paragraphs:[
-      'XAUUSD kotasyonu bir troy ons altının kaç ABD doları olduğunu ifade eder. Troy ons yaklaşık 31,10 gramdır; ancak Türkiye’deki gram altın fiyatına ulaşmak için yalnızca onsu grama bölmek yeterli değildir. Dolar/TL kuru, yerel piyasa koşulları, saflık ve alış-satış farkı da hesaba katılır.',
-      'XAUUSD küresel fiyatı gün içinde faiz, dolar, ekonomik veri ve risk haberleriyle değişir. Panelde bu akış canlı karşılaştırma fiyatı olarak yer alır; tahmin grafiğinin geçmiş serisiyle oluşabilecek küçük piyasa farkı ayrıca gösterilir.'
-    ],
-    points:['Bir troy onsun yaklaşık 31,10 gram olduğunu bilin.','Gram altın hesabında döviz kurunu ekleyin.','Kotasyon ile işlem yapılabilir fiyatın farklı olabileceğini unutmayın.']
-  },
-  {
-    id:'yapay-zeka-altin-tahmini',
-    keyword:'yapay zeka altın tahmini',
-    title:'Yapay Zekâ ile Altın Fiyat Tahmini Güvenilir mi?',
-    summary:'Yapay zekâ modeli geçmiş ilişkileri öğrenerek tutarlı senaryolar üretebilir; fakat beklenmedik olayları kesin olarak bilemez ve sonuçlar olasılıksaldır.',
-    paragraphs:[
-      'Yapay zekâ ile altın tahmini, çok sayıda değişken arasındaki doğrusal olmayan ilişkileri birlikte değerlendirme avantajı sağlar. Bu panelde sinir ağı; fiyat momentumu, oynaklık, faiz, dolar, enflasyon ve risk göstergelerinden 1, 3 ve 6 aylık sonuç üretir.',
-      'Model doğruluğu sabit değildir. Piyasa rejimi değiştiğinde geçmişte öğrenilen ilişkiler zayıflayabilir. Sistem bu nedenle gerçekleşen fiyat ile önceki tahmini karşılaştırır, hataları kaydeder ve yeterli yeni gözlem oluştuğunda yeniden eğitim sürecine veri sağlar. Kullanıcı yine de tahmin bandını ve risk yönetimini dikkate almalıdır.'
-    ],
-    points:['Model sonucunu kesinlik değil senaryo olarak görün.','Gerçekleşen hata ve model tarihini kontrol edin.','Tahmin bandını pozisyon riskine dahil edin.']
-  },
-  {
-    id:'ons-altin-neden-yukseliyor',
-    keyword:'ons altın neden yükseliyor',
-    title:'Ons Altın Bugün Neden Yükseliyor?',
-    summary:'Ons altındaki yükseliş; faiz beklentileri, doların yönü, güvenli liman talebi ve teknik kırılımların aynı anda etkili olmasıyla oluşabilir.',
-    paragraphs:[
-      '“Ons altın neden yükseliyor?” sorusunun cevabı güne göre değişir. ABD tahvil getirilerinin veya reel faizin gerilemesi, doların zayıflaması ve faiz indirimi beklentisinin güçlenmesi altının fırsat maliyetini azaltabilir. Jeopolitik gerilim, finansal stres veya merkez bankası talebi de güvenli liman alımlarını artırabilir.',
-      'Fiyatın bir direnç bölgesini yüksek momentumla aşması kısa vadeli alımları hızlandırabilir. Ancak tek bir başlık yerine dolar endeksi, tahvil getirileri, VIX, ekonomik veri sürprizi ve fiyat momentumunu birlikte değerlendirmek gerekir. Panel bu değişkenleri aynı ekranda karşılaştırarak hareketin olası kaynaklarını görünür kılar.'
-    ],
-    points:['Reel faiz ve doların aynı yöndeki etkisini kontrol edin.','Haber saatini fiyat hareketinin başlangıcıyla karşılaştırın.','Tek günlük yükselişi uzun vadeli trend olarak kabul etmeyin.']
-  },
-  {
-    id:'ons-altin-neden-dusuyor',
-    keyword:'ons altın neden düşüyor',
-    title:'Ons Altın Bugün Neden Düşüyor?',
-    summary:'Ons altındaki düşüş çoğunlukla güçlenen dolar, yükselen reel faiz, azalan risk talebi veya teknik desteklerin kırılmasıyla ilişkilidir.',
-    paragraphs:[
-      'Ons altında satış baskısı, piyasanın faizlerin daha uzun süre yüksek kalacağını fiyatlamasıyla artabilir. Güçlü ekonomik veri tahvil getirilerini ve doları yukarı taşıdığında faiz getirisi olmayan altının göreli cazibesi azalabilir. Risk iştahının toparlanması da güvenli liman pozisyonlarının çözülmesine yol açabilir.',
-      'Teknik tarafta önemli desteğin altında kapanış, zarar kesme emirlerini ve kısa vadeli satışı hızlandırabilir. Yine de her geri çekilme kalıcı düşüş değildir. Hareketin devamlılığı için reel faiz, dolar endeksi, oynaklık ve sonraki günün fiyat teyidi birlikte izlenmelidir.'
-    ],
-    points:['Ekonomik verinin beklentiye göre sürprizini inceleyin.','Destek kırılımında kapanış teyidi arayın.','Fiyat düşerken risk göstergelerinin davranışını karşılaştırın.']
-  },
-  {
-    id:'bir-ons-altin-kac-gram',
-    keyword:'1 ons altın kaç gram',
-    title:'1 Ons Altın Kaç Gramdır?',
-    summary:'Kıymetli maden piyasasında kullanılan bir troy ons 31,1034768 grama eşittir; piyasa hesaplarında çoğunlukla 31,10 gram kullanılır.',
-    paragraphs:[
-      'Altın piyasasında standart ağırlık birimi troy onstur. Bir troy ons tam olarak yaklaşık 31,1034768 gramdır. Günlük hesaplamalarda bu değer 31,10 gram olarak yuvarlanabilir. XAUUSD kotasyonu, bir troy ons saf altının ABD doları cinsinden fiyatını ifade eder.',
-      'Ons fiyatını yalnızca 31,10’a bölmek bir gram altının dolar karşılığını verir. Türkiye’de gram altının teorik TL değerine ulaşmak için sonuç USD/TRY kuru ile çarpılır. Saflık, piyasa primi ve alış-satış farkı nedeniyle gerçek işlem fiyatı teorik değerden ayrılabilir.'
-    ],
-    points:['1 troy ons yaklaşık 31,1035 gramdır.','Ons ve standart ağırlık onsunu karıştırmayın.','Yerel gram fiyatında kur ve piyasa marjını hesaba katın.']
-  },
-  {
-    id:'ons-gram-altin-hesaplama',
-    keyword:'ons gram altın hesaplama',
-    title:'Ons Fiyatından Gram Altın Nasıl Hesaplanır?',
-    summary:'Teorik gram altın fiyatı, ons fiyatının 31,1035’e bölünüp dolar/TL kuru ile çarpılmasıyla hesaplanır.',
-    paragraphs:[
-      'Temel formül “gram altın (TL) = ons altın (USD) × USD/TRY ÷ 31,1035” şeklindedir. Örneğin ons fiyatı ve dolar kuru bilindiğinde önce bir gram saf altının dolar değeri, ardından TL karşılığı bulunur. Bu hesap küresel referans fiyatın yerel para birimine dönüşümüdür.',
-      'Kuyumcu, banka veya serbest piyasa fiyatı formül sonucuyla birebir aynı olmayabilir. Saflık oranı, işlem saati, arz-talep dengesi, fiziki ürün primi ve alış-satış makası gerçek fiyatı değiştirir. Bu nedenle hesaplanan değer karşılaştırma referansı olarak kullanılmalıdır.'
-    ],
-    points:['Formülde troy ons için 31,1035 kullanın.','Anlık ve doğru USD/TRY kurunu esas alın.','Teorik değer ile işlem fiyatı arasındaki makası ölçün.']
-  },
-  {
-    id:'altin-alim-zamani-nasil-belirlenir',
-    keyword:'altın alım zamanı nasıl belirlenir',
-    title:'Altın Alım Zamanı Nasıl Değerlendirilir?',
-    summary:'Altın için alım zamanı tek bir göstergeyle değil; trend, destek bölgeleri, reel faiz, dolar ve kişisel risk planıyla değerlendirilmelidir.',
-    paragraphs:[
-      'Altın alım zamanı arayan bir yatırımcı önce vadesini ve kabul edebileceği kaybı belirlemelidir. Kısa vadeli işlemde momentum, oynaklık ve destek bölgeleri daha önemliyken uzun vadede reel faiz döngüsü, enflasyon beklentisi ve portföy çeşitlendirmesi öne çıkar. Tek seferde işlem yapmak yerine kademeli yaklaşım zamanlama riskini azaltabilir.',
-      'Modelin alt bandı kesin dip, üst bandı kesin tepe değildir. Bu seviyeler geçmiş hata ve mevcut oynaklığa göre olası senaryoları gösterir. Karar verirken fiyatın senaryoyu geçersiz kılacağı risk seviyesi ile beklenen getiri birlikte düşünülmelidir. İçerik kişisel yatırım tavsiyesi değildir.'
-    ],
-    points:['Önce vade ve azami kayıp sınırını belirleyin.','Tek fiyat yerine kademeli senaryoları değerlendirin.','Tahmin bandını garanti olarak yorumlamayın.']
-  },
-  {
-    id:'ons-altin-yil-sonu-tahmini',
-    keyword:'ons altın yıl sonu tahmini',
-    title:'Ons Altın Yıl Sonu Tahmini Nasıl Okunmalı?',
-    summary:'Yıl sonu altın tahmini tek rakamdan ziyade faiz, dolar, enflasyon ve risk senaryolarına bağlı bir fiyat aralığı olarak okunmalıdır.',
-    paragraphs:[
-      'Yıl sonu tahminleri uzun vade nedeniyle yüksek belirsizlik taşır. Merkez senaryo mevcut faiz patikası, dolar eğilimi ve fiyat momentumunun kademeli devamını varsayabilir. Alt senaryo güçlü dolar ve yüksek reel faizleri; üst senaryo ise faiz gevşemesi, merkez bankası talebi veya artan güvenli liman ihtiyacını temsil edebilir.',
-      'Takvim ilerledikçe açıklanan her enflasyon, istihdam ve merkez bankası kararı başlangıç varsayımlarını değiştirir. Bu nedenle yıl sonu hedefi sabit bir rakam olarak değil, yeni verilerle daralan veya yer değiştiren olasılık bandı olarak takip edilmelidir.'
-    ],
-    points:['Tahmini alt, merkez ve üst senaryoyla okuyun.','Her önemli veri sonrasında varsayımları güncelleyin.','Uzun vadede hata payının büyüdüğünü hesaba katın.']
-  },
-  {
-    id:'merkez-bankalari-altin-alimi',
-    keyword:'merkez bankaları altın alımı',
-    title:'Merkez Bankalarının Altın Alımları Fiyatı Nasıl Etkiler?',
-    summary:'Merkez bankalarının rezerv çeşitlendirmesi amacıyla yaptığı kalıcı alımlar, fiziksel altın talebini ve uzun vadeli fiyat algısını destekleyebilir.',
-    paragraphs:[
-      'Merkez bankaları rezervlerini çeşitlendirmek, döviz riskini azaltmak veya güvenli varlık payını artırmak için altın alabilir. Bu talep kısa vadeli spekülatif akıştan farklı olarak daha uzun soluklu olabilir ve küresel fiziksel talebin önemli bir bölümünü oluşturabilir.',
-      'Bununla birlikte açıklanan alım verileri gecikmeli olabilir ve fiyat üzerinde tek başına belirleyici değildir. Reel faiz, dolar ve yatırım fonu akımları ters yönde güçlü hareket ederse merkez bankası talebinin kısa vadeli etkisi sınırlı kalabilir. Veri, daha geniş makro çerçeve içinde okunmalıdır.'
-    ],
-    points:['Rezerv verilerinin açıklanma gecikmesini dikkate alın.','Net alımı tek aylık rakam yerine eğilim olarak izleyin.','Makro fiyatlama ile fiziksel talebi birlikte değerlendirin.']
-  },
-  {
-    id:'altin-rsi-nedir',
-    keyword:'altın RSI nedir',
-    title:'Altında RSI Göstergesi Nasıl Yorumlanır?',
-    summary:'RSI, fiyat hareketinin hızını ölçen 0–100 arası momentum göstergesidir; aşırı alım veya satım sinyali tek başına dönüş garantisi vermez.',
-    paragraphs:[
-      'Göreceli Güç Endeksi olarak bilinen RSI genellikle 14 dönem üzerinden hesaplanır. 70 üzeri değerler güçlü veya aşırı alım, 30 altı değerler zayıf veya aşırı satım bölgesi olarak değerlendirilir. Güçlü trendlerde RSI uzun süre uç bölgelerde kalabileceği için yalnızca bu eşiklerle ters pozisyon almak risklidir.',
-      'RSI; fiyat trendi, destek-direnç ve oynaklık göstergeleriyle birlikte kullanıldığında daha anlamlıdır. Fiyat yeni zirve yaparken RSI’ın daha düşük zirve üretmesi momentum kaybına işaret edebilir; ancak ayrışmanın fiyat tarafından teyit edilmesi gerekir.'
-    ],
-    points:['RSI seviyesini mevcut trend bağlamında okuyun.','Uyumsuzluklarda fiyat teyidi bekleyin.','RSI’ı tek başına alım-satım kararı olarak kullanmayın.']
-  },
-  {
-    id:'altin-atr-oynaklik',
-    keyword:'altın ATR oynaklık',
-    title:'Altında ATR ve Oynaklık Ne Anlama Gelir?',
-    summary:'ATR fiyat yönünü değil, belirli dönemdeki tipik hareket genişliğini ölçer ve tahmin bandı ile risk mesafesini değerlendirmeye yardımcı olur.',
-    paragraphs:[
-      'Average True Range (ATR), gün içi yüksek-düşük aralığını ve fiyat boşluklarını hesaba katarak piyasanın ne kadar hareketli olduğunu ölçer. ATR yükseliyorsa günlük fiyat salınımı genişliyor, düşüyorsa piyasa daha dar bir bantta hareket ediyor olabilir. Gösterge yön tahmini üretmez.',
-      'Oynaklık yükseldiğinde aynı fiyat hedefi için daha geniş hata bandı ve daha uzak risk kesme mesafesi gerekebilir. Panel ATR yüzdesini ve 20 günlük oynaklığı model girdisi olarak kullanarak tahmin belirsizliğini piyasa koşullarına uyarlamaya çalışır.'
-    ],
-    points:['ATR’ın yön değil hareket genişliği ölçtüğünü bilin.','Yüksek oynaklıkta pozisyon riskini küçültün.','Farklı fiyat dönemlerini ATR yüzdesiyle karşılaştırın.']
-  },
-  {
-    id:'hafta-sonu-altin-fiyati',
-    keyword:'hafta sonu altın fiyatı neden farklı',
-    title:'Hafta Sonu Altın Fiyatı Neden Farklı Görünür?',
-    summary:'Klasik XAUUSD piyasası kapalıyken dijital altın ürünlerinin işlem görmesi, düşük likidite ve genişleyen makas hafta sonu fiyat farkı oluşturabilir.',
-    paragraphs:[
-      'Küresel spot altın piyasasının kapalı olduğu hafta sonunda son XAUUSD kotasyonu sabit kalabilir. Buna karşılık günün her saati işlem görebilen altına bağlı dijital varlıklarda fiyat değişmeye devam eder. Emir defteri derinliğinin azalması ve yeni haberlerin fiyatlanması iki gösterge arasında geçici fark yaratabilir.',
-      'Piyasa yeniden açıldığında farkın kapanması garanti değildir; spot fiyat yeni bilgiye göre dijital ürüne yaklaşabilir veya dijital üründeki hafta sonu hareketi geri alınabilir. Karşılaştırmada zaman damgası, USDT/dolar farkı ve alış-satış makası mutlaka kontrol edilmelidir.'
-    ],
-    points:['Karşılaştırılan fiyatların zaman damgasına bakın.','Düşük likiditede makasın genişleyebileceğini unutmayın.','Hafta sonu farkını kesin arbitraj fırsatı saymayın.']
-  },
-  {
-    id:'altin-guvenli-liman',
-    keyword:'altın güvenli liman mı',
-    title:'Altın Neden Güvenli Liman Olarak Görülür?',
-    summary:'Altın kredi riski taşımayan, küresel kabul gören ve sınırlı arzlı bir varlık olduğu için belirsizlik dönemlerinde güvenli liman talebi görebilir.',
-    paragraphs:[
-      'Altının uzun geçmişi, küresel likiditesi ve herhangi bir şirket ya da devletin ödeme vaadine dayanmaması güvenli liman algısını destekler. Jeopolitik gerilim, bankacılık stresi veya para birimlerine güvenin zayıfladığı dönemlerde yatırımcılar portföy çeşitlendirmesi amacıyla altına yönelebilir.',
-      'Güvenli liman niteliği fiyatın her kriz gününde yükseleceği anlamına gelmez. Nakit ihtiyacının arttığı dönemlerde altın da satılabilir; güçlü dolar ve yükselen reel faiz fiyatı baskılayabilir. Koruma etkisi yatırım vadesine ve portföy içindeki ağırlığa bağlıdır.'
-    ],
-    points:['Güvenli limanı kısa vadeli yükseliş garantisi sanmayın.','Likidite ve reel faiz koşullarını izleyin.','Altını portföy bağlamında değerlendirin.']
-  }
-];
 const avg = a => a.reduce((s,v)=>s+v,0)/a.length;
 const std = a => { const m=avg(a); return Math.sqrt(avg(a.map(v=>(v-m)**2))); };
 const matVec=(x,w)=>w[0].map((_,j)=>x.reduce((s,v,i)=>s+v*w[i][j],0));
@@ -355,12 +129,120 @@ function TickSparkline({ticks}) {
   return <svg className={`tick-spark ${up?'up':'down'}`} viewBox={`0 0 ${W} ${H}`} aria-label="Son saniyelerde ons fiyat hareketi"><polyline points={pts}/></svg>;
 }
 
-function SiteNav() {
-  return <nav className="site-nav" aria-label="Ana menü">
-    <a className="brand" href="/#panel" aria-label="Ons Altın Analiz ana bölümü"><img src="/favicon.svg" alt=""/><span>Ons Altın Analiz</span></a>
-    <div className="desktop-links"><a href="/#panel">Canlı Panel</a><a href="/#tahmin">Tahmin</a><a href="/#rehberler">Altın Rehberi</a><a href="/#risk-notu">Risk Notu</a></div>
-    <details className="guide-menu"><summary>Rehberler <span aria-hidden="true">⌄</span></summary><div>{SEO_ARTICLES.map(article=><a key={article.id} href={`/rehber/${article.id}`}>{article.title}</a>)}</div></details>
-    <details className="mobile-menu"><summary aria-label="Menüyü aç"><span/><span/><span/></summary><div><a href="/#panel">Canlı Panel</a><a href="/#tahmin">Tahminler</a><a href="/#rehberler">Altın Rehberi</a>{SEO_ARTICLES.map(article=><a key={article.id} href={`/rehber/${article.id}`}>{article.title}</a>)}<a href="/#risk-notu">Risk Notu</a></div></details>
+const NAV_SECTIONS = [['/#panel','Canlı Panel'],['/#tahmin','Tahmin'],['/#risk-notu','Risk Notu']] as [string,string][];
+const CATEGORY_ORDER = [...new Set(SEO_ARTICLES.map(article=>article.category))];
+const GUIDES_BY_CATEGORY = CATEGORY_ORDER.map(category=>[category,SEO_ARTICLES.filter(article=>article.category===category)] as [string,SeoArticle[]]);
+const fold = (value:string)=>value.toLocaleLowerCase('tr').replace(/[\u0300-\u036f]/g,'');
+
+function SiteNav({current}:{current?:string}) {
+  const [menu,setMenu]=useState<null|'guides'|'mobile'>(null);
+  const [query,setQuery]=useState('');
+  const navRef=useRef<HTMLElement>(null);
+  const sheetRef=useRef<HTMLDivElement>(null);
+  const searchRef=useRef<HTMLInputElement>(null);
+  const close=useCallback(()=>{setMenu(null);setQuery('');},[]);
+
+  // Açık menü dışına tıklama ve Escape ile kapanma. <details> bunu yapamadığı için
+  // menü mobilde açık kalıyor, kullanıcı sayfaya dönmek için tekrar butona basmak zorundaydı.
+  useEffect(()=>{
+    if(!menu) return;
+    const onPointer=(event:PointerEvent)=>{const target=event.target as Node;
+      if(navRef.current?.contains(target)||sheetRef.current?.contains(target))return;
+      close();};
+    const onKey=(event:KeyboardEvent)=>{if(event.key==='Escape')close();};
+    document.addEventListener('pointerdown',onPointer);
+    document.addEventListener('keydown',onKey);
+    return()=>{document.removeEventListener('pointerdown',onPointer);document.removeEventListener('keydown',onKey);};
+  },[menu,close]);
+  // iOS Safari'de body'ye overflow:hidden vermek kaydırmayı durdurmaz; arka plan
+  // sayfa panelin altında kaymaya devam eder. Konumu sabitleyip geri yüklüyoruz.
+  useEffect(()=>{
+    if(menu!=='mobile') return;
+    const offset=window.scrollY;
+    const {style}=document.body;
+    const previous={position:style.position,top:style.top,left:style.left,right:style.right,overflow:style.overflow};
+    Object.assign(style,{position:'fixed',top:`-${offset}px`,left:'0',right:'0',overflow:'hidden'});
+    document.body.classList.add('nav-locked');
+    return()=>{
+      Object.assign(style,previous);
+      document.body.classList.remove('nav-locked');
+      window.scrollTo(0,offset);
+    };
+  },[menu]);
+  useEffect(()=>{
+    if(menu!=='guides') return;
+    searchRef.current?.focus();
+    // Açık rehber listenin altında kalabiliyor; kullanıcı nerede olduğunu görebilsin.
+    document.querySelector('#guide-panel a.active')?.scrollIntoView({block:'center'});
+  },[menu]);
+
+  const groups=useMemo(()=>{
+    const needle=fold(query.trim());
+    if(!needle) return GUIDES_BY_CATEGORY;
+    return GUIDES_BY_CATEGORY
+      .map(([category,items])=>[category,items.filter(article=>fold(`${article.title} ${article.keyword}`).includes(needle))] as [string,SeoArticle[]])
+      .filter(([,items])=>items.length>0);
+  },[query]);
+  const hitCount=groups.reduce((total,[,items])=>total+items.length,0);
+
+  const guideLink=(article:SeoArticle)=>
+    <a key={article.id} href={`/rehber/${article.id}`} onClick={close}
+       aria-current={current===article.id?'page':undefined}
+       className={current===article.id?'active':undefined}>{article.title}</a>;
+
+  return <nav className="site-nav" aria-label="Ana menü" ref={navRef}>
+    <a className="skip-link" href="#icerik">İçeriğe geç</a>
+    <a className="brand" href="/" aria-label="Ons Altın Analiz ana sayfa"><img src="/favicon.svg" alt=""/><span>Ons Altın Analiz</span></a>
+
+    <div className="desktop-links">
+      {NAV_SECTIONS.map(([href,label])=><a key={href} href={href}>{label}</a>)}
+      <div className="guide-menu">
+        <button type="button" aria-expanded={menu==='guides'} aria-haspopup="true" aria-controls="guide-panel"
+                className={menu==='guides'||current?'open':undefined}
+                onClick={()=>setMenu(value=>value==='guides'?null:'guides')}>
+          Altın Rehberi <span aria-hidden="true">⌄</span>
+        </button>
+        {menu==='guides'&&<div className="guide-panel" id="guide-panel">
+          <div className="guide-search">
+            <input ref={searchRef} type="search" value={query} placeholder="Rehberlerde ara…"
+                   aria-label="Rehberlerde ara" onChange={event=>setQuery(event.target.value)}/>
+            <small>{hitCount} rehber</small>
+          </div>
+          <div className="guide-groups">
+            {groups.map(([category,items])=><section key={category}><h3>{category}</h3>{items.map(guideLink)}</section>)}
+            {groups.length===0&&<p className="guide-empty">Eşleşen rehber yok.</p>}
+          </div>
+          <a className="guide-all" href="/rehber" onClick={close}>Tüm rehberleri gör <span aria-hidden="true">→</span></a>
+        </div>}
+      </div>
+    </div>
+
+    <button type="button" className="mobile-toggle" aria-expanded={menu==='mobile'} aria-controls="mobile-panel"
+            aria-label={menu==='mobile'?'Menüyü kapat':'Menüyü aç'}
+            onClick={()=>setMenu(value=>value==='mobile'?null:'mobile')}>
+      <span/><span/><span/>
+    </button>
+    {menu==='mobile'&&createPortal(
+      /* Portal şart: .site-nav üzerindeki backdrop-filter, position:fixed alt öğeler için
+         içeren blok yaratıyor ve panel navbar'ın içine hapsolup 1 piksele çöküyordu. */
+      <div className="mobile-sheet" ref={sheetRef}>
+        <div className="mobile-backdrop" onClick={close} aria-hidden="true"/>
+        <div className="mobile-panel" id="mobile-panel" role="dialog" aria-modal="true" aria-label="Menü">
+          <div className="mobile-head">
+            <input type="search" value={query} placeholder="Rehberlerde ara…" aria-label="Rehberlerde ara"
+                   onChange={event=>setQuery(event.target.value)}/>
+            <button type="button" onClick={close} aria-label="Menüyü kapat">✕</button>
+          </div>
+          <div className="mobile-scroll">
+            {!query&&<section className="mobile-sections">{NAV_SECTIONS.map(([href,label])=>
+              <a key={href} href={href} onClick={close}>{label}</a>)}
+              <a href="/rehber" onClick={close}>Tüm rehberler</a>
+            </section>}
+            {groups.map(([category,items])=><section key={category}><h3>{category}</h3>{items.map(guideLink)}</section>)}
+            {groups.length===0&&<p className="guide-empty">Eşleşen rehber yok.</p>}
+          </div>
+        </div>
+      </div>, document.body)}
   </nav>;
 }
 
@@ -391,7 +273,7 @@ function SiteFooter() {
 function ArticlePage({article}) {
   useEffect(()=>{
     const url=`${window.location.origin}/rehber/${article.id}`;
-    const title=`${article.title} | Ons Altın Analiz`;
+    const title=`${article.seoTitle||article.title} | Ons Altın Analiz`;
     document.title=title;
     const set=(selector,value,attribute='content')=>{const node=document.querySelector(selector);if(node)node.setAttribute(attribute,value);};
     set('meta[name="description"]',article.summary);
@@ -402,10 +284,16 @@ function ArticlePage({article}) {
     set('meta[name="twitter:title"]',title);
     set('meta[name="twitter:description"]',article.summary);
   },[article]);
-  return <main className="app article-page"><SiteNav/><article className="standalone-article">
+  return <main className="app article-page"><SiteNav current={article.id}/><article className="standalone-article">
     <nav className="breadcrumbs" aria-label="İçerik yolu"><a href="/">Ana Sayfa</a><span>/</span><a href="/#rehberler">Altın Rehberi</a><span>/</span><b>{article.title}</b></nav>
-    <header><span className="eyebrow">{article.keyword}</span><h1>{article.title}</h1><p>{article.summary}</p></header>
-    <div className="standalone-body">{article.paragraphs.map((paragraph,i)=><p key={i}>{paragraph}</p>)}<section><h2>Bu konuda dikkat edilmesi gerekenler</h2><ul>{article.points.map(point=><li key={point}>{point}</li>)}</ul></section><div className="article-cta"><div><span className="eyebrow">Canlı model</span><h2>Verileri güncel tahminle karşılaştırın</h2><p>Canlı fiyatı, model bandını ve parametre katkılarını tek ekranda inceleyin.</p></div><a href="/#panel">Canlı panele git <span aria-hidden="true">→</span></a></div></div>
+    <header id="icerik"><span className="eyebrow">{article.keyword}</span><h1>{article.title}</h1><p>{article.summary}</p></header>
+    <div className="standalone-body">
+      <p className="article-intro">{article.intro}</p>
+      {article.sections.map(section=><section key={section.heading}><h2>{section.heading}</h2>{section.paragraphs.map((paragraph,i)=><p key={i}>{paragraph}</p>)}</section>)}
+      <section className="article-summary"><h2>Özet: {article.keyword}</h2><ul>{article.points.map(point=><li key={point}>{point}</li>)}</ul></section>
+      <section className="article-faq"><h2>Sık sorulan sorular</h2>{article.faq.map(item=><div key={item.q}><h3>{item.q}</h3><p>{item.a}</p></div>)}</section>
+      <p className="article-updated"><small>Son güncelleme: {article.updated}</small></p>
+    </div>
     <nav className="related-guides" aria-label="Diğer altın rehberleri"><h2>Diğer rehberler</h2><div>{SEO_ARTICLES.filter(item=>item.id!==article.id).slice(0,4).map(item=><a href={`/rehber/${item.id}`} key={item.id}><small>{item.keyword}</small><b>{item.title}</b><span aria-hidden="true">→</span></a>)}</div></nav>
   </article><SiteFooter/></main>;
 }
@@ -451,17 +339,42 @@ function DashboardApp() {
 
   const impacts=useMemo(()=>{const names={DFII10:'10Y reel faiz',DTWEXBGS:'Dolar',DGS10:'10Y faiz',VIXCLS:'VIX',CPIAUCSL_yoy_pct:'TÜFE',CPILFESL_yoy_pct:'Çekirdek TÜFE',UNRATE:'İşsizlik',gold_return_20d:'20g momentum'};const base=forecast.mean[1];return Object.entries(names).map(([k,name])=>{const changed={...features,[k]:model.xMean[model.features.indexOf(k)]};changed.yield_curve_10y_2y=changed.DGS10-changed.DGS2;changed.breakeven_inflation_10y=changed.DGS10-changed.DFII10;return{name,value:base-predict(changed,values.price).mean[1]};}).sort((a,b)=>Math.abs(b.value)-Math.abs(a.value));},[features,forecast,values.price]);
   const near=values.price*(1+forecast.mean[1]),band=values.price*forecast.err[1],atr=features.gold_atr14_pct*values.price,buy=[near-band*.72,near-band*.38],sell=[near+band*.35,near+band*.72],stop=buy[0]-Math.max(atr*1.5,band*.18),entry=avg(buy),units=(capital*riskPct/100)/Math.max(1,entry-stop);
+  const gramTable=useMemo(()=>{
+    const ons=+harem.satis||+spot.price||0, kur=+usdTry.satis||0;
+    if(!ons||!kur) return null;
+    const saf=ons*kur/31.1035;                     // 24 ayar saf gram
+    const ziynet=(gram:number)=>saf*gram*.916;     // 22 ayar (916 milyem)
+    return {ons,kur,saf,
+      gram22:ziynet(1),
+      ceyrek:ziynet(1.75),
+      yarim:ziynet(3.5),
+      tam:ziynet(7),
+      ata:ziynet(7.216)};                          // Cumhuriyet/Ata lirası tam gramajı
+  },[harem.satis,spot.price,usdTry.satis]);
   const dailyForecast=useMemo(()=>buildDailyPath(forecast,horizonDays),[forecast,horizonDays]);
   const loan=useMemo(()=>loanProjection(forecast,loanTerm),[forecast,loanTerm]);
   const loanCosts=useMemo(()=>{const amount=Math.max(0,+loanAmount||0),monthly=loanPayment(amount,Math.max(0,+loanRate||0)/100,loanTerm),total=monthly*loanTerm,currentFx=+usdTry.satis||0,targetFx=+futureUsdTry||currentFx,fxReturn=currentFx>0?targetFx/currentFx-1:0,results=loan.scenarios.map(s=>{const onsReturn=s.ret,tlReturn=(1+onsReturn)*(1+fxReturn)-1;return{...s,onsReturn,tlReturn,monthly:breakEvenLoanRate(tlReturn,loanTerm),endValue:amount*(1+tlReturn),net:amount*(1+tlReturn)-total};});return{monthly,total,currentFx,targetFx,fxReturn,results};},[loan,loanAmount,loanRate,loanTerm,usdTry.satis,futureUsdTry]);
 
   return <main className="app">
     <SiteNav/>
-    <header id="panel"><div><span className="eyebrow">Özgün Altın Tahmin Modeli</span><h1>Canlı Ons Altın Tahmin ve Senaryo Analiz Paneli</h1><p>Tahmin ve eğitim referansı PAXG/USDT; ONS/XAUUSD yalnızca canlı piyasa karşılaştırmasıdır.</p></div><div className="header-market"><div className="live-price token-price"><span><i className={spot.live?'ok':'warn'}/>PAXG / USDT</span><strong>{money2(spot.price)}</strong><b className={spot.change>=0?'positive':'negative'}>{spot.change>=0?'▲':'▼'} %{Math.abs(spot.change).toFixed(2)}</b><small>{spot.time?`Son fiyat ${spot.time.toLocaleTimeString('tr-TR')}`:'Canlı akış bekleniyor'}</small></div><div className="live-price ons-price"><span><i className={harem.live?'ok':'warn'}/>ONS / XAUUSD</span><strong>{harem.satis?money2(harem.satis):'Bağlanıyor…'}</strong><div className="bid-ask"><b>Alış {harem.alis?money2(harem.alis):'—'}</b><b>Satış {harem.satis?money2(harem.satis):'—'}</b></div><TickSparkline ticks={haremTicks}/><small>{harem.satis?`PAXG farkı ${(harem.satis-spot.price)>=0?'+':''}${money2(harem.satis-spot.price)}`:'Canlı ons akışı bekleniyor'}</small></div><div className="live-price fx-price"><span><i className={usdTry.live?'ok':'warn'}/>USD / TL</span><strong>{usdTry.satis?`₺${tryRate(usdTry.satis)}`:'Bağlanıyor…'}</strong><div className="bid-ask"><b>Alış {usdTry.alis?`₺${tryRate(usdTry.alis)}`:'—'}</b><b>Satış {usdTry.satis?`₺${tryRate(usdTry.satis)}`:'—'}</b></div><small>{usdTry.time?`Son kur ${usdTry.time.toLocaleTimeString('tr-TR')}`:'Canlı kur bekleniyor'}</small></div><div className="status"><b>Model {model.latestDate}</b><span>{model.rows.toLocaleString('tr-TR')} gözlem</span><button onClick={refresh}><i className={status.type}/>{status.text}</button></div></div></header>
+    <header id="panel"><div id="icerik"><span className="eyebrow">Özgün Altın Tahmin Modeli</span><h1>Canlı Ons Altın Tahmin ve Senaryo Analiz Paneli</h1><p>Tahmin ve eğitim referansı PAXG/USDT; ONS/XAUUSD yalnızca canlı piyasa karşılaştırmasıdır.</p></div><div className="header-market"><div className="live-price token-price"><span><i className={spot.live?'ok':'warn'}/>PAXG / USDT</span><strong>{money2(spot.price)}</strong><b className={spot.change>=0?'positive':'negative'}>{spot.change>=0?'▲':'▼'} %{Math.abs(spot.change).toFixed(2)}</b><small>{spot.time?`Son fiyat ${spot.time.toLocaleTimeString('tr-TR')}`:'Canlı akış bekleniyor'}</small></div><div className="live-price ons-price"><span><i className={harem.live?'ok':'warn'}/>ONS / XAUUSD</span><strong>{harem.satis?money2(harem.satis):'Bağlanıyor…'}</strong><div className="bid-ask"><b>Alış {harem.alis?money2(harem.alis):'—'}</b><b>Satış {harem.satis?money2(harem.satis):'—'}</b></div><TickSparkline ticks={haremTicks}/><small>{harem.satis?`PAXG farkı ${(harem.satis-spot.price)>=0?'+':''}${money2(harem.satis-spot.price)}`:'Canlı ons akışı bekleniyor'}</small></div><div className="live-price fx-price"><span><i className={usdTry.live?'ok':'warn'}/>USD / TL</span><strong>{usdTry.satis?`₺${tryRate(usdTry.satis)}`:'Bağlanıyor…'}</strong><div className="bid-ask"><b>Alış {usdTry.alis?`₺${tryRate(usdTry.alis)}`:'—'}</b><b>Satış {usdTry.satis?`₺${tryRate(usdTry.satis)}`:'—'}</b></div><small>{usdTry.time?`Son kur ${usdTry.time.toLocaleTimeString('tr-TR')}`:'Canlı kur bekleniyor'}</small></div><div className="status"><b>Model {model.latestDate}</b><span>{model.rows.toLocaleString('tr-TR')} gözlem</span><button onClick={refresh}><i className={status.type}/>{status.text}</button></div></div></header>
     <div className="parameter-toggle-bar"><button onClick={()=>setWideChart(v=>!v)} aria-expanded={!wideChart}><span>⚙</span>{wideChart?'Parametreleri göster':'Parametreleri gizle'}</button></div>
     <div className={`layout ${wideChart?'wide-chart':''}`}><aside className="panel controls"><h2>Güncel parametreler</h2>{GROUPS.map(([title,items])=><section className="group" key={title}><h3>{title}</h3>{items.map(([id,label,unit])=><label key={id}><span>{label}{unit&&` (${unit})`}</span><input type="number" step="any" value={Number(values[id]).toFixed(id==='price'?2:3)} onChange={e=>setField(id,e.target.value)}/></label>)}</section>)}<button className="primary" onClick={()=>setValues(fieldDefaults())}>Eğitim değerlerine dön</button></aside>
       <section className="content"><div className="cards three" id="tahmin">{model.horizons.map((h,j)=>({h,j})).filter(x=>x.h!==7).map(({h,j})=><article className="panel card" key={h}><span>{LABELS[h]}</span><strong>{money(values.price*(1+forecast.mean[j]))}</strong><b className={forecast.mean[j]>=0?'positive':'negative'}>{forecast.mean[j]>=0?'▲':'▼'} {pct(forecast.mean[j])}</b><small>%{BAND_COVERAGE} bant<br/>{money(values.price*(1+forecast.mean[j]-forecast.err[j]))} – {money(values.price*(1+forecast.mean[j]+forecast.err[j]))}</small></article>)}</div>
         <section className="panel block loan-break-even" aria-labelledby="finance-comparison-title"><div className="loan-head"><div><span className="eyebrow">Varsayımsal karşılaştırma</span><h2 id="finance-comparison-title">Altının TL getirisi ve finansman maliyeti</h2><p>Ons senaryosu, canlı USD/TL kuru ve vade sonu kur varsayımıyla TL getirisine çevrilir.</p></div><div className="segmented">{[3,6,9].map(n=><button key={n} className={loanTerm===n?'active':''} onClick={()=>setLoanTerm(n)}>{n} Ay</button>)}</div></div><div className="loan-inputs"><label>Karşılaştırma tutarı (TL)<input type="text" inputMode="numeric" autoComplete="off" value={tryAmount(loanAmount)} onChange={e=>setLoanAmount(Number(e.target.value.replace(/\D/g,""))||0)}/></label><label>Aylık finansman maliyeti (%)<input type="number" min="0" step="0.01" value={loanRate} onChange={e=>setLoanRate(+e.target.value)}/></label><div><span>Canlı USD/TL</span><b>{loanCosts.currentFx?`₺${tryRate(loanCosts.currentFx)}`:'Bekleniyor'}</b></div><label>Vade sonu USD/TL varsayımı<input type="number" min="0" step="0.01" placeholder={loanCosts.currentFx?String(loanCosts.currentFx):''} value={futureUsdTry||''} onChange={e=>setFutureUsdTry(+e.target.value)}/></label><div><span>Toplam finansman maliyeti</span><b>{tryMoney(loanCosts.total)}</b></div></div><div className="loan-results">{loanCosts.results.map(s=><article className={`loan-result ${s.tone}`} key={s.label}><span>{s.label} · Ons {pct(s.onsReturn)} · TL {pct(s.tlReturn)}</span><strong className={s.net>=0?'positive':'negative'}>{s.net>=0?'+':''}{tryMoney(s.net)}</strong><small>{loanTerm} ay sonunda TL getirisi–maliyet farkı</small></article>)}</div><details className="break-even-details"><summary>Teorik başa baş oranlarını göster</summary><div className="loan-scenarios">{loanCosts.results.map(s=><article className={`loan-scenario ${s.tone}`} key={s.label}><span>{s.label}</span><strong>{s.monthly==null?'%0,00':`%${(s.monthly*100).toFixed(2).replace('.',',')}`}</strong><small>TL getirisine göre aylık teorik başa baş maliyeti</small></article>)}</div></details><div className="loan-note">Başlangıçta canlı USD/TL satış kuru kullanılır. Vade sonu kur alanı boşsa kurun değişmediği varsayılır; makas, vergi, sigorta ve diğer masraflar dahil değildir.{loan.derived&&<em> 9 aylık sonuç, modelin 6 aylık eğiliminden türetilmiştir.</em>}</div></section>
+        {gramTable&&<section className="panel block gram-block" aria-labelledby="gram-title">
+          <div className="gram-head"><h2 id="gram-title">Ons fiyatından TL karşılıkları</h2>
+            <small>Saf gram = ons × USD/TRY ÷ 31,1035. Ziynet değerleri 22 ayar (0,916) saflıkla hesaplanır; işçilik ve satıcı marjı dahil değildir.</small></div>
+          <div className="gram-grid">
+            <div><span>Saf gram (24 ayar)</span><b>{tryMoney(gramTable.saf)}</b></div>
+            <div><span>22 ayar gram</span><b>{tryMoney(gramTable.gram22)}</b></div>
+            <div><span>Çeyrek (1,75 g)</span><b>{tryMoney(gramTable.ceyrek)}</b></div>
+            <div><span>Yarım (3,5 g)</span><b>{tryMoney(gramTable.yarim)}</b></div>
+            <div><span>Tam (7 g)</span><b>{tryMoney(gramTable.tam)}</b></div>
+            <div><span>Ata (7,216 g)</span><b>{tryMoney(gramTable.ata)}</b></div>
+          </div>
+          <p className="gram-note">Hesap canlı ONS ({money2(gramTable.ons)}) ve USD/TRY ({tryRate(gramTable.kur)}) verisinden türetilir. <a href="/rehber/gram-altin-fiyati-nasil-belirlenir">Gram altın fiyatı nasıl belirlenir?</a> · <a href="/rehber/ceyrek-altin-kac-gram">Çeyrek altın kaç gram?</a> · <a href="/rehber/ata-yarim-tam-altin-farki">Ata, yarım ve tam altın farkı</a></p>
+        </section>}
         <section className="panel block impact-block"><h2>Aylık tahmine parametre katkısı</h2><div className="impact-grid">{impacts.map(x=><div className="impact" key={x.name}><span>{x.name}</span><div><i className={x.value>=0?'pos':'neg'} style={{width:`${Math.min(100,Math.abs(x.value)*1700)}%`}}/></div><b className={x.value>=0?'positive':'negative'}>{x.value>=0?'+':''}{pct(x.value)}</b></div>)}</div></section>
         <section className="panel block chart-block"><div className="chart-head"><div><h2>Gün gün fiyat yolu ve model bölgeleri</h2><p>Tahmin PAXG/USDT referanslıdır; ONS/XAUUSD canlı karşılaştırma çizgisi olarak gösterilir.</p></div><div className="chart-tools"><button className="wide-toggle" onClick={()=>setWideChart(v=>!v)}>{wideChart?'Parametreleri göster':'Grafiği genişlet'}</button><div className="tool-group"><span>Tahmin</span><div className="segmented">{([[30,'1 Ay'],[90,'3 Ay'],[180,'6 Ay']] as [number,string][]).map(([n,label])=><button key={n} className={horizonDays===n?'active':''} onClick={()=>setHorizonDays(n)}>{label}</button>)}</div></div><div className="tool-group"><span>Geçmiş</span><div className="segmented">{[30,90,180,260].map(n=><button key={n} className={rangeDays===n?'active':''} onClick={()=>setRangeDays(n)}>{n===260?'1Y':`${n}G`}</button>)}</div></div><label><input type="checkbox" checked={showBand} onChange={e=>setShowBand(e.target.checked)}/> Tahmin bandı</label><label><input type="checkbox" checked={showLevels} onChange={e=>setShowLevels(e.target.checked)}/> İşlem bölgeleri</label></div></div><ForecastChart forecast={forecast} history={history} rangeDays={rangeDays} horizonDays={horizonDays} showBand={showBand} showLevels={showLevels} levels={{buy,sell,stop}} spot={{...spot,price:harem.satis||spot.price}} tokenSpot={spot} mobile={mobile}/><details className="daily-table"><summary>{horizonDays} günlük tahmin değerlerini göster</summary><div><table><thead><tr><th>Gün</th><th>Tarih</th><th>Tahmin</th><th>Günlük değişim</th><th>%{BAND_COVERAGE} alt</th><th>%{BAND_COVERAGE} üst</th></tr></thead><tbody>{dailyForecast.slice(1).map((d,i)=><tr key={d.day}><td>{d.day}</td><td>{new Date(`${d.date}T00:00:00`).toLocaleDateString('tr-TR')}</td><td>{money(d.v)}</td><td className={d.v>=dailyForecast[i].v?'positive':'negative'}>{pct(d.v/dailyForecast[i].v-1)}</td><td>{money(d.lo)}</td><td>{money(d.hi)}</td></tr>)}</tbody></table></div></details></section>
         <div className="bottom"><section className="panel block"><h2>Altın etki bülteni</h2><div className="bulletins"><div><h3>Parametre özeti</h3><p><b>Reel faiz:</b> 5 günlük {features.real_yield_change_5d>=0?'+':''}{features.real_yield_change_5d.toFixed(2)} puan.</p><p><b>Dolar:</b> 5 günlük {pct(features.dollar_return_5d)}.</p><p><b>VIX:</b> 5 günlük {features.vix_change_5d>=0?'+':''}{features.vix_change_5d.toFixed(2)}.</p></div><div><h3>Canlı haberler</h3>{news.slice(0,5).map((n,i)=><a key={i} href={n.url} target="_blank" rel="noreferrer">{n.title}<small>{n.source}</small></a>)}</div></div></section>
@@ -472,8 +385,25 @@ function DashboardApp() {
   </main>;
 }
 
+function GuideHub() {
+  useEffect(()=>{document.title='Ons Altın Rehberi | Ons Altın Analiz';},[]);
+  return <main className="app article-page"><SiteNav/>
+    <article className="standalone-article guide-hub">
+      <nav className="breadcrumbs" aria-label="İçerik yolu"><a href="/">Ana Sayfa</a><span>/</span><b>Altın Rehberi</b></nav>
+      <header id="icerik"><span className="eyebrow">Altın Bilgi Merkezi</span><h1>Ons Altın Rehberi</h1>
+        <p>Canlı fiyatı okumaktan model tahminlerini değerlendirmeye, gram ve ziynet altın hesabından alım satım pratiğine kadar {SEO_ARTICLES.length} rehber; beş başlık altında toplandı.</p></header>
+      <div className="standalone-body">{GUIDES_BY_CATEGORY.map(([category,items])=><section key={category}>
+        <h2>{category}</h2>
+        <div className="hub-cards">{items.map(article=><a className="hub-card" key={article.id} href={`/rehber/${article.id}`}>
+          <small>{article.keyword}</small><b>{article.title}</b><span>{article.summary}</span></a>)}</div>
+      </section>)}</div>
+    </article><SiteFooter/></main>;
+}
+
 function App() {
-  const match=window.location.pathname.match(/^\/rehber\/([a-z0-9-]+)\/?$/);
+  const path=window.location.pathname.replace(/\/+$/,'')||'/';
+  if(path==='/rehber') return <GuideHub/>;
+  const match=path.match(/^\/rehber\/([a-z0-9-]+)$/);
   const article=match?SEO_ARTICLES.find(item=>item.id===match[1]):null;
   return article?<ArticlePage article={article}/>:<DashboardApp/>;
 }
