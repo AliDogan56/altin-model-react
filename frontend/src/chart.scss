@@ -145,14 +145,6 @@ body.nav-locked { overflow:hidden; }
 .crosshair .hover-card .tip-value { font-variant-numeric:tabular-nums; font-weight:900; }
 .crosshair .hover-card .tip-min { fill:#70d7bd; }
 .crosshair .hover-card .tip-max { fill:#f3c969; }
-.live-chart-price line { stroke:#fff; stroke-width:1.2; stroke-dasharray:2 4; opacity:.82; }
-.live-chart-price circle { fill:var(--teal); stroke:#fff; stroke-width:2; filter:drop-shadow(0 0 5px var(--teal)); }
-.live-chart-price rect { fill:#174c42; stroke:var(--teal); }
-.live-chart-price text { fill:#fff; font-size:13px; font-weight:900; }
-.live-chart-price .ons-line-label { fill:var(--teal); font-size:11px; letter-spacing:.03em; }
-.token-chart-price line { stroke:var(--blue); stroke-width:1; stroke-dasharray:6 5; opacity:.75; }
-.token-chart-price text { fill:var(--blue); font-size:9px; }
-.token-chart-price circle { fill:var(--blue); stroke:#fff; stroke-width:1.5; }
 .chart-legend { display:flex; justify-content:center; gap:15px; flex-wrap:wrap; color:var(--muted); font-size:10px; }
 .chart-legend span { display:flex; align-items:center; gap:5px; }
 .chart-legend i { display:inline-block; width:18px; height:4px; border-radius:4px; }
@@ -379,3 +371,84 @@ body.nav-locked { overflow:hidden; }
 .hub-card small { color:var(--gold); font-size:10px; text-transform:uppercase; letter-spacing:.04em; }
 .hub-card b { color:#eef4fa; font-size:14px; line-height:1.3; }
 .hub-card span { color:var(--muted); font-size:11.5px; line-height:1.55; }
+
+/* Vadesi gelmiş tahmin satırları */
+.daily-table .settled-row { background:#0e1f33; }
+.daily-table .pending { color:var(--muted); }
+.crosshair .tip-divider { stroke:#2b4761; stroke-width:1; }
+.crosshair .tip-real { fill:#9fd8ff; font-size:11px; font-weight:800; }
+.crosshair .tip-error { fill:#b9cadd; font-size:10px; }
+.crosshair .tip-error-ok { fill:var(--teal); font-size:11px; font-weight:800; }
+.crosshair .tip-error-bad { fill:var(--red); font-size:11px; font-weight:800; }
+.origin-marker { stroke:#7aa2d8; stroke-width:1; stroke-dasharray:2 4; opacity:.65; }
+.origin-label { fill:#7aa2d8; font-size:10px; font-weight:700; }
+.origin-key { background:#7aa2d8; }
+
+/* ============ Grafik tasarım dili ============
+   Renk rolleri:  mavi = gerçekleşen · altın = model tahmini
+                  çelik = geçmiş karşılaştırma · yeşil = canlı fiyat · kırmızı = risk
+   Kural: tam genişlikte yatay çizgi yalnızca bir tane (canlı fiyat referansı).
+   Diğer seviyeler sağ kenarda kısa tick + etiket olarak durur.                  */
+
+/* Zaman ekseni ikiye ayrılır: solda olan, sağda olacak olan */
+.future-zone { fill:#7f9dbd12; }
+.today-divider { stroke:#5f7d99; stroke-width:1.2; stroke-dasharray:4 4; opacity:.8; }
+.zone-caption { fill:#6c8299; font-size:9.5px; letter-spacing:.08em; text-transform:uppercase; }
+
+/* Tek referans çizgisi + sağ kenarda birleşik canlı fiyat kartı */
+.now-line { stroke:var(--teal); stroke-width:1; stroke-dasharray:2 5; opacity:.5; }
+.now-dot-ons { fill:var(--teal); stroke:#07111f; stroke-width:2; }
+.now-dot-token { fill:var(--blue); stroke:#07111f; stroke-width:1.5; }
+.now-card { fill:#0d2a26; stroke:var(--teal); stroke-opacity:.55; }
+.now-tag { fill:var(--teal); font-size:9px; font-weight:800; letter-spacing:.06em; }
+.now-tag.alt { fill:var(--blue); }
+.now-value { fill:#fff; font-size:12px; font-weight:800; }
+.now-value.alt { fill:#cfe0f0; font-size:11px; }
+
+/* Karşılaştırma katmanı: dolgusuz, kesikli — canlı bantla yarışmasın */
+/* Karşılaştırma katmanı ikincil: dolgu yok, yalnız kesikli sınır. Dolgulu hâli
+   canlı bandı ve gelecek gölgesini bastırıp altın tahmin çizgisini okunmaz yapıyordu. */
+.origin-band { fill:none; stroke:#7aa2d870; stroke-width:1.1; stroke-dasharray:3 4; }
+.origin-forecast { fill:none; stroke:#7aa2d8; stroke-width:1.6; stroke-dasharray:6 4; }
+
+/* Momentum eşiği artık sağ kenarda kısa bir tick */
+.resistance { stroke:var(--red); stroke-width:1.2; stroke-dasharray:4 4; opacity:.7; }
+
+/* Katman kontrolleri tek grupta */
+.chart-legend { gap:13px; }
+
+/* ---- Mobile first: kontroller ve grafik yoğunluğu ---- */
+@media (max-width:650px) {
+  .chart-tools { gap:8px; justify-content:stretch; }
+  .chart-tools .tool-group { flex:1 1 100%; justify-content:space-between; }
+  /* Katman anahtarları yatay kaydırılan çip şeridi */
+  .chart { min-height:0; height:auto; aspect-ratio:420/620; }
+  .chart-legend { gap:9px; font-size:9.5px; }
+  .zoom-controls { margin:6px 0 0; }
+}
+
+/* Efsane hem açıklama hem katman anahtarı */
+.chart-legend button { display:flex; align-items:center; gap:5px; min-height:34px; padding:0 11px;
+  border:1px solid var(--line); border-radius:999px; background:#0d1d30; color:#b9cadd;
+  font:inherit; font-size:10px; cursor:pointer; }
+.chart-legend button:hover { border-color:#8e773d; color:#fff; }
+.chart-legend button.off { opacity:.45; }
+.chart-legend button.off i { filter:grayscale(1); }
+.chart-legend button:focus-visible { outline:2px solid var(--gold); outline-offset:2px; }
+@media (max-width:650px) {
+  .chart-tools .tool-group { display:flex; align-items:center; justify-content:space-between; gap:9px; }
+  .chart-legend { gap:7px; }
+  .chart-legend button { min-height:38px; font-size:11px; padding:0 12px; }
+}
+
+/* styles.scss'teki .band{fill:#f3c96920} üzerine: bant altın çizginin etrafında
+   yumuşak bir hale olmalı, sağ yarıyı kaplayan bir blok değil. */
+.band { fill:#e8c56a10; }
+
+/* Destek / direnç seviyeleri — yalnız geçmiş bölgesinde, ince ve ikincil */
+.sr line { stroke-width:1; stroke-dasharray:5 5; opacity:.55; }
+.sr text { font-size:9.5px; font-weight:700; opacity:.9; }
+.sr.res line { stroke:var(--red); } .sr.res text { fill:var(--red); }
+.sr.sup line { stroke:var(--teal); } .sr.sup text { fill:var(--teal); }
+.sr-key { background:linear-gradient(90deg,var(--teal) 50%,var(--red) 50%); }
+.gram-grid em { color:var(--muted); font-size:10px; font-style:normal; }
