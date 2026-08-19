@@ -662,7 +662,7 @@ function DashboardApp() {
         </section>}
         {ZIYNET.some(([code])=>ziynet[code])&&<section className="panel block gram-block" aria-labelledby="gram-title">
           <div className="gram-head"><h2 id="gram-title">Canlı ziynet altın fiyatları</h2>
-            <small>Harem Altın canlı kotasyonu; işçilik ve satıcı marjı fiyatın içindedir. Yüzde, önceki kapanışa göre satış fiyatındaki değişimdir.</small></div>
+            <small>Canlı piyasa kotasyonu; işçilik ve satıcı marjı fiyatın içindedir. Yüzde, önceki kapanışa göre satış fiyatındaki değişimdir.</small></div>
           <div className="gram-grid">
             {ZIYNET.filter(([code])=>ziynet[code]).map(([code,label])=>{
               const q=ziynet[code];

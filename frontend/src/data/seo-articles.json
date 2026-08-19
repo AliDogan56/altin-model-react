@@ -73,7 +73,7 @@
     "heading": "Günlük değişim yüzdesi hangi ana göre hesaplanır",
     "paragraphs": [
      "Yüzde değişim, referans aldığınız başlangıç anına göre değişir. Kimi kaynak önceki günün kapanışını, kimi UTC gece yarısını, kimi de son 24 saati baz alır. Aynı anda iki farklı sitede farklı yüzdeler görmenizin en yaygın sebebi budur.",
-     "Bu paneldeki değişim, Binance PAXG/USDT çiftinin 24 saatlik istatistiğinden gelir. Kripto piyasası kesintisiz işlediği için burada gün kavramı kayan bir penceredir; geleneksel bir kapanış saati yoktur. Karşılaştırma yaparken hangi referansa baktığınızı bilmek, yüzdenin kendisinden daha önemlidir."
+     "Bu paneldeki değişim, PAXG/USDT çiftinin 24 saatlik istatistiğinden gelir. Kripto piyasası kesintisiz işlediği için burada gün kavramı kayan bir penceredir; geleneksel bir kapanış saati yoktur. Karşılaştırma yaparken hangi referansa baktığınızı bilmek, yüzdenin kendisinden daha önemlidir."
     ]
    },
    {
@@ -943,7 +943,7 @@
    {
     "heading": "Reel faiz nasıl ölçülür",
     "paragraphs": [
-     "En pratik ölçüm ABD Hazinesi'nin enflasyona endeksli 10 yıllık tahvil getirisidir (TIPS). Bu seri doğrudan reel getiriyi verir; ayrıca hesaplama yapmanız gerekmez. FRED üzerinde DFII10 koduyla izlenir ve bu panelin girdilerinden biridir.",
+     "En pratik ölçüm ABD Hazinesi'nin enflasyona endeksli 10 yıllık tahvil getirisidir (TIPS). Bu seri doğrudan reel getiriyi verir; ayrıca hesaplama yapmanız gerekmez. DFII10 koduyla yayımlanır ve bu panelin girdilerinden biridir.",
      "Alternatif yaklaşım nominal faizden enflasyon beklentisini çıkarmaktır. İkisi arasındaki fark başabaş enflasyon oranını verir. Hangi yöntemi kullanırsanız kullanın, kritik nokta gerçekleşmiş enflasyonu değil beklenen enflasyonu kullanmaktır; piyasa geleceği fiyatlar."
     ]
    },
@@ -964,7 +964,7 @@
   ],
   "points": [
    "Reel faiz = nominal faiz − beklenen enflasyon; altının fırsat maliyetini ölçer.",
-   "En doğrudan ölçüm 10 yıllık TIPS getirisidir (FRED: DFII10).",
+   "En doğrudan ölçüm 10 yıllık TIPS getirisidir (kod: DFII10).",
    "İlişki genelde ters yönlüdür ama günlük veride gürültülüdür.",
    "Negatif reel faiz dönemleri altın için tarihsel olarak en destekleyici ortamdır.",
    "Merkez bankası alımları ilişkiyi geçici olarak bastırabilir."
@@ -1180,7 +1180,7 @@
    {
     "heading": "Bu paneldeki yöntem",
     "paragraphs": [
-     "Panel 7, 30, 90 ve 180 günlük ufuklar için ayrı tahmin üretir. Girdiler altının kendi teknik göstergeleri ile ABD tahvil faizleri, reel faiz, dolar endeksi, enflasyon beklentisi ve oynaklık göstergelerinden oluşur. Eğitim ve hata ölçümü tek referansa, Binance PAXG/USDT'ye bağlıdır.",
+     "Panel 7, 30, 90 ve 180 günlük ufuklar için ayrı tahmin üretir. Girdiler altının kendi teknik göstergeleri ile ABD tahvil faizleri, reel faiz, dolar endeksi, enflasyon beklentisi ve oynaklık göstergelerinden oluşur. Eğitim ve hata ölçümü tek referansa, PAXG/USDT'ye bağlıdır.",
      "Her tahmin bir aralıkla birlikte sunulur ve modelin geçmiş performansı panelde açıkça gösterilir. Amaç kesin bir fiyat söylemek değil, hangi senaryonun hangi koşullarda daha olası olduğunu görünür kılmaktır."
     ]
    }
