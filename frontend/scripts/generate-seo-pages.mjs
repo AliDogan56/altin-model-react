@@ -12,6 +12,12 @@ const articles = JSON.parse(await readFile(join(root, 'src/data/seo-articles.jso
 const rawBaseHtml = await readFile(join(root, 'dist/index.html'), 'utf8');
 const today = new Date().toISOString().slice(0, 10);
 const RELATED_COUNT = 5;
+// Ön render edilen sayfalarda da tam uyarı bulunmalı: Google'ın indekslediği ve
+// JavaScript çalışmadan görülen sürüm bunlar.
+const LEGAL = `<section class="legal-note"><h2>Yasal uyarı ve sorumluluk reddi</h2>
+        <p>Bu sitede yer alan bilgi, yorum, tahmin ve tavsiyeler <strong>yatırım danışmanlığı kapsamında değildir</strong>. Yatırım danışmanlığı hizmeti, yetkili kuruluşlar tarafından kişilerin risk ve getiri tercihleri dikkate alınarak kişiye özel sunulur. Buradaki içerik geneldir; mali durumunuza ve risk-getiri tercihlerinize uygun olmayabilir.</p>
+        <p>Fiyat tahminleri geçmiş verilerden türetilmiş istatistiksel kestirimlerdir; kesinlik, isabet ya da kâr garantisi taşımaz. Veriler üçüncü taraf kaynaklardan alınır ve doğruluğu garanti edilmez; gösterge niteliğindedir.</p>
+        <p>Bu platform hiçbir finansal ürün için alım-satım teklifi ya da çağrısı değildir. İçeriğe dayanarak alınan kararlardan ve doğabilecek doğrudan veya dolaylı zararlardan site sahibi sorumlu tutulamaz. Yatırım kararlarınızın sorumluluğu size aittir.</p></section>`;
 const categories = [...new Set(articles.map(article => article.category))];
 const byCategory = category => articles.filter(article => article.category === category);
 
@@ -57,7 +63,7 @@ const articleBody = (article, related) => `<main class="seo-prerender" data-seo-
         <p><small>Son güncelleme: ${escapeHtml(article.updated)}</small></p>
       </article>
       <nav aria-label="İlgili rehberler"><h2>İlgili Ons Altın Rehberleri</h2><ul>${related.map(item => `<li><a href="/rehber/${escapeHtml(item.id)}">${escapeHtml(item.title)}</a></li>`).join('')}</ul></nav>
-      <footer><p>Bu platform eğitim ve araştırma amaçlıdır; kişisel yatırım tavsiyesi değildir.</p><p>Projenin yaratıcısı: <a href="${linkedInUrl}" rel="me">Ali Doğan — LinkedIn</a></p><nav aria-label="Footer bağlantıları"><a href="/">Canlı ons paneli</a> · <a href="/#rehberler">Altın rehberleri</a> · <a href="/sitemap.xml">Sitemap</a></nav></footer>
+      <footer>${LEGAL}<p>Projenin yaratıcısı: <a href="${linkedInUrl}" rel="me">Ali Doğan — LinkedIn</a></p><nav aria-label="Footer bağlantıları"><a href="/">Canlı ons paneli</a> · <a href="/#rehberler">Altın rehberleri</a> · <a href="/sitemap.xml">Sitemap</a></nav></footer>
     </main>`;
 
 for (const [index, article] of articles.entries()) {
@@ -118,7 +124,7 @@ const hubBody = `<main class="seo-prerender" data-seo-page="hub">
       <nav aria-label="İçerik yolu"><a href="/">Ana Sayfa</a> / Altın Rehberi</nav>
       <header><h1>Ons Altın Rehberi</h1><p>Canlı fiyatı okumaktan model tahminlerini değerlendirmeye, gram ve ziynet altın hesabından alım satım pratiğine kadar ${articles.length} rehber; beş başlık altında toplandı.</p></header>
       ${categories.map(category => `<section><h2>${escapeHtml(category)}</h2><ul>${byCategory(category).map(article => `<li><a href="/rehber/${escapeHtml(article.id)}"><strong>${escapeHtml(article.title)}</strong></a> — ${escapeHtml(article.summary)}</li>`).join('')}</ul></section>`).join('\n      ')}
-      <footer><p>Bu platform eğitim ve araştırma amaçlıdır; kişisel yatırım tavsiyesi değildir.</p><nav aria-label="Footer bağlantıları"><a href="/">Canlı ons paneli</a> · <a href="/sitemap.xml">Sitemap</a></nav></footer>
+      <footer>${LEGAL}<nav aria-label="Footer bağlantıları"><a href="/">Canlı ons paneli</a> · <a href="/sitemap.xml">Sitemap</a></nav></footer>
     </main>`;
 
 const hubSchema = { '@context': 'https://schema.org', '@graph': [
@@ -152,7 +158,7 @@ const homeFallback = `<main class="seo-prerender" data-seo-page="home">
       <section id="rehberler"><h2>Ons Altın Analizi ve Tahmin Rehberleri</h2><p>Canlı fiyatı doğru okumak, modeli değerlendirmek ve altını etkileyen ekonomik göstergeleri anlamak için hazırlanan ${articles.length} rehber. Tümü <a href="/rehber">Altın Rehberi</a> sayfasında.</p>
         ${categories.map(category => `<section><h3>${escapeHtml(category)}</h3><ul>${byCategory(category).map(article => `<li><a href="/rehber/${escapeHtml(article.id)}"><strong>${escapeHtml(article.title)}</strong></a> — ${escapeHtml(article.summary)}</li>`).join('')}</ul></section>`).join('\n        ')}
       </section>
-      <footer><p>Projenin yaratıcısı: <a href="${linkedInUrl}" rel="me">Ali Doğan — LinkedIn</a></p><nav aria-label="Footer bağlantıları"><a href="/sitemap.xml">Sitemap</a></nav></footer>
+      <footer>${LEGAL}<p>Projenin yaratıcısı: <a href="${linkedInUrl}" rel="me">Ali Doğan — LinkedIn</a></p><nav aria-label="Footer bağlantıları"><a href="/sitemap.xml">Sitemap</a></nav></footer>
     </main>`;
 
 const homeItemList = {
