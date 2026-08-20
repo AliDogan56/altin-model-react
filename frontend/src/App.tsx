@@ -3,8 +3,14 @@ import { createPortal } from 'react-dom';
 import { io } from 'socket.io-client';
 import model from './data/model.json';
 import seoArticles from './data/seo-articles.json';
+import panelFeatures from './data/panel-features.json';
 
 const SEO_ARTICLES = seoArticles as SeoArticle[];
+type PanelFeature = { slug:string; anchor:string; collapsible:boolean; title:string; seoTitle:string; summary:string; intro:string };
+const PANEL_FEATURES = panelFeatures as PanelFeature[];
+/** Panel başlıkları özellik sayfalarıyla aynı metinden gelir: hem tutarlılık için
+ *  hem de anahtar kelimelerin anasayfada da geçmesi için. */
+const featureBy=(anchor:string)=>PANEL_FEATURES.find(item=>item.anchor===anchor)!;
 
 type SeoSection = { heading: string; paragraphs: string[] };
 type SeoFaq = { q: string; a: string };
@@ -271,7 +277,9 @@ function TickSparkline({ticks}) {
   return <svg className={`tick-spark ${up?'up':'down'}`} viewBox={`0 0 ${W} ${H}`} aria-label="Son saniyelerde ons fiyat hareketi"><polyline points={pts}/></svg>;
 }
 
-const NAV_SECTIONS = [['/#panel','Canlı Panel'],['/#tahmin','Tahmin']] as [string,string][];
+/* Bölümler artık Panel açılır menüsünde; ayrı '#tahmin' bağlantısı hem gereksizdi
+   hem de kartların id'si feature-tahmin olduğu için çalışmıyordu. */
+const NAV_SECTIONS = [['/','Canlı Panel']] as [string,string][];
 const CATEGORY_ORDER = [...new Set(SEO_ARTICLES.map(article=>article.category))];
 const GUIDES_BY_CATEGORY = CATEGORY_ORDER.map(category=>[category,SEO_ARTICLES.filter(article=>article.category===category)] as [string,SeoArticle[]]);
 const fold = (value:string)=>value.toLocaleLowerCase('tr').replace(/[\u0300-\u036f]/g,'');
@@ -284,6 +292,22 @@ const LEGAL_SECTIONS: [string,string][] = [
 ];
 /** Uyarı üç ayrı bileşenden açılabildiği için prop yerine olay kullanılıyor. */
 const openLegal=()=>window.dispatchEvent(new Event('legal:open'));
+
+/** Yan özellik kabı. Kapalıyken bile "özet" alanında tek bir canlı değer gösterir;
+ *  böylece bilgi gizlenmiş olmaz, yalnız yer kaplamaz. */
+function Collapsible({title,hint,summary,children,id,anchor,openByDefault}:{title:string;hint?:string;summary?:React.ReactNode;children:React.ReactNode;id:string;anchor?:string;openByDefault?:boolean}) {
+  const [open,setOpen]=useState(!!openByDefault);
+  useEffect(()=>{if(openByDefault)setOpen(true);},[openByDefault]);
+  return <section id={anchor} className={`panel block collapsible ${open?'is-open':''}`}>
+    <button type="button" className="collapsible-head" aria-expanded={open} aria-controls={`${id}-body`}
+            onClick={()=>setOpen(value=>!value)}>
+      <span className="collapsible-title"><b>{title}</b>{hint&&<small>{hint}</small>}</span>
+      {summary!=null&&<span className="collapsible-summary">{summary}</span>}
+      <span className="collapsible-chevron" aria-hidden="true">⌄</span>
+    </button>
+    {open&&<div className="collapsible-body reveal" id={`${id}-body`}>{children}</div>}
+  </section>;
+}
 
 function LegalModal() {
   const [open,setOpen]=useState(false);
@@ -314,7 +338,7 @@ function LegalModal() {
 }
 
 function SiteNav({current}:{current?:string}) {
-  const [menu,setMenu]=useState<null|'guides'|'mobile'>(null);
+  const [menu,setMenu]=useState<null|'guides'|'panel'|'mobile'>(null);
   const [query,setQuery]=useState('');
   const navRef=useRef<HTMLElement>(null);
   const sheetRef=useRef<HTMLDivElement>(null);
@@ -375,7 +399,21 @@ function SiteNav({current}:{current?:string}) {
 
     <div className="desktop-links">
       {NAV_SECTIONS.map(([href,label])=><a key={href} href={href}>{label}</a>)}
-      <button type="button" className="nav-legal" onClick={openLegal}>Yasal Uyarı</button>
+      <div className="guide-menu">
+        <button type="button" aria-expanded={menu==='panel'} aria-haspopup="true" aria-controls="panel-menu"
+                className={menu==='panel'?'open':undefined}
+                onClick={()=>setMenu(value=>value==='panel'?null:'panel')}>
+          Panel <span aria-hidden="true">⌄</span>
+        </button>
+        {menu==='panel'&&<div className="guide-panel narrow" id="panel-menu">
+          <div className="guide-groups single">
+            <section>{PANEL_FEATURES.map(feature=>
+              <a key={feature.slug} href={`/panel/${feature.slug}`} onClick={close}
+                 aria-current={current===feature.slug?'page':undefined}
+                 className={current===feature.slug?'active':undefined}>{feature.title}</a>)}</section>
+          </div>
+        </div>}
+      </div>
       <div className="guide-menu">
         <button type="button" aria-expanded={menu==='guides'} aria-haspopup="true" aria-controls="guide-panel"
                 className={menu==='guides'||current?'open':undefined}
@@ -417,6 +455,9 @@ function SiteNav({current}:{current?:string}) {
             {!query&&<section className="mobile-sections">{NAV_SECTIONS.map(([href,label])=>
               <a key={href} href={href} onClick={close}>{label}</a>)}
               <a href="/rehber" onClick={close}>Tüm rehberler</a>
+        </section>}
+        {!query&&<section className="mobile-sections"><h3>Panel bölümleri</h3>
+          {PANEL_FEATURES.map(feature=><a key={feature.slug} href={`/panel/${feature.slug}`} onClick={close}>{feature.title}</a>)}
             </section>}
             {groups.map(([category,items])=><section key={category}><h3>{category}</h3>{items.map(guideLink)}</section>)}
             {groups.length===0&&<p className="guide-empty">Eşleşen rehber yok.</p>}
@@ -479,7 +520,7 @@ function ArticlePage({article}) {
   </article><SiteFooter/></main>;
 }
 
-function DashboardApp() {
+function DashboardApp({focus}:{focus?:string}) {
   const [mobile,setMobile]=useState(()=>typeof window!=='undefined'&&window.matchMedia('(max-width: 720px)').matches);
   const [values,setValues]=useState(fieldDefaults);
   const [live,setLive]=useState<Record<string,number>>({});
@@ -499,6 +540,49 @@ function DashboardApp() {
   const [loanTerm,setLoanTerm]=useState(6),[loanAmount,setLoanAmount]=useState(100000),[loanRate,setLoanRate]=useState(4.25),[futureUsdTry,setFutureUsdTry]=useState(0);
   const [rangeDays,setRangeDays]=useState(90),[horizonDays,setHorizonDays]=useState(90),[showBand,setShowBand]=useState(true),[showLevels,setShowLevels]=useState(false),[showOrigin,setShowOrigin]=useState(true),[showSR,setShowSR]=useState(true);
   const snapshotDayRef=useRef('');
+  /* /panel/<slug> ile gelindiyse: sayfa başlığını o özelliğe çevir, bölümü aç,
+     görünür alana kaydır ve kısa süre vurgula. */
+  const feature=useMemo(()=>PANEL_FEATURES.find(item=>item.slug===focus)||null,[focus]);
+  useEffect(()=>{
+    if(!feature) return;
+    document.title=`${feature.seoTitle} | Ons Altın Analiz`;
+    const set=(selector:string,value:string,attribute='content')=>{const node=document.querySelector(selector);if(node)node.setAttribute(attribute,value);};
+    set('meta[name="description"]',feature.summary);
+    set('link[rel="canonical"]',`${window.location.origin}/panel/${feature.slug}`,'href');
+    /* Önce yerleşimin durulmasını bekler, sonra TEK yumuşak hareket yapar.
+       Doğrudan smooth kaydırma denendiğinde sayfa yüklenirken yüksekliği değiştiği
+       için hedefi ıskalıyordu; anlık kaydırma ise sert görünüyordu. */
+    if('scrollRestoration' in history) history.scrollRestoration='manual';
+    const HEDEF=84;                                   // sabit navbar payı
+    const yumusak=!window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let timer:number, tries=0, oncekiYukseklik=-1, durulma=0, basladi=false;
+    const bitir=(node:HTMLElement)=>{
+      node.classList.add('feature-focus');
+      window.setTimeout(()=>node.classList.remove('feature-focus'),2400);
+      // yumuşak hareket bittikten sonra kalan sapmayı sessizce düzelt
+      window.setTimeout(()=>{
+        const kalan=node.getBoundingClientRect().top-HEDEF;
+        if(Math.abs(kalan)>24) window.scrollBy({top:kalan,behavior:'auto'});
+      },yumusak?700:0);
+    };
+    const step=()=>{
+      const node=document.getElementById(feature.anchor);
+      const yukseklik=document.body.scrollHeight;
+      if(node&&!basladi){
+        durulma=yukseklik===oncekiYukseklik?durulma+1:0;
+        oncekiYukseklik=yukseklik;
+        if(durulma>=2||tries>=16){          // iki ölçüm aynı: yerleşim durdu
+          basladi=true;
+          window.scrollBy({top:node.getBoundingClientRect().top-HEDEF,behavior:yumusak?'smooth':'auto'});
+          bitir(node);
+          return;
+        }
+      }
+      if(++tries<24) timer=window.setTimeout(step,180);
+    };
+    timer=window.setTimeout(step,200);
+    return()=>clearTimeout(timer);
+  },[feature]);
   const features=useMemo(()=>computeFeatures(values,live),[values,live]);
   const featureSignature=useMemo(()=>model.features.map(name=>Number(features[name]).toPrecision(10)).join('|'),[features]);
   const fallbackForecast=useMemo(()=>predict(features,values.price),[features,values.price]);
@@ -630,38 +714,12 @@ function DashboardApp() {
     <header id="panel"><div id="icerik"><span className="eyebrow">Özgün Altın Tahmin Modeli</span><h1>Canlı Ons Altın Tahmin ve Senaryo Analiz Paneli</h1><p>Tahmin ve eğitim referansı PAXG/USDT; ONS/XAUUSD yalnızca canlı piyasa karşılaştırmasıdır.</p></div><div className="header-market"><div className="live-price token-price"><span><i className={spot.live?'ok':'warn'}/>PAXG / USDT</span><strong>{money2(spot.price)}</strong><b className={spot.change>=0?'positive':'negative'}>{spot.change>=0?'▲':'▼'} %{Math.abs(spot.change).toFixed(2)}</b><small>{spot.time?`Son fiyat ${spot.time.toLocaleTimeString('tr-TR')}`:'Canlı akış bekleniyor'}</small></div><div className="live-price ons-price"><span><i className={harem.live?'ok':'warn'}/>ONS / XAUUSD</span><strong>{harem.satis?money2(harem.satis):'Bağlanıyor…'}</strong><div className="bid-ask"><b>Alış {harem.alis?money2(harem.alis):'—'}</b><b>Satış {harem.satis?money2(harem.satis):'—'}</b></div><TickSparkline ticks={haremTicks}/><small>{harem.satis?`PAXG farkı ${(harem.satis-spot.price)>=0?'+':''}${money2(harem.satis-spot.price)}`:'Canlı ons akışı bekleniyor'}</small></div><div className="live-price fx-price"><span><i className={usdTry.live?'ok':'warn'}/>USD / TL</span><strong>{usdTry.satis?`₺${tryRate(usdTry.satis)}`:'Bağlanıyor…'}</strong><div className="bid-ask"><b>Alış {usdTry.alis?`₺${tryRate(usdTry.alis)}`:'—'}</b><b>Satış {usdTry.satis?`₺${tryRate(usdTry.satis)}`:'—'}</b></div><small>{usdTry.time?`Son kur ${usdTry.time.toLocaleTimeString('tr-TR')}`:'Canlı kur bekleniyor'}</small></div><div className="status"><b>Model {model.latestDate}</b><span>{model.rows.toLocaleString('tr-TR')} gözlem</span><button onClick={refresh}><i className={status.type}/>{status.text}</button></div></div></header>
     <div className="parameter-toggle-bar"><button onClick={()=>setWideChart(v=>!v)} aria-expanded={!wideChart}><span>⚙</span>{wideChart?'Parametreleri göster':'Parametreleri gizle'}</button></div>
     <div className={`layout ${wideChart?'wide-chart':''}`}><aside className="panel controls"><h2>Güncel parametreler</h2>{GROUPS.map(([title,items])=><section className="group" key={title}><h3>{title}</h3>{items.map(([id,label,unit])=><label key={id}><span>{label}{unit&&` (${unit})`}</span><input type="number" step="any" value={Number(values[id]).toFixed(id==='price'?2:3)} onChange={e=>setField(id,e.target.value)}/></label>)}</section>)}<button className="primary" onClick={()=>setValues(fieldDefaults())}>Eğitim değerlerine dön</button></aside>
-      <section className="content"><div className="cards three" id="tahmin">{model.horizons.map((h,j)=>({h,j})).filter(x=>x.h!==7).map(({h,j})=><article className="panel card" key={h}><span>{LABELS[h]}</span><strong>{money(values.price*(1+forecast.mean[j]))}</strong><b className={forecast.mean[j]>=0?'positive':'negative'}>{forecast.mean[j]>=0?'▲':'▼'} {pct(forecast.mean[j])}</b><small>%{BAND_COVERAGE} bant<br/>{money(values.price*(1+forecast.mean[j]-forecast.err[j]))} – {money(values.price*(1+forecast.mean[j]+forecast.err[j]))}</small></article>)}</div>
-        <section className="panel block loan-break-even" aria-labelledby="finance-comparison-title"><div className="loan-head"><div><span className="eyebrow">Varsayımsal karşılaştırma</span><h2 id="finance-comparison-title">Altının TL getirisi ve finansman maliyeti</h2><p>Ons senaryosu, canlı USD/TL kuru ve vade sonu kur varsayımıyla TL getirisine çevrilir.</p></div><div className="segmented">{[3,6,9].map(n=><button key={n} className={loanTerm===n?'active':''} onClick={()=>setLoanTerm(n)}>{n} Ay</button>)}</div></div><div className="loan-inputs"><label>Karşılaştırma tutarı (TL)<input type="text" inputMode="numeric" autoComplete="off" value={tryAmount(loanAmount)} onChange={e=>setLoanAmount(Number(e.target.value.replace(/\D/g,""))||0)}/></label><label>Aylık finansman maliyeti (%)<input type="number" min="0" step="0.01" value={loanRate} onChange={e=>setLoanRate(+e.target.value)}/></label><div><span>Canlı USD/TL</span><b>{loanCosts.currentFx?`₺${tryRate(loanCosts.currentFx)}`:'Bekleniyor'}</b></div><label>Vade sonu USD/TL varsayımı<input type="number" min="0" step="0.01" placeholder={loanCosts.currentFx?String(loanCosts.currentFx):''} value={futureUsdTry||''} onChange={e=>setFutureUsdTry(+e.target.value)}/></label><div><span>Toplam finansman maliyeti</span><b>{tryMoney(loanCosts.total)}</b></div></div><div className="loan-results">{loanCosts.results.map(s=><article className={`loan-result ${s.tone}`} key={s.label}><span>{s.label} · Ons {pct(s.onsReturn)} · TL {pct(s.tlReturn)}</span><strong className={s.net>=0?'positive':'negative'}>{s.net>=0?'+':''}{tryMoney(s.net)}</strong><small>{loanTerm} ay sonunda TL getirisi–maliyet farkı</small></article>)}</div><details className="break-even-details"><summary>Teorik başa baş oranlarını göster</summary><div className="loan-scenarios">{loanCosts.results.map(s=><article className={`loan-scenario ${s.tone}`} key={s.label}><span>{s.label}</span><strong>{s.monthly==null?'%0,00':`%${(s.monthly*100).toFixed(2).replace('.',',')}`}</strong><small>TL getirisine göre aylık teorik başa baş maliyeti</small></article>)}</div></details><div className="loan-note">Başlangıçta canlı USD/TL satış kuru kullanılır. Vade sonu kur alanı boşsa kurun değişmediği varsayılır; makas, vergi, sigorta ve diğer masraflar dahil değildir.{loan.derived&&<em> 9 aylık sonuç, modelin 6 aylık eğiliminden türetilmiştir.</em>}</div></section>
+      <section className="content"><div className="section-label"><span>Ana görünüm</span></div><div className="cards three" id="feature-tahmin">{model.horizons.map((h,j)=>({h,j})).filter(x=>x.h!==7).map(({h,j})=><article className="panel card" key={h}><span>{LABELS[h]}</span><strong>{money(values.price*(1+forecast.mean[j]))}</strong><b className={forecast.mean[j]>=0?'positive':'negative'}>{forecast.mean[j]>=0?'▲':'▼'} {pct(forecast.mean[j])}</b><small>%{BAND_COVERAGE} bant<br/>{money(values.price*(1+forecast.mean[j]-forecast.err[j]))} – {money(values.price*(1+forecast.mean[j]+forecast.err[j]))}</small></article>)}</div>
         <p className="inline-legal">Gösterilen tahminler istatistiksel kestirimdir; yatırım danışmanlığı kapsamında değildir ve kâr garantisi sunmaz. <button type="button" className="link-btn" onClick={openLegal}>Yasal uyarının tamamı</button></p>
-        {scorecard&&<section className="panel block score-block" aria-labelledby="score-title">
-          <div className="score-head">
-            <div><span className="eyebrow">Modelin kendi karnesi</span>
-              <h2 id="score-title">Tahminler ne kadar tuttu?</h2>
-              <p>{model.latestDate} tarihinde ilan edilen tahmin, o günden bu yana gerçekleşen kapanışlarla karşılaştırılıyor. Her yeni günle bir ölçüm daha ekleniyor.</p></div>
-            <div className="score-days"><b>{scorecard.days}</b><span>gün<br/>gerçekleşti</span></div>
-          </div>
-          <div className="score-grid">
-            <div><span>Ortalama mutlak hata</span><b>{pct2(scorecard.mae)}</b>
-              <small>Tahmin ile gerçekleşen arasındaki ortalama sapma</small></div>
-            <div><span>Naif kural ("fiyat değişmez")</span><b>{pct2(scorecard.naiveMae)}</b>
-              <small>Hiçbir bilgi kullanmayan referans</small></div>
-            <div className={scorecard.skill>0?'good':'bad'}>
-              <span>Modelin katkısı</span>
-              <b>{scorecard.skill>=0?'+':''}{new Intl.NumberFormat('tr-TR',{maximumFractionDigits:0}).format(scorecard.skill*100)}%</b>
-              <small>{scorecard.skill>0?'naif kuraldan bu kadar daha isabetli':'naif kural bu kadar daha isabetli — model henüz değer katmıyor'}</small></div>
-            <div><span>Bant isabeti</span><b>{scorecard.inBand}/{scorecard.days}</b>
-              <small>İlan edilen %{BAND_COVERAGE} bandın içinde kalan gün sayısı</small></div>
-            <div><span>Yön isabeti</span><b>{scorecard.rightWay}/{scorecard.days}</b>
-              <small>Yükselir/düşer yönünü doğru bilen gün sayısı</small></div>
-            <div><span>En büyük sapma</span><b>{signedPct2(scorecard.worst.errorPct)}</b>
-              <small>{new Date(`${scorecard.worst.date}T00:00:00`).toLocaleDateString('tr-TR')} · tahmin {money(scorecard.worst.v)} · gerçek {money(scorecard.worst.real)}</small></div>
-          </div>
-          <p className="score-note">{scorecard.days<20
-            ? `Uyarı: ${scorecard.days} günlük ölçüm istatistiksel bir sonuç için çok azdır; bu rakamlar şimdilik yalnız şeffaflık amacıyla gösterilir. Anlamlı bir yargı için en az birkaç ay gerekir.`
-            : 'Ölçüm penceresi genişledikçe bu rakamlar daha güvenilir hâle gelir.'}</p>
-        </section>}
-        {ZIYNET.some(([code])=>ziynet[code])&&<section className="panel block gram-block" aria-labelledby="gram-title">
-          <div className="gram-head"><h2 id="gram-title">Canlı ziynet altın fiyatları</h2>
+        <section id="feature-grafik" className="panel block chart-block"><div className="chart-head"><div><h2>{featureBy("feature-grafik").title}</h2><p>Solda gerçekleşen, sağda tahmin. Kesikli çizgi modelin {model.latestDate} tahmini; üzerine gelince o günün gerçekleşen değerini ve hatasını gösterir.</p></div><div className="chart-tools"><button className="wide-toggle" onClick={()=>setWideChart(v=>!v)}>{wideChart?'Parametreleri göster':'Grafiği genişlet'}</button><div className="tool-group"><span>Tahmin</span><div className="segmented">{([[30,'1 Ay'],[90,'3 Ay'],[180,'6 Ay']] as [number,string][]).map(([n,label])=><button key={n} className={horizonDays===n?'active':''} onClick={()=>setHorizonDays(n)}>{label}</button>)}</div></div><div className="tool-group"><span>Geçmiş</span><div className="segmented">{[30,90,180,260].map(n=><button key={n} className={rangeDays===n?'active':''} onClick={()=>setRangeDays(n)}>{n===260?'1Y':`${n}G`}</button>)}</div></div></div></div><ForecastChart forecast={forecast} history={history} rangeDays={rangeDays} horizonDays={horizonDays} showBand={showBand} showLevels={showLevels} showOrigin={showOrigin} showSR={showSR} originForecast={originForecast} onToggle={key=>{if(key==='band')setShowBand(v=>!v);else if(key==='origin')setShowOrigin(v=>!v);else if(key==='sr')setShowSR(v=>!v);else setShowLevels(v=>!v);}} levels={{buy,sell,stop}} spot={{...spot,price:harem.satis||spot.price}} tokenSpot={spot} mobile={mobile}/><details className="daily-table" open><summary>{model.latestDate} tahmini · {horizonDays} günlük değerler ({forecastTable.filter(r=>r.real!=null).length} gün gerçekleşti)</summary><div><table><thead><tr><th>Tarih</th><th>Olası min</th><th>Sinir ağı tahmini</th><th>Olası maks</th><th>Gerçekleşen</th><th>Hata</th></tr></thead><tbody>{forecastTable.map(row=><tr key={row.day} className={row.real==null?undefined:'settled-row'}><td>{new Date(`${row.date}T00:00:00`).toLocaleDateString('tr-TR')}</td><td>{money(row.lo)}</td><td>{money(row.v)}</td><td>{money(row.hi)}</td><td>{row.real==null?<span className="pending">—</span>:<b>{money(row.real)}</b>}</td><td>{row.errorPct==null?<span className="pending">—</span>:<b className={Math.abs(row.errorPct)<=0.01?'positive':'negative'}>{row.errorPct>=0?'+':''}{(row.errorPct*100).toFixed(2)}%</b>}</td></tr>)}</tbody></table></div></details></section>
+        {ZIYNET.some(([code])=>ziynet[code])&&
+<section id="feature-ziynet" className="panel block gram-block" aria-labelledby="gram-title">
+          <div className="gram-head"><h2 id="gram-title">{featureBy("feature-ziynet").title}</h2>
             <small>Canlı piyasa kotasyonu; işçilik ve satıcı marjı fiyatın içindedir. Yüzde, önceki kapanışa göre satış fiyatındaki değişimdir.</small></div>
           <div className="gram-grid">
             {ZIYNET.filter(([code])=>ziynet[code]).map(([code,label])=>{
@@ -690,56 +748,103 @@ function DashboardApp() {
             })}
           </div>
           <p className="gram-note">Bu fiyatlar ons ve kurdan nasıl türer: <a href="/rehber/gram-altin-fiyati-nasil-belirlenir">Gram altın fiyatı nasıl belirlenir?</a> · <a href="/rehber/ceyrek-altin-kac-gram">Çeyrek altın kaç gram?</a> · <a href="/rehber/altin-makasi-nedir">Alış-satış makası nedir?</a></p>
-        </section>}
-        <section className="panel block impact-block" aria-labelledby="impact-title"><div className="impact-head"><h2 id="impact-title">1 aylık tahmine parametre katkısı</h2><p>Her satır şunu ölçer: <b>o gösterge bugünkü değerinden uzun dönem ortalamasına çekilseydi, 1 aylık tahmin kaç puan değişirdi.</b> Pozitif değer, göstergenin bugünkü seviyesinin tahmini yukarı çektiği anlamına gelir. Yanındaki <em>sd</em> rozeti göstergenin ortalamadan kaç standart sapma uzakta olduğunu söyler.</p><p className="impact-caveat">Satırların toplamı alttaki parametre katkısına eşit çıkmaz: burada modelin 31 girdisinden yalnız en çok konuşulan 8'i listeleniyor ve model doğrusal olmadığı için etkiler birbirinden bağımsız değil.</p></div><div className="impact-grid">{impacts.rows.map(x=><div className="impact" key={x.key}><span>{x.name}<em className={Math.abs(x.z)>=1?'far':undefined}>{x.z>=0?'+':''}{x.z.toFixed(1)} sd</em></span><div><i className={x.value>=0?'pos':'neg'} style={{width:`${Math.max(3,x.share*100)}%`}}/></div><b className={x.value>=0?'positive':'negative'}>{x.value>=0?'+':''}{(x.value*100).toFixed(2)} p</b></div>)}</div><div className="impact-sum"><div><span>Sabit taban</span><b>{pct(impacts.constant)}</b><small>tüm göstergeler ortalamadayken modelin verdiği tahmin</small></div><div><span>Parametre katkısı</span><b className={impacts.total>=0?'positive':'negative'}>{impacts.total>=0?'+':''}{(impacts.total*100).toFixed(2)} p</b><small>bugünkü sapmaların toplam etkisi</small></div><div className="total"><span>1 aylık tahmin</span><b>{pct(impacts.here)}</b><small>sabit taban + parametre katkısı</small></div></div></section>
-        <section className="panel block chart-block"><div className="chart-head"><div><h2>Gün gün fiyat yolu</h2><p>Solda gerçekleşen, sağda tahmin. Kesikli çizgi modelin {model.latestDate} tahmini; üzerine gelince o günün gerçekleşen değerini ve hatasını gösterir.</p></div><div className="chart-tools"><button className="wide-toggle" onClick={()=>setWideChart(v=>!v)}>{wideChart?'Parametreleri göster':'Grafiği genişlet'}</button><div className="tool-group"><span>Tahmin</span><div className="segmented">{([[30,'1 Ay'],[90,'3 Ay'],[180,'6 Ay']] as [number,string][]).map(([n,label])=><button key={n} className={horizonDays===n?'active':''} onClick={()=>setHorizonDays(n)}>{label}</button>)}</div></div><div className="tool-group"><span>Geçmiş</span><div className="segmented">{[30,90,180,260].map(n=><button key={n} className={rangeDays===n?'active':''} onClick={()=>setRangeDays(n)}>{n===260?'1Y':`${n}G`}</button>)}</div></div></div></div><ForecastChart forecast={forecast} history={history} rangeDays={rangeDays} horizonDays={horizonDays} showBand={showBand} showLevels={showLevels} showOrigin={showOrigin} showSR={showSR} originForecast={originForecast} onToggle={key=>{if(key==='band')setShowBand(v=>!v);else if(key==='origin')setShowOrigin(v=>!v);else if(key==='sr')setShowSR(v=>!v);else setShowLevels(v=>!v);}} levels={{buy,sell,stop}} spot={{...spot,price:harem.satis||spot.price}} tokenSpot={spot} mobile={mobile}/><details className="daily-table" open><summary>{model.latestDate} tahmini · {horizonDays} günlük değerler ({forecastTable.filter(r=>r.real!=null).length} gün gerçekleşti)</summary><div><table><thead><tr><th>Tarih</th><th>Olası min</th><th>Sinir ağı tahmini</th><th>Olası maks</th><th>Gerçekleşen</th><th>Hata</th></tr></thead><tbody>{forecastTable.map(row=><tr key={row.day} className={row.real==null?undefined:'settled-row'}><td>{new Date(`${row.date}T00:00:00`).toLocaleDateString('tr-TR')}</td><td>{money(row.lo)}</td><td>{money(row.v)}</td><td>{money(row.hi)}</td><td>{row.real==null?<span className="pending">—</span>:<b>{money(row.real)}</b>}</td><td>{row.errorPct==null?<span className="pending">—</span>:<b className={Math.abs(row.errorPct)<=0.01?'positive':'negative'}>{row.errorPct>=0?'+':''}{(row.errorPct*100).toFixed(2)}%</b>}</td></tr>)}</tbody></table></div></details></section>
-        {tech&&<section className="panel block tech-block" aria-labelledby="tech-title">
-          <div className="pivot-head"><div><h2 id="tech-title">Teknik göstergeler</h2>
-            <small>Günlük PAXG/USDT mumlarından hesaplanır. Göstergenin bulunduğu durum yazılır; bilinçli olarak alım-satım kararı üretilmez — aşırı alım bölgesi yükselişin biteceği anlamına gelmez, güçlü trendlerde gösterge uzun süre orada kalabilir.</small></div></div>
-          <div className="tech-grid">
-            {tech.rows.map(row=><div className="tech-row" key={row.name}>
-              <span>{row.name}{row.note&&<em>{row.note}</em>}</span>
-              <b>{row.value}</b>
-              <i className={`tech-state ${row.tone}`}>{row.text}</i>
-            </div>)}
+        </section>
+        }
+        {scorecard&&
+<section id="feature-karne" className="panel block score-block" aria-labelledby="score-title">
+          <div className="score-head">
+            <div><span className="eyebrow">Modelin kendi karnesi</span>
+              <h2 id="score-title">{featureBy("feature-karne").title}</h2>
+              <p>{model.latestDate} tarihinde ilan edilen tahmin, o günden bu yana gerçekleşen kapanışlarla karşılaştırılıyor. Her yeni günle bir ölçüm daha ekleniyor.</p></div>
+            <div className="score-days"><b>{scorecard.days}</b><span>gün<br/>gerçekleşti</span></div>
           </div>
-          <h3 className="tech-sub">Hareketli ortalamalar</h3>
-          <div className="tech-grid ma">
-            {tech.averages.map(a=><div className="tech-row" key={a.n}>
-              <span>MA{a.n}<em>EMA {money(a.ema)}</em></span>
-              <b>{money(a.sma)}</b>
-              <i className={`tech-state ${a.price>=a.sma?'up':'down'}`}>{a.price>=a.sma?'Fiyat üstünde':'Fiyat altında'}</i>
-            </div>)}
+          <div className="score-grid">
+            <div><span>Ortalama mutlak hata</span><b>{pct2(scorecard.mae)}</b>
+              <small>Tahmin ile gerçekleşen arasındaki ortalama sapma</small></div>
+            <div><span>Naif kural ("fiyat değişmez")</span><b>{pct2(scorecard.naiveMae)}</b>
+              <small>Hiçbir bilgi kullanmayan referans</small></div>
+            <div className={scorecard.skill>0?'good':'bad'}>
+              <span>Modelin katkısı</span>
+              <b>{scorecard.skill>=0?'+':''}{new Intl.NumberFormat('tr-TR',{maximumFractionDigits:0}).format(scorecard.skill*100)}%</b>
+              <small>{scorecard.skill>0?'naif kuraldan bu kadar daha isabetli':'naif kural bu kadar daha isabetli — model henüz değer katmıyor'}</small></div>
+            <div><span>Bant isabeti</span><b>{scorecard.inBand}/{scorecard.days}</b>
+              <small>İlan edilen %{BAND_COVERAGE} bandın içinde kalan gün sayısı</small></div>
+            <div><span>Yön isabeti</span><b>{scorecard.rightWay}/{scorecard.days}</b>
+              <small>Yükselir/düşer yönünü doğru bilen gün sayısı</small></div>
+            <div><span>En büyük sapma</span><b>{signedPct2(scorecard.worst.errorPct)}</b>
+              <small>{new Date(`${scorecard.worst.date}T00:00:00`).toLocaleDateString('tr-TR')} · tahmin {money(scorecard.worst.v)} · gerçek {money(scorecard.worst.real)}</small></div>
           </div>
-        </section>}
-        {pivotLadder&&<section className="panel block pivot-block" aria-labelledby="pivot-title">
-          <div className="pivot-head">
-            <div><h2 id="pivot-title">Pivot seviyeleri</h2>
-              <small>Önceki {pivotPeriod==='monthly'?'ayın':'haftanın'} yüksek/düşük/kapanışından hesaplanır ({pivotLadder.id}). Grafikteki destek-direnç kendi bulduğu bölgeleri gösterir; bu ise standart formülle herkesin aynı bulduğu seviyelerdir.</small></div>
-            <div className="pivot-tools">
-              <div className="segmented">{([['weekly','Haftalık'],['monthly','Aylık']] as const).map(([k,l])=>
-                <button key={k} className={pivotPeriod===k?'active':''} onClick={()=>setPivotPeriod(k)}>{l}</button>)}</div>
-              <div className="segmented">{([['classic','Klasik'],['fib','Fibonacci']] as const).map(([k,l])=>
-                <button key={k} className={pivotMethod===k?'active':''} onClick={()=>setPivotMethod(k)}>{l}</button>)}</div>
+          <p className="score-note">{scorecard.days<20
+            ? `Uyarı: ${scorecard.days} günlük ölçüm istatistiksel bir sonuç için çok azdır; bu rakamlar şimdilik yalnız şeffaflık amacıyla gösterilir. Anlamlı bir yargı için en az birkaç ay gerekir.`
+            : 'Ölçüm penceresi genişledikçe bu rakamlar daha güvenilir hâle gelir.'}</p>
+        </section>
+        }
+        <div className="section-label"><span>Ayrıntılar</span><small>Başlığa dokunarak açın</small></div>
+        {tech&&
+        <Collapsible id="tech" anchor="feature-teknik" openByDefault={focus===PANEL_FEATURES.find(f=>f.anchor==="feature-teknik")?.slug} title={featureBy("feature-teknik").title} hint={featureBy("feature-teknik").summary} summary={`RSI ${tech.rows[0].value}`}>
+  <section className="panel block tech-block" aria-labelledby="tech-title">
+            <div className="pivot-head"><div><h2 id="tech-title">Teknik göstergeler</h2>
+              <small>Günlük PAXG/USDT mumlarından hesaplanır. Göstergenin bulunduğu durum yazılır; bilinçli olarak alım-satım kararı üretilmez — aşırı alım bölgesi yükselişin biteceği anlamına gelmez, güçlü trendlerde gösterge uzun süre orada kalabilir.</small></div></div>
+            <div className="tech-grid">
+              {tech.rows.map(row=><div className="tech-row" key={row.name}>
+                <span>{row.name}{row.note&&<em>{row.note}</em>}</span>
+                <b>{row.value}</b>
+                <i className={`tech-state ${row.tone}`}>{row.text}</i>
+              </div>)}
             </div>
-          </div>
-          <div className="pivot-ladder">
-            {pivotLadder.items.map((item,index)=><div key={item.name}>
-              {index===pivotLadder.insertAt&&
-                <div className="pivot-now"><span>şu an</span><b>{money(pivotLadder.price)}</b></div>}
-              <div className={`pivot-row ${item.above?'up':'down'} ${item.name===pivotLadder.nearestUp||item.name===pivotLadder.nearestDown?'nearest':''}`}>
-                <span className="pivot-name">{item.name}</span>
-                <b>{money(item.value)}</b>
-                <em>{item.distance>=0?'+':''}{(item.distance*100).toFixed(2)}%</em>
+            <h3 className="tech-sub">Hareketli ortalamalar</h3>
+            <div className="tech-grid ma">
+              {tech.averages.map(a=><div className="tech-row" key={a.n}>
+                <span>MA{a.n}<em>EMA {money(a.ema)}</em></span>
+                <b>{money(a.sma)}</b>
+                <i className={`tech-state ${a.price>=a.sma?'up':'down'}`}>{a.price>=a.sma?'Fiyat üstünde':'Fiyat altında'}</i>
+              </div>)}
+            </div>
+          </section>
+        </Collapsible>
+        }
+        {pivotLadder&&
+        <Collapsible id="pivot" anchor="feature-pivot" openByDefault={focus===PANEL_FEATURES.find(f=>f.anchor==="feature-pivot")?.slug} title={featureBy("feature-pivot").title} hint={featureBy("feature-pivot").summary} summary={pivotLadder.nearestUp?`İlk direnç ${pivotLadder.nearestUp}`:null}>
+  <section className="panel block pivot-block" aria-labelledby="pivot-title">
+            <div className="pivot-head">
+              <div><h2 id="pivot-title">Pivot seviyeleri</h2>
+                <small>Önceki {pivotPeriod==='monthly'?'ayın':'haftanın'} yüksek/düşük/kapanışından hesaplanır ({pivotLadder.id}). Grafikteki destek-direnç kendi bulduğu bölgeleri gösterir; bu ise standart formülle herkesin aynı bulduğu seviyelerdir.</small></div>
+              <div className="pivot-tools">
+                <div className="segmented">{([['weekly','Haftalık'],['monthly','Aylık']] as const).map(([k,l])=>
+                  <button key={k} className={pivotPeriod===k?'active':''} onClick={()=>setPivotPeriod(k)}>{l}</button>)}</div>
+                <div className="segmented">{([['classic','Klasik'],['fib','Fibonacci']] as const).map(([k,l])=>
+                  <button key={k} className={pivotMethod===k?'active':''} onClick={()=>setPivotMethod(k)}>{l}</button>)}</div>
               </div>
-            </div>)}
-            {pivotLadder.insertAt===pivotLadder.items.length&&
-              <div className="pivot-now"><span>şu an</span><b>{money(pivotLadder.price)}</b></div>}
-          </div>
-          <p className="pivot-note">Fiyatın hemen üstündeki seviye ilk direnç, hemen altındaki ilk destek olarak okunur. Bu bir işlem önerisi değildir. <a href="/rehber/altin-destek-direnc">Destek ve direnç nasıl okunur?</a></p>
-        </section>}
-        <div className="bottom"><section className="panel block"><h2>Altın etki bülteni</h2><div className="bulletins"><div><h3>Parametre özeti</h3><p><b>Reel faiz:</b> 5 günlük {features.real_yield_change_5d>=0?'+':''}{features.real_yield_change_5d.toFixed(2)} puan.</p><p><b>Dolar:</b> 5 günlük {pct(features.dollar_return_5d)}.</p><p><b>VIX:</b> 5 günlük {features.vix_change_5d>=0?'+':''}{features.vix_change_5d.toFixed(2)}.</p></div><div><h3>Canlı haberler</h3>{news.slice(0,5).map((n,i)=><a key={i} href={n.url} target="_blank" rel="noreferrer">{n.title}<small>{n.source}</small></a>)}</div></div></section>
-          <section className="panel block"><h2>İşlem bölgeleri</h2><div className="level"><span>Kademeli alım</span><b>{money(buy[0])} – {money(buy[1])}</b></div><div className="level"><span>Kâr alma</span><b>{money(sell[0])} – {money(sell[1])}</b></div><div className="level danger"><span>Risk kesme</span><b>{money(stop)}</b></div><label className="risk">Portföy (USD)<input value={capital} onChange={e=>setCapital(+e.target.value)} type="number"/></label><label className="risk">Risk (%)<input value={riskPct} onChange={e=>setRiskPct(+e.target.value)} type="number" step=".1"/></label><div className="position">Örnek azami pozisyon <b>{units.toFixed(3)} PAXG · {money(units*entry)}</b></div></section></div>
+            </div>
+            <div className="pivot-ladder">
+              {pivotLadder.items.map((item,index)=><div key={item.name}>
+                {index===pivotLadder.insertAt&&
+                  <div className="pivot-now"><span>şu an</span><b>{money(pivotLadder.price)}</b></div>}
+                <div className={`pivot-row ${item.above?'up':'down'} ${item.name===pivotLadder.nearestUp||item.name===pivotLadder.nearestDown?'nearest':''}`}>
+                  <span className="pivot-name">{item.name}</span>
+                  <b>{money(item.value)}</b>
+                  <em>{item.distance>=0?'+':''}{(item.distance*100).toFixed(2)}%</em>
+                </div>
+              </div>)}
+              {pivotLadder.insertAt===pivotLadder.items.length&&
+                <div className="pivot-now"><span>şu an</span><b>{money(pivotLadder.price)}</b></div>}
+            </div>
+            <p className="pivot-note">Fiyatın hemen üstündeki seviye ilk direnç, hemen altındaki ilk destek olarak okunur. Bu bir işlem önerisi değildir. <a href="/rehber/altin-destek-direnc">Destek ve direnç nasıl okunur?</a></p>
+          </section>
+        </Collapsible>
+        }
+        <Collapsible id="impact" anchor="feature-katki" openByDefault={focus===PANEL_FEATURES.find(f=>f.anchor==="feature-katki")?.slug} title={featureBy("feature-katki").title} hint={featureBy("feature-katki").summary} summary={impacts.rows[0]?impacts.rows[0].name:null}>
+  <section className="panel block impact-block" aria-labelledby="impact-title"><div className="impact-head"><h2 id="impact-title">1 aylık tahmine parametre katkısı</h2><p>Her satır şunu ölçer: <b>o gösterge bugünkü değerinden uzun dönem ortalamasına çekilseydi, 1 aylık tahmin kaç puan değişirdi.</b> Pozitif değer, göstergenin bugünkü seviyesinin tahmini yukarı çektiği anlamına gelir. Yanındaki <em>sd</em> rozeti göstergenin ortalamadan kaç standart sapma uzakta olduğunu söyler.</p><p className="impact-caveat">Satırların toplamı alttaki parametre katkısına eşit çıkmaz: burada modelin 31 girdisinden yalnız en çok konuşulan 8'i listeleniyor ve model doğrusal olmadığı için etkiler birbirinden bağımsız değil.</p></div><div className="impact-grid">{impacts.rows.map(x=><div className="impact" key={x.key}><span>{x.name}<em className={Math.abs(x.z)>=1?'far':undefined}>{x.z>=0?'+':''}{x.z.toFixed(1)} sd</em></span><div><i className={x.value>=0?'pos':'neg'} style={{width:`${Math.max(3,x.share*100)}%`}}/></div><b className={x.value>=0?'positive':'negative'}>{x.value>=0?'+':''}{(x.value*100).toFixed(2)} p</b></div>)}</div><div className="impact-sum"><div><span>Sabit taban</span><b>{pct(impacts.constant)}</b><small>tüm göstergeler ortalamadayken modelin verdiği tahmin</small></div><div><span>Parametre katkısı</span><b className={impacts.total>=0?'positive':'negative'}>{impacts.total>=0?'+':''}{(impacts.total*100).toFixed(2)} p</b><small>bugünkü sapmaların toplam etkisi</small></div><div className="total"><span>1 aylık tahmin</span><b>{pct(impacts.here)}</b><small>sabit taban + parametre katkısı</small></div></div></section>
+        </Collapsible>
+        <Collapsible id="loan" anchor="feature-tl" openByDefault={focus===PANEL_FEATURES.find(f=>f.anchor==="feature-tl")?.slug} title={featureBy("feature-tl").title} hint={featureBy("feature-tl").summary} summary={`${loanTerm} ay`}>
+  <section className="panel block loan-break-even" aria-labelledby="finance-comparison-title"><div className="loan-head"><div><span className="eyebrow">Varsayımsal karşılaştırma</span><h2 id="finance-comparison-title">Altının TL getirisi ve finansman maliyeti</h2><p>Ons senaryosu, canlı USD/TL kuru ve vade sonu kur varsayımıyla TL getirisine çevrilir.</p></div><div className="segmented">{[3,6,9].map(n=><button key={n} className={loanTerm===n?'active':''} onClick={()=>setLoanTerm(n)}>{n} Ay</button>)}</div></div><div className="loan-inputs"><label>Karşılaştırma tutarı (TL)<input type="text" inputMode="numeric" autoComplete="off" value={tryAmount(loanAmount)} onChange={e=>setLoanAmount(Number(e.target.value.replace(/\D/g,""))||0)}/></label><label>Aylık finansman maliyeti (%)<input type="number" min="0" step="0.01" value={loanRate} onChange={e=>setLoanRate(+e.target.value)}/></label><div><span>Canlı USD/TL</span><b>{loanCosts.currentFx?`₺${tryRate(loanCosts.currentFx)}`:'Bekleniyor'}</b></div><label>Vade sonu USD/TL varsayımı<input type="number" min="0" step="0.01" placeholder={loanCosts.currentFx?String(loanCosts.currentFx):''} value={futureUsdTry||''} onChange={e=>setFutureUsdTry(+e.target.value)}/></label><div><span>Toplam finansman maliyeti</span><b>{tryMoney(loanCosts.total)}</b></div></div><div className="loan-results">{loanCosts.results.map(s=><article className={`loan-result ${s.tone}`} key={s.label}><span>{s.label} · Ons {pct(s.onsReturn)} · TL {pct(s.tlReturn)}</span><strong className={s.net>=0?'positive':'negative'}>{s.net>=0?'+':''}{tryMoney(s.net)}</strong><small>{loanTerm} ay sonunda TL getirisi–maliyet farkı</small></article>)}</div><details className="break-even-details"><summary>Teorik başa baş oranlarını göster</summary><div className="loan-scenarios">{loanCosts.results.map(s=><article className={`loan-scenario ${s.tone}`} key={s.label}><span>{s.label}</span><strong>{s.monthly==null?'%0,00':`%${(s.monthly*100).toFixed(2).replace('.',',')}`}</strong><small>TL getirisine göre aylık teorik başa baş maliyeti</small></article>)}</div></details><div className="loan-note">Başlangıçta canlı USD/TL satış kuru kullanılır. Vade sonu kur alanı boşsa kurun değişmediği varsayılır; makas, vergi, sigorta ve diğer masraflar dahil değildir.{loan.derived&&<em> 9 aylık sonuç, modelin 6 aylık eğiliminden türetilmiştir.</em>}</div></section>
+        </Collapsible>
+        <Collapsible id="bulletin" anchor="feature-bulten" openByDefault={focus===PANEL_FEATURES.find(f=>f.anchor==="feature-bulten")?.slug} title={featureBy("feature-bulten").title} hint={featureBy("feature-bulten").summary} summary={news.length?`${news.length} haber`:null}>
+          <section className="panel block"><h2>Altın etki bülteni</h2><div className="bulletins"><div><h3>Parametre özeti</h3><p><b>Reel faiz:</b> 5 günlük {features.real_yield_change_5d>=0?'+':''}{features.real_yield_change_5d.toFixed(2)} puan.</p><p><b>Dolar:</b> 5 günlük {pct(features.dollar_return_5d)}.</p><p><b>VIX:</b> 5 günlük {features.vix_change_5d>=0?'+':''}{features.vix_change_5d.toFixed(2)}.</p></div><div><h3>Canlı haberler</h3>{news.slice(0,5).map((n,i)=><a key={i} href={n.url} target="_blank" rel="noreferrer">{n.title}<small>{n.source}</small></a>)}</div></div></section>
+        </Collapsible>
+        <Collapsible id="zones" anchor="feature-bolge" openByDefault={focus===PANEL_FEATURES.find(f=>f.anchor==="feature-bolge")?.slug} title={featureBy("feature-bolge").title} hint={featureBy("feature-bolge").summary} summary={null}>
+          <section className="panel block"><h2>İşlem bölgeleri</h2><div className="level"><span>Kademeli alım</span><b>{money(buy[0])} – {money(buy[1])}</b></div><div className="level"><span>Kâr alma</span><b>{money(sell[0])} – {money(sell[1])}</b></div><div className="level danger"><span>Risk kesme</span><b>{money(stop)}</b></div><label className="risk">Portföy (USD)<input value={capital} onChange={e=>setCapital(+e.target.value)} type="number"/></label><label className="risk">Risk (%)<input value={riskPct} onChange={e=>setRiskPct(+e.target.value)} type="number" step=".1"/></label><div className="position">Örnek azami pozisyon <b>{units.toFixed(3)} PAXG · {money(units*entry)}</b></div></section>
+        </Collapsible>
         <SeoContent/>
         <SiteFooter/>
       </section></div>
@@ -764,6 +869,9 @@ function GuideHub() {
 function App() {
   const path=window.location.pathname.replace(/\/+$/,'')||'/';
   if(path==='/rehber') return <><GuideHub/><LegalModal/></>;
+  const panel=path.match(/^\/panel\/([a-z0-9-]+)$/);
+  if(panel&&PANEL_FEATURES.some(item=>item.slug===panel[1]))
+    return <><DashboardApp focus={panel[1]}/><LegalModal/></>;
   const match=path.match(/^\/rehber\/([a-z0-9-]+)$/);
   const article=match?SEO_ARTICLES.find(item=>item.id===match[1]):null;
   return <>{article?<ArticlePage article={article}/>:<DashboardApp/>}<LegalModal/></>;

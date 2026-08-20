@@ -9,3 +9,5 @@ __pycache__/
 
 # Project exclude paths
 /backend/model-service/data/
+frontend/dist-local/
+

@@ -1,0 +1,92 @@
+[
+ {
+  "slug": "ons-altin-tahmini",
+  "anchor": "feature-tahmin",
+  "collapsible": false,
+  "title": "Ons Altın Tahmini: 1, 3 ve 6 Aylık Projeksiyon",
+  "seoTitle": "Ons Altın Tahmini · 1, 3, 6 Aylık",
+  "summary": "Sinir ağı modelinin 1 aylık, 3 aylık ve 6 aylık ons altın tahminleri ve her biri için %70 güven bandı.",
+  "intro": "Panelin tahmin kartları, modelin üç farklı vade için ürettiği fiyat projeksiyonunu ve bu projeksiyonun belirsizlik bandını gösterir. Her kart tek bir sayı değil, bir aralık sunar: bandın genişliği o vadede belirsizliğin ne kadar büyük olduğunu anlatır. Vade uzadıkça bant belirgin biçimde genişler, çünkü uzak geleceğe dair bilgi azalır."
+ },
+ {
+  "slug": "altin-fiyat-grafigi",
+  "anchor": "feature-grafik",
+  "collapsible": false,
+  "title": "Gün Gün Ons Altın Fiyat Grafiği",
+  "seoTitle": "Ons Altın Fiyat Grafiği · Gün Gün",
+  "summary": "Geçmiş fiyat, model tahmini ve güven bandı tek grafikte. Modelin başlangıç tahminiyle gerçekleşen fiyatın karşılaştırması dahil.",
+  "intro": "Grafik zaman eksenini ikiye ayırır: solda gerçekleşen fiyat, sağda modelin tahmini. Kesikli çizgi modelin ilk yayınladığı tahmindir ve gerçekleşen fiyatın üzerine biner; bir güne geldiğinizde o gün için ilan edilen alt sınır, tahmin, üst sınır ve gerçekleşen değer yan yana görünür. Geçmiş aralığı ve tahmin vadesi ayrı ayrı seçilebilir."
+ },
+ {
+  "slug": "ziynet-altin-fiyatlari",
+  "anchor": "feature-ziynet",
+  "collapsible": false,
+  "title": "Canlı Ziynet Altın Fiyatları",
+  "seoTitle": "Canlı Ziynet Altın Fiyatları",
+  "summary": "Gram, 22 ayar, çeyrek, yarım, tam ve Yeni Ata altın için canlı alış-satış fiyatı, gün aralığı ve makas.",
+  "intro": "Ziynet kartları piyasadan gelen canlı kotasyonu gösterir; işçilik ve satıcı marjı fiyatın içindedir. Her ürün için alış ve satış fiyatının yanında aradaki makas da yazılıdır — makas, işlem yaptığınız anda üstlendiğiniz gerçek maliyettir. Gün aralığı çubuğu fiyatın günün en düşüğü ile en yükseği arasında nerede durduğunu gösterir."
+ },
+ {
+  "slug": "model-isabet-karnesi",
+  "anchor": "feature-karne",
+  "collapsible": false,
+  "title": "Model İsabet Karnesi: Tahminler Ne Kadar Tuttu?",
+  "seoTitle": "Model İsabet Karnesi",
+  "summary": "Modelin geçmiş tahminleri gerçekleşen fiyatlarla karşılaştırılır: ortalama hata, bant isabeti, yön isabeti ve naif kurala göre katkı.",
+  "intro": "Bir tahmin modelinin tek anlamlı sınavı, hiçbir bilgi kullanmayan basit bir kuralı geçip geçmediğidir. Karne bu karşılaştırmayı açıkça yapar: modelin ortalama mutlak hatası, aynı dönemde \"fiyat değişmez\" kuralının hatası ve ikisi arasındaki fark. Ayrıca ilan edilen güven bandının gerçekten vaat ettiği oranda kapsayıp kapsamadığı ölçülür."
+ },
+ {
+  "slug": "altin-teknik-gostergeler",
+  "anchor": "feature-teknik",
+  "collapsible": true,
+  "title": "Ons Altın Teknik Göstergeleri",
+  "seoTitle": "Ons Altın Teknik Göstergeleri",
+  "summary": "RSI, MACD, Stochastic, ADX, CCI, Williams %R, ATR ve ROC değerleri ile SMA/EMA 5-200 hareketli ortalamalar.",
+  "intro": "Teknik göstergeler günlük kapanış, yüksek ve düşük verilerinden hesaplanır. Panel bilinçli olarak alım-satım kararı üretmez; yalnız göstergenin bulunduğu durumu yazar. Aşırı alım bölgesi yükselişin biteceği anlamına gelmez — güçlü trendlerde bir gösterge haftalarca orada kalabilir. Hareketli ortalama tablosu fiyatın hangi ortalamaların üstünde veya altında olduğunu özetler."
+ },
+ {
+  "slug": "altin-pivot-seviyeleri",
+  "anchor": "feature-pivot",
+  "collapsible": true,
+  "title": "Ons Altın Pivot Seviyeleri: Destek ve Direnç",
+  "seoTitle": "Ons Altın Pivot Seviyeleri",
+  "summary": "Haftalık ve aylık dönem için klasik ve Fibonacci pivot noktaları; canlı fiyat kendi yerinde işaretli merdiven düzeni.",
+  "intro": "Pivot seviyeleri, önceki dönemin yüksek, düşük ve kapanış değerlerinden standart bir formülle hesaplanır. Grafikteki destek-direnç katmanı fiyatın kendi geçmişinden çıkarılan bölgeleri gösterirken, pivot herkesin aynı şekilde bulduğu deterministik seviyelerdir; ikisinin çakıştığı yerler daha güçlü kabul edilir. Seviyeler fiyata göre sıralanır ve canlı fiyat aralarındaki yerine yerleşir."
+ },
+ {
+  "slug": "tahmine-parametre-katkisi",
+  "anchor": "feature-katki",
+  "collapsible": true,
+  "title": "Tahmine Parametre Katkısı",
+  "seoTitle": "Tahmine Parametre Katkısı",
+  "summary": "Reel faiz, dolar endeksi, enflasyon ve momentum gibi göstergelerin 1 aylık tahmini kaç puan oynattığı.",
+  "intro": "Her satır tek bir soruyu yanıtlar: o gösterge bugünkü değerinden uzun dönem ortalamasına çekilseydi, tahmin kaç puan değişirdi. Yanındaki standart sapma rozeti göstergenin ortalamadan ne kadar uzakta olduğunu söyler; katkının büyüklüğü hem bu uzaklıktan hem modelin o göstergeye verdiği ağırlıktan doğar. Bölümün altında tahminin ne kadarının sabit tabandan, ne kadarının parametrelerden geldiği ayrıştırılır."
+ },
+ {
+  "slug": "altin-tl-getirisi",
+  "anchor": "feature-tl",
+  "collapsible": true,
+  "title": "Altının TL Getirisi ve Finansman Maliyeti",
+  "seoTitle": "Altının TL Getirisi Hesabı",
+  "summary": "Ons senaryosunu canlı USD/TL kuru ve vade sonu kur varsayımıyla TL getirisine çeviren varsayımsal karşılaştırma.",
+  "intro": "TL bazlı altın getirisi iki bileşenin çarpımıdır: ons altının dolar bazlı hareketi ve USD/TL kurunun hareketi. Bu bölüm modelin alt bant, orta ve üst bant senaryolarını alır, seçtiğiniz vade sonu kur varsayımıyla TL'ye çevirir ve aynı vadedeki finansman maliyetiyle karşılaştırır. Hesap varsayımsaldır; makas, vergi ve diğer masraflar dahil değildir."
+ },
+ {
+  "slug": "altin-piyasa-bulteni",
+  "anchor": "feature-bulten",
+  "collapsible": true,
+  "title": "Altın Etki Bülteni ve Haberler",
+  "seoTitle": "Altın Etki Bülteni ve Haberler",
+  "summary": "Reel faiz, dolar endeksi ve enflasyon beklentisindeki güncel değişimlerin özeti ile altını ilgilendiren haber akışı.",
+  "intro": "Bülten, modelin en çok baktığı makro göstergelerdeki son değişimleri tek bakışta özetler: reel faizin ve dolar endeksinin yirmi günlük hareketi, enflasyon beklentisinin yönü ve oynaklık göstergesinin seviyesi. Yanında altın fiyatını etkileyebilecek güncel haber başlıkları listelenir."
+ },
+ {
+  "slug": "altin-islem-bolgeleri",
+  "anchor": "feature-bolge",
+  "collapsible": true,
+  "title": "İşlem Bölgeleri ve Pozisyon Hesabı",
+  "seoTitle": "Altın İşlem Bölgeleri",
+  "summary": "Modelin güven bandından türetilen örnek alım, kâr alma ve risk kesme bölgeleri ile risk yüzdesine göre pozisyon büyüklüğü.",
+  "intro": "Bu bölüm modelin bir aylık tahmin bandını alır ve bandın alt-üst uçlarından örnek seviyeler türetir. Gösterilen bölgeler bir işlem önerisi değildir; yalnız bandın pratikte hangi fiyat aralıklarına denk geldiğini görünür kılar. Pozisyon hesabı, belirlediğiniz portföy büyüklüğü ve risk yüzdesine göre örnek bir miktar üretir."
+ }
+]

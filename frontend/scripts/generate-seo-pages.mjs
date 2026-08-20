@@ -9,6 +9,7 @@ const linkedInUrl = 'https://www.linkedin.com/in/ali-do%C4%9Fan-86b57721a/';
 // Makale verisi tek bir JSON dosyasından okunur. Eskiden App.tsx string indeksiyle
 // parse edilip Function() ile eval ediliyordu; kaynaktaki en küçük düzenleme build'i kırıyordu.
 const articles = JSON.parse(await readFile(join(root, 'src/data/seo-articles.json'), 'utf8'));
+const features = JSON.parse(await readFile(join(root, 'src/data/panel-features.json'), 'utf8'));
 const rawBaseHtml = await readFile(join(root, 'dist/index.html'), 'utf8');
 const today = new Date().toISOString().slice(0, 10);
 const RELATED_COUNT = 5;
@@ -118,6 +119,45 @@ for (const [index, article] of articles.entries()) {
   await writeFile(output, html);
 }
 
+/* ---- /panel/<slug> özellik sayfaları ----
+   Her panel bölümünün kendi adresi var. Aynı içeriği 10 adreste sunmamak için her
+   sayfa kendi başlığını, açıklamasını ve tanıtım metnini taşır; canonical kendine bakar. */
+for (const [index, feature] of features.entries()) {
+  const url = `${siteUrl}/panel/${feature.slug}`;
+  const title = `${feature.seoTitle} | Ons Altın Analiz`;
+  const others = features.filter(item => item.slug !== feature.slug).slice(0, 5);
+  const fallback = `<main class="seo-prerender" data-seo-page="panel-${escapeHtml(feature.slug)}">
+      <nav aria-label="İçerik yolu"><a href="/">Canlı Panel</a> / ${escapeHtml(feature.title)}</nav>
+      <article>
+        <header><h1>${escapeHtml(feature.title)}</h1><p>${escapeHtml(feature.summary)}</p></header>
+        <p>${escapeHtml(feature.intro)}</p>
+        <p><a href="/">Canlı panelde bu bölümü aç</a></p>
+      </article>
+      <nav aria-label="Diğer panel bölümleri"><h2>Panelin diğer bölümleri</h2><ul>${others.map(item => `<li><a href="/panel/${escapeHtml(item.slug)}">${escapeHtml(item.title)}</a></li>`).join('')}</ul></nav>
+      <footer>${LEGAL}<nav aria-label="Footer bağlantıları"><a href="/">Canlı ons paneli</a> · <a href="/rehber">Altın rehberleri</a> · <a href="/sitemap.xml">Sitemap</a></nav></footer>
+    </main>`;
+  const schema = { '@context': 'https://schema.org', '@graph': [
+    { '@type': 'WebPage', name: feature.title, description: feature.summary, url, inLanguage: 'tr-TR',
+      isPartOf: { '@type': 'WebSite', url: siteUrl, name: 'Ons Altın Analiz' } },
+    { '@type': 'BreadcrumbList', itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Canlı Panel', item: `${siteUrl}/` },
+      { '@type': 'ListItem', position: 2, name: feature.title, item: url }] },
+    creator] };
+  let html = dropSchema(dropSchema(rawBaseHtml, 'ItemList'), 'WebApplication')
+    .replace(/<title>[^<]*<\/title>/i, `<title>${escapeHtml(title)}</title>`)
+    .replace('<div id="root"></div>', `<div id="root">${fallback}</div>`)
+    .replace('</head>', `    ${jsonLd(schema)}\n  </head>`);
+  html = replaceAttribute(html, 'link\\s+rel="canonical"', 'href', url);
+  html = setMeta(html, 'description', feature.summary);
+  html = setMeta(html, 'og:title', title, true);
+  html = setMeta(html, 'og:description', feature.summary, true);
+  html = setMeta(html, 'og:url', url, true);
+  html = setMeta(html, 'twitter:title', title);
+  html = setMeta(html, 'twitter:description', feature.summary);
+  await mkdir(join(root, 'dist/panel', feature.slug), { recursive: true });
+  await writeFile(join(root, 'dist/panel', feature.slug, 'index.html'), html);
+}
+
 /* ---- /rehber dizin sayfası ----
    Navbar'daki 31 kalemlik açılır liste yerine gerçek bir hedef sayfa; breadcrumb de buraya işaret eder. */
 const hubBody = `<main class="seo-prerender" data-seo-page="hub">
@@ -155,6 +195,9 @@ await writeFile(join(root, 'dist/rehber/index.html'), hubHtml);
    ulaşmıyor, 31 rehbere giden iç linkler yalnız JS çalışınca oluşuyordu. */
 const homeFallback = `<main class="seo-prerender" data-seo-page="home">
       <header><h1>Canlı Ons Altın Tahmin ve Senaryo Analiz Paneli</h1><p>Canlı ONS/XAUUSD ve PAXG/USDT fiyatları, reel faiz ve dolar endeksi gibi makro girdilerle beslenen 1 haftalık, 1 aylık, 3 aylık ve 6 aylık altın tahminleri tek panelde. Her tahmin güven bandıyla birlikte sunulur.</p><p>Tahmin ve eğitim referansı PAXG/USDT'dir; ONS/XAUUSD canlı karşılaştırma çizgisi olarak gösterilir. Bu platform eğitim ve araştırma amaçlıdır, yatırım tavsiyesi değildir.</p></header>
+      <section><h2>Panel bölümleri</h2><p>Panelin her bölümü kendi sayfasından da açılabilir.</p>
+        <ul>${features.map(feature => `<li><a href="/panel/${escapeHtml(feature.slug)}"><strong>${escapeHtml(feature.title)}</strong></a> — ${escapeHtml(feature.summary)}</li>`).join('\n        ')}</ul>
+      </section>
       <section id="rehberler"><h2>Ons Altın Analizi ve Tahmin Rehberleri</h2><p>Canlı fiyatı doğru okumak, modeli değerlendirmek ve altını etkileyen ekonomik göstergeleri anlamak için hazırlanan ${articles.length} rehber. Tümü <a href="/rehber">Altın Rehberi</a> sayfasında.</p>
         ${categories.map(category => `<section><h3>${escapeHtml(category)}</h3><ul>${byCategory(category).map(article => `<li><a href="/rehber/${escapeHtml(article.id)}"><strong>${escapeHtml(article.title)}</strong></a> — ${escapeHtml(article.summary)}</li>`).join('')}</ul></section>`).join('\n        ')}
       </section>
@@ -176,10 +219,11 @@ const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>${siteUrl}/</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>
   <url><loc>${siteUrl}/rehber</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+${features.map(feature => `  <url><loc>${siteUrl}/panel/${feature.slug}</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>`).join('\n')}
 ${articles.map(article => `  <url><loc>${siteUrl}/rehber/${article.id}</loc><lastmod>${article.updated}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>`).join('\n')}
 </urlset>
 `;
 
 await writeFile(join(root, 'dist/index.html'), homeHtml);
 await writeFile(join(root, 'dist/sitemap.xml'), sitemap);
-console.log(`${articles.length} rehber + dizin sayfası, ön render edilmiş anasayfa ve sitemap oluşturuldu.`);
+console.log(`${articles.length} rehber + dizin + ${features.length} panel sayfası, ön render edilmiş anasayfa ve sitemap oluşturuldu.`);

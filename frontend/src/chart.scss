@@ -605,3 +605,58 @@ body.nav-locked { overflow:hidden; }
   .mobile-sections button { min-height:46px; display:flex; align-items:center; padding:6px 9px;
     border:0; border-radius:9px; background:none; color:#fff; font:inherit; font-size:13.5px; font-weight:800; text-align:left; cursor:pointer; }
 }
+
+/* ---- Ana / yan özellik gruplaması ---- */
+.section-label { display:flex; align-items:baseline; gap:10px; margin:8px 2px 0; }
+.section-label span { color:var(--gold); font-size:10.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; }
+.section-label small { color:#6f8399; font-size:10.5px; }
+.section-label::after { content:''; flex:1; height:1px; background:var(--line); }
+
+.collapsible { padding:0; overflow:hidden; }
+.collapsible-head { width:100%; display:grid; grid-template-columns:1fr auto auto; align-items:center; gap:12px;
+  min-height:58px; padding:12px 16px; border:0; background:none; color:inherit; font:inherit; text-align:left; cursor:pointer; }
+.collapsible-head:hover { background:#12243a; }
+.collapsible-head:focus-visible { outline:2px solid var(--gold); outline-offset:-2px; }
+.collapsible-title { display:flex; flex-direction:column; gap:3px; min-width:0; }
+.collapsible-title b { font-size:14.5px; }
+.collapsible-title small { color:var(--muted); font-size:11px; }
+.collapsible-summary { padding:5px 10px; border:1px solid var(--line); border-radius:999px;
+  background:#0d1d30; color:#b9cadd; font-size:11px; font-variant-numeric:tabular-nums; white-space:nowrap; }
+.collapsible-chevron { color:var(--muted); font-size:15px; transition:transform .18s ease; }
+.collapsible.is-open .collapsible-chevron { transform:rotate(180deg); }
+.collapsible.is-open .collapsible-head { border-bottom:1px solid var(--line); }
+.collapsible-body { padding:16px; }
+/* İçerideki eski panel kabuğu sıfırlanır: panel içinde panel görünmesin */
+.collapsible-body > .panel,
+.collapsible-body > .block { padding:0; border:0; background:none; box-shadow:none; }
+/* Bölüm başlığı akordeon başlığında zaten var; içeride tekrar etmesin. */
+.collapsible-body h2 { display:none; }
+@media (max-width:650px) {
+  .collapsible-head { grid-template-columns:1fr auto; gap:8px 10px; padding:11px 13px; }
+  .collapsible-summary { grid-column:1; justify-self:start; }
+  .collapsible-chevron { grid-row:1; grid-column:2; }
+  .collapsible-body { padding:13px; }
+}
+
+/* ---- /panel/<slug> ile gelindiğinde bölümü vurgula ---- */
+.feature-focus { animation:feature-glow 2.4s cubic-bezier(.22,.61,.36,1); scroll-margin-top:86px; }
+@keyframes feature-glow {
+  0%   { box-shadow:0 0 0 0 #f3c96900, 0 16px 44px #02071288; }
+  14%  { box-shadow:0 0 0 3px #f3c96988, 0 22px 54px #020712aa; }
+  100% { box-shadow:0 0 0 0 #f3c96900, 0 16px 44px #02071288; }
+}
+/* Akordeon içeriği yerine yumuşakça otursun */
+.collapsible-body.reveal { animation:reveal .26s cubic-bezier(.22,.61,.36,1); }
+@keyframes reveal { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:none; } }
+.collapsible-chevron { transition:transform .26s cubic-bezier(.22,.61,.36,1); }
+@media (prefers-reduced-motion: reduce) {
+  .feature-focus, .collapsible-body.reveal { animation:none; }
+  .collapsible-chevron { transition:none; }
+}
+.content > [id^="feature-"] { scroll-margin-top:86px; }
+#feature-tahmin { scroll-margin-top:86px; }
+/* Navbar panel menüsü tek sütun */
+.guide-panel.narrow { width:min(360px,92vw); }
+.guide-groups.single { grid-template-columns:1fr; }
+.mobile-sections h3 { margin:12px 0 4px; color:var(--gold); font-size:10.5px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; }
+@media (max-width:650px) { .feature-focus { scroll-margin-top:74px; } .content > [id^="feature-"] { scroll-margin-top:74px; } }
