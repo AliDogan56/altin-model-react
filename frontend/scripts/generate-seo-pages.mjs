@@ -158,6 +158,32 @@ for (const [index, feature] of features.entries()) {
   await writeFile(join(root, 'dist/panel', feature.slug, 'index.html'), html);
 }
 
+/* ---- /panel dizin sayfası ----
+   /panel daha önce 301 ile /panel/ adresine gidip 403 veriyordu (dizin listesi kapalı).
+   Artık gerçek bir hedef sayfa; hem kullanıcı hem tarayıcı için tutarlı. */
+const panelHubBody = `<main class="seo-prerender" data-seo-page="panel-hub">
+      <nav aria-label="İçerik yolu"><a href="/">Canlı Panel</a> / Panel Bölümleri</nav>
+      <header><h1>Panel Bölümleri</h1><p>Canlı ons altın panelinin ${features.length} bölümü; her biri kendi sayfasından da açılabilir.</p></header>
+      <ul>${features.map(feature => `<li><a href="/panel/${escapeHtml(feature.slug)}"><strong>${escapeHtml(feature.title)}</strong></a> — ${escapeHtml(feature.summary)}</li>`).join('\n      ')}</ul>
+      <footer>${LEGAL}<nav aria-label="Footer bağlantıları"><a href="/">Canlı ons paneli</a> · <a href="/rehber">Altın rehberleri</a> · <a href="/sitemap.xml">Sitemap</a></nav></footer>
+    </main>`;
+let panelHubHtml = dropSchema(dropSchema(rawBaseHtml, 'ItemList'), 'WebApplication')
+  .replace(/<title>[^<]*<\/title>/i, '<title>Panel Bölümleri | Ons Altın Analiz</title>')
+  .replace('<div id="root"></div>', `<div id="root">${panelHubBody}</div>`)
+  .replace('</head>', `    ${jsonLd({ '@context': 'https://schema.org', '@graph': [
+    { '@type': 'CollectionPage', name: 'Panel Bölümleri', url: `${siteUrl}/panel`,
+      description: `Canlı ons altın panelinin ${features.length} bölümü.`, inLanguage: 'tr-TR',
+      isPartOf: { '@type': 'WebSite', url: siteUrl, name: 'Ons Altın Analiz' } },
+    { '@type': 'ItemList', numberOfItems: features.length,
+      itemListElement: features.map((feature, index) => ({ '@type': 'ListItem', position: index + 1, name: feature.title, url: `${siteUrl}/panel/${feature.slug}` })) },
+    creator] })}\n  </head>`);
+panelHubHtml = replaceAttribute(panelHubHtml, 'link\\s+rel="canonical"', 'href', `${siteUrl}/panel`);
+panelHubHtml = setMeta(panelHubHtml, 'description', `Canlı ons altın panelinin ${features.length} bölümü: tahmin, grafik, ziynet fiyatları, teknik göstergeler, pivot seviyeleri ve daha fazlası.`);
+panelHubHtml = setMeta(panelHubHtml, 'og:title', 'Panel Bölümleri | Ons Altın Analiz', true);
+panelHubHtml = setMeta(panelHubHtml, 'og:url', `${siteUrl}/panel`, true);
+await mkdir(join(root, 'dist/panel'), { recursive: true });
+await writeFile(join(root, 'dist/panel/index.html'), panelHubHtml);
+
 /* ---- /rehber dizin sayfası ----
    Navbar'daki 31 kalemlik açılır liste yerine gerçek bir hedef sayfa; breadcrumb de buraya işaret eder. */
 const hubBody = `<main class="seo-prerender" data-seo-page="hub">
@@ -219,6 +245,7 @@ const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>${siteUrl}/</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>
   <url><loc>${siteUrl}/rehber</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>${siteUrl}/panel</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
 ${features.map(feature => `  <url><loc>${siteUrl}/panel/${feature.slug}</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>`).join('\n')}
 ${articles.map(article => `  <url><loc>${siteUrl}/rehber/${article.id}</loc><lastmod>${article.updated}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>`).join('\n')}
 </urlset>
