@@ -1,0 +1,11 @@
+/* Grafik çizgileri ve bantları. */
+.gridline{stroke:#20364d}
+.axis{fill:var(--muted);font-size:12px}
+.band{fill:#f3c96920}
+.history{fill:none;stroke:var(--blue);stroke-width:2}
+.forecast{fill:none;stroke:var(--gold);stroke-width:3}
+.resistance{stroke:var(--red);stroke-dasharray:6 6}
+.guide{fill:var(--red);font-size:11px}
+.future-dot{fill:var(--gold)}
+.today-dot{fill:var(--blue)}
+.bottom{display:grid;grid-template-columns:1.35fr .65fr;gap:18px}

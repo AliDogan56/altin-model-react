@@ -1,0 +1,11 @@
+/* Ziynet fiyat bölümü. */
+.gram-block .gram-head { display:flex; flex-direction:column; gap:5px; margin-bottom:12px; }
+.gram-block .gram-head h2 { margin:0; }
+.gram-block .gram-head small { color:var(--muted); font-size:11px; line-height:1.5; }
+.gram-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:9px; }
+.gram-grid > div { background:#141f2e; border:1px solid var(--line); border-radius:10px; padding:10px 12px; display:flex; flex-direction:column; gap:4px; }
+.gram-grid span { color:var(--muted); font-size:10.5px; }
+.gram-grid b { font-size:16px; font-variant-numeric:tabular-nums; }
+.gram-note { color:var(--muted); font-size:11px; margin-top:11px; line-height:1.6; }
+.gram-note a { color:var(--gold); }
+/* Rehber sayfası tipografisi */

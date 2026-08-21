@@ -1,0 +1,12 @@
+/* Tahmin kartları ve blok kabı. */
+.content{display:grid;gap:18px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.card{padding:15px;display:grid;gap:7px}
+.card>span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.09em}
+.card strong{font-size:25px}
+.card b{font-size:13px}
+.card small{color:var(--muted);font-size:11px;line-height:1.45}
+.positive{color:var(--teal)}
+.negative{color:var(--red)}
+.block{padding:18px}
+.impact-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 22px;margin-top:14px}

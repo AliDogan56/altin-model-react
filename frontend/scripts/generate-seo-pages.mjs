@@ -1,6 +1,7 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { siteRoutes } from './site-routes.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const siteUrl = 'https://onsaltinanaliz.com';
@@ -243,11 +244,7 @@ const homeHtml = dropSchema(rawBaseHtml, 'ItemList')
 
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>${siteUrl}/</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>
-  <url><loc>${siteUrl}/rehber</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>${siteUrl}/panel</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
-${features.map(feature => `  <url><loc>${siteUrl}/panel/${feature.slug}</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>`).join('\n')}
-${articles.map(article => `  <url><loc>${siteUrl}/rehber/${article.id}</loc><lastmod>${article.updated}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>`).join('\n')}
+${(await siteRoutes(today)).map(route => `  <url><loc>${siteUrl}${route.path}</loc><lastmod>${route.lastmod}</lastmod><changefreq>${route.changefreq}</changefreq><priority>${route.priority}</priority></url>`).join('\n')}
 </urlset>
 `;
 

@@ -1,0 +1,6 @@
+/* Canlı veri durumu rozeti ve yenile düğmesi. */
+header p{color:var(--muted);font-size:14px;margin:0}
+.status{text-align:right;font-size:12px;color:var(--muted);display:grid;gap:4px}
+.status b{color:var(--teal)}
+.status button{margin-top:5px;background:#162d44;border:1px solid var(--line);color:#edf5ff;border-radius:8px;padding:8px 10px;cursor:pointer}
+.status i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px;background:var(--gold)}

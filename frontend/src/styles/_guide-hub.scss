@@ -1,0 +1,15 @@
+/* Rehber dizini ve makale gövdesi. */
+.article-intro { font-size:15.5px; line-height:1.75; }
+.standalone-body section { margin-top:22px; }
+.standalone-body h2 { font-size:18px; margin:0 0 9px; }
+.article-faq h3 { font-size:14px; margin:16px 0 5px; color:#e6eef7; }
+.article-updated { color:var(--muted); margin-top:24px; }
+
+/* Rehber dizini kartları */
+.guide-hub .standalone-body section { margin-top:30px; }
+.hub-cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:10px; margin-top:11px; }
+.hub-card { display:flex; flex-direction:column; gap:5px; padding:14px; border:1px solid var(--line); border-radius:13px; background:#0d1d30; text-decoration:none; }
+.hub-card:hover { border-color:#8e773d; background:#122a41; }
+.hub-card small { color:var(--gold); font-size:10px; text-transform:uppercase; letter-spacing:.04em; }
+.hub-card b { color:#eef4fa; font-size:14px; line-height:1.3; }
+.hub-card span { color:var(--muted); font-size:11.5px; line-height:1.55; }

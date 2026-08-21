@@ -14,19 +14,23 @@
     "build:development": "vite build --mode development && node scripts/generate-seo-pages.mjs",
     "build:production": "vite build --mode production && node scripts/generate-seo-pages.mjs",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "preview": "vite preview"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",
-    "vite": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "socket.io-client": "latest"
+    "react-router-dom": "^7.18.2",
+    "socket.io-client": "latest",
+    "vite": "latest"
   },
   "devDependencies": {
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "sass": "latest",
-    "typescript": "latest"
+    "typescript": "latest",
+    "vitest": "^3.2.7"
   }
 }

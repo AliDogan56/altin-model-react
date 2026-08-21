@@ -1,0 +1,43 @@
+/* Bugün çizgisi, köken tahmini ve direnç katmanları. */
+/* Vadesi gelmiş tahmin satırları */
+.daily-table .settled-row { background:#0e1f33; }
+.daily-table .pending { color:var(--muted); }
+.crosshair .tip-divider { stroke:#2b4761; stroke-width:1; }
+.crosshair .tip-real { fill:#9fd8ff; font-size:12px; font-weight:800; }
+.crosshair .tip-error { fill:#b9cadd; font-size:12px; }
+.crosshair .tip-error-ok { fill:var(--teal); font-size:12px; font-weight:800; }
+.crosshair .tip-error-bad { fill:var(--red); font-size:12px; font-weight:800; }
+.origin-marker { stroke:#7aa2d8; stroke-width:1; stroke-dasharray:2 4; opacity:.65; }
+.origin-label { fill:#7aa2d8; font-size:11px; font-weight:700; }
+.origin-key { background:#7aa2d8; }
+
+/* ============ Grafik tasarım dili ============
+   Renk rolleri:  mavi = gerçekleşen · altın = model tahmini
+                  çelik = geçmiş karşılaştırma · yeşil = canlı fiyat · kırmızı = risk
+   Kural: tam genişlikte yatay çizgi yalnızca bir tane (canlı fiyat referansı).
+   Diğer seviyeler sağ kenarda kısa tick + etiket olarak durur.                  */
+
+/* Zaman ekseni ikiye ayrılır: solda olan, sağda olacak olan */
+.future-zone { fill:#7f9dbd12; }
+.today-divider { stroke:#5f7d99; stroke-width:1.2; stroke-dasharray:4 4; opacity:.8; }
+.zone-caption { fill:#8299b0; font-size:10px; letter-spacing:.08em; text-transform:uppercase; }
+
+/* Tek referans çizgisi + sağ kenarda birleşik canlı fiyat kartı */
+.now-line { stroke:var(--teal); stroke-width:1; stroke-dasharray:2 5; opacity:.5; }
+.now-dot-ons { fill:var(--teal); stroke:#07111f; stroke-width:2; }
+.now-dot-token { fill:var(--blue); stroke:#07111f; stroke-width:1.5; }
+.now-card { fill:#0d2a26; stroke:var(--teal); stroke-opacity:.55; }
+.now-tag { fill:var(--teal); font-size:10px; font-weight:800; letter-spacing:.06em; }
+.now-tag.alt { fill:var(--blue); }
+.now-value { fill:#fff; font-size:13px; font-weight:800; }
+.now-value.alt { fill:#cfe0f0; font-size:12px; }
+
+/* Karşılaştırma katmanı ikincil: dolgu yok, yalnız kesikli çizgi. Dolgulu hâli
+   canlı bandı ve gelecek gölgesini bastırıp altın tahmin çizgisini okunmaz yapıyordu. */
+.origin-forecast { fill:none; stroke:#7aa2d8; stroke-width:1.6; stroke-dasharray:6 4; }
+
+/* Momentum eşiği artık sağ kenarda kısa bir tick */
+.resistance { stroke:var(--red); stroke-width:1.2; stroke-dasharray:4 4; opacity:.7; }
+
+/* Katman kontrolleri tek grupta */
+.chart-legend { gap:13px; }

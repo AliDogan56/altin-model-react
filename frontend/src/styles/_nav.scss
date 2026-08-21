@@ -1,0 +1,31 @@
+/* Üst menü, rehber açılır listesi ve mobil panel. */
+.site-nav { position:sticky; top:8px; z-index:20; min-height:58px; margin-bottom:18px; padding:8px 10px; display:flex; align-items:center; gap:10px; border:1px solid #29445f; border-radius:15px; background:#091827ed; box-shadow:0 12px 30px #02071299; backdrop-filter:blur(18px); }
+.site-nav a { color:#dce8f5; text-decoration:none; }
+.site-nav .brand { display:flex; align-items:center; gap:9px; margin-right:auto; font-weight:900; letter-spacing:-.02em; }
+.site-nav .brand img { width:36px; height:36px; border-radius:10px; }
+.desktop-links { display:flex; align-items:center; gap:4px; }
+.desktop-links > a,.guide-menu > button { min-height:40px; display:inline-flex; align-items:center; gap:6px; padding:0 13px; border:0; border-radius:9px; background:none; color:#b8c9da; font:inherit; font-size:12px; font-weight:800; cursor:pointer; }
+.desktop-links > a:hover,.guide-menu > button:hover { color:#fff; background:#17314b; }
+.desktop-links > a:focus-visible,.guide-menu > button:focus-visible { outline:2px solid var(--gold); outline-offset:2px; }
+.guide-menu { position:relative; }
+.guide-menu > button.open { color:var(--gold); background:#17314b; }
+.guide-panel { position:absolute; right:0; top:48px; width:min(620px,92vw); padding:12px; border:1px solid var(--line); border-radius:14px; background:#0b1b2cfa; box-shadow:0 22px 48px #020712cc; }
+.guide-search { display:flex; align-items:center; gap:9px; margin-bottom:10px; }
+.guide-search input { flex:1; min-height:38px; padding:0 12px; border:1px solid var(--line); border-radius:9px; background:#0d1d30; color:#eaf1f8; font:inherit; font-size:12.5px; }
+.guide-search input:focus { outline:none; border-color:#8e773d; }
+.guide-search small { color:var(--muted); font-size:10.5px; white-space:nowrap; }
+.guide-groups { max-height:min(58vh,460px); overflow:auto; display:grid; grid-template-columns:1fr 1fr; gap:4px 14px; }
+.guide-groups section { display:flex; flex-direction:column; }
+.guide-groups h3 { margin:8px 0 3px; padding:0 8px; color:var(--gold); font-size:10px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; }
+.guide-groups a { padding:8px 9px; border-radius:8px; color:#c2d2e2; font-size:12px; line-height:1.35; }
+.guide-groups a:hover { color:#fff; background:#17314b; }
+.guide-groups a.active { color:var(--gold); background:#16283c; }
+.guide-empty { grid-column:1 / -1; padding:14px 9px; color:var(--muted); font-size:12px; }
+.guide-all { display:inline-flex; align-items:center; gap:6px; margin-top:10px; padding:9px 11px; border-radius:9px; background:#16283c; color:var(--gold) !important; font-size:12px; font-weight:800; }
+.guide-all:hover { background:#1d3350; }
+.mobile-toggle { display:none; }
+.mobile-sheet { display:none; }
+/* Panel body'ye portal edildiği için .site-nav altındaki kuralları devralmaz. */
+.mobile-sheet a { text-decoration:none; color:#c6d5e4; }
+.mobile-sheet button { font:inherit; }
+body.nav-locked { overflow:hidden; }

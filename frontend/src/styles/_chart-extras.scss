@@ -1,0 +1,38 @@
+/* Grafik kırılma noktaları ve destek-direnç. */
+/* ---- Mobile first: kontroller ve grafik yoğunluğu ---- */
+@media (max-width:650px) {
+  .chart-tools { gap:8px; justify-content:stretch; }
+  .chart-tools .tool-group { flex:1 1 100%; justify-content:space-between; }
+  /* Katman anahtarları yatay kaydırılan çip şeridi */
+  .chart-canvas { height:clamp(400px,68vh,560px); }
+  .chart-legend { gap:9px; font-size:9.5px; }
+  .zoom-controls { margin:6px 0 0; }
+}
+
+/* Efsane hem açıklama hem katman anahtarı */
+.chart-legend button { display:flex; align-items:center; gap:5px; min-height:34px; padding:0 11px;
+  border:1px solid var(--line); border-radius:999px; background:#0d1d30; color:#b9cadd;
+  font:inherit; font-size:10px; cursor:pointer; }
+.chart-legend button:hover { border-color:#8e773d; color:#fff; }
+.chart-legend button.off { opacity:.45; }
+.chart-legend button.off i { filter:grayscale(1); }
+.chart-legend button:focus-visible { outline:2px solid var(--gold); outline-offset:2px; }
+@media (max-width:650px) {
+  .chart-tools .tool-group { display:flex; align-items:center; justify-content:space-between; gap:9px; }
+  .chart-legend { gap:7px; }
+  .chart-legend button { min-height:38px; font-size:11px; padding:0 12px; }
+}
+
+/* styles.scss'teki .band{fill:#f3c96920} üzerine: bant altın çizginin etrafında
+   yumuşak bir hale olmalı, sağ yarıyı kaplayan bir blok değil. */
+.band { fill:#e8c56a10; }
+
+/* Destek / direnç seviyeleri — yalnız geçmiş bölgesinde, ince ve ikincil */
+.sr line { stroke-width:1; stroke-dasharray:5 5; opacity:.55; }
+.sr text { font-size:11px; font-weight:700; opacity:.9; }
+.sr.res line { stroke:var(--red); } .sr.res text { fill:var(--red); }
+.sr.sup line { stroke:var(--teal); } .sr.sup text { fill:var(--teal); }
+.sr-key { background:linear-gradient(90deg,var(--teal) 50%,var(--red) 50%); }
+.gram-grid em { color:var(--muted); font-size:10px; font-style:normal; }
+
+/* ---- Pivot seviyeleri ---- */

@@ -6,7 +6,7 @@ Prod: https://onsaltinanaliz.com (Docker Compose + host Nginx, sunucu 5.75.148.2
 ## Repo haritası
 
 ```
-frontend/                 React 19 + TS + SCSS + Vite (tek dosya UI: src/App.tsx, 481 satır)
+frontend/                 React 19 + TS + SCSS + Vite (katmanlı: lib/domain/services/features/pages/app)
 backend/api-gateway/      Tek dışa açık giriş, saf reverse-proxy (port 8000)
 backend/market-service/   Binance / FRED / Google News veri kaynağı (port 8001)
 backend/model-service/    MLP tahmin + otomatik toplama & yeniden eğitim (port 8002)
@@ -53,12 +53,96 @@ Kök `api-gateway/`, `market-service/`, `model-service/` klasörleri yalnızca e
 
 ## Frontend
 
-- `src/App.tsx` tek dosya: dashboard + SEO makale sayfaları + grafik + kredi senaryo hesabı.
+2026-08-20'de tek dosyalık `src/App.tsx` (880 satır) katmanlı mimariye taşındı.
+
+```
+src/lib/          saf yardımcılar (math, format, series, meta) — hiçbir şeye bağımlı değil
+src/domain/       iş kuralları; React ve ağ yok, model artefaktı parametre olarak alınır
+    model/        network · predict · features · impacts · types
+    market/       goldFeatures (mumlardan) · macroFeatures (FRED serilerinden)
+    indicators/ · pivots · supportResistance · scorecard · loan · tradeZones
+src/services/     ağ katmanı; config · http · api/{market,model} · realtime/{binance,harem}
+src/content/      metin ve veri tek kaynağı: articles · panel · parameters · site · types
+src/features/     ekran bölümleri (dashboard, chart, ziynet, scorecard, indicators,
+                  pivots, impact, loan, bulletin, zones, parameters, forecast, guides)
+src/components/   paylaşılan parçalar: SiteNav · SiteFooter · Collapsible · LegalModal · TickSparkline
+src/pages/        DashboardPage · ArticlePage · GuideHubPage · PanelHubPage
+src/app/          App (React Router) · routes · ScrollToTop · useDocumentMeta
+src/styles/       32 SCSS modülü + index.scss
+```
+
+Bağımlılık yönü tek yönlüdür: `app → pages → features → services/content → domain → lib`.
+Domain katmanı `model.json`'ı **import etmez**; artefakt `src/data/artifact.ts` üzerinden
+parametre olarak geçirilir, bu sayede küçük sahte modellerle test edilebilir.
+
+- **Durum yönetimi:** `features/dashboard/DashboardContext.tsx`. Dört hook'tan oluşur —
+  `useMarketData` (REST + iki soket), `usePanelSettings` (yalnız görünüm tercihleri),
+  `useForecastModel` (parametre formu + tahmin), `useDailySnapshot`. Türetilmiş her değer
+  (impacts, pivotLadder, tech, scorecard, loan, zones) burada `useMemo` ile hesaplanır ve
+  bölümler prop almadan `useDashboard()` ile okur.
+- **Rotalar:** React Router. `src/app/routes.ts` ile `scripts/site-routes.mjs` aynı JSON'lardan
+  aynı yolları üretir; `routes.test.ts` ikisinin birebir eşit olduğunu doğrular — sayfa eklenip
+  sitemap'e (ya da tersi) yazılmaması artık testte patlar. Site içi bağlantılar `<Link>`;
+  `#` çıpaları ve `/sitemap.xml` düz `<a>` kaldı.
+- **Meta:** SPA gezinmesinde başlık/kanonik `useDocumentMeta` ile sayfaya göre güncellenir.
+  Öncesinde tek dosya olduğu için makaleden anasayfaya dönüldüğünde makale başlığı kalıyordu.
+- **Test:** 84 test, 13 dosya (`vitest`, node ortamı). Kapsam yalnız `domain/`, `lib/` ve
+  rota tablosu — kullanıcı kararıyla bileşen testi yazılmadı.
+  Çalıştırma: `node node_modules/vitest/vitest.mjs run` (`.bin/vitest` sarmalayıcısı bu Node
+  sürümünde çalışmıyor).
 - `API_BASE` şablonu: `.env.production` → `{origin}` (aynı origin, nginx proxy), `.env.localhost` → `http://{host}:8000`.
-- Canlı veri: Binance WS (`wss://stream.binance.com:9443/ws/paxgusdt@ticker`) + Harem socket.io (`wss://hrmsocketonly.haremaltin.com`, ONS ve USDTRY) — bunlar tarayıcıdan **doğrudan**, gateway'siz.
+- Canlı veri: Binance WS (`wss://stream.binance.com:9443/ws/paxgusdt@ticker`) + Harem socket.io (`wss://hrmsocketonly.haremaltin.com`, ONS ve USDTRY) — bunlar tarayıcıdan **doğrudan**, gateway'siz. Soketler yalnız panel rotalarında açılır; rehber sayfaları `DashboardProvider`'ı mount etmez.
 - Tahmin: `POST /model-service/v1/predict` (700 ms debounce); istek düşerse `src/data/model.json` ile tarayıcı içi ensemble fallback.
-- Günde bir kez `POST /model-service/v1/snapshots` (Europe/Istanbul günü, `snapshotDayRef` ile tekilleştirme).
-- SEO: `scripts/generate-seo-pages.mjs` build sonrası `App.tsx` içindeki `SEO_ARTICLES` dizisini parse edip `dist/rehber/<id>/index.html` üretir — **dizinin sözdizimi bozulursa build kırılır** (`const avg` bitiş işaretçisine bağlı).
+- Günde bir kez `POST /model-service/v1/snapshots` (Europe/Istanbul günü, `useDailySnapshot` içinde `pending:` işaretiyle tekilleştirme).
+- SEO: `scripts/generate-seo-pages.mjs` build sonrası `src/data/seo-articles.json` ve
+  `panel-features.json`'dan `dist/rehber/<id>/`, `dist/panel/<slug>/`, iki dizin sayfası,
+  ön render edilmiş anasayfa ve 44 URL'lik sitemap üretir.
+### Grafik (`features/chart`)
+
+2026-08-20'de ölçek ve etkileşim elden geçirildi.
+
+- **viewBox = ölçülen piksel kutusu.** `useElementSize` saran `div`'i ölçer, SVG `viewBox`'ı
+  bire bir aynı yazılır; ölçek tam 1 olur. Öncesinde viewBox sabitti (1600×650 / 420×620):
+  masaüstünde ayrılan yüksekliğin **113px'i (%18)**, 651–720px arası genişliklerde
+  **219px (%33)** boş kalıyordu ve SVG içindeki 10px'lik yazı ekranda **7,6px** basılıyordu.
+  `ResizeObserver` tek dayanak değildir — `<svg>` üzerinde hiç tetiklenmediği ortamlar var
+  (ölçüldü); her render sonrası `useLayoutEffect` ölçümü ve `resize`/`orientationchange`
+  dinleyicileri de var.
+- **Tek kırılma noktası.** Dar yerleşim ölçülen genişlikten türer (`COMPACT_WIDTH = 650`);
+  `usePanelSettings`'teki `mobile` bayrağı kaldırıldı. Eskiden JS 720px'te, CSS 650px'te
+  ayrıldığı için arada kalan genişlikler bozuk çiziliyordu.
+- **Dikey ölçek** `domain/chart/scale.ts` içindedir (saf, testli). Belirsizlik bandı
+  çekirdek serilerin payını `MIN_CORE_SHARE` (0,5) altına düşürmeyecek kadar dahil edilir;
+  taşan uç kırpılır ve grafikte "bant uçları kırpıldı" notu çıkar. Tam değerler ipucunda
+  ve günlük tabloda durmaya devam eder.
+- **Zaman ekseni** artık tarih gösterir (`pickTimeTicks` + `dropNear`); ufuk çıpaları
+  geniş ekranda "13.09 · 1 Ay" biçiminde etiketlenir. Öncesinde eksende hiç tarih yoktu.
+- **Hareketler** `useChartGestures`: sürükleyerek kaydırma, iki parmakla yakınlaştırma,
+  Ctrl'süz tekerlek zoom'u, dokun-sabitle imleç (dokunmatikte parmak kalkınca ipucu
+  kayboluyordu). `touch-action: pan-y` — dikey sayfa kaydırma serbest kalır.
+  Sabitlenen ipucu parmağın altında kalmasın diye çizim alanının üstüne yerleşir.
+- Mobilde "Sıfırla" düğmesi geri geldi (yalnız simge); y etiketleri çizim alanının içine
+  alınarak sol kenar boşluğu 34px'ten 10px'e indi.
+- `model.latestDate` seçili geçmiş aralığında değilse karşılaştırma katmanı çizilemez;
+  efsanedeki düğme artık pasifleşir ve nedenini `title` ile söyler.
+- **İpucu köken katmanından ayrıldı.** Projeksiyon, efsane düğmesi kapalıyken de hesaplanır;
+  geçmiş bir güne gelince "gerçekleşen / o günkü tahmin / sapma" görünür. Öncesinde imleç
+  noktaları köken projeksiyonu ile aynı `i` değerini paylaşıyor, eşitlikte projeksiyon
+  kazanıyordu; bir geçmiş günün gerçek kapanışı ipucunda hiç görünmüyordu.
+- **Erişilebilirlik:** SVG odaklanabilir (`tabIndex`), `<title>`/`<desc>` ile özetlenir ve
+  `aria-describedby` ile günlük tabloya bağlıdır. Ok tuşları gün gün gezer (Shift ile hafta,
+  PageUp/Down ay, Home/End uç, Esc kapatır); seçilen nokta `aria-live` bölgesinden okunur.
+  Nokta görünür pencerenin dışındaysa pencere ona kayar.
+- **Günlük tablo** varsayılan olarak kapalı; açıldığında yalnız vadesi dolan günleri listeler,
+  "N günün tamamı" düğmesiyle tümü gelir. Başlık `origin-key` rengiyle işaretlidir — tablo
+  canlı tahmini değil, grafikteki kesikli mavi katmanı listeler. Mobilde bölüm yüksekliği
+  1423px'ten 1030px'e indi.
+- Ölü kontrol ve stiller temizlendi: her ekranda `display:none` olan `.wide-toggle` düğmesi
+  ve hiç kullanılmayan `.origin-band` kuralı kaldırıldı.
+
+- SCSS eski `styles.scss` + `chart.scss` sırasını **birebir koruyacak şekilde** bölündü;
+  derlenmiş CSS bölme öncesiyle karakterine kadar aynı (yorumlar hariç doğrulandı).
+  `styles/index.scss` içindeki `@use` sırası bozulursa özgüllük çakışmaları değişir.
 
 ## Deployment
 
@@ -82,6 +166,7 @@ Kök `api-gateway/`, `market-service/`, `model-service/` klasörleri yalnızca e
 ```bash
 ./start-profile.sh localhost          # 3 servis + vite dev
 pnpm --dir frontend typecheck
+pnpm --dir frontend test              # 84 test (domain + lib + rota tablosu)
 pnpm --dir frontend build:production
 backend/<servis>/.venv/bin/python -m pytest backend/<servis>/tests
 docker compose up -d --build
@@ -120,7 +205,7 @@ yaratıyordu.
 
 ## SEO içerik sistemi (2026-08-18'de yeniden kuruldu)
 
-- İçerik kaynağı: `frontend/src/data/seo-articles.json` (31 makale). Hem `App.tsx` hem
+- İçerik kaynağı: `frontend/src/data/seo-articles.json` (31 makale). Hem `src/content/articles.ts` hem
   `scripts/generate-seo-pages.mjs` aynı dosyadan okur; üretici eskiden `App.tsx`'i string
   indeksiyle parse edip `Function()` ile eval ediyordu, artık düz JSON okuyor.
 - Makale şeması: `id, keyword, title, seoTitle, updated, summary, intro, sections[], points[], faq[]`.
@@ -141,7 +226,7 @@ iç link almayan sayfa 15 → 0; şema `Article/BreadcrumbList` → `Article/FAQ
 
 ## Navigasyon
 
-- `SiteNav` (`App.tsx`) `<details>` yerine kontrollü React state kullanır: dışarı tıklama,
+- `SiteNav` (`src/components/SiteNav.tsx`) `<details>` yerine kontrollü React state kullanır: dışarı tıklama,
   Escape ve link tıklaması menüyü kapatır; `aria-expanded`/`aria-current` doğru işaretlenir.
 - Rehberler açılır listesi `category` alanına göre gruplanır ve arama kutusuyla filtrelenir.
 - **Mobil panel `createPortal` ile `document.body`'ye taşınır.** `.site-nav` üzerindeki
