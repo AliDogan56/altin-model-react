@@ -49,3 +49,16 @@
 .related-guides small { grid-column:1; color:var(--teal); font-size:8px; text-transform:uppercase; letter-spacing:.08em; }
 .related-guides b { grid-column:1; font-size:12px; line-height:1.4; }
 .related-guides a > span { grid-column:2; grid-row:1 / span 2; align-self:center; color:var(--gold); }
+
+/* Rehberden canlı panele yönlendirme: arama trafiği aracı görmeden çıkıyordu. */
+.article-cta { display:block; margin:26px 0; padding:18px 20px; border:1px solid #6d5a2f;
+  border-radius:14px; background:linear-gradient(145deg,#1d1a10,#141b26); }
+.article-cta-eyebrow { display:block; margin-bottom:6px; color:var(--gold);
+  font-size:10px; font-weight:800; letter-spacing:.09em; text-transform:uppercase; }
+.article-cta b { display:block; margin-bottom:6px; color:#fff; font-size:16px; }
+.article-cta p { margin:0 0 14px; color:#c2d2e2; font-size:13px; line-height:1.7; }
+.article-cta-link { display:inline-flex; align-items:center; gap:8px; min-height:42px;
+  padding:0 18px; border-radius:999px; background:var(--gold); color:#1c1605;
+  font-weight:800; font-size:13px; text-decoration:none; }
+.article-cta-link:hover { filter:brightness(1.08); }
+.article-cta-link:focus-visible { outline:2px solid #fff; outline-offset:2px; }

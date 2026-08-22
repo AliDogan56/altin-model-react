@@ -54,6 +54,21 @@ const dropSchema = (html, type) => html.replace(
 const relatedOf = index => Array.from({ length: RELATED_COUNT },
   (_, offset) => articles[(index + offset + 1) % articles.length]);
 
+/* Arama sonucundan gelen okuyucuyu konunun canlı karşılığına götürür.
+   Ön render edilen sürümde de bulunmalı: Google'ın gördüğü ve JavaScript
+   çalışmadan görünen HTML bu. */
+const panelBySlug = new Map(features.map(feature => [feature.slug, feature]));
+const panelCta = article => {
+  const feature = panelBySlug.get(article.panel);
+  if (!feature) return '';
+  return `<aside class="article-cta">
+          <p>Bunu canlı veride gör</p>
+          <h2>${escapeHtml(feature.title)}</h2>
+          <p>${escapeHtml(feature.summary)}</p>
+          <p><a class="article-cta-link" href="/panel/${escapeHtml(feature.slug)}">Panelde aç →</a></p>
+        </aside>`;
+};
+
 const articleBody = (article, related) => `<main class="seo-prerender" data-seo-page="${escapeHtml(article.id)}">
       <nav aria-label="İçerik yolu"><a href="/">Ana Sayfa</a> / <a href="/rehber">Altın Rehberi</a> / ${escapeHtml(article.title)}</nav>
       <article>
@@ -62,6 +77,7 @@ const articleBody = (article, related) => `<main class="seo-prerender" data-seo-
         ${article.sections.map(section => `<section><h2>${escapeHtml(section.heading)}</h2>${section.paragraphs.map(p => `<p>${escapeHtml(p)}</p>`).join('')}</section>`).join('\n        ')}
         <section><h2>Özet: ${escapeHtml(article.keyword)}</h2><ul>${article.points.map(point => `<li>${escapeHtml(point)}</li>`).join('')}</ul></section>
         <section><h2>Sık sorulan sorular</h2>${article.faq.map(item => `<h3>${escapeHtml(item.q)}</h3><p>${escapeHtml(item.a)}</p>`).join('')}</section>
+        ${panelCta(article)}
         <p><small>Son güncelleme: ${escapeHtml(article.updated)}</small></p>
       </article>
       <nav aria-label="İlgili rehberler"><h2>İlgili Ons Altın Rehberleri</h2><ul>${related.map(item => `<li><a href="/rehber/${escapeHtml(item.id)}">${escapeHtml(item.title)}</a></li>`).join('')}</ul></nav>

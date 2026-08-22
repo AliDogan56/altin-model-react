@@ -4,6 +4,8 @@ export type SeoArticle = {
   id: string; keyword: string; title: string; seoTitle?: string; updated: string;
   summary: string; intro: string; category: string;
   sections: SeoSection[]; points: string[]; faq: SeoFaq[];
+  /** Makalenin canlı karşılığı olan panel bölümünün slug'ı. */
+  panel: string;
 };
 
 export type PanelFeature = {

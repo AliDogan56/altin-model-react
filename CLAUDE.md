@@ -203,6 +203,10 @@ satırlar listelenmez ama toplamlara dahildir.
 - 30 rehber makalesi (`data/seo-articles.json`), 10 panel özelliği (`data/panel-features.json`)
 - `scripts/generate-seo-pages.mjs` build sonrası: 30 rehber + `/rehber` dizini + 10 panel
   sayfası + `/panel` dizini + ön render edilmiş anasayfa + **43 URL'lik sitemap**
+- **Her rehber, canlı karşılığı olan panel bölümüne bağlanır.** `seo-articles.json` içindeki
+  `panel` alanı hedef slug'ı verir; hem `ArticlePage` hem `generate-seo-pages.mjs` bir CTA
+  basar. Ön render edilen sürümde bulunması şart — Google'ın indekslediği ve JavaScript
+  çalışmadan görülen HTML o. Öncesinde makalelerden panele **tek bir link bile yoktu**
 - nginx `absolute_redirect off` + `/panel` ve `/rehber` için ayrı `location =` blokları
   (protokol düşüren 301 sorunu bu yüzden çözüldü)
 - `/panel/<slug>` ile gelindiğinde ilgili bölüm açılır, yerleşim durulunca tek yumuşak
