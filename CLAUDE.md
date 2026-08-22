@@ -200,9 +200,23 @@ satırlar listelenmez ama toplamlara dahildir.
 
 ## SEO
 
-- 30 rehber makalesi (`data/seo-articles.json`), 10 panel özelliği (`data/panel-features.json`)
+- 30 rehber makalesi (`data/seo-articles.json`), 10 panel özelliği (`data/panel-features.json`),
+  4 kurumsal sayfa (`data/site-pages.json`: hakkımızda, yazar, iletişim, gizlilik)
 - `scripts/generate-seo-pages.mjs` build sonrası: 30 rehber + `/rehber` dizini + 10 panel
-  sayfası + `/panel` dizini + ön render edilmiş anasayfa + **43 URL'lik sitemap**
+  sayfası + `/panel` dizini + 4 kurumsal sayfa + ön render edilmiş anasayfa +
+  **47 URL'lik sitemap**
+- **Güven sayfaları (E-E-A-T).** YMYL kategorisinde Google'ın aradığı sinyaller sitede hiç
+  yoktu. Dört sayfa `SitePageView` şablonuyla render edilir, ön render edilir ve her ön
+  render edilmiş footer'dan (`LEGAL` sabiti) linklenir. Article şemasının `author`'ı artık
+  `/yazar`'a bakar. `SitePageView` başlığa site adını bir kez ekler — `useDocumentMeta`
+  zaten ekliyordu, iki kez markalanıyordu
+- **Makale derinliği.** En yüksek potansiyelli 10 makale ~210 kelimeden 1200+ kelimeye
+  çıkarıldı (7-8 bölüm, 8 SSS); kalan 20'si hâlâ ~500 kelime. Şablon payı %21. Bu 10 makale
+  modelin **kendi ölçülmüş sayılarını** kaynak olarak kullanır (MAE, yön, beceri, ağırlık)
+- **Makale şemasında tablo ve liste var** (`SeoTable`, `SeoList` — `content/types.ts`).
+  Sayısal içerik düz paragrafta kayboluyordu. `ArticlePage` ve `generate-seo-pages.mjs`
+  aynı işaretlemeyi basar; tablo `overflow-x:auto` saran divde, mobilde sayfa taşmıyor
+- Meta açıklamaları 130–160 karakter aralığında (bazıları 75 karakterdi)
 - **Her rehber, canlı karşılığı olan panel bölümüne bağlanır.** `seo-articles.json` içindeki
   `panel` alanı hedef slug'ı verir; hem `ArticlePage` hem `generate-seo-pages.mjs` bir CTA
   basar. Ön render edilen sürümde bulunması şart — Google'ın indekslediği ve JavaScript
