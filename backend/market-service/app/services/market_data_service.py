@@ -23,11 +23,8 @@ class MarketDataService:
         self._cache[key] = (time.monotonic(), value)
         return value
 
-    async def binance_history(self) -> list:
-        return await self._get("binance-history", "https://api.binance.com/api/v3/klines?symbol=PAXGUSDT&interval=1d&limit=260", 60)
-
-    async def binance_spot(self) -> dict:
-        return await self._get("binance-spot", "https://api.binance.com/api/v3/ticker/24hr?symbol=PAXGUSDT", 5)
+    async def xau_history(self) -> dict:
+        return await self._get("xau-history", "https://xaus.com/api/v1/history", 300)
 
     async def fred_series(self, series_id: str) -> str:
         safe_id = re.sub(r"[^A-Z0-9_]", "", series_id.upper())

@@ -1,4 +1,5 @@
 import SiteFooter from '../components/SiteFooter';
+import ErrorBoundary from '../components/ErrorBoundary';
 import SiteNav from '../components/SiteNav';
 import { featureBySlug } from '../content/panel';
 import { PAGE_META } from '../content/site';
@@ -13,7 +14,6 @@ import SeoContent from '../features/guides/SeoContent';
 import ImpactSection from '../features/impact/ImpactSection';
 import IndicatorsSection from '../features/indicators/IndicatorsSection';
 import LoanSection from '../features/loan/LoanSection';
-import ParameterPanel from '../features/parameters/ParameterPanel';
 import PivotSection from '../features/pivots/PivotSection';
 import ScorecardSection from '../features/scorecard/ScorecardSection';
 import ZiynetSection from '../features/ziynet/ZiynetSection';
@@ -23,7 +23,7 @@ import { ZIYNET } from '../services/realtime/harem';
 /** Panel yerleşimi: ana özellikler üstte açık, yan özellikler akordiyonda.
  *  Bölümlerin kendi verisi context'ten gelir; buradan prop geçilmez. */
 function DashboardPage({ focus }: { focus?: string }) {
-  const { wideChart, setWideChart, ziynet, scorecard, tech, pivotLadder } = useDashboard();
+  const { ziynet, scorecard, tech, pivotLadder } = useDashboard();
   const feature = focus ? featureBySlug(focus) ?? null : null;
   useDocumentMeta(PAGE_META.home.title, PAGE_META.home.description, PAGE_META.home.path, !feature);
   useFeatureFocus(feature);
@@ -32,26 +32,22 @@ function DashboardPage({ focus }: { focus?: string }) {
     <main className="app">
       <SiteNav/>
       <PanelHeader/>
-      <div className="parameter-toggle-bar">
-        <button onClick={()=>setWideChart(v=>!v)} aria-expanded={!wideChart}>
-          <span>⚙</span>{wideChart?'Parametreleri göster':'Parametreleri gizle'}
-        </button>
-      </div>
-      <div className={`layout ${wideChart?'wide-chart':''}`}>
-        <ParameterPanel/>
+      <div className="layout">
         <section className="content">
           <div className="section-label"><span>Ana görünüm</span></div>
-          <ForecastCards/>
-          <ChartSection/>
-          {ZIYNET.some(([code])=>ziynet[code])&&<ZiynetSection/>}
-          {scorecard&&<ScorecardSection/>}
+          {/* Her bölüm kendi sınırında: biri çökerse diğerleri okunur kalır. */}
+          <ErrorBoundary title="Tahmin kartları yüklenemedi"><ForecastCards/></ErrorBoundary>
+          {ZIYNET.some(([code])=>ziynet[code])&&
+            <ErrorBoundary title="Ziynet fiyatları yüklenemedi"><ZiynetSection/></ErrorBoundary>}
+          <ErrorBoundary title="Grafik yüklenemedi"><ChartSection/></ErrorBoundary>
           <div className="section-label"><span>Ayrıntılar</span><small>Başlığa dokunarak açın</small></div>
-          {tech&&<IndicatorsSection focus={focus}/>}
-          {pivotLadder&&<PivotSection focus={focus}/>}
-          <ImpactSection focus={focus}/>
-          <LoanSection focus={focus}/>
-          <BulletinSection focus={focus}/>
-          <ZoneSection focus={focus}/>
+          {scorecard&&<ErrorBoundary title="İsabet karnesi yüklenemedi"><ScorecardSection focus={focus}/></ErrorBoundary>}
+          {tech&&<ErrorBoundary title="Teknik göstergeler yüklenemedi"><IndicatorsSection focus={focus}/></ErrorBoundary>}
+          {pivotLadder&&<ErrorBoundary title="Pivot seviyeleri yüklenemedi"><PivotSection focus={focus}/></ErrorBoundary>}
+          <ErrorBoundary title="Parametre katkısı yüklenemedi"><ImpactSection focus={focus}/></ErrorBoundary>
+          <ErrorBoundary title="TL getirisi yüklenemedi"><LoanSection focus={focus}/></ErrorBoundary>
+          <ErrorBoundary title="Bülten yüklenemedi"><BulletinSection focus={focus}/></ErrorBoundary>
+          <ErrorBoundary title="İşlem bölgeleri yüklenemedi"><ZoneSection focus={focus}/></ErrorBoundary>
           <SeoContent/>
           <SiteFooter/>
         </section>

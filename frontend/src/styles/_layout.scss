@@ -1,3 +1,4 @@
 /* İki kolonlu panel yerleşimi. */
 .status i.ok{background:var(--teal);box-shadow:0 0 8px var(--teal)}
-.layout{display:grid;grid-template-columns:330px 1fr;gap:18px}
+/* Parametre kenar çubuğu kaldırıldı; yerleşim tek sütun. */
+.layout{display:block}

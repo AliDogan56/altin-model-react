@@ -11,7 +11,7 @@ export const predict = (model: ModelArtifact, features: FeatureMap, price: numbe
   const all = model.models.map(net => forward(x, net, model.yMean, model.yStd));
   const mean = model.horizons.map((_, j) => avg(all.map(p => p[j])));
   const err = model.residual80.map((r, j) => Math.max(r, std(all.map(p => p[j])) * 1.64) * BAND_SCALE);
-  return { features, price: +price, mean, err };
+  return { horizons: model.horizons, features, price: +price, mean, err };
 };
 
 /**
@@ -23,7 +23,7 @@ export const buildDailyPath = (
   model: ModelArtifact, forecast: Forecast, horizonDays: number, startDate: string | null = null,
 ): PathPoint[] => {
   const anchors = [{ day: 0, ret: 0, err: 0 },
-    ...model.horizons.map((day, j) => ({ day, ret: forecast.mean[j], err: forecast.err[j] }))];
+    ...forecast.horizons.map((day, j) => ({ day, ret: forecast.mean[j], err: forecast.err[j] }))];
   return Array.from({ length: horizonDays + 1 }, (_, day) => {
     const right = anchors.find(a => a.day >= day) || anchors.at(-1)!;
     const ri = anchors.indexOf(right);

@@ -15,14 +15,9 @@ async def upstream(call):
         raise HTTPException(502, f"Harici veri kaynağına ulaşılamadı: {error}") from error
 
 
-@router.get("/binance")
-async def binance_history() -> list:
-    return await upstream(market_data_service.binance_history())
-
-
-@router.get("/spot")
-async def binance_spot() -> dict:
-    return await upstream(market_data_service.binance_spot())
+@router.get("/xau")
+async def xau_history() -> dict:
+    return await upstream(market_data_service.xau_history())
 
 
 @router.get("/fred", response_class=Response)

@@ -221,7 +221,7 @@ await writeFile(join(root, 'dist/rehber/index.html'), hubHtml);
    Eskiden <div id="root"></div> boş gidiyordu: tarayıcıya h1 dahil hiçbir gövde
    ulaşmıyor, 31 rehbere giden iç linkler yalnız JS çalışınca oluşuyordu. */
 const homeFallback = `<main class="seo-prerender" data-seo-page="home">
-      <header><h1>Canlı Ons Altın Tahmin ve Senaryo Analiz Paneli</h1><p>Canlı ONS/XAUUSD ve PAXG/USDT fiyatları, reel faiz ve dolar endeksi gibi makro girdilerle beslenen 1 haftalık, 1 aylık, 3 aylık ve 6 aylık altın tahminleri tek panelde. Her tahmin güven bandıyla birlikte sunulur.</p><p>Tahmin ve eğitim referansı PAXG/USDT'dir; ONS/XAUUSD canlı karşılaştırma çizgisi olarak gösterilir. Bu platform eğitim ve araştırma amaçlıdır, yatırım tavsiyesi değildir.</p></header>
+      <header><h1>Canlı Ons Altın Tahmin ve Senaryo Analiz Paneli</h1><p>Canlı ONS/XAUUSD fiyatı, reel faiz ve dolar endeksi gibi makro girdilerle beslenen 1 haftalık, 1 aylık ve 3 aylık altın tahminleriyle birlikte sunulur.</p><p>Tahmin, eğitim ve hata ölçümü doğrudan XAU/USD günlük serisine dayanır. Bu platform eğitim ve araştırma amaçlıdır, yatırım tavsiyesi değildir.</p></header>
       <section><h2>Panel bölümleri</h2><p>Panelin her bölümü kendi sayfasından da açılabilir.</p>
         <ul>${features.map(feature => `<li><a href="/panel/${escapeHtml(feature.slug)}"><strong>${escapeHtml(feature.title)}</strong></a> — ${escapeHtml(feature.summary)}</li>`).join('\n        ')}</ul>
       </section>

@@ -31,7 +31,9 @@ export function indicators(candles: Candle[]): Indicators | null {
   const williams=hh===ll?-50:(hh-c[last])/(hh-ll)*-100;
 
   const tp=c.map((_,i)=>(h[i]+l[i]+c[i])/3);
-  const tpMean=sma(tp,20), dev=tp.slice(-20).reduce((s,v)=>s+Math.abs(v-tpMean),0)/20;
+  /* sma 20 gözlemden az veri varsa null döner; guard olmadan NaN yayılıyordu. */
+  const tpMean=sma(tp,20) ?? tp[last];
+  const dev=tp.slice(-20).reduce((s,v)=>s+Math.abs(v-tpMean),0)/20;
   const cci=dev?(tp[last]-tpMean)/(0.015*dev):0;
 
   const tr=[],plusDM=[],minusDM=[];
@@ -41,12 +43,14 @@ export function indicators(candles: Candle[]): Indicators | null {
     plusDM.push(up>down&&up>0?up:0); minusDM.push(down>up&&down>0?down:0);}
   const n=14, trS=wilder(tr,n), pS=wilder(plusDM,n), mS=wilder(minusDM,n), dx=[];
   for(let i=n-1;i<tr.length;i++){
-    if(!trS[i]) continue;
-    const pdi=100*pS[i]/trS[i], mdi=100*mS[i]/trS[i], sum=pdi+mdi;
+    const trValue=trS[i], plus=pS[i], minus=mS[i];
+    if(!trValue||plus==null||minus==null) continue;
+    const pdi=100*plus/trValue, mdi=100*minus/trValue, sum=pdi+mdi;
     dx.push(sum?100*Math.abs(pdi-mdi)/sum:0);}
   const adx=dx.length>=n?dx.slice(-n).reduce((s,v)=>s+v,0)/n:null;
-  const pdiNow=trS[tr.length-1]?100*pS[tr.length-1]/trS[tr.length-1]:0;
-  const mdiNow=trS[tr.length-1]?100*mS[tr.length-1]/trS[tr.length-1]:0;
+  const lastTr=trS[tr.length-1], lastPlus=pS[tr.length-1], lastMinus=mS[tr.length-1];
+  const pdiNow=lastTr&&lastPlus!=null?100*lastPlus/lastTr:0;
+  const mdiNow=lastTr&&lastMinus!=null?100*lastMinus/lastTr:0;
 
   const atr=tr.slice(-14).reduce((s,v)=>s+v,0)/14, atrPct=atr/c[last]*100;
   const atrHist=[];
@@ -54,7 +58,7 @@ export function indicators(candles: Candle[]): Indicators | null {
   const atrMed=[...atrHist].sort((a,b)=>a-b)[Math.floor(atrHist.length/2)]||atrPct;
   const roc=c[last-12]?(c[last]/c[last-12]-1)*100:0;
 
-  const state=(text,tone)=>({text,tone});   // value döndürmüyor: yayılma sırasında gerçek değeri eziyordu
+  const state=(text:string,tone:string)=>({text,tone});   // value döndürmüyor: yayılma sırasında gerçek değeri eziyordu
   return {
     rows:[
       {name:'RSI (14)',value:rsi.toFixed(1),

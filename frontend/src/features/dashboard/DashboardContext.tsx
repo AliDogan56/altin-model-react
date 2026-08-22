@@ -1,14 +1,12 @@
 import { createContext, useContext, useMemo, type ReactNode } from 'react';
 import { model } from '../../data/artifact';
-import { IMPACT_NAMES } from '../../content/parameters';
+import { IMPACT_LABELS } from '../../content/parameters';
 import { indicators } from '../../domain/indicators';
 import { computeImpacts } from '../../domain/model/impacts';
 import { buildDailyPath, predict } from '../../domain/model/predict';
 import { buildLadder, computePivots } from '../../domain/pivots';
-import { buildForecastTable, buildScorecard } from '../../domain/scorecard';
 import { loanCosts, loanProjection } from '../../domain/loan';
 import { tradeZones } from '../../domain/tradeZones';
-import { useDailySnapshot } from './useDailySnapshot';
 import { useForecastModel } from './useForecastModel';
 import { useMarketData } from './useMarketData';
 import { usePanelSettings } from './usePanelSettings';
@@ -16,20 +14,20 @@ import { usePanelSettings } from './usePanelSettings';
 const useDashboardState = () => {
   const market = useMarketData();
   const settings = usePanelSettings();
-  const forecastModel = useForecastModel(market.live, market.lastClose, market.spot.price);
+  const forecastModel = useForecastModel(market.live, market.lastClose, market.harem.satis ?? market.lastClose ?? market.spot.price);
   const { features, forecast, values } = forecastModel;
-  useDailySnapshot(market.spot, market.harem, features);
 
   const impacts = useMemo(
-    () => computeImpacts(model, features, values.price, IMPACT_NAMES), [features, values.price]);
+    () => computeImpacts(model, features, values.price, IMPACT_LABELS, forecast, settings.horizonDays),
+    [features, values.price, forecast, settings.horizonDays]);
 
   const zones = useMemo(
-    () => tradeZones(forecast, values.price, features.gold_atr14_pct, settings.capital, settings.riskPct),
-    [forecast, values.price, features.gold_atr14_pct, settings.capital, settings.riskPct]);
+    () => tradeZones(forecast, values.price, features.gold_atr14_pct, settings.capital, settings.riskPct, settings.horizonDays),
+    [forecast, values.price, features.gold_atr14_pct, settings.capital, settings.riskPct, settings.horizonDays]);
 
-  const pivots = useMemo(() => computePivots(market.candles), [market.candles]);
+  const pivots = useMemo(() => computePivots(market.candles), [market.candles]);  // bugün = gerçek takvim günü
   const pivotLadder = useMemo(
-    () => buildLadder(pivots?.[settings.pivotPeriod] ?? null, settings.pivotMethod, +market.harem.satis || +market.spot.price || 0),
+    () => buildLadder(pivots?.[settings.pivotPeriod] ?? null, settings.pivotMethod, (market.harem.satis ?? market.spot.price ?? 0)),
     [pivots, settings.pivotPeriod, settings.pivotMethod, market.harem.satis, market.spot.price]);
 
   const tech = useMemo(() => indicators(market.candles), [market.candles]);
@@ -42,21 +40,20 @@ const useDashboardState = () => {
   /* Tablo, modelin yayınladığı ilk tahmine (model.latestDate) çapalıdır; o günkü girdilerle
      hesaplanır. Canlı girdilerle yeniden hesaplamak, geçmişi bugünün bilgisiyle tahmin etmek olurdu. */
   const originForecast = useMemo(() => predict(model, model.latest, model.latestPrice), []);
-  const forecastTable = useMemo(
-    () => buildForecastTable(model, originForecast, market.history, settings.horizonDays),
-    [originForecast, market.history, settings.horizonDays]);
-  const scorecard = useMemo(() => buildScorecard(forecastTable, model.latestPrice), [forecastTable]);
 
-  const loan = useMemo(() => loanProjection(model, forecast, settings.loanTerm), [forecast, settings.loanTerm]);
+  const loan = useMemo(() => loanProjection(forecast, settings.horizonDays), [forecast, settings.horizonDays]);
   const costs = useMemo(() => loanCosts({
-    amount: settings.loanAmount, ratePct: settings.loanRate, months: settings.loanTerm,
-    currentFx: +market.usdTry.satis || 0, futureFx: +settings.futureUsdTry || 0, scenarios: loan.scenarios,
-  }), [loan, settings.loanAmount, settings.loanRate, settings.loanTerm, market.usdTry.satis, settings.futureUsdTry]);
+    amount: settings.loanAmount, ratePct: settings.loanRate, days: loan.days,
+    currentFx: market.usdTry.satis ?? 0, futureFx: +settings.futureUsdTry || 0, scenarios: loan.scenarios,
+  }), [loan, settings.loanAmount, settings.loanRate, market.usdTry.satis, settings.futureUsdTry]);
 
-  return {
+  /* Değer her render'da yeniden kurulduğu için her canlı tick tüm paneli
+     yeniden çiziyordu (tick başına ~70 DOM mutasyonu ölçüldü). */
+  return useMemo(() => ({
     ...market, ...settings, ...forecastModel,
-    impacts, zones, pivots, pivotLadder, tech, dailyForecast, originForecast, forecastTable, scorecard, loan, costs,
-  };
+    impacts, zones, pivots, pivotLadder, tech, dailyForecast, originForecast, loan, costs,
+  }), [market, settings, forecastModel, impacts, zones, pivots, pivotLadder, tech,
+       dailyForecast, originForecast, loan, costs]);
 };
 
 export type DashboardState = ReturnType<typeof useDashboardState>;

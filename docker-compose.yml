@@ -45,13 +45,10 @@ services:
     restart: unless-stopped
     environment:
       APP_ENV: production
-      DATABASE_PATH: /data/gold_platform_production.sqlite3
       MODEL_DIR: /models
-      GATEWAY_URL: http://api-gateway:8000
       CORS_ORIGINS: http://api-gateway:8000
       AUTO_TRAIN: "true"
     volumes:
-      - gold-data:/data
       - gold-models:/models
     networks: [gold-network]
     healthcheck:

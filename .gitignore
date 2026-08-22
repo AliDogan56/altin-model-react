@@ -7,7 +7,7 @@ backend/models/active.json
 __pycache__/
 .pytest_cache/
 
-# Project exclude paths
-/backend/model-service/data/
+# Üretilmiş model ikilileri hariç, yeniden üretilebilir XAU/USD eğitim CSV'si sürümlenir.
+/backend/model-service/data/*
+!/backend/model-service/data/xauusd_training_5y.csv
 frontend/dist-local/
-

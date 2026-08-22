@@ -26,3 +26,7 @@
 }
 
 /* ---- Canlı ziynet kotasyon kartları ---- */
+
+/* Fiyat dönemin tüm seviyelerinin dışına çıktığında merdiven yanıltıcı olmasın. */
+.pivot-alert { margin:10px 0 0; padding:9px 11px; border:1px solid #6d5a2f; border-radius:9px;
+  background:#1d1a10; color:#d9c78d; font-size:11px; line-height:1.5; }

@@ -1,4 +1,5 @@
 import { Route, Routes, useParams } from 'react-router-dom';
+import ErrorBoundary from '../components/ErrorBoundary';
 import LegalModal from '../components/LegalModal';
 import ScrollToTop from './ScrollToTop';
 import { articleById } from '../content/articles';
@@ -11,7 +12,9 @@ import PanelHubPage from '../pages/PanelHubPage';
 
 /** Panel durumu yalnız panel sayfalarında kurulur; rehber sayfaları soket açmaz. */
 const Dashboard = ({ focus }: { focus?: string }) => (
-  <DashboardProvider><DashboardPage focus={focus}/></DashboardProvider>
+  <ErrorBoundary title="Panel yüklenemedi">
+    <DashboardProvider><DashboardPage focus={focus}/></DashboardProvider>
+  </ErrorBoundary>
 );
 
 const PanelFeatureRoute = () => {
@@ -30,6 +33,7 @@ function App() {
   return (
     <>
       <ScrollToTop/>
+      <ErrorBoundary>
       <Routes>
         <Route path="/rehber" element={<GuideHubPage/>}/>
         <Route path="/rehber/:id" element={<GuideRoute/>}/>
@@ -37,6 +41,7 @@ function App() {
         <Route path="/panel/:slug" element={<PanelFeatureRoute/>}/>
         <Route path="*" element={<Dashboard/>}/>
       </Routes>
+      </ErrorBoundary>
       <LegalModal/>
     </>
   );

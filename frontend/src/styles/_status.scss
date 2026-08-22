@@ -4,3 +4,16 @@ header p{color:var(--muted);font-size:14px;margin:0}
 .status b{color:var(--teal)}
 .status button{margin-top:5px;background:#162d44;border:1px solid var(--line);color:#edf5ff;border-radius:8px;padding:8px 10px;cursor:pointer}
 .status i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px;background:var(--gold)}
+
+/* Hata sınırı: bölüm çökse de sayfanın geri kalanı okunur kalsın. */
+.error-fallback { border:1px solid #6d3b3b; }
+.error-fallback h2 { margin:0 0 6px; font-size:15px; color:var(--red); }
+.error-fallback p { margin:0 0 12px; color:var(--muted); font-size:12px; max-width:60ch; }
+.error-actions { display:flex; gap:8px; flex-wrap:wrap; }
+.error-actions button { min-height:38px; padding:0 14px; border:1px solid var(--line); border-radius:9px;
+  background:#0d1d30; color:#dce9f6; font:inherit; font-size:12px; cursor:pointer; }
+.error-actions button.primary { border-color:#8e773d; background:#17304a; color:#fff; }
+.error-fallback details { margin-top:12px; color:var(--muted); font-size:11px; }
+.error-fallback pre { margin:6px 0 0; white-space:pre-wrap; word-break:break-word; }
+
+.bulletin-asof { margin-top:10px; color:var(--muted); font-size:10.5px; line-height:1.55; }

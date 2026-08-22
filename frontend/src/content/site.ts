@@ -2,7 +2,7 @@ export const SITE_NAME = 'Ons Altın Analiz';
 export const SITE_URL = 'https://onsaltinanaliz.com';
 export const LINKEDIN_URL = 'https://www.linkedin.com/in/ali-do%C4%9Fan-86b57721a/';
 
-export const HORIZON_LABELS: Record<number, string> = { 7: '1 Hafta', 30: '1 Ay', 90: '3 Ay', 180: '6 Ay' };
+export const HORIZON_LABELS: Record<number, string> = { 7: '1 Hafta', 14: '2 Hafta', 30: '1 Ay' };
 
 export const LEGAL_SECTIONS: [string, string][] = [
   ['Yatırım danışmanlığı değildir', 'Bu sitede yer alan bilgi, yorum, tahmin ve tavsiyeler yatırım danışmanlığı kapsamında değildir. Yatırım danışmanlığı hizmeti, yetkili kuruluşlar tarafından kişilerin risk ve getiri tercihleri dikkate alınarak kişiye özel sunulur. Buradaki içerik geneldir; mali durumunuza ve risk-getiri tercihlerinize uygun olmayabilir.'],
@@ -23,7 +23,7 @@ export const fold = (value: string) => value.toLocaleLowerCase('tr').replace(/[\
 export const PAGE_META = {
   home: {
     title: 'Canlı Ons Altın Tahmini ve Analiz Paneli',
-    description: 'Canlı ons altın fiyatını izleyin; yapay zekâ destekli 1, 3 ve 6 aylık tahminleri, piyasa parametrelerini ve altın analiz rehberlerini inceleyin.',
+    description: 'Canlı ons altın fiyatını izleyin; bağımsız 7, 14 ve 30 günlük tahminleri, piyasa parametrelerini ve altın analiz rehberlerini inceleyin.',
     path: '/',
   },
   guides: {

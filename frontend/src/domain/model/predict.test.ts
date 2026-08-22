@@ -75,10 +75,12 @@ describe('buildDailyPath', () => {
 });
 
 describe('computeFeatures', () => {
-  it('türetilmiş alanları yeniden hesaplar', () => {
-    const f = computeFeatures(model, { DGS10: 5 }, {});
-    expect(f.yield_curve_10y_2y).toBe(5 - 3);
-    expect(f.breakeven_inflation_10y).toBe(5 - 2);
+  /* Türetilmiş alan kalmadı: yield_curve_10y_2y artık macroFeatures'tan hazır
+     geliyor, breakeven_inflation_10y ise XAU feature setinden tamamen çıktı. */
+  it('canlı değerin üzerine form değerini yazar', () => {
+    const f = computeFeatures(model, { yield_curve_10y_2y: 1.4 }, { yield_curve_10y_2y: 0.9, vix_level: 17 });
+    expect(f.yield_curve_10y_2y).toBe(1.4);
+    expect(f.vix_level).toBe(17);
   });
 
   it('yüzde alanlarını orana çevirir, price alanını yok sayar', () => {

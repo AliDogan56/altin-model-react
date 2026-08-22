@@ -1,43 +1,76 @@
 import { featureBy } from '../../content/panel';
-import { pct, tryMoney } from '../../lib/format';
+import { buildZiynetRows, pureGramPrice, type ZiynetRow } from '../../domain/ziynet';
+import { pct, pct2, tryMoney } from '../../lib/format';
 import { ZIYNET } from '../../services/realtime/harem';
 import { useDashboard } from '../dashboard/DashboardContext';
 
+const ORDER = ZIYNET.map(([code]) => code);
+
+const grams = (value: number) => `${value.toFixed(3).replace(/\.?0+$/, '').replace('.', ',')} gr`;
+
+function Tile({ row }: { row: ZiynetRow }) {
+  return (
+    <article className="quote" key={row.code}>
+      <header>
+        <span className="quote-name">{row.label}</span>
+        <em className="quote-content">{grams(row.pureGrams)} saf altın</em>
+      </header>
+
+      <strong key={row.satis} className={`quote-price tick-${row.dir || 'flat'}`}>{tryMoney(row.satis)}</strong>
+      <div className="quote-line">
+        <span>Alış <b>{tryMoney(row.alis)}</b></span>
+        <span>Makas <b>{tryMoney(row.satis - row.alis)}</b> ({pct2(row.spreadPct)})</span>
+      </div>
+
+      {row.rawValue != null && row.premium != null && <div className="quote-breakdown">
+        <div><span>Ham altın değeri</span><b>{tryMoney(row.rawValue)}</b></div>
+        <div><span>İşçilik + satıcı payı</span>
+          <b className={row.premium >= 0 ? 'warn' : 'positive'}>
+            {row.premium >= 0 ? '+' : '−'}{pct2(Math.abs(row.premium))}</b></div>
+        <div className="premium-bar">
+          <i style={{ width: `${Math.min(100, Math.max(1, Math.abs(row.premium) * 100 / 0.06 * 100))}%` }}/>
+        </div>
+      </div>}
+
+      {row.change != null && <p className="quote-change">
+        Önceki kapanışa göre <b className={row.change >= 0 ? 'positive' : 'negative'}>
+          {row.change >= 0 ? '▲' : '▼'} {pct(Math.abs(row.change))}</b></p>}
+    </article>
+  );
+}
+
 function ZiynetSection() {
-  const { ziynet, zones } = useDashboard();
-  const { band } = zones;
+  const { ziynet, harem, usdTry } = useDashboard();
+  const ons = harem.satis ?? 0;
+  const kur = usdTry.satis ?? 0;
+  const rows = buildZiynetRows(ziynet, ons, kur, ORDER);
+  const gramPrice = pureGramPrice(ons, kur);
+  const missingChange = rows.filter(row => row.change == null).length;
+
   return (
     <section id="feature-ziynet" className="panel block gram-block" aria-labelledby="gram-title">
-    <div className="gram-head">
-    <h2 id="gram-title">{featureBy("feature-ziynet").title}</h2>
-    <small>Canlı piyasa kotasyonu; işçilik ve satıcı marjı fiyatın içindedir. Yüzde, önceki kapanışa göre satış fiyatındaki değişimdir.</small></div>
-    <div className="gram-grid">
-    {ZIYNET.filter(([code])=>ziynet[code]).map(([code,label])=>{
-    const q=ziynet[code];
-    /* Harem'in kapanis alanı bazı üründe bozuk geliyor: Yeni Ata gün
-    zirvesindeyken önceki kapanışı aralığın %65 üstünde bildiriyor ve
-    -%2,1 çıkıyor; neredeyse aynı ürün olan Tam altın ise +%2,3.
-    Aşağı boşlukla açılış normaldir (kapanış aralığın altında kalır),
-    kapanışın aralığın belirgin üstünde olması ise tutarsızlık işaretidir. */
-    const band=q.high-q.low;
-    const trusted=q.prev>0&&band>0&&q.prev>=q.low-1.5*band&&q.prev<=q.high+0.25*band;
-    const change=trusted?q.satis/q.prev-1:0;
-    const range=q.high-q.low;
-    const at=range>0?Math.min(100,Math.max(0,(q.satis-q.low)/range*100)):50;
-    return <article className={`quote ${trusted?(change>=0?'up':'down'):'flat'}`} key={code}>
-    <header><span>{label}</span>
-    {trusted&&<b className={change>=0?'positive':'negative'}>{change>=0?'▲':'▼'} {pct(Math.abs(change))}</b>}
-    </header>
-    <strong key={q.satis} className={`tick-${q.dir||'flat'}`}>{tryMoney(q.satis)}</strong>
-    <small>Alış {tryMoney(q.alis)} · Makas {tryMoney(q.satis-q.alis)}</small>
-    {range>0&&<div className="quote-range" title={`Gün aralığı ${tryMoney(q.low)} – ${tryMoney(q.high)}`}>
-    <i style={{left:`${at}%`}}/>
-    <u>{tryMoney(q.low)}</u><em>{tryMoney(q.high)}</em>
-    </div>}
-    </article>;
-    })}
-    </div>
-    <p className="gram-note">Bu fiyatlar ons ve kurdan nasıl türer: <a href="/rehber/gram-altin-fiyati-nasil-belirlenir">Gram altın fiyatı nasıl belirlenir?</a> · <a href="/rehber/ceyrek-altin-kac-gram">Çeyrek altın kaç gram?</a> · <a href="/rehber/altin-makasi-nedir">Alış-satış makası nedir?</a></p>
+      <div className="gram-head">
+        <div>
+          <h2 id="gram-title">{featureBy('feature-ziynet').title}</h2>
+          <small>Her ürünün fiyatı, içindeki saf altının değeri ve üzerine binen işçilik-marj payı.
+            Fiyatlar canlı piyasa kotasyonudur.</small>
+        </div>
+        {gramPrice != null && <div className="gram-basis">
+          <span>1 gram saf altın</span><b>{tryMoney(gramPrice)}</b>
+          <small>canlı ons × USD/TL ÷ 31,1035</small>
+        </div>}
+      </div>
+
+      <div className="gram-grid">{rows.map(row => <Tile key={row.code} row={row}/>)}</div>
+
+      <p className="gram-note">
+        {gramPrice == null && <b>Kur akışı beklendiği için ham değer ve işçilik payı hesaplanamıyor. </b>}
+        {missingChange > 0 && `${missingChange} üründe günlük değişim gösterilmiyor; kaynağın bildirdiği önceki kapanış gün aralığıyla bağdaşmıyor. `}
+        Bu fiyatlar ons ve kurdan nasıl türer:{' '}
+        <a href="/rehber/gram-altin-fiyati-nasil-belirlenir">Gram altın fiyatı nasıl belirlenir?</a> ·{' '}
+        <a href="/rehber/ceyrek-altin-kac-gram">Çeyrek altın kaç gram?</a> ·{' '}
+        <a href="/rehber/altin-makasi-nedir">Alış-satış makası nedir?</a>
+      </p>
     </section>
   );
 }

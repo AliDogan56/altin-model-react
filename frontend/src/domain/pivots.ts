@@ -11,8 +11,28 @@ const isoWeek = (date: string): string => {
   return d.toISOString().slice(0, 10);
 };
 
-/** Son *tamamlanan* dönemin yüksek/düşük/kapanışı; içinde bulunulan dönem atlanır. */
-const lastCompletePeriod = (candles: Candle[], key: (date: string) => string) => {
+const addDays = (date: string, days: number): string => {
+  const d = new Date(`${date}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().slice(0, 10);
+};
+
+/** Hafta cuma kapanışıyla biter; cumartesiden itibaren tamamlanmış sayılır. */
+const weekIsComplete = (weekStart: string, today: string) => today >= addDays(weekStart, 5);
+const monthIsComplete = (monthId: string, today: string) => monthId < today.slice(0, 7);
+
+/**
+ * Son *tamamlanan* dönemin yüksek/düşük/kapanışı.
+ *
+ * Önceden koşulsuzca sondan bir önceki grup alınıyordu: cuma kapanışı gelmiş olsa
+ * bile içinde bulunulan hafta "devam ediyor" sayıldığı için seviyeler bir hafta
+ * bayat kalıyordu. 22 Ağustos cumartesi ölçüldüğünde kart 10–14 Ağustos haftasını
+ * kullanıyor, altın o günden beri %5 yükseldiği için R3 dahil tüm seviyeler fiyatın
+ * altında kalıyordu.
+ */
+const lastCompletePeriod = (
+  candles: Candle[], key: (date: string) => string, isComplete: (id: string) => boolean,
+) => {
   const groups = new Map<string, { h: number; l: number; c: number }>();
   candles.forEach(candle => {
     const id = key(candle.date);
@@ -20,8 +40,8 @@ const lastCompletePeriod = (candles: Candle[], key: (date: string) => string) =>
     if (!g) groups.set(id, { h: candle.h, l: candle.l, c: candle.c });
     else { g.h = Math.max(g.h, candle.h); g.l = Math.min(g.l, candle.l); g.c = candle.c; }
   });
-  const ids = [...groups.keys()].sort();
-  return ids.length < 2 ? null : { id: ids[ids.length - 2], ...groups.get(ids[ids.length - 2])! };
+  const id = [...groups.keys()].sort().filter(isComplete).at(-1);
+  return id ? { id, ...groups.get(id)! } : null;
 };
 
 const levelsOf = (bar: { h: number; l: number; c: number }) => {
@@ -39,10 +59,12 @@ const levelsOf = (bar: { h: number; l: number; c: number }) => {
  * kümelerinden farklı olarak deterministiktir; ikisi çakışırsa seviye güçlü demektir.
  * Günlük pivot 90-180 günlük grafikte çok dar kaldığı için haftalık ve aylık kullanılır.
  */
-export const computePivots = (candles: Candle[]): Pivots | null => {
+export const computePivots = (
+  candles: Candle[], today: string = new Date().toISOString().slice(0, 10),
+): Pivots | null => {
   if (candles.length < 40) return null;
-  const weekly = lastCompletePeriod(candles, isoWeek);
-  const monthly = lastCompletePeriod(candles, date => date.slice(0, 7));
+  const weekly = lastCompletePeriod(candles, isoWeek, id => weekIsComplete(id, today));
+  const monthly = lastCompletePeriod(candles, date => date.slice(0, 7), id => monthIsComplete(id, today));
   return {
     weekly: weekly && { ...levelsOf(weekly), id: weekly.id },
     monthly: monthly && { ...levelsOf(monthly), id: monthly.id },

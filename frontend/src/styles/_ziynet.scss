@@ -1,11 +1,41 @@
-/* Ziynet fiyat bölümü. */
-.gram-block .gram-head { display:flex; flex-direction:column; gap:5px; margin-bottom:12px; }
-.gram-block .gram-head h2 { margin:0; }
-.gram-block .gram-head small { color:var(--muted); font-size:11px; line-height:1.5; }
-.gram-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:9px; }
-.gram-grid > div { background:#141f2e; border:1px solid var(--line); border-radius:10px; padding:10px 12px; display:flex; flex-direction:column; gap:4px; }
-.gram-grid span { color:var(--muted); font-size:10.5px; }
-.gram-grid b { font-size:16px; font-variant-numeric:tabular-nums; }
-.gram-note { color:var(--muted); font-size:11px; margin-top:11px; line-height:1.6; }
-.gram-note a { color:var(--gold); }
-/* Rehber sayfası tipografisi */
+/* Ziynet kartları: kaynağın bozuk `dusuk`/`kapanis` alanları yerine her üründe
+   her zaman güvenilir olan alış/satış ve ürünün saf altın içeriği üzerine kurulu. */
+.gram-block { padding:14px; }
+.gram-head { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:14px; }
+.gram-head h2 { margin:0 0 5px; font-size:15px; }
+.gram-head small { color:var(--muted); font-size:11px; line-height:1.6; display:block; max-width:62ch; }
+.gram-basis { flex:0 0 auto; text-align:right; padding:9px 13px; border:1px solid var(--line);
+  border-radius:10px; background:#0b1929; }
+.gram-basis span { display:block; color:var(--muted); font-size:9.5px; text-transform:uppercase; letter-spacing:.07em; }
+.gram-basis b { display:block; margin:3px 0 2px; color:var(--gold); font-size:16px; font-variant-numeric:tabular-nums; }
+.gram-basis small { color:#6d8299; font-size:9.5px; }
+
+.gram-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:12px; }
+.quote { padding:13px; border:1px solid var(--line); border-radius:12px; background:#0b1826; }
+.quote header { display:flex; align-items:baseline; justify-content:space-between; gap:8px; }
+.quote-name { color:#e7f0f9; font-size:12px; font-weight:800; }
+.quote-content { color:var(--muted); font-size:10px; font-style:normal; white-space:nowrap; }
+.quote-price { display:block; margin:8px 0 6px; font-size:21px; font-weight:800;
+  font-variant-numeric:tabular-nums; color:#fff; transition:color .35s ease; }
+.quote-price.tick-up { color:var(--teal); }
+.quote-price.tick-down { color:var(--red); }
+.quote-line { display:flex; justify-content:space-between; gap:10px; color:var(--muted); font-size:10.5px; }
+.quote-line b { color:#cfdcea; font-variant-numeric:tabular-nums; }
+
+.quote-breakdown { margin-top:11px; padding-top:10px; border-top:1px solid #1b3249; }
+.quote-breakdown > div { display:flex; justify-content:space-between; gap:10px; font-size:10.5px; color:var(--muted); }
+.quote-breakdown > div + div { margin-top:4px; }
+.quote-breakdown b { color:#cfdcea; font-variant-numeric:tabular-nums; }
+.quote-breakdown b.warn { color:var(--gold); }
+.quote-breakdown b.positive { color:var(--teal); }
+.premium-bar { display:block; margin-top:7px; height:4px; border-radius:3px; background:#132436; overflow:hidden; }
+.premium-bar i { display:block; height:100%; border-radius:3px; background:var(--gold); }
+
+.quote-change { margin:9px 0 0; color:var(--muted); font-size:10.5px; }
+.gram-note { margin:14px 0 0; color:var(--muted); font-size:11px; line-height:1.7; }
+.gram-note a { color:#9fd8ff; }
+
+@media (max-width:650px) {
+  .gram-grid { grid-template-columns:1fr; }
+  .gram-basis { text-align:left; }
+}

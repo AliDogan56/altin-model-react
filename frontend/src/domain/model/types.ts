@@ -2,6 +2,7 @@
 export type ModelNetwork = { w1: number[][]; b1: number[]; w2: number[][]; b2: number[]; w3: number[][]; b3: number[] };
 
 export type ModelArtifact = {
+  fallback?: boolean;
   features: string[];
   horizons: number[];
   xMean: number[]; xStd: number[];
@@ -20,10 +21,13 @@ export type ModelArtifact = {
 export type FeatureMap = Record<string, number>;
 
 export type Forecast = {
+  horizons: number[];
   features: FeatureMap;
   price: number;
   mean: number[];
   err: number[];
+  /** Sunucu modelinin ufuk -> parametre -> marjinal getiri etkisi. */
+  featureEffects?: Record<string, FeatureMap>;
 };
 
 export type PathPoint = {

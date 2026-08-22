@@ -42,15 +42,10 @@
   .status button { margin:0; min-height:40px; }
   .live-price { width:100%; min-width:0; padding:12px 14px; }
   .live-price strong { font-size:30px; }
-  .layout { display:block; }
-  .layout:not(.wide-chart) > .controls { display:block; margin-bottom:10px; }
-  .controls { padding:14px; max-height:none; position:static; }
   .group label { grid-template-columns:1fr 110px; min-height:44px; }
   .group input,.risk input { min-height:42px; font-size:16px; }
   .content { gap:10px; grid-template-columns:minmax(0,1fr); }
   .content > * { min-width:0; max-width:100%; }
-  .parameter-toggle-bar { margin:0 0 10px; }
-  .parameter-toggle-bar button { width:100%; min-height:46px; font-size:12px; }
   .panel { border-radius:14px; box-shadow:0 8px 22px #02071266; }
   .block { padding:13px; }
 .loan-break-even { margin:0; }
@@ -77,18 +72,9 @@
   .chart-block { padding:12px 2px 10px; overflow:hidden; }
   .chart-wrap { margin-top:3px; }
   .chart-canvas { height:clamp(400px,68vh,560px); }
-  .zoom-controls { justify-content:space-between; overflow:visible; padding:0 7px; margin:8px 0 0; }
-  .zoom-controls span { flex:1; }
-  .zoom-controls button { min-width:40px; min-height:40px; font-size:14px; }
   /* Sıfırla mobilde gizliydi; 6 kata yakınlaştırdıktan sonra geri dönmek için
      "−"ye beş kez basmak gerekiyordu. Artık yalnız simgesi görünüyor. */
-  .zoom-controls .zoom-reset em { display:none; }
-  .zoom-controls .zoom-reset { padding:0; }
   .chart-legend { justify-content:flex-start; padding:0 9px; gap:9px 12px; }
-  .daily-table { margin:12px 8px 0; }
-  .daily-table summary { min-height:44px; display:flex; align-items:center; }
-  .daily-table .table-scroll { max-height:55vh; }
-  .daily-table table { min-width:650px; }
   .cards.three { grid-template-columns:1fr; }
   .card { grid-template-columns:1fr auto; align-items:center; gap:4px 10px; padding:13px; }
   .card > span,.card small { grid-column:1; }

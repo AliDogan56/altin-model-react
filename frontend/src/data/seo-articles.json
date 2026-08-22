@@ -73,21 +73,21 @@
     "heading": "Günlük değişim yüzdesi hangi ana göre hesaplanır",
     "paragraphs": [
      "Yüzde değişim, referans aldığınız başlangıç anına göre değişir. Kimi kaynak önceki günün kapanışını, kimi UTC gece yarısını, kimi de son 24 saati baz alır. Aynı anda iki farklı sitede farklı yüzdeler görmenizin en yaygın sebebi budur.",
-     "Bu paneldeki değişim, PAXG/USDT çiftinin 24 saatlik istatistiğinden gelir. Kripto piyasası kesintisiz işlediği için burada gün kavramı kayan bir penceredir; geleneksel bir kapanış saati yoktur. Karşılaştırma yaparken hangi referansa baktığınızı bilmek, yüzdenin kendisinden daha önemlidir."
+     "Bu paneldeki değişim günlük XAU/USD kapanışına göre hesaplanır. Canlı Harem ONS kotasyonu alış ve satış değerlerini gösterirken modelin tarihsel serisi tek ve tutarlı bir XAU/USD kaynağından gelir."
     ]
    },
    {
     "heading": "Neden iki farklı ons fiyatı görüyorsunuz",
     "paragraphs": [
-     "Panelde hem ONS/XAUUSD hem PAXG/USDT çizgisi var. Birincisi geleneksel spot altın piyasasının fiyatı, ikincisi altına dayalı bir tokenin kripto borsasındaki fiyatı. İkisi aynı varlığı takip eder ama arz-talep dinamikleri farklı olduğu için aralarında sürekli küçük bir baz farkı bulunur.",
-     "Bu fark normalde birkaç dolar seviyesindedir. Belirgin şekilde açıldığında bu, genelde bir tarafta likidite sıkışması olduğunu gösterir; fiyatın yanlış olduğunu değil. Modelin eğitim ve hata ölçümü tek bir referansa, PAXG/USDT'ye bağlıdır; ONS çizgisi yalnızca karşılaştırma amaçlıdır."
+     "Panelde tarihsel XAU/USD kapanış serisi ile canlı ONS alış-satış kotasyonu birlikte kullanılır.",
+     "Modelin eğitim, tahmin ve hata ölçümü aynı XAU/USD referansına bağlıdır; böylece farklı varlıkların baz farkı modele karışmaz."
     ]
    },
    {
     "heading": "Hafta sonu ve tatil saatlerinde fiyat",
     "paragraphs": [
-     "Spot altın piyasası cuma akşamı kapanır, pazar akşamı açılır. Bu aralıkta ONS fiyatı donar; ekranda gördüğünüz sayı cuma kapanışının tekrarıdır. Kripto tarafı ise kesintisiz işlediği için PAXG fiyatı hafta sonu boyunca hareket etmeye devam eder.",
-     "Bu yüzden pazartesi sabahı iki fiyat arasında beklenmedik bir fark görebilirsiniz. Bu bir hata değil, spot piyasanın kapalı olduğu sürede biriken haber akışının yalnız kripto tarafında fiyatlanmasının sonucudur."
+     "Spot altın piyasası cuma akşamı kapanır, pazar akşamı açılır. Bu aralıkta ONS fiyatı son kotasyonda kalabilir.",
+     "Pazartesi açılışında hafta sonu biriken haber akışı tek seferde fiyatlanabileceği için boşluk görülebilir."
     ]
    }
   ],
@@ -95,8 +95,8 @@
    "Ons, 31,1035 gramlık troy ons birimidir; normal 1000 gramlık kilogram ölçüsüyle karıştırılmamalıdır.",
    "Alış-satış farkı işlem maliyetinizdir; seans çakışmalarında daralır, veri öncesi açılır.",
    "Yüzde değişimin referans anı kaynaktan kaynağa değişir, karşılaştırmadan önce kontrol edin.",
-   "PAXG ile ONS arasındaki küçük baz farkı normaldir, likidite farkından doğar.",
-   "Hafta sonu spot piyasa kapalıdır; ONS donar, PAXG hareket etmeye devam eder."
+   "Tarihsel ve canlı seri aynı XAU/USD referansını kullanır.",
+   "Hafta sonu spot piyasa kapalı olduğundan son kotasyon sabit kalabilir."
   ],
   "faq": [
    {
@@ -105,7 +105,7 @@
    },
    {
     "q": "Canlı fiyat kaç saniyede bir güncellenir?",
-    "a": "Bu paneldeki PAXG/USDT fiyatı websocket üzerinden anlık akar; ONS/XAUUSD verisi ise saniyeler mertebesinde tazelenir. Gecikme normal şartlarda bir saniyenin altındadır."
+    "a": "Paneldeki ONS/XAUUSD kotasyonu canlı bağlantı üzerinden saniyeler mertebesinde tazelenir."
    },
    {
     "q": "Alış fiyatından mı satış fiyatından mı bakmalıyım?",
@@ -218,60 +218,6 @@
    {
     "q": "Külçe altın mı gram altın mı daha ucuz?",
     "a": "Büyük gramajlı külçelerde gram başına makas ve işçilik payı genelde daha düşüktür."
-   }
-  ],
-  "category": "Temel Kavramlar"
- },
- {
-  "id": "paxg-usdt-nedir",
-  "keyword": "PAXG USDT nedir",
-  "title": "PAXG/USDT ile Ons Altın Neden Farklılaşır?",
-  "seoTitle": "PAXG USDT Nedir",
-  "updated": "2026-08-18",
-  "summary": "PAXG fiziki altına dayalı bir tokendir. Ons altınla arasındaki baz farkının neden oluştuğunu ve ne zaman açıldığını açıklıyoruz.",
-  "intro": "PAXG, her biri bir troy ons saf altınla teminatlandırılmış bir dijital varlıktır. Kripto borsalarında dolar karşılığı işlem görür ve fiyatı ons altını yakından takip eder. Bu panelin eğitim ve hata ölçümü referansı PAXG/USDT çiftidir.",
-  "sections": [
-   {
-    "heading": "Neden referans olarak seçildi",
-    "paragraphs": [
-     "PAXG kesintisiz işlem görür; hafta sonu ve tatil boşluğu yoktur. Model günlük kapanış serisiyle çalıştığı için, boşluksuz bir seri eğitimde ve hata ölçümünde çok daha temiz sonuç verir.",
-     "Ayrıca borsa verisi herkese açık, doğrulanabilir ve tek bir kaynaktan alınabilir. Spot altın piyasasında fiyat sağlayıcıya göre küçük farklar oluşur; bu, geçmişe dönük tutarlı bir eğitim serisi kurmayı zorlaştırır."
-    ]
-   },
-   {
-    "heading": "Baz farkı nereden doğar",
-    "paragraphs": [
-     "PAXG ile ons altın aynı varlığı temsil etse de farklı piyasalarda işlem görür. Kripto tarafındaki arz-talep dengesi, tokenin ihraç ve itfa mekanizmasının hızı ve borsa likiditesi küçük bir fark yaratır.",
-     "Bu fark normal koşullarda birkaç dolar seviyesindedir. Kripto piyasasında genel bir stres yaşandığında ya da spot piyasa kapalıyken önemli bir haber çıktığında fark geçici olarak açılabilir. Kapanma eğilimi güçlüdür; arbitraj mekanizması çalışır."
-    ]
-   },
-   {
-    "heading": "Kullanırken dikkat edilmesi gerekenler",
-    "paragraphs": [
-     "PAXG bir kripto varlıktır; borsa riski, saklama riski ve ihraççı riski taşır. Fiziki altın sahibi olmakla aynı şey değildir. Panel bunu yalnızca fiyat referansı olarak kullanır, bir yatırım aracı olarak önermez.",
-     "Hafta sonu PAXG fiyatı hareket ederken ONS fiyatı sabit kalır. Pazartesi açılışında ONS'un PAXG'ye doğru sıçraması sık görülür ve bu bir uyumsuzluk değil, kapalı piyasanın açılışta bilgiyi tek seferde fiyatlamasıdır."
-    ]
-   }
-  ],
-  "points": [
-   "PAXG her biri bir troy ons altınla teminatlı bir tokendir.",
-   "Kesintisiz işlem gördüğü için boşluksuz günlük seri sağlar; eğitim için avantajlıdır.",
-   "Ons ile arasındaki birkaç dolarlık baz farkı normaldir.",
-   "Fark stres dönemlerinde açılır, arbitrajla kapanma eğilimindedir.",
-   "Kripto varlık olarak borsa, saklama ve ihraççı riski taşır."
-  ],
-  "faq": [
-   {
-    "q": "PAXG fiziki altın mıdır?",
-    "a": "Fiziki altınla teminatlandırılmış dijital bir alacaktır; kasadaki külçenin kendisine doğrudan sahip olmak değildir."
-   },
-   {
-    "q": "Neden ONS yerine PAXG ile eğitiliyor?",
-    "a": "Boşluksuz, tek kaynaklı ve doğrulanabilir günlük seri sağladığı için. Hata ölçümünün tutarlı olması buna bağlıdır."
-   },
-   {
-    "q": "Baz farkı ne kadar açılabilir?",
-    "a": "Normalde birkaç dolar. Piyasa stresinde geçici olarak daha fazla açılabilir ancak kalıcı olmaz."
    }
   ],
   "category": "Temel Kavramlar"
@@ -1180,7 +1126,7 @@
    {
     "heading": "Bu paneldeki yöntem",
     "paragraphs": [
-     "Panel 7, 30, 90 ve 180 günlük ufuklar için ayrı tahmin üretir. Girdiler altının kendi teknik göstergeleri ile ABD tahvil faizleri, reel faiz, dolar endeksi, enflasyon beklentisi ve oynaklık göstergelerinden oluşur. Eğitim ve hata ölçümü tek referansa, PAXG/USDT'ye bağlıdır.",
+     "Panel 7, 14 ve 30 günlük bağımsız tahminler üretir. Girdiler altının kısa dönem teknik göstergeleri ile ABD tahvil faizleri, reel faiz, dolar endeksi, enflasyon beklentisi ve oynaklık göstergelerinden oluşur. Eğitim ve hata ölçümü doğrudan XAU/USD serisine bağlıdır.",
      "Her tahmin bir aralıkla birlikte sunulur ve modelin geçmiş performansı panelde açıkça gösterilir. Amaç kesin bir fiyat söylemek değil, hangi senaryonun hangi koşullarda daha olası olduğunu görünür kılmaktır."
     ]
    }
@@ -1199,7 +1145,7 @@
    },
    {
     "q": "Hangi vade en anlamlı?",
-    "a": "Kısa vadeler istatistiksel olarak daha çok bağımsız gözlem içerdiği için daha ölçülebilirdir. 180 günlük tahminler geniş bantlarla ve temkinle okunmalıdır."
+    "a": "Kısa vadeler istatistiksel olarak daha çok bağımsız gözlem içerdiği için daha ölçülebilirdir. Panel bu nedenle 7, 14 ve 30 günlük bağımsız modeller kullanır; 30 günlük sonuç daha geniş bantla okunmalıdır."
    },
    {
     "q": "Yapay zekâ tahmini klasik yöntemlerden üstün mü?",
@@ -1634,8 +1580,8 @@
     "a": "Uzun vadeli saklamada düşük işçilikli fiziki ürün ya da düşük ücretli dijital enstrüman öne çıkar; belirleyici olan toplam maliyettir."
    },
    {
-    "q": "PAXG dijital altın mıdır?",
-    "a": "Evet, fiziki altınla teminatlandırılmış bir tokendir ve karşı taraf riski taşır."
+    "q": "Dijital altında karşı taraf riski var mıdır?",
+    "a": "Evet. Ürünü çıkaran kuruluşun, saklama altyapısının ve işlem platformunun riski dikkate alınmalıdır."
    }
   ],
   "category": "Alım Satım Rehberi"
@@ -1646,21 +1592,21 @@
   "title": "Hafta Sonu Altın Fiyatı Neden Farklı?",
   "seoTitle": "Hafta Sonu Altın Fiyatı",
   "updated": "2026-08-18",
-  "summary": "Spot piyasa hafta sonu kapalıdır. Donan ONS fiyatı, hareket eden PAXG ve pazartesi açılış boşluğunun sebebi.",
+  "summary": "Spot piyasa hafta sonu kapalıdır. Sabit kalan ONS kotasyonu ve pazartesi açılış boşluğunun sebebi.",
   "intro": "Hafta sonu altın fiyatlarında gördüğünüz tuhaflıkların çoğu tek bir gerçekten kaynaklanır: uluslararası spot altın piyasası cuma akşamı kapanır ve pazar akşamına kadar açılmaz.",
   "sections": [
    {
     "heading": "Kapalı piyasada fiyat ne olur",
     "paragraphs": [
      "Spot piyasa kapalıyken ONS/XAUUSD fiyatı donar. Ekranda gördüğünüz sayı yeni bir işlemin sonucu değil, cuma kapanışının tekrarıdır. Bu dönemde fiyatın 'değişmemesi' piyasanın sakin olduğu anlamına gelmez; sadece işlem yapılmıyordur.",
-     "Kripto tarafı ise kesintisiz çalışır. PAXG/USDT hafta sonu boyunca haber akışına tepki vermeye devam eder. Bu yüzden hafta sonu iki fiyat arasındaki fark normalden fazla açılabilir."
+     "Bu sırada yeni spot işlem oluşmadığı için son kotasyon güncel piyasa uzlaşısı olarak yorumlanmamalıdır."
     ]
    },
    {
     "heading": "Pazartesi açılış boşluğu",
     "paragraphs": [
      "Spot piyasa pazar akşamı açıldığında, kapalı olduğu sürede biriken tüm bilgiyi tek seferde fiyatlar. Sonuç genelde bir açılış boşluğudur; fiyat cuma kapanışından belirgin şekilde farklı bir seviyeden başlar.",
-     "Bu boşluğun yönü çoğu zaman PAXG'nin hafta sonu boyunca gittiği yöndedir. Kesintisiz işlem gören piyasa, kapalı piyasa için bir ön gösterge işlevi görür."
+     "Boşluğun yönü hafta sonu boyunca biriken makroekonomik ve jeopolitik haber akışına bağlıdır."
     ]
    },
    {
@@ -1674,7 +1620,7 @@
   "points": [
    "Spot altın piyasası cuma akşamı kapanır, pazar akşamı açılır.",
    "Kapalıyken ONS fiyatı donar; gördüğünüz sayı cuma kapanışıdır.",
-   "PAXG kesintisiz işlediği için hafta sonu hareket etmeye devam eder.",
+   "Kapalı piyasanın son kotasyonu yeni bir işlem fiyatı değildir.",
    "Pazartesi açılış boşluğu biriken bilginin tek seferde fiyatlanmasıdır.",
    "Hafta sonu kuyumcu makası risk primi nedeniyle genişler."
   ],
@@ -1689,7 +1635,7 @@
    },
    {
     "q": "Hangi fiyat gerçek?",
-    "a": "İkisi de gerçektir; ONS kapalı piyasanın son fiyatı, PAXG açık piyasanın güncel fiyatıdır."
+    "a": "Piyasa kapalıyken gösterilen ONS değeri son işlem kotasyonudur; yeni bir piyasa fiyatı oluşmamıştır."
    }
   ],
   "category": "Alım Satım Rehberi"

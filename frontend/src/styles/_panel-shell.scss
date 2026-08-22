@@ -1,15 +1,10 @@
 /* Panel kabuğu, geniş grafik modu ve bölüm sırası. */
 .chart-head { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; }
 .app { max-width:none; width:100%; padding:10px 12px; }
-.layout.wide-chart { grid-template-columns:1fr; }
-.layout.wide-chart > .controls { display:none; }
 .layout,.content,.chart-block,.chart-wrap { width:100%; min-width:0; }
-.content > .loan-break-even { order:1; }
-.content > .chart-block { order:2; }
-.content > .cards { order:3; }
-.content > .impact-block { order:4; }
-.content > .bottom { order:5; }
-.content > .seo-hub { order:6; }
-.content > footer { order:7; }
+/* Bölüm sırası eskiden CSS `order` ile kuruluyordu; App.tsx monoliti bölümleri
+   başka bir sırada basıyordu. DashboardPage artık istenen sırayı doğrudan DOM'a
+   yazıyor, dolayısıyla bu kurallar yalnız sırayı bozuyordu: grafik ve tahmin
+   kartları "Ayrıntılar" bölümünün altına düşüyordu. Sıra = DOM sırası. */
 .skip-link { position:absolute; left:-9999px; padding:10px 14px; border-radius:9px; background:var(--gold); color:#0a1420; font-weight:800; font-size:12px; }
 .skip-link:focus { left:10px; top:10px; z-index:40; }

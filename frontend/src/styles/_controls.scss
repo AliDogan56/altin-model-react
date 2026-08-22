@@ -1,9 +1,5 @@
-/* Parametre formu. */
+/* Panel yüzeyi ve bölüm başlıkları. */
+.block h2{font-size:17px;margin:0}
 .panel{background:linear-gradient(145deg,#102339ef,#0a1727ef);border:1px solid var(--line);border-radius:18px;box-shadow:0 16px 44px #02071288}
-.controls{padding:18px;position:sticky;top:12px;max-height:calc(100vh - 24px);overflow:auto}
-.controls h2,.block h2{font-size:17px;margin:0}
-.group{border-top:1px solid var(--line);padding-top:14px;margin-top:15px}
-.group h3,.bulletins h3{font-size:11px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin:0 0 8px}
-.group label{display:grid;grid-template-columns:1fr 95px;gap:10px;align-items:center;margin:9px 0;font-size:12px;color:#cad8e8}
-.group input,.risk input{width:100%;background:#071321;border:1px solid #2b4967;border-radius:8px;padding:7px;color:#edf5ff;text-align:right}
+.bulletins h3{font-size:11px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin:0 0 8px}
 .primary{width:100%;border:0;border-radius:9px;padding:10px;margin-top:14px;background:var(--gold);color:#1c1605;font-weight:800;cursor:pointer}

@@ -30,14 +30,6 @@ function liveDataApi() {
       server.middlewares.use(async (req, res, next) => {
         try {
           const url = new URL(req.url, 'http://localhost');
-          if (url.pathname === '/api/binance') {
-            const body = await cached('binance', 60_000, () => fetchText('https://api.binance.com/api/v3/klines?symbol=PAXGUSDT&interval=1d&limit=260'));
-            return send(res, 200, 'application/json; charset=utf-8', body);
-          }
-          if (url.pathname === '/api/spot') {
-            const body = await cached('spot', 5_000, () => fetchText('https://api.binance.com/api/v3/ticker/24hr?symbol=PAXGUSDT'));
-            return send(res, 200, 'application/json; charset=utf-8', body);
-          }
           if (url.pathname === '/api/fred') {
             const id = (url.searchParams.get('id') || '').replace(/[^A-Z0-9_]/g, '');
             if (!id) return send(res, 400, 'application/json', '{"error":"series id gerekli"}');
@@ -65,7 +57,7 @@ export default defineConfig(({mode})=>{
   return {
     plugins: [react(), liveDataApi()],
     // Yalnız domain katmanı test edilir: saf fonksiyonlar, React ve DOM gerektirmez.
-    test: { environment: 'node', include: ['src/domain/**/*.test.ts', 'src/lib/**/*.test.ts', 'src/app/**/*.test.ts'] },
+    test: { environment: 'node', include: ['src/domain/**/*.test.ts', 'src/lib/**/*.test.ts', 'src/app/**/*.test.ts', 'src/services/**/*.test.ts'] },
     server: { host: '0.0.0.0', port: 5173, strictPort: true, proxy: {'/backend':{target:env.VITE_BACKEND_PROXY||'http://127.0.0.1:8000',changeOrigin:true,rewrite:path=>path.replace(/^\/backend/,'')}} },
     preview: { host: '0.0.0.0', port: 4173, strictPort: true }
   };

@@ -1,253 +1,279 @@
-# CLAUDE.md — Proje İndeksi
+# Proje İndeksi
 
-Ons altın (PAXG/USDT referanslı) fiyat tahmin platformu. React SPA + 3 FastAPI mikroservisi + SQLite.
-Prod: https://onsaltinanaliz.com (Docker Compose + host Nginx, sunucu 5.75.148.203).
+Ons altın (XAU/USD) tahmin ve analiz platformu. React SPA + API Gateway + Market Service +
+Model Service. Tahmin, eğitim ve hata ölçümü **yalnız XAU/USD günlük serisine** dayanır;
+PAXG/Binance kaynağı ve eski fallback modeli projeden tamamen çıkarılmıştır.
 
-## Repo haritası
+Son tarama: 2026-08-21. Aşağıdaki her sayı o gün ölçüldü.
+
+## Akış
 
 ```
-frontend/                 React 19 + TS + SCSS + Vite (katmanlı: lib/domain/services/features/pages/app)
-backend/api-gateway/      Tek dışa açık giriş, saf reverse-proxy (port 8000)
-backend/market-service/   Binance / FRED / Google News veri kaynağı (port 8001)
-backend/model-service/    MLP tahmin + otomatik toplama & yeniden eğitim (port 8002)
-backend/data/             gold_platform_<env>.sqlite3 (üç servis ortak dosya, tablolar servis bazlı ayrık)
-deploy/nginx/             Sunucudaki host Nginx (TLS terminasyonu + 127.0.0.1:8080'e proxy)
-docker-compose.yml        Prod orkestrasyonu
-start-profile.sh          Lokal: 3 servis + vite (profil: localhost|development|production)
+Tarayıcı → web nginx (:8080) → api-gateway (:8000) → market-service (:8001)
+                                                   → model-service  (:8002)
+Canlı ONS / USDTRY / ziynet: tarayıcıdan doğrudan Harem Socket.IO
 ```
-Kök `api-gateway/`, `market-service/`, `model-service/` klasörleri yalnızca eski `.venv` kalıntısıdır; kod `backend/` altındadır.
 
-## Mimari akış
+Gateway yalnız yol adına bakar: `/market-service/*` ve `/model-service/*` öneki soyulup
+ilgili servise iletilir (`api-gateway/app/services/router_service.py`).
 
-`Tarayıcı → (nginx :443) → web konteyneri nginx :80 → api-gateway :8000 → market|model-service`
+### Uçlar
 
-- Gateway URL'i **servis adıyla başlamak zorunda**: `/market-service/...`, `/model-service/...`
-  (`app/services/router_service.py`). Gateway öneki soyar, kalanı upstream'e iletir.
-- Market ve model servisleri lokalde yalnız `127.0.0.1` dinler; Docker'da ise ağ izolasyonuyla korunur.
-- Hata standardizasyonu: `GatewayException` → `{timestamp,status,code,message,path,service,trace_id}` + `X-Trace-Id` (`app/exceptions/`).
-- Her istek `gateway_request_logs` tablosuna yazılır (`app/database.py`).
-
-## Backend uçları
-
-| Uç | Servis | Not |
+| Servis | Uç | Not |
 |---|---|---|
-| `GET /health`, `GET /gateway/routes` | api-gateway | proxy'den önce tanımlı |
-| `GET /v1/market/binance` | market | PAXGUSDT 1d, 260 mum, TTL 60 sn |
-| `GET /v1/market/spot` | market | 24hr ticker, TTL 5 sn |
-| `GET /v1/market/fred?id=` | market | CSV; `curl_cffi` ile `impersonate="chrome"` (FRED bot engeli), TTL 900 sn |
-| `GET /v1/market/news` | market | Google News RSS, TTL 600 sn |
-| `POST /v1/predict` | model | `{price, features}` → mean/error/prices |
-| `POST /v1/snapshots` | model | günlük gözlem kaydı + tahmin hedefleri açar, vadesi dolanları kapatır |
-| `GET /v1/learning/metrics` | model | horizon bazlı MAE/RMSE/yön/bant |
-| `POST /v1/training/run` | model | MLPRegressor yeniden eğitimi |
-| `GET /v1/learning/job` | model | otomatik job durumu |
+| market | `GET /v1/market/xau` | xaus.com günlük OHLC, 300 sn önbellek |
+| market | `GET /v1/market/fred?id=` | FRED CSV (curl_cffi ile), 900 sn önbellek, son 800 gün |
+| market | `GET /v1/market/news` | Google News RSS, 10 başlık |
+| model | `GET /v1/features/latest` | **tahmin girdilerinin tek kaynağı** — eğitim setiyle birebir |
+| model | `POST /v1/predict` | `{price, features}` → getiri, bant, `feature_effects`, `weights`, `confident`, `clipped_features` |
+| model | `GET /v1/learning/metrics` | aktif model + katman dışı metrikler |
+| model | `POST /v1/training/run` | elle yeniden eğitim |
+| model | `GET /v1/learning/job` | saatlik job durumu |
 
-## Model / öğrenme döngüsü
+Model-service'te SQLite yok; `db.py` ve `gold_repository.py` kaldırıldı. Snapshot/observations
+tabloları ve `/v1/snapshots` ucu artık mevcut değil.
 
-- **Etiket kaynağı daima Binance PAXGUSDT.** Harem ONS yalnız gösterim; fark `observations.basis_usd`'de tutulur, eğitimde kullanılmaz.
-- Horizon: 7 / 30 / 90 / 180 gün. 31 özellik (teknik + FRED makro).
-- Soğuk başlangıç: `model-service/data/initial_model.json` (5 ağlı ensemble, saf NumPy ileri besleme, `residual80 × BAND_SCALE=0.81` bant).
-- Eğitilmiş model: `MLPRegressor(28,12)`, `%80` eğitim / kalan doğrulama, `residual70` bant. Artefakt `MODEL_DIR/<version>.joblib` + `active.json` işaretçisi, `model_versions` tablosuna kayıt.
-- Otomatik job (`automatic_learning_service.py`): saatlik (`COLLECTION_INTERVAL_SECONDS=3600`), veriyi **gateway üzerinden** çeker, snapshot yazar, `AUTO_TRAIN` ve `rows ≥ 80` + `yeni satır ≥ 20` koşulunda eğitir.
-- Şema: `observations` (PK trade_date) · `prediction_runs` (UNIQUE base_date) · `prediction_targets` (run+horizon) · `model_versions`.
+## XAU/USD veri seti
+
+Üretici: `backend/model-service/app/services/xau_dataset_service.py` →
+`backend/model-service/data/xauusd_training_5y.csv`
+
+- Kaynak: `https://xaus.com/api/v1/history` (günlük yüksek/düşük/kapanış)
+- FRED serileri her satırın tarihinde bilinen son değerle (`as_of`) eşlenir — sızıntı yok
+- Kullanılan FRED serileri: DGS10, DGS2, DFII10, DTWEXBGS, DCOILWTICO, VIXCLS, CPILFESL
+- **19 özellik**: 8 teknik (getiri 1/5/20g, 50g ortalamadan sapma, merkezlenmiş RSI, ATR,
+  20g oynaklık, 60g zirveden düşüş) + 11 makro (reel faiz 5/20g, dolar 5/20g, breakeven 20g,
+  getiri eğrisi, VIX seviye + 5g, çekirdek TÜFE yıllık, petrol 5/20g)
+- **Hedefler**: 7, 14 ve 30 takvim günü sonrasının ilk işlem günündeki getirisi
+- Henüz vadesi dolmamış hedefler boş bırakılır; ilgili ufkun eğitiminde o satır atlanır
+- Güncel dosya: **1197 satır**, 2021-11-16 → 2026-08-21
+
+## Eğitim ve yeniden öğrenme
+
+`backend/model-service/app/services/trainer.py`
+
+- Her ufuk **bağımsız** eğitilir; ortak ağ yok
+- Ağ: `MLPRegressor(hidden_layer_sizes=(8, 4), activation="tanh", solver="lbfgs", alpha=0.08)`
+- 3 tohumlu (17/42/91) topluluk, tahmin ortalaması
+- **Purge'lü genişleyen walk-forward**: katlar %55/%70/%85'te başlar, eğitim penceresi
+  `start - horizon` ile kesilir → kat sınırında hedef örtüşmesi temizlenir
+- Ölçekleme **yalnız ilgili eğitim katından** hesaplanır
+- **Ağırlık kısma**: `weight` = katman dışı tahminin regresyon eğimi, [0, 1]'e kırpılmış
+  (merkezlenmiş toplamlarla; ddof karışıklığı yok). Bu ağırlıkla **servis edilen** tahmin
+  sıfır-getiri bazını yenemezse ağırlık sıfırlanır ve o ufuk fiilen "tahmin yok" der
+- Belirsizlik bandı: ağırlıklı katman dışı artığın **80. yüzdeliği**, tahmin anında
+  güncel/eğitim oynaklık oranıyla (0,75–2,0 arası kırpılı) ölçeklenir
+- Otomatik job veri setini saatlik tazeler; en az `RETRAIN_EVERY_NEW_ROWS` (varsayılan 5)
+  yeni satır oluşunca yeniden eğitir ve `RETRAIN_MINIMUM_ROWS`'u (300) uygular
+- **Artefakt `MODEL_DIR` volume'una** yazılır, yanına `active.json` işaretçisi konur ve
+  en yeni `KEEP_ARTIFACTS` (5) tanesi saklanır. İmaja gömülen `data/xauusd_model.joblib`
+  yalnız volume boşken kullanılan yedektir
+- Yüklenen artefaktın `features`/`horizons` listesi koddakiyle birebir doğrulanır;
+  uymayan artefakt yüklenmez ve `/v1/learning/job` içinde `rejected_artifacts` olarak raporlanır
+- Docker imajı build sırasında sürümlenen CSV'den yedek modeli üretir
+
+### Aktif modelin karnesi (`xauusd-mlp-20260821T164355Z`)
+
+| Ufuk | Etiketli satır | OOF satır | MAE | Yön | Sıfır bazına karşı beceri | Ağırlık |
+|---|---|---|---|---|---|---|
+| 7g | 1192 | 537 | %2,32 | %63,5 | %3,9 | 0,92 |
+| 14g | 1187 | 535 | %3,17 | %62,4 | %1,9 | **0,13** |
+| 30g | 1175 | 529 | %4,22 | %70,1 | %26,3 | 0,64 |
+
+Bant genişlikleri (error80): %3,5 / %4,9 / %6,8. 14 günlük ufkun ağırlığı çok düşük —
+model orada neredeyse hiçbir şey söylemiyor, bu bilinçli ve doğru davranış.
 
 ## Frontend
 
-2026-08-20'de tek dosyalık `src/App.tsx` (880 satır) katmanlı mimariye taşındı.
+`frontend/src/` — katmanlı, App.tsx monoliti kaldırıldı. En büyük dosya 383 satır.
 
 ```
-src/lib/          saf yardımcılar (math, format, series, meta) — hiçbir şeye bağımlı değil
-src/domain/       iş kuralları; React ve ağ yok, model artefaktı parametre olarak alınır
-    model/        network · predict · features · impacts · types
-    market/       goldFeatures (mumlardan) · macroFeatures (FRED serilerinden)
-    indicators/ · pivots · supportResistance · scorecard · loan · tradeZones
-src/services/     ağ katmanı; config · http · api/{market,model} · realtime/{binance,harem}
-src/content/      metin ve veri tek kaynağı: articles · panel · parameters · site · types
-src/features/     ekran bölümleri (dashboard, chart, ziynet, scorecard, indicators,
-                  pivots, impact, loan, bulletin, zones, parameters, forecast, guides)
-src/components/   paylaşılan parçalar: SiteNav · SiteFooter · Collapsible · LegalModal · TickSparkline
-src/pages/        DashboardPage · ArticlePage · GuideHubPage · PanelHubPage
-src/app/          App (React Router) · routes · ScrollToTop · useDocumentMeta
-src/styles/       32 SCSS modülü + index.scss
+lib/        saf yardımcılar (math, format, meta) — React bilmez
+domain/     saf iş mantığı; model.json'u import etmez, artefakt parametre olarak geçer
+services/   ağ katmanı (api/, realtime/, config, http)
+features/   ekran bölümleri + veri kancaları (parametre formu kaldırıldı)
+components/ paylaşılan bileşenler (SiteNav, SiteFooter, Collapsible, LegalModal)
+pages/      DashboardPage, ArticlePage, GuideHubPage, PanelHubPage
+app/        App (react-router), routes.ts, ScrollToTop, useDocumentMeta
+content/    tek kaynak: makaleler, panel özellikleri, parametre grupları, site metinleri
 ```
 
-Bağımlılık yönü tek yönlüdür: `app → pages → features → services/content → domain → lib`.
-Domain katmanı `model.json`'ı **import etmez**; artefakt `src/data/artifact.ts` üzerinden
-parametre olarak geçirilir, bu sayede küçük sahte modellerle test edilebilir.
+- **Rota**: react-router. `app/routes.ts` uygulama yollarını, `scripts/site-routes.mjs`
+  sitemap'i **aynı JSON'lardan** üretir; `routes.test.ts` ikisinin birebir aynı olduğunu doğrular
+- **Durum**: `DashboardProvider` (Context). Alt kancalar `useMarketData`, `useForecastModel`,
+  `usePanelSettings`, `useFeatureFocus`. Panel durumu yalnız panel rotalarında kurulur —
+  rehber sayfaları soket açmaz
+- **Tahmin**: `useForecastModel` 700 ms debounce ile `/v1/predict` çağırır. `modelStatus`
+  üç değerli: `loading` / `live` / `fallback`. Backend yoksa `data/model.json` devreye girer;
+  bu artefakt **nötr** (tüm ağırlıklar sıfır, `fallback: true`) — eski bir ağı çalıştırmaz,
+  yalnız geçmiş seriyi ve ölçekleri taşır
+- **Yanıt doğrulama**: `services/api/model.ts` → `parseForecast` sunucu yanıtını arayüze
+  sokmadan doğrular; bozuk şema `null` döner ve `fallback`'e geçilir
+- **Hata sınırı**: her panel bölümü kendi `ErrorBoundary`'si içinde. Sınır yokken bozuk bir
+  tahmin yanıtı `forecast.horizons.indexOf(...)` üzerinden fırlıyor ve **tüm sayfayı boşaltıyordu**
+- **Ufuk çözümleme**: `domain/model/horizon.ts` → `resolveHorizon`. `Math.max(0, indexOf(x))`
+  kalıbı, listede olmayan ufukta sessizce ilk ufka düşüyordu; artık en yakınına düşer ve
+  tam eşleşme olup olmadığını bildirir. Katkı kartı ve işlem bölgeleri seçili ufku izler
+- **Tazeleme**: `useMarketData` 10 dakikada bir ve sekme yeniden görünür olduğunda
+  (5 dakikadan uzun gizli kaldıysa) yeniden çeker; üst üste binen çağrılar engellenir
+- **Grafik** (`features/chart/`): viewBox ölçülen piksel kutusuyla birebir (ResizeObserver,
+  saran div üzerinde — `<svg>` için ResizeObserver tetiklenmiyor), ölçek tam 1. Sürükle-kaydır,
+  iki parmakla ve tekerlekle yakınlaştırma, dokun-sabitle ipucu, ok tuşlarıyla gezinme,
+  `<title>/<desc>` + `aria-describedby` ile destek-direnç açıklamasına bağlı
+- **Grafik kartı acemi okuyucuya göre sadeleştirildi**: 16 kontrol → 7 (ne kadar geçmiş /
+  kaç gün sonrası), 1200px → 1028px. Destek ve direnç artık ince çizgi değil **etiketli
+  bölge** (`sr-zone`, fiyatın ±%0,35'i) ve grafiğin altında sade dille anlatılıyor.
+  Kaldırılanlar: işlem bölgeleri katmanı (kendi bölümünde duruyor), momentum eşiği,
+  zoom düğmeleri, dört efsane anahtarı, günlük tahmin tablosu (karne bölümü bunu
+  çok daha geniş örneklemle yapıyor). Modelin geçmiş beklentisi tek bir anahtarla,
+  varsayılan kapalı
+- **Bölüm sırası DOM sırasıdır.** `_panel-shell.scss` içinde App.tsx monolitinden kalma
+  `.content > .chart-block { order:2 }` / `.cards { order:3 }` gibi kurallar vardı; `.content`
+  grid olduğu için bunlar DOM sırasını eziyor, **grafik ve tahmin kartları "Ayrıntılar"ın
+  altına düşüyordu**. Kurallar kaldırıldı — sıra artık yalnız `DashboardPage`'ten gelir.
+  Sıra değişikliği doğrulanırken DOM sırası yetmez, ekrandaki dikey konum ölçülmelidir
+- **Parametre formu kaldırıldı.** Sol kenar çubuğu (19 girdinin elle düzenlendiği form) ve
+  "Parametreleri göster" düğmesi silindi; girdiler artık `/v1/features/latest`'ten geldiği
+  için elle değiştirme anlamını yitirmişti. Yerleşim tek sütun (`.layout{display:block}`),
+  `wideChart` durumu ve `resetFields` de kalktı
+- **Destek/direnç tek kaynaktan gelir.** Grafik ve pivot kartı aynı `buildLadder` çıktısını
+  kullanır; grafikte yedi seviye de kendi adıyla çizilir (S1–S3, P, R1–R3) ve S1/R1 belirgin,
+  S3/R3 soluk gösterilir. Önceden grafik `domain/supportResistance.ts` ile fiyatın fiilen
+  döndüğü noktaları kümeliyordu; iki bölüm farklı sayı gösterip kafa karıştırıyordu
+  (grafik DESTEK $4.529 ↔ pivot P $4.525 gibi). O modül kaldırıldı. Pivot dönemi/yöntemi
+  Ayrıntılar'daki karttan seçilir, grafik anında onu izler; varsayılan **haftalık + Fibonacci**.
+  Seviyeler `computeDomain`'in **kırpılabilir** kümesinde: S3/R3 fiyattan %10 uzakta
+  olabildiği için çekirdek kümeye konsa fiyat çizgisi düz bir hat olurdu (ölçüm: geçmiş
+  çizgisi yüksekliğin %64'ünü kullanıyor)
+- **Pivot dönemi takvimle belirlenir** (`domain/pivots.ts`). `lastCompletePeriod` koşulsuzca
+  sondan bir önceki grubu alıyordu: cuma kapanışı gelmiş olsa bile içinde bulunulan hafta
+  "devam ediyor" sayılıyor, seviyeler bir hafta bayat kalıyordu. 22 Ağustos cumartesi kart
+  10–14 Ağustos haftasını kullanıyor, altın o günden beri %5 yükseldiği için **R3 dahil tüm
+  seviyeler fiyatın altında** kalıyordu. Artık hafta cumartesiden, ay da bittiğinde
+  tamamlanmış sayılır; `computePivots(candles, today)` ile test edilebilir
+- **Dikey ölçek** (`domain/chart/scale.ts`): belirsizlik bandı çekirdek serileri ezmesin diye
+  pay sınırıyla dahil edilir (çekirdek en az %50), taşan uç kırpılır
+- Panel sırası — **ana görünüm**: tahmin kartları, ziynet, grafik (özet kartlar ve
+  destek-direnç açıklaması grafiğin **altında**); **ayrıntılar**: isabet karnesi, teknik
+  göstergeler, pivot, parametre katkısı, TL getirisi, bülten, işlem bölgeleri
+  (hepsi `Collapsible` içinde)
+- **Vade her yerde `horizonDays`'e bağlı.** Tahmin kartları, grafik, parametre katkısı,
+  işlem bölgeleri ve TL getirisi aynı ufku gösterir. TL kartı 3/6/9 **ay** sunuyor ve
+  30 günlük tahmini `days/30` kadar üstel olarak uzatıyordu (9 ayda bant ±%32); artık
+  yalnız modelin ölçüldüğü 7/14/30 gün. Finansman maliyeti aylık girilir, gün sayısına
+  göre bileşik ölçeklenir; taksitli kredi (annüite) formülü kaldırıldı — tek dönemde
+  taksit yok. Getiri pozitif değilse başa baş oran **yoktur** (eskiden `%0,00` yazıyordu)
+- **İsabet karnesi Ayrıntılar sekmesinde** ve servisten gelir (`/v1/learning/metrics` →
+  `services/api/metrics.ts`). Kapalıyken en iyi vadenin isabetini özet olarak gösterir;
+  açıldığında vade başına üç sayı: ortalama yanılma, yönü bilme, basit kurala üstünlük.
+  Tarayıcı artefaktından üretiliyordu; artefakt nötr yedeğe dönünce (`fallback: true`)
+  koşul hiç sağlanmadı ve bölüm **hiçbir dağıtımda görünmedi**. Şimdi her ufuk için
+  katman dışı MAE, yön, naif kurala göre beceri ve gün sayısı listelenir
+- **Ziynet kartı kaynağın güvenilir alanları üzerine kuruludur** (`domain/ziynet.ts`).
+  Harem `dusuk` alanını çeyrek/yarım/tam altında ₺5–₺20 gibi imkânsız değerlerle,
+  `kapanis`i ise bayat veriyor; bunlar doğrulanınca (`domain/quotes.ts`) kart neredeyse
+  boş kalıyordu. Kart artık her üründe **her zaman** var olan üç şeyden konuşuyor:
+  alış, satış ve ürünün saf altın içeriği (`ZIYNET_SPECS`: gram × milyem). Bunlardan
+  **ham altın değeri** (canlı ons × USD/TL ÷ 31,1035 × saf gram) ve **işçilik + satıcı
+  payı** hesaplanır — ölçülen değerler gram %0,1, ziynet ürünleri %1–2. Gün aralığı ve
+  günlük yüzde yalnız kaynağın verisi doğrulanırsa ek bilgi olarak görünür
 
-- **Durum yönetimi:** `features/dashboard/DashboardContext.tsx`. Dört hook'tan oluşur —
-  `useMarketData` (REST + iki soket), `usePanelSettings` (yalnız görünüm tercihleri),
-  `useForecastModel` (parametre formu + tahmin), `useDailySnapshot`. Türetilmiş her değer
-  (impacts, pivotLadder, tech, scorecard, loan, zones) burada `useMemo` ile hesaplanır ve
-  bölümler prop almadan `useDashboard()` ile okur.
-- **Rotalar:** React Router. `src/app/routes.ts` ile `scripts/site-routes.mjs` aynı JSON'lardan
-  aynı yolları üretir; `routes.test.ts` ikisinin birebir eşit olduğunu doğrular — sayfa eklenip
-  sitemap'e (ya da tersi) yazılmaması artık testte patlar. Site içi bağlantılar `<Link>`;
-  `#` çıpaları ve `/sitemap.xml` düz `<a>` kaldı.
-- **Meta:** SPA gezinmesinde başlık/kanonik `useDocumentMeta` ile sayfaya göre güncellenir.
-  Öncesinde tek dosya olduğu için makaleden anasayfaya dönüldüğünde makale başlığı kalıyordu.
-- **Test:** 84 test, 13 dosya (`vitest`, node ortamı). Kapsam yalnız `domain/`, `lib/` ve
-  rota tablosu — kullanıcı kararıyla bileşen testi yazılmadı.
-  Çalıştırma: `node node_modules/vitest/vitest.mjs run` (`.bin/vitest` sarmalayıcısı bu Node
-  sürümünde çalışmıyor).
-- `API_BASE` şablonu: `.env.production` → `{origin}` (aynı origin, nginx proxy), `.env.localhost` → `http://{host}:8000`.
-- Canlı veri: Binance WS (`wss://stream.binance.com:9443/ws/paxgusdt@ticker`) + Harem socket.io (`wss://hrmsocketonly.haremaltin.com`, ONS ve USDTRY) — bunlar tarayıcıdan **doğrudan**, gateway'siz. Soketler yalnız panel rotalarında açılır; rehber sayfaları `DashboardProvider`'ı mount etmez.
-- Tahmin: `POST /model-service/v1/predict` (700 ms debounce); istek düşerse `src/data/model.json` ile tarayıcı içi ensemble fallback.
-- Günde bir kez `POST /model-service/v1/snapshots` (Europe/Istanbul günü, `useDailySnapshot` içinde `pending:` işaretiyle tekilleştirme).
-- SEO: `scripts/generate-seo-pages.mjs` build sonrası `src/data/seo-articles.json` ve
-  `panel-features.json`'dan `dist/rehber/<id>/`, `dist/panel/<slug>/`, iki dizin sayfası,
-  ön render edilmiş anasayfa ve 44 URL'lik sitemap üretir.
-### Grafik (`features/chart`)
+### Ufuk ağırlıkları
 
-2026-08-20'de ölçek ve etkileşim elden geçirildi.
+`/v1/predict` her ufuk için `weight` ve `confident` döner. Ağırlığı 0,2'nin altındaki ufukta
+ağın katkısı neredeyse tamamen kısılmıştır; çıktı "sıfıra yakın tahmin" değil **"görüş yok"**
+olarak sunulmalıdır. Bugünkü örnek: 7g %0,61 (ağırlık 0,92) · 14g %0,06 (**0,13**) · 30g %0,72
+(0,64) — ufuklar arası eğri bu yüzden monoton değil.
 
-- **viewBox = ölçülen piksel kutusu.** `useElementSize` saran `div`'i ölçer, SVG `viewBox`'ı
-  bire bir aynı yazılır; ölçek tam 1 olur. Öncesinde viewBox sabitti (1600×650 / 420×620):
-  masaüstünde ayrılan yüksekliğin **113px'i (%18)**, 651–720px arası genişliklerde
-  **219px (%33)** boş kalıyordu ve SVG içindeki 10px'lik yazı ekranda **7,6px** basılıyordu.
-  `ResizeObserver` tek dayanak değildir — `<svg>` üzerinde hiç tetiklenmediği ortamlar var
-  (ölçüldü); her render sonrası `useLayoutEffect` ölçümü ve `resize`/`orientationchange`
-  dinleyicileri de var.
-- **Tek kırılma noktası.** Dar yerleşim ölçülen genişlikten türer (`COMPACT_WIDTH = 650`);
-  `usePanelSettings`'teki `mobile` bayrağı kaldırıldı. Eskiden JS 720px'te, CSS 650px'te
-  ayrıldığı için arada kalan genişlikler bozuk çiziliyordu.
-- **Dikey ölçek** `domain/chart/scale.ts` içindedir (saf, testli). Belirsizlik bandı
-  çekirdek serilerin payını `MIN_CORE_SHARE` (0,5) altına düşürmeyecek kadar dahil edilir;
-  taşan uç kırpılır ve grafikte "bant uçları kırpıldı" notu çıkar. Tam değerler ipucunda
-  ve günlük tabloda durmaya devam eder.
-- **Zaman ekseni** artık tarih gösterir (`pickTimeTicks` + `dropNear`); ufuk çıpaları
-  geniş ekranda "13.09 · 1 Ay" biçiminde etiketlenir. Öncesinde eksende hiç tarih yoktu.
-- **Hareketler** `useChartGestures`: sürükleyerek kaydırma, iki parmakla yakınlaştırma,
-  Ctrl'süz tekerlek zoom'u, dokun-sabitle imleç (dokunmatikte parmak kalkınca ipucu
-  kayboluyordu). `touch-action: pan-y` — dikey sayfa kaydırma serbest kalır.
-  Sabitlenen ipucu parmağın altında kalmasın diye çizim alanının üstüne yerleşir.
-- Mobilde "Sıfırla" düğmesi geri geldi (yalnız simge); y etiketleri çizim alanının içine
-  alınarak sol kenar boşluğu 34px'ten 10px'e indi.
-- `model.latestDate` seçili geçmiş aralığında değilse karşılaştırma katmanı çizilemez;
-  efsanedeki düğme artık pasifleşir ve nedenini `title` ile söyler.
-- **İpucu köken katmanından ayrıldı.** Projeksiyon, efsane düğmesi kapalıyken de hesaplanır;
-  geçmiş bir güne gelince "gerçekleşen / o günkü tahmin / sapma" görünür. Öncesinde imleç
-  noktaları köken projeksiyonu ile aynı `i` değerini paylaşıyor, eşitlikte projeksiyon
-  kazanıyordu; bir geçmiş günün gerçek kapanışı ipucunda hiç görünmüyordu.
-- **Erişilebilirlik:** SVG odaklanabilir (`tabIndex`), `<title>`/`<desc>` ile özetlenir ve
-  `aria-describedby` ile günlük tabloya bağlıdır. Ok tuşları gün gün gezer (Shift ile hafta,
-  PageUp/Down ay, Home/End uç, Esc kapatır); seçilen nokta `aria-live` bölgesinden okunur.
-  Nokta görünür pencerenin dışındaysa pencere ona kayar.
-- **Günlük tablo** varsayılan olarak kapalı; açıldığında yalnız vadesi dolan günleri listeler,
-  "N günün tamamı" düğmesiyle tümü gelir. Başlık `origin-key` rengiyle işaretlidir — tablo
-  canlı tahmini değil, grafikteki kesikli mavi katmanı listeler. Mobilde bölüm yüksekliği
-  1423px'ten 1030px'e indi.
-- Ölü kontrol ve stiller temizlendi: her ekranda `display:none` olan `.wide-toggle` düğmesi
-  ve hiç kullanılmayan `.origin-band` kuralı kaldırıldı.
+### Parametre katkısı hakkında
 
-- SCSS eski `styles.scss` + `chart.scss` sırasını **birebir koruyacak şekilde** bölündü;
-  derlenmiş CSS bölme öncesiyle karakterine kadar aynı (yorumlar hariç doğrulandı).
-  `styles/index.scss` içindeki `@use` sırası bozulursa özgüllük çakışmaları değişir.
+`domain/model/impacts.ts` ve backend'in `feature_effects`'i **ablation** yapar: girdiyi kendi
+eğitim ortalamasına çekip çıktı farkını ölçer. Bu bir **model duyarlılığı** ölçüsüdür,
+nedensellik ya da "parametre ağırlığı" değildir — ağ doğrusal olmadığı için satırlar toplanmaz.
 
-## Deployment
+Kart ("Model Bu Tahmini Neden Verdi?") sade dille konuşur: etkiler **dolar** cinsinden,
+*yukarı itenler* / *aşağı çekenler* olarak ayrılmış, her satırda göstergenin ne işe yaradığı
+ve bugün sıra dışı olup olmadığı yazılı. Etiketler `content/parameters.ts` → `IMPACT_LABELS`
+içinde ve **19 girdinin tamamını** kapsar; eskiden 14'lük bir liste vardı ve en büyük etki
+(60 günlük zirveden düşüş) kartta hiç görünmüyordu. Dolar karşılığı 1$'ın altında kalan
+satırlar listelenmez ama toplamlara dahildir.
 
-- `docker-compose.yml`: 4 servis, `gold-data` + `gold-models` volume'ları, healthcheck zinciri (`web → api-gateway → market/model`).
-- Yalnız `web` port yayınlar: `127.0.0.1:8080:80`. Dışarıya açılış host Nginx üzerinden.
-- `frontend/nginx.conf` SPA'yı sunar ve `/market-service|/model-service` yollarını konteyner içi `api-gateway:8000`'e proxy'ler; `/rehber/` statik SEO sayfaları.
-- `deploy/nginx/onsaltinanaliz.com.conf` host tarafında: 80→443, `www`→apex, Let's Encrypt (`/var/www/certbot`), HSTS, `127.0.0.1:8080`'e proxy.
-- Prod deploy: sunucuda `docker compose up -d --build`.
+## SEO
 
-### Sunucu (2026-08-18 doğrulandı)
+- 30 rehber makalesi (`data/seo-articles.json`), 10 panel özelliği (`data/panel-features.json`)
+- `scripts/generate-seo-pages.mjs` build sonrası: 30 rehber + `/rehber` dizini + 10 panel
+  sayfası + `/panel` dizini + ön render edilmiş anasayfa + **43 URL'lik sitemap**
+- nginx `absolute_redirect off` + `/panel` ve `/rehber` için ayrı `location =` blokları
+  (protokol düşüren 301 sorunu bu yüzden çözüldü)
+- `/panel/<slug>` ile gelindiğinde ilgili bölüm açılır, yerleşim durulunca tek yumuşak
+  kaydırma yapılır ve kısa süre vurgulanır (`useFeatureFocus`)
 
-- Host `ali-dogan-services` @ `5.75.148.203`, repo `/opt/altin-model-react`, compose projesi `altin-model-react`.
-- 4 konteyner de `Up (healthy)`; dışa açık tek port `127.0.0.1:8080->80` (`web`).
-- Sistem Nginx (`www-data`, `/etc/nginx/conf.d/*.conf` ile site conf'u dahil ediliyor).
-- Kaynak: disk 38G / %10 dolu, RAM 3.8G (~2.9G available), **swap yok**.
-- Canlı durum: `environment=production`, `model_version=initial-2026-08-14`, otomatik job saatlik çalışıyor ve `last_error=null`.
-  `prediction_days=4`, `pending_targets=16` — 180 günlük horizon nedeniyle ilk yeniden eğitim (80 tam satır) için aylar gerekiyor.
+## Dağıtım
+
+- `docker-compose.yml`: api-gateway, market-service, model-service, web. Yalnız `web`
+  dışarı açık (`127.0.0.1:8080`), TLS host nginx'te (`deploy/nginx/onsaltinanaliz.com.conf`)
+- Model imajı proje kökünden build edilir (CSV'yi kopyalayabilmek için)
+- Sunucu ve deploy adımları: [[altin-model-deployment]] (hafıza)
+
+## Test
+
+```
+frontend: 13 dosya, 85 test (vitest: domain + lib + app/routes + services)
+backend : model-service 23 test (pytest)
+```
+
+Vitest bu Node sürümünde `.bin/vitest` sarmalayıcısıyla çalışmıyor:
+`node node_modules/vitest/vitest.mjs run` kullan.
+
+## Bilinen sorunlar ve temizlik borcu
+
+1. **Harem `kapanis` alanı güvenilmez.** Ziynet kartlarındaki günlük yüzde bundan hesaplanıyor
+   ve bayat kapanışla yanlış çıkabiliyor; mevcut asimetrik guard bazı ürünleri kaçırıyor.
+   Ayrıntı: [[altin-fred-parse-ve-harem-kapanis]]
+2. Rafa kaldırılan iş: "altını ne itti/çekti" sürücü panosu — [[surucu-panosu-rafta]]
+
+### 2026-08-21 frontend loop'unda kapatılanlar
+
+- **Bozuk `/v1/predict` yanıtı tüm sayfayı beyaza düşürüyordu** (deneyle doğrulandı: gövde
+  0 karakter). Artık `parseForecast` reddediyor ve bölüm bazlı `ErrorBoundary` var.
+- `services/config.ts` modül yüklenirken `window.location` okuyordu; tarayıcı dışı her
+  ortamda import anında patlıyordu. Adresler artık çağrı anında çözülür.
+- Backend'in `weights`/`confident` alanları kullanılmıyordu; ağırlığı 0,13 olan 14 günlük
+  ufuk gerçek tahmin gibi gösteriliyordu. Artık **"Görüş yok"** yazıyor.
+- Parametre katkısı ve işlem bölgeleri sabit 30 güne bağlıydı; kullanıcı 7 güne geçse bile
+  kart 30 günü anlatmaya devam ediyordu.
+- Varsayılan ufuk 14 idi — modelin görüş bildirmediği vade. 30 güne alındı.
+- Veriler yalnız sayfa açılışında çekiliyordu; gün boyu açık sekme bayat girdi gösteriyordu.
+- `strict: false` idi; `noImplicitAny` + `strictNullChecks` + `strictFunctionTypes` +
+  `noUnusedLocals` açıldı ve 81 gizli tip hatası giderildi (`vite.config.ts` kapsam dışı).
+- `LegalModal` `aria-modal` diyordu ama odak yönetimi yoktu: odak tuzağı ve kapanışta
+  çağıran öğeye geri dönüş eklendi.
+- Ölçüldü, kusur değil: canlı tick başına ~90 DOM mutasyonu var ama 12 saniyede **0 uzun
+  görev** — fiyat çizgisi, fiyat kartı ve ziynet kartları gerçekten güncelleniyor.
+
+### 2026-08-21 model-service loop'unda kapatılanlar
+
+- Tarayıcı model girdilerini kendi hesaplıyordu ve 19 alanın **10'u** eğitim setinden farklı
+  çıkıyordu (makro `*_5d` gözlem sayısıyla, `*_20d` yanlış çapa tarihiyle geriye bakıyordu).
+  Girdiler artık `/v1/features/latest`'ten gelir; tarayıcı FRED indirmez.
+  Bunun yan etkisi olarak `parseCsv`'nin boş FRED alanını 0 sayma hatası da ortadan kalktı
+  (kodun tamamı silindi: `lib/series.ts`, `domain/market/goldFeatures.ts`, `macroFeatures.ts`).
+- Yeniden eğitilen model kalıcı değildi: artefakt imajın içine yazılıyor, `MODEL_DIR` volume'u
+  hiç kullanılmıyor, `active.json` hiç üretilmiyordu. Her container restart'ında eğitim kayboluyordu.
+- Artefakt şeması doğrulanmıyordu; `RETRAIN_MINIMUM_ROWS` ölü konfigdi; `_load_dataset` eksik
+  sütunu bildirmiyordu; `train_model` yok sayılan parametreler taşıyordu; `training_rows`
+  anahtarı sabit `"7"` idi; ağırlıkta `cov(ddof=1)/var(ddof=0)` karışıktı; ufuk devre dışı
+  bırakma kararı ham beceriye bakarken rapor ağırlıklı beceriyi yazıyordu.
+- Ölü dosyalar silindi: `app/schemas.py`, `data/initial_model.json` (86 KB),
+  `data/gold_model_localhost.sqlite3`. `on_event` yerine `lifespan` kullanılıyor.
 
 ## Komutlar
 
 ```bash
-./start-profile.sh localhost          # 3 servis + vite dev
-pnpm --dir frontend typecheck
-pnpm --dir frontend test              # 84 test (domain + lib + rota tablosu)
-pnpm --dir frontend build:production
-backend/<servis>/.venv/bin/python -m pytest backend/<servis>/tests
+backend/model-service/.venv/bin/python backend/model-service/scripts/build_xau_dataset.py
+backend/model-service/.venv/bin/python -c "from app.services.trainer import train_model; print(train_model())"
+backend/model-service/.venv/bin/python -m pytest backend/model-service/tests
+backend/model-service/.venv/bin/python backend/model-service/scripts/export_frontend_fallback.py
+cd frontend && node node_modules/vitest/vitest.mjs run
 docker compose up -d --build
 ```
-
-## Model durumu
-
-Üretimde **eski model** çalışıyor (`initial-2026-08-14`, `frontend/src/data/model.json`
-üzerinden 5 ağlı ensemble). 2026-08-18'de yazılan yeni hat (sürüklenme çapası +
-purge'lü CV + beceri ağırlıklı düzeltme) kullanıcı kararıyla geri alındı;
-`model-rework-20260818` dalında commit `31f446f` olarak duruyor.
-Geri getirmek için: `git cherry-pick 31f446f`.
-
-Eski model hakkında ölçülen ve hâlâ geçerli olan bulgular (2026-08-18):
-
-- **Yön hatası:** 10Y reel faiz (`DFII10`) −3sd→+3sd taramasında 180g tahmini
-  +14.6% → +27.5% *artıyor*. Ekonomik olarak ters. `DTWEXBGS`, `VIXCLS` ve TÜFE
-  serilerinin işaretleri de ters.
-- **Sabit terim baskın:** 31 özellik aynı anda ±1sd oynatıldığında (2000 senaryo)
-  180g çıktısı [+4.5%, +42.5%] — **hiçbir senaryoda düşüş yok**. 30g'de parametre
-  kaynaklı sapma sd=1.28p, modelin kendi bandı ±6.89p.
-- **Azami ayı senaryosu** → 180g **+46.2%**, bandın alt ucu +22.6%.
-- **Metrikler yanıltıcı:** eğitim penceresinde (2022-07→2026-08, PAXG +154%)
-  "her zaman YUKARI de" kuralı 180g'de %88.6 isabetli; modelin raporladığı
-  `direction` 0.693 — naif kuraldan kötü. 30g'deki 0.872 örtüşen pencere yanlılığı.
-- **Kök neden:** 180g için 1447 örtüşen satır ≈ 8 bağımsız pencere; 31 özellik
-  bu veriden öğrenilemez.
-
-Model **fiyat değil getiri** üretiyor; `price` 31 özelliğin içinde değil. Fiyat
-seviyesi canlı Binance spot'undan gelir, parametreler yalnız yüzde değişimi kaydırır.
-
-`trainer.py` içindeki `import json` eksikliği 2026-08-18'de düzeltildi (geri alma
-kapsamı dışında tutuldu): hata `joblib.dump` sonrası patlıyor, `active.json` ve
-`model_versions` kaydı yazılmıyor, bu da sonsuz saatlik yeniden eğitim döngüsü
-yaratıyordu.
-
-## SEO içerik sistemi (2026-08-18'de yeniden kuruldu)
-
-- İçerik kaynağı: `frontend/src/data/seo-articles.json` (31 makale). Hem `src/content/articles.ts` hem
-  `scripts/generate-seo-pages.mjs` aynı dosyadan okur; üretici eskiden `App.tsx`'i string
-  indeksiyle parse edip `Function()` ile eval ediyordu, artık düz JSON okuyor.
-- Makale şeması: `id, keyword, title, seoTitle, updated, summary, intro, sections[], points[], faq[]`.
-  `title` H1'dir, `seoTitle` `<title>` etiketi içindir (60 karakter sınırı bunun üzerinden tutulur).
-- `npm run build` = `vite build` + üretici. Üretici `dist/index.html`, `dist/rehber/*/index.html`
-  ve `dist/sitemap.xml` dosyalarını yazar. `public/sitemap.xml` kaldırıldı (bayat kopyaydı).
-- İç linkleme dönen pencereyle yapılır (`relatedOf`): her makale kendinden sonraki 5 makaleye
-  link verir, böylece her sayfa tam 5 inbound link alır. Eski `slice(0,5)` her zaman ilk beşi
-  seçtiği için 21 sayfanın 15'i hiç iç link almıyordu.
-- Anasayfa artık ön render edilir; `<div id="root">` içine H1, tanıtım metni ve 31 rehbere
-  giden link listesi yazılır. Öncesinde tarayıcıya 23 kelime ve sıfır başlık gidiyordu.
-
-Ölçülen durum (öncesi → sonrası): anasayfa 23 → 798 kelime, 0 → 31 iç link, başlıksız → H1+H2;
-rehber sayfaları 21 → 31 adet, ortalama 200 → 419 kelime, gövde içi ara başlık 0 → 6 H2 + 3 H3;
-iç link almayan sayfa 15 → 0; şema `Article/BreadcrumbList` → `Article/FAQPage/BreadcrumbList/Person`;
-`dateModified` build tarihi → içeriğin kendi `updated` alanı; makale sayfalarındaki yanlış
-`WebApplication` şeması kaldırıldı.
-
-## Navigasyon
-
-- `SiteNav` (`src/components/SiteNav.tsx`) `<details>` yerine kontrollü React state kullanır: dışarı tıklama,
-  Escape ve link tıklaması menüyü kapatır; `aria-expanded`/`aria-current` doğru işaretlenir.
-- Rehberler açılır listesi `category` alanına göre gruplanır ve arama kutusuyla filtrelenir.
-- **Mobil panel `createPortal` ile `document.body`'ye taşınır.** `.site-nav` üzerindeki
-  `backdrop-filter`, `position:fixed` alt öğeler için içeren blok yarattığından panel
-  navbar'ın içine hapsolup 1 piksele çöküyordu. Portal edildiği için `.site-nav a` altındaki
-  stilleri de devralmaz; `.mobile-sheet a` kuralları bu yüzden ayrıca tanımlıdır.
-- `/rehber` gerçek bir dizin sayfasıdır (hem statik ön render hem SPA rotası). Breadcrumb'ın
-  ikinci kademesi buraya işaret eder; öncesinde `/#rehberler` fragment'ıydı.
-- `frontend/nginx.conf` içinde `location = /rehber` **şarttır**: `location ^~ /rehber/` sondaki
-  eğik çizgisiz yolu yakalamaz, istek `location /` üzerinden 301 ile `/rehber/`'e giderdi.
-  Sitemap ve canonical `/rehber` olduğu için doğrudan 200 dönmesi gerekir.
-- iOS Safari notu: eski mobil menü `<details>` + `summary{display:grid}` kullanıyordu; WebKit
-  `<summary>` display'i değiştirildiğinde açma davranışını düşürür, menü iPhone'da hiç açılmıyordu.
-  Yeni menü `<button>` + React state kullanır. Mobil panelde body kaydırma kilidi de
-  `overflow:hidden` yerine `position:fixed` + scroll geri yükleme ile yapılır (iOS'ta overflow yetmez).
-
-## Bilinen sorunlar
-
-0. Prod Nginx `http` bloğunda `ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;` (dağıtım varsayılanı). Site conf'u `onsaltinanaliz.com` için TLSv1.2/1.3'e daraltıyor, ama başka bir server bloğu eklenirse eski protokoller devreye girer.
-1. `/model-service/v1/training/run`, `/v1/training/backfill` ve `/v1/snapshots` gateway üzerinden kimlik doğrulaması olmadan herkese açık. `/v1/snapshots` gövdesindeki `features` doğrudan eğitim tablosuna yazıldığı için bu bir veri bütünlüğü riski.
-2. `automatic_learning_service.collect_once` snapshot'ı `display_price=closes[-1]` (Binance) ile yazıyor; `observations` PK `trade_date` olduğu için saatlik job, frontend'in yazdığı gerçek Harem fiyatını ezip `basis_usd`'yi 0'a çekiyor.
-3. `.env.development` dosyalarında hâlâ `example.com` yer tutucuları var (development profili kullanılamaz durumda).
-4. Kök dizindeki `api-gateway/`, `market-service/`, `model-service/` klasörleri ölü `.venv` kalıntısı.
-5. Grafikteki "vadesi dolan tahminler" katmanı `/v1/learning/history` verisi biriktikçe dolar; ilk 7 günlük hedefler kapanana kadar boş görünür.

@@ -4,15 +4,14 @@ Ana IntelliJ projesinde frontend ve backend ana modülleri; backend altında ü�
 
 - `frontend/`: React + TypeScript/TSX + SCSS + Vite
 - `backend/api-gateway/`: Dışarıya açık tek API girişi ve servis rota kayıtları
-- `backend/market-service/`: Binance, FRED ve haber verileri
+- `backend/market-service/`: XAU/USD, FRED ve haber verileri
 - `backend/model-service/`: Sinir ağı, SQLite öğrenme verisi, otomatik toplama ve yeniden eğitim job'u
 
 ## Veri disiplini
 
-- Eğitim, yeniden eğitim ve hata ölçümü: **Binance PAXGUSDT**
-- Ön yüzde karşılaştırma: **Harem ONS**
-- Harem–Binance baz farkı günlük kayıtta tutulur fakat model etiketi olarak kullanılmaz.
-- Tahmin hedefleri: 7, 30, 90 ve 180 gün.
+- Eğitim, yeniden eğitim ve hata ölçümü: **XAU/USD**
+- Canlı fiyat: **Harem ONS/XAUUSD**
+- Bağımsız tahmin hedefleri: 7, 14 ve 30 gün.
 - Lokal ortamda üç mikroservis ortak `backend/data/gold_platform_localhost.sqlite3` SQLite dosyasını kullanır.
 - Gateway, market ve model tabloları aynı dosyada servis bazında ayrılmıştır.
 

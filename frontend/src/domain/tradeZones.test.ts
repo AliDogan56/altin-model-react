@@ -3,7 +3,7 @@ import { tradeZones } from './tradeZones';
 import type { Forecast } from './model/types';
 
 const forecast = (mean1: number, err1: number): Forecast =>
-  ({ features: {}, price: 100, mean: [0, mean1], err: [0, err1] });
+  ({ horizons: [7, 30], features: {}, price: 100, mean: [0, mean1], err: [0, err1] });
 
 describe('tradeZones', () => {
   it('alım bölgesi tahminin altında, satış üstündedir', () => {

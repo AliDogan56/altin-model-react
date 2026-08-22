@@ -1,39 +1,58 @@
-import { featureBy } from '../../content/panel';
-import { model } from '../../data/artifact';
-import { BAND_COVERAGE } from '../../domain/model/predict';
-import { money, pct2, signedPct2 } from '../../lib/format';
+import Collapsible from '../../components/Collapsible';
+import { PANEL_FEATURES, featureBy } from '../../content/panel';
+import { pct, pct2 } from '../../lib/format';
 import { useDashboard } from '../dashboard/DashboardContext';
 
-function ScorecardSection() {
+/**
+ * Modelin karnesi. Değerler servisin purge'lü walk-forward ölçümlerinden gelir:
+ * her ufuk, eğitimde hiç görmediği 500'den fazla günde değerlendirilmiştir.
+ */
+function ScorecardSection({ focus }: { focus?: string }) {
   const { scorecard } = useDashboard();
+  if (!scorecard) return null;
+
+  const best = scorecard.rows.reduce((a, b) => (b.skill > a.skill ? b : a));
+
   return (
-    <section id="feature-karne" className="panel block score-block" aria-labelledby="score-title">
-              <div className="score-head">
-                <div><span className="eyebrow">Modelin kendi karnesi</span>
-                  <h2 id="score-title">{featureBy("feature-karne").title}</h2>
-                  <p>{model.latestDate} tarihinde ilan edilen tahmin, o günden bu yana gerçekleşen kapanışlarla karşılaştırılıyor. Her yeni günle bir ölçüm daha ekleniyor.</p></div>
-                <div className="score-days"><b>{scorecard.days}</b><span>gün<br/>gerçekleşti</span></div>
-              </div>
-              <div className="score-grid">
-                <div><span>Ortalama mutlak hata</span><b>{pct2(scorecard.mae)}</b>
-                  <small>Tahmin ile gerçekleşen arasındaki ortalama sapma</small></div>
-                <div><span>Naif kural ("fiyat değişmez")</span><b>{pct2(scorecard.naiveMae)}</b>
-                  <small>Hiçbir bilgi kullanmayan referans</small></div>
-                <div className={scorecard.skill>0?'good':'bad'}>
-                  <span>Modelin katkısı</span>
-                  <b>{scorecard.skill>=0?'+':''}{new Intl.NumberFormat('tr-TR',{maximumFractionDigits:0}).format(scorecard.skill*100)}%</b>
-                  <small>{scorecard.skill>0?'naif kuraldan bu kadar daha isabetli':'naif kural bu kadar daha isabetli — model henüz değer katmıyor'}</small></div>
-                <div><span>Bant isabeti</span><b>{scorecard.inBand}/{scorecard.days}</b>
-                  <small>İlan edilen %{BAND_COVERAGE} bandın içinde kalan gün sayısı</small></div>
-                <div><span>Yön isabeti</span><b>{scorecard.rightWay}/{scorecard.days}</b>
-                  <small>Yükselir/düşer yönünü doğru bilen gün sayısı</small></div>
-                <div><span>En büyük sapma</span><b>{signedPct2(scorecard.worst.errorPct)}</b>
-                  <small>{new Date(`${scorecard.worst.date}T00:00:00`).toLocaleDateString('tr-TR')} · tahmin {money(scorecard.worst.v)} · gerçek {money(scorecard.worst.real)}</small></div>
-              </div>
-              <p className="score-note">{scorecard.days<20
-                ? `Uyarı: ${scorecard.days} günlük ölçüm istatistiksel bir sonuç için çok azdır; bu rakamlar şimdilik yalnız şeffaflık amacıyla gösterilir. Anlamlı bir yargı için en az birkaç ay gerekir.`
-                : 'Ölçüm penceresi genişledikçe bu rakamlar daha güvenilir hâle gelir.'}</p>
-            </section>
+    <Collapsible id="score" anchor="feature-karne"
+      openByDefault={focus === PANEL_FEATURES.find(f => f.anchor === 'feature-karne')?.slug}
+      title={featureBy('feature-karne').title} hint={featureBy('feature-karne').summary}
+      summary={`${best.horizon} günde ${pct(best.direction)} isabet`}>
+      <section className="panel block score-block" aria-labelledby="score-title">
+        <h2 id="score-title">Model ne kadar tutturuyor?</h2>
+        <p className="score-lede">
+          Her vade, modelin eğitimde <b>hiç görmediği</b> günlerde sınandı. Aşağıdaki üç sayı
+          o sınavın sonucu: ne kadar yanılıyor, yönü ne sıklıkla doğru biliyor ve
+          “fiyat olduğu yerde kalır” demekten daha iyi mi.
+        </p>
+
+        <div className="score-table" role="table" aria-label="Vade başına isabet ölçümleri">
+          <div className="score-row head" role="row">
+            <span role="columnheader">Vade</span>
+            <span role="columnheader">Ortalama yanılma</span>
+            <span role="columnheader">Yönü bilme</span>
+            <span role="columnheader">Basit kurala üstünlük</span>
+          </div>
+          {scorecard.rows.map(row => (
+            <div className={`score-row ${row.confident ? '' : 'muted'}`} role="row" key={row.horizon}>
+              <span role="cell"><b>{row.horizon} gün</b><small>{row.oofRows} günde sınandı</small></span>
+              <span role="cell" data-label="Ortalama yanılma: ">{pct2(row.mae)}</span>
+              <span role="cell" data-label="Yönü bilme: "
+                className={row.direction >= 0.6 ? 'positive' : undefined}>{pct(row.direction)}</span>
+              <span role="cell" data-label="Basit kurala üstünlük: "
+                className={row.skill > 0.05 ? 'positive' : row.skill <= 0 ? 'negative' : undefined}>
+                {row.skill >= 0 ? '+' : ''}{pct(row.skill)}</span>
+            </div>
+          ))}
+        </div>
+
+        <p className="score-note">
+          Soluk satırlar, modelin kendi ağırlığını kıstığı vadelerdir: orada panel fiyat
+          tahmini yerine <b>“görüş yok”</b> gösterir.{' '}
+          <span className="score-version">Aktif model: <code>{scorecard.version || 'bilinmiyor'}</code></span>
+        </p>
+      </section>
+    </Collapsible>
   );
 }
 

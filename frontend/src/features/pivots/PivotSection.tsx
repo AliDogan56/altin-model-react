@@ -5,18 +5,19 @@ import { useDashboard } from '../dashboard/DashboardContext';
 
 function PivotSection({ focus }: { focus?: string }) {
   const { pivotPeriod, setPivotPeriod, pivotMethod, setPivotMethod, pivotLadder } = useDashboard();
+  if (!pivotLadder) return null;
   return (
     <Collapsible id="pivot" anchor="feature-pivot" openByDefault={focus===PANEL_FEATURES.find(f=>f.anchor==="feature-pivot")?.slug} title={featureBy("feature-pivot").title} hint={featureBy("feature-pivot").summary} summary={pivotLadder.nearestUp?`İlk direnç ${pivotLadder.nearestUp}`:null}>
     <section className="panel block pivot-block" aria-labelledby="pivot-title">
     <div className="pivot-head">
     <div>
     <h2 id="pivot-title">Pivot seviyeleri</h2>
-    <small>Önceki {pivotPeriod==='monthly'?'ayın':'haftanın'} yüksek/düşük/kapanışından hesaplanır ({pivotLadder.id}). Grafikteki destek-direnç kendi bulduğu bölgeleri gösterir; bu ise standart formülle herkesin aynı bulduğu seviyelerdir.</small></div>
+    <small>Önceki {pivotPeriod==='monthly'?'ayın':'haftanın'} yüksek/düşük/kapanışına standart formül uygulanarak bulunur ({pivotLadder.id}) — herkesin aynı hesapladığı seviyelerdir. Grafikteki destek-direnç şeritleri ise başka bir yoldan, fiyatın <b>fiilen döndüğü</b> noktalar kümelenerek çıkarılır; bu yüzden sayılar birebir tutmaz. İki yöntem aynı yeri gösteriyorsa seviye güçlü sayılır.</small></div>
     <div className="pivot-tools">
     <div className="segmented">{([['weekly','Haftalık'],['monthly','Aylık']] as const).map(([k,l])=>
-    <button key={k} className={pivotPeriod===k?'active':''} onClick={()=>setPivotPeriod(k)}>{l}</button>)}</div>
+    <button type="button" key={k} className={pivotPeriod===k?'active':''} aria-pressed={pivotPeriod===k} onClick={()=>setPivotPeriod(k)}>{l}</button>)}</div>
     <div className="segmented">{([['classic','Klasik'],['fib','Fibonacci']] as const).map(([k,l])=>
-    <button key={k} className={pivotMethod===k?'active':''} onClick={()=>setPivotMethod(k)}>{l}</button>)}</div>
+    <button type="button" key={k} className={pivotMethod===k?'active':''} aria-pressed={pivotMethod===k} onClick={()=>setPivotMethod(k)}>{l}</button>)}</div>
     </div>
     </div>
     <div className="pivot-ladder">
@@ -33,6 +34,10 @@ function PivotSection({ focus }: { focus?: string }) {
     {pivotLadder.insertAt===pivotLadder.items.length&&
     <div className="pivot-now"><span>şu an</span><b>{money(pivotLadder.price)}</b></div>}
     </div>
+    {!pivotLadder.nearestUp&&<p className="pivot-alert">Fiyat bu dönemin <b>tüm seviyelerinin üzerinde</b>;
+      dönem içinde direnç kalmadı, R3 artık ilk destek gibi okunur.</p>}
+    {!pivotLadder.nearestDown&&<p className="pivot-alert">Fiyat bu dönemin <b>tüm seviyelerinin altında</b>;
+      dönem içinde destek kalmadı, S3 artık ilk direnç gibi okunur.</p>}
     <p className="pivot-note">Fiyatın hemen üstündeki seviye ilk direnç, hemen altındaki ilk destek olarak okunur. Bu bir işlem önerisi değildir. <a href="/rehber/altin-destek-direnc">Destek ve direnç nasıl okunur?</a></p>
     </section>
     </Collapsible>

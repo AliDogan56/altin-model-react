@@ -1,66 +1,69 @@
-import type { Forecast, ModelArtifact } from './model/types';
-import { buildDailyPath } from './model/predict';
+import { resolveHorizon } from './model/horizon';
+import type { Forecast } from './model/types';
 
-/** Aylık ödemeyle toplam getirinin başa baş geldiği faiz; ikili arama ile bulunur. */
-export const breakEvenLoanRate = (totalReturn: number, months: number): number | null => {
-  if (!Number.isFinite(totalReturn) || totalReturn <= 0) return null;
-  const target = 1 + totalReturn;
-  const totalRatio = (rate: number) => rate === 0 ? 1 : months * (rate * (1 + rate) ** months / ((1 + rate) ** months - 1));
-  let lo = 0, hi = 1;
-  if (totalRatio(hi) < target) return hi;
-  for (let i = 0; i < 80; i++) { const mid = (lo + hi) / 2; if (totalRatio(mid) < target) lo = mid; else hi = mid; }
-  return (lo + hi) / 2;
+const DAYS_IN_MONTH = 30;
+
+/** Aylık oranın, gerçek gün sayısına karşılık gelen dönem maliyeti. */
+export const periodCostRate = (monthlyRatePct: number, days: number): number => {
+  const monthly = Math.max(0, monthlyRatePct || 0) / 100;
+  if (days <= 0) return 0;
+  return (1 + monthly) ** (days / DAYS_IN_MONTH) - 1;
 };
 
-export const loanPayment = (principal: number, monthlyRate: number, months: number): number => {
-  const rate = Math.max(0, monthlyRate);
-  return rate === 0 ? principal / months : principal * (rate * (1 + rate) ** months / ((1 + rate) ** months - 1));
+/**
+ * Dönem getirisini karşılayan aylık finansman oranı.
+ *
+ * Önceden taksitli kredi (annüite) formülü kullanılıyordu; oysa 7–30 günlük tek
+ * dönemde taksit yok. Getiri pozitif değilse başa baş oran **yoktur** — eski kart
+ * bu durumda `%0,00` yazıyor ve "faizsiz kredi başa baş" gibi okunuyordu.
+ */
+export const breakEvenMonthlyRate = (totalReturn: number, days: number): number | null => {
+  if (!Number.isFinite(totalReturn) || totalReturn <= 0 || days <= 0) return null;
+  return (1 + totalReturn) ** (DAYS_IN_MONTH / days) - 1;
 };
 
-export type LoanScenario = { label: string; ret: number; tone: string; monthly: number | null };
+export type LoanScenario = { label: string; ret: number; tone: string };
 
-/** 180 günü aşan vadeler modelin en uzun ufkundan türetilir; `derived` bunu işaretler. */
-export const loanProjection = (model: ModelArtifact, forecast: Forecast, months: number) => {
-  const days = months * 30;
-  const path = buildDailyPath(model, forecast, Math.min(days, 180));
-  const last = path.at(-1)!;
-  let mean = last.ret, err = last.err, derived = false;
-  if (days > 180) {
-    const scale = days / 180;
-    mean = Math.expm1(Math.log1p(Math.max(-0.95, mean)) * scale);
-    err *= Math.sqrt(scale);
-    derived = true;
-  }
+/**
+ * Senaryolar doğrudan modelin **kendi ufkundan** gelir.
+ *
+ * Kart 3/6/9 ay sunuyor, `loanProjection` ise 30 günlük tahmini `days/30` kadar
+ * üstel olarak uzatıyordu: 9 aylık bant ±%32'ye çıkıyor ve modelin hiç ölçülmediği
+ * bir vade için sayı üretiliyordu. Artık yalnız 7/14/30 gün.
+ */
+export const loanProjection = (forecast: Forecast, requestedDays: number) => {
+  const { index, horizon } = resolveHorizon(forecast.horizons, requestedDays);
+  const mean = forecast.mean[index], err = forecast.err[index];
   const scenarios: LoanScenario[] = [
     { label: 'Alt bant', ret: mean - err, tone: 'low' },
     { label: 'Model tahmini', ret: mean, tone: 'base' },
     { label: 'Üst bant', ret: mean + err, tone: 'high' },
-  ].map(s => ({ ...s, monthly: breakEvenLoanRate(s.ret, months) }));
-  return { months, derived, scenarios };
+  ];
+  return { days: horizon, scenarios };
 };
 
 export type LoanCostInput = {
-  amount: number; ratePct: number; months: number;
+  amount: number; ratePct: number; days: number;
   currentFx: number; futureFx: number;
   scenarios: LoanScenario[];
 };
 
 /** Kredi maliyeti TL, altın getirisi USD cinsindendir; ikisi ancak kur beklentisi
  *  üzerinden aynı para birimine getirildiğinde karşılaştırılabilir. */
-export const loanCosts = ({ amount, ratePct, months, currentFx, futureFx, scenarios }: LoanCostInput) => {
+export const loanCosts = ({ amount, ratePct, days, currentFx, futureFx, scenarios }: LoanCostInput) => {
   const principal = Math.max(0, amount || 0);
-  const monthly = loanPayment(principal, Math.max(0, ratePct || 0) / 100, months);
-  const total = monthly * months;
+  const costRate = periodCostRate(ratePct, days);
+  const total = principal * costRate;
   const targetFx = futureFx || currentFx;
   const fxReturn = currentFx > 0 ? targetFx / currentFx - 1 : 0;
   const results = scenarios.map(s => {
     const tlReturn = (1 + s.ret) * (1 + fxReturn) - 1;
     return {
       ...s, onsReturn: s.ret, tlReturn,
-      monthly: breakEvenLoanRate(tlReturn, months),
+      monthly: breakEvenMonthlyRate(tlReturn, days),
       endValue: principal * (1 + tlReturn),
-      net: principal * (1 + tlReturn) - total,
+      net: principal * (1 + tlReturn) - principal - total,
     };
   });
-  return { monthly, total, currentFx, targetFx, fxReturn, results };
+  return { costRate, total, currentFx, targetFx, fxReturn, results };
 };
