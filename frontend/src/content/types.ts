@@ -15,3 +15,12 @@ export type PanelFeature = {
 
 export type ParameterItem = [id: string, label: string, unit: string];
 export type ParameterGroup = [title: string, items: ParameterItem[]];
+
+export type SitePageSection = { heading: string; paragraphs: string[] };
+
+/** Hakkımızda, yazar, iletişim, gizlilik gibi kurumsal sayfalar. */
+export type SitePage = {
+  slug: string; title: string; seoTitle: string; summary: string;
+  updated: string; priority: string;
+  sections: SitePageSection[];
+};

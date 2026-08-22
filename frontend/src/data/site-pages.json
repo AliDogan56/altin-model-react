@@ -1,0 +1,139 @@
+[
+  {
+    "slug": "hakkimizda",
+    "title": "Hakkımızda",
+    "seoTitle": "Hakkımızda: Ons Altın Analiz Nasıl Çalışır",
+    "summary": "Ons Altın Analiz'in ne yaptığı, verilerini nereden aldığı, tahmin modelini nasıl ölçtüğü ve neyi bilerek yapmadığı.",
+    "updated": "2026-08-22",
+    "priority": "0.6",
+    "sections": [
+      {
+        "heading": "Bu site ne yapar",
+        "paragraphs": [
+          "Ons Altın Analiz, XAU/USD (ons altın) fiyatını canlı izleyen, bu fiyatı etkileyen makroekonomik göstergeleri tek ekranda toplayan ve kendi eğittiği bir sinir ağı modeliyle 7, 14 ve 30 günlük projeksiyon üreten bağımsız bir araştırma panelidir. Yanında altın piyasasını yeni öğrenenler için hazırlanmış rehber içerikleri bulunur.",
+          "Site hiçbir kuyumcuya, bankaya, aracı kuruma ya da yatırım platformuna bağlı değildir. Reklam, yönlendirme komisyonu veya sponsorlu içerik barındırmaz. Tek amacı, altın fiyatının arkasındaki veriyi ve bir modelin bu veriden ne çıkarabildiğini şeffaf biçimde göstermektir."
+        ]
+      },
+      {
+        "heading": "Veri kaynakları",
+        "paragraphs": [
+          "Ons altının günlük yüksek, düşük ve kapanış serisi xaus.com üzerinden alınır ve modelin hem eğitiminde hem tahmininde kullanılan tek fiyat kaynağıdır. Makroekonomik göstergeler ABD Merkez Bankası'nın açık veri servisi FRED'den gelir: 10 ve 2 yıllık tahvil faizi, 10 yıllık enflasyona endeksli faiz, dolar endeksi, WTI petrol, VIX ve çekirdek tüketici enflasyonu.",
+          "Türk lirası tarafındaki canlı ons, USD/TRY kuru ve ziynet altın kotasyonları doğrudan tarayıcınızdan bir piyasa veri akışına bağlanarak alınır; sunucumuzdan geçmez. Ziynet kartlarındaki ham altın değeri ve işçilik payı, ürünün resmî gram ve milyem değerlerinden hesaplanır — örneğin çeyrek altın 1,75 gram × 916 milyem = 1,603 gram saf altın.",
+          "Veriler üçüncü taraf kaynaklardan geldiği için gecikme, eksik gözlem veya hata içerebilir. Makro serilerin yayın gecikmesi 1 ile 6 gün arasında değişir; panel bu tarihi açıkça yazar. Kaynağın bildirdiği bir değer kendi içinde tutarsızsa (örneğin gün aralığıyla bağdaşmayan bir önceki kapanış) o değeri göstermek yerine gizleriz."
+        ]
+      },
+      {
+        "heading": "Model nasıl eğitiliyor ve ölçülüyor",
+        "paragraphs": [
+          "Model, ons altının 2021'den bugüne uzanan günlük serisi üzerinde eğitilir. Her satır, o gün bilinen 19 göstergeyi (8 teknik, 11 makro) ve 7, 14, 30 gün sonrasının getirisini içerir. Makro göstergeler her satırın kendi tarihinde bilinen son değerle eşlenir; böylece modele geleceğe ait hiçbir bilgi sızmaz.",
+          "Üç vadenin her biri ayrı ayrı eğitilir. Ölçüm, modelin eğitim sırasında hiç görmediği günlerde yapılır: genişleyen pencereli walk-forward doğrulama, kat sınırında hedef örtüşmesi temizlenerek. Her vade 500'den fazla bağımsız günde sınanır.",
+          "Bir modelin değeri, hiçbir bilgi kullanmayan basit bir kuralı geçip geçmediğiyle ölçülür. Referansımız \"fiyat olduğu yerde kalır\" kuralıdır. Model bir vadede bu referansı anlamlı biçimde yenemiyorsa o vadedeki ağırlığı kısılır ve panel fiyat tahmini yerine açıkça \"görüş yok\" gösterir. Bugün 14 günlük vade tam olarak bu durumdadır — modelimizin orada söyleyecek bir şeyi yok ve bunu gizlemiyoruz."
+        ]
+      },
+      {
+        "heading": "Neyi bilerek yapmıyoruz",
+        "paragraphs": [
+          "Al ya da sat demiyoruz. Panelde teknik göstergelerin bulunduğu durum yazılır, ama bundan bir işlem kararı türetilmez; \"aşırı alım\" bölgesi yükselişin biteceği anlamına gelmez ve güçlü trendlerde gösterge uzun süre orada kalabilir.",
+          "Hedef fiyat vaat etmiyoruz. Her tahmin bir olasılık aralığıyla birlikte sunulur ve modelin geçmiş isabeti panelde herkese açık şekilde durur. Tahminlerimizin ortalama hatası, yön isabeti ve basit kurala üstünlüğü İsabet Karnesi bölümünde ölçülmüş hâliyle listelenir.",
+          "Kişiye özel tavsiye vermiyoruz. Buradaki içerik geneldir; sizin mali durumunuzu, risk toleransınızı veya vade tercihinizi bilmiyoruz. Yatırım danışmanlığı yetkili kuruluşlarca ve kişiye özel olarak sunulur; bu site o kapsamda değildir."
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "yazar",
+    "title": "Yazar ve Metodoloji",
+    "seoTitle": "Yazar: Ali Doğan · Metodoloji ve Sorumluluk",
+    "summary": "İçeriği kimin hazırladığı, modelin hangi yöntemle kurulduğu, hataların nasıl raporlandığı ve düzeltme politikamız.",
+    "updated": "2026-08-22",
+    "priority": "0.6",
+    "sections": [
+      {
+        "heading": "Kim hazırlıyor",
+        "paragraphs": [
+          "Ons Altın Analiz'i Ali Doğan geliştiriyor ve yazıyor. Yazılım geliştirme tarafında çalışan biri olarak bu projeyi, altın piyasasına dair yorumların çoğunun ölçülemez olmasından duyduğum rahatsızlıkla kurdum: bir tahmin yapılıyor, tutmuyor, kimse geri dönüp bakmıyor.",
+          "Finansal danışmanlık lisansım yok ve bu siteyi danışmanlık olarak sunmuyorum. Getirdiğim şey lisans değil, yöntem şeffaflığı: modelin nasıl eğitildiği, hangi veriyle beslendiği, nerede yanıldığı ve neyi bilmediği panelde ve bu sayfada açıkça yazıyor.",
+          "İletişim ve geri bildirim için LinkedIn üzerinden ulaşabilirsiniz. Bir hata bildirimi geldiğinde önce ölçer, doğrularsam düzeltir ve ilgili sayfada ne değiştiğini belirtirim."
+        ]
+      },
+      {
+        "heading": "Metodoloji özeti",
+        "paragraphs": [
+          "Girdi seti 19 göstergeden oluşur. Teknik tarafta: 1, 5 ve 20 günlük getiri, 50 günlük ortalamadan sapma, merkezlenmiş RSI, ATR, 20 günlük oynaklık ve 60 günlük zirveden düşüş. Makro tarafta: reel faizin 5 ve 20 günlük değişimi, dolar endeksinin 5 ve 20 günlük getirisi, beklenen enflasyondaki 20 günlük değişim, getiri eğrisi, VIX seviyesi ve 5 günlük değişimi, çekirdek enflasyonun yıllık oranı, petrolün 5 ve 20 günlük getirisi.",
+          "Ağ küçük ve güçlü düzenlileştirilmiş tutulur; veri hacmine göre büyük bir ağ ezberler. Üç farklı başlangıç değeriyle eğitilen bir topluluk kullanılır ve tahminleri ortalanır. Belirsizlik aralığı, modelin geçmişteki katman dışı hatalarının dağılımından türetilir ve güncel oynaklığa göre ölçeklenir.",
+          "Tahmin girdileri tarayıcıda değil sunucuda, eğitim setiyle birebir aynı kodla hesaplanır. Bu bir tercih değil, bir düzeltmenin sonucu: girdiler daha önce tarayıcıda ayrıca hesaplanıyordu ve 19 alanın 10'u eğitim setinden farklı çıkıyordu."
+        ]
+      },
+      {
+        "heading": "Hata politikası",
+        "paragraphs": [
+          "Model yanıldığında bunu saklamıyoruz. İsabet Karnesi bölümü her vade için ortalama yanılma oranını, yön isabetini ve basit kurala göre üstünlüğü listeler; bu sayılar modelin eğitimde hiç görmediği günlerden gelir ve her yeniden eğitimde güncellenir.",
+          "Bir vade referans kuralı geçemiyorsa o vade panelde soluk gösterilir ve fiyat tahmini yerine \"görüş yok\" yazılır. Bu, aracın kendi sınırını kabul etmesidir; sayıyı yine de gösterip güven telkin etmek daha kolay olurdu.",
+          "Veri kaynağından gelen bir değer kendi içinde tutarsızsa gösterilmez ve nedeni yazılır. Örneğin ziynet ürünlerinde kaynağın bildirdiği önceki kapanış gün aralığıyla bağdaşmadığında günlük yüzde değişim gizlenir; fiyat ve makas canlı akıştan geldiği için etkilenmez."
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "iletisim",
+    "title": "İletişim",
+    "seoTitle": "İletişim ve Hata Bildirimi",
+    "summary": "Hata bildirimi, veri düzeltmesi, iş birliği ve içerik önerisi için nasıl ulaşabileceğiniz.",
+    "updated": "2026-08-22",
+    "priority": "0.4",
+    "sections": [
+      {
+        "heading": "Nasıl ulaşabilirsiniz",
+        "paragraphs": [
+          "Site tek kişi tarafından geliştiriliyor. En hızlı ulaşım yolu LinkedIn üzerinden mesaj göndermek: linkedin.com/in/ali-doğan-86b57721a.",
+          "Yanıt süresi genellikle birkaç iş günüdür. Ticari teklif, reklam ve sponsorlu içerik talepleri yanıtlanmaz — site bu tür iş birlikleri kabul etmiyor."
+        ]
+      },
+      {
+        "heading": "Hata bildirimi",
+        "paragraphs": [
+          "Bir sayının yanlış göründüğünü düşünüyorsanız bildirin. Bildiriminizde hangi sayfada, hangi bölümde, hangi değeri gördüğünüzü ve ne beklediğinizi yazarsanız doğrulaması çok daha hızlı olur; mümkünse ekran görüntüsü ekleyin.",
+          "Gelen her bildirimi önce ölçerim. Hata doğrulanırsa düzeltilir ve ilgili sayfada neyin değiştiği belirtilir. Doğrulanmazsa neden öyle olduğunu açıklarım — çoğu zaman fark, verinin yayın gecikmesinden ya da farklı bir hesaplama yönteminden kaynaklanıyor."
+        ]
+      },
+      {
+        "heading": "İçerik önerisi",
+        "paragraphs": [
+          "Rehberlerde cevabını bulamadığınız bir soru varsa yazın. Hangi soruların sorulduğu, hangi başlıkların ekleneceğini belirleyen en iyi kaynak; okuyucudan gelen somut sorular üzerine yazılan içerik genelden çok daha faydalı oluyor."
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "gizlilik",
+    "title": "Gizlilik ve Çerez Politikası",
+    "seoTitle": "Gizlilik ve Çerez Politikası",
+    "summary": "Hangi verilerin toplandığı, tarayıcınızın hangi servislere bağlandığı ve haklarınız.",
+    "updated": "2026-08-22",
+    "priority": "0.3",
+    "sections": [
+      {
+        "heading": "Toplanan veriler",
+        "paragraphs": [
+          "Site üyelik, giriş veya form içermez. Adınızı, e-postanızı, telefonunuzu ya da ödeme bilgilerinizi istemiyoruz ve saklamıyoruz.",
+          "Panelde yaptığınız seçimler (vade, geçmiş aralığı, pivot dönemi gibi) yalnız o sekmenin belleğinde tutulur; sunucuya gönderilmez ve sekmeyi kapattığınızda kaybolur.",
+          "Sunucularımız teknik işleyiş için istek kayıtları tutar: istek zamanı, yol, yanıt kodu ve süre. Bu kayıtlar kişi tanımlamak için kullanılmaz."
+        ]
+      },
+      {
+        "heading": "Üçüncü taraf bağlantıları",
+        "paragraphs": [
+          "Canlı ons, USD/TRY ve ziynet fiyatları için tarayıcınız doğrudan bir piyasa veri akışına bağlanır. Bu bağlantı sunucumuzdan geçmez, dolayısıyla ilgili sağlayıcı sizin IP adresinizi görür. Bağlantı yalnız panel sayfalarında kurulur; rehber sayfalarında kurulmaz.",
+          "Fiyat geçmişi, makroekonomik seriler ve haber başlıkları sunucumuz üzerinden alınır; bu isteklerde tarayıcınıza ait bir bilgi dış kaynaklara iletilmez."
+        ]
+      },
+      {
+        "heading": "Çerezler ve haklarınız",
+        "paragraphs": [
+          "Site reklam, takip veya analitik çerezi kullanmaz. Üçüncü taraf takip kodu yerleştirilmemiştir.",
+          "Kişisel veri toplamadığımız için silinmesini isteyeceğiniz bir kaydınız da bulunmuyor. Yine de bir sorunuz olursa İletişim sayfasındaki adresten ulaşabilirsiniz."
+        ]
+      }
+    ]
+  }
+]

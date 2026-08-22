@@ -1,7 +1,8 @@
 import { SEO_ARTICLES } from '../content/articles';
 import { PANEL_FEATURES } from '../content/panel';
+import { SITE_PAGES } from '../content/pages';
 
-export type RouteKind = 'dashboard' | 'panel-hub' | 'panel-feature' | 'guide-hub' | 'guide';
+export type RouteKind = 'dashboard' | 'panel-hub' | 'panel-feature' | 'guide-hub' | 'guide' | 'page';
 
 export type SiteRoute = { path: string; kind: RouteKind };
 
@@ -13,4 +14,5 @@ export const SITE_ROUTES: SiteRoute[] = [
   { path: '/panel', kind: 'panel-hub' },
   ...PANEL_FEATURES.map(f => ({ path: `/panel/${f.slug}`, kind: 'panel-feature' as const })),
   ...SEO_ARTICLES.map(a => ({ path: `/rehber/${a.id}`, kind: 'guide' as const })),
+  ...SITE_PAGES.map(p => ({ path: `/${p.slug}`, kind: 'page' as const })),
 ];

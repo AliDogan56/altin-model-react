@@ -11,6 +11,7 @@ const linkedInUrl = 'https://www.linkedin.com/in/ali-do%C4%9Fan-86b57721a/';
 // parse edilip Function() ile eval ediliyordu; kaynaktaki en küçük düzenleme build'i kırıyordu.
 const articles = JSON.parse(await readFile(join(root, 'src/data/seo-articles.json'), 'utf8'));
 const features = JSON.parse(await readFile(join(root, 'src/data/panel-features.json'), 'utf8'));
+const sitePages = JSON.parse(await readFile(join(root, 'src/data/site-pages.json'), 'utf8'));
 const rawBaseHtml = await readFile(join(root, 'dist/index.html'), 'utf8');
 const today = new Date().toISOString().slice(0, 10);
 const RELATED_COUNT = 5;
@@ -19,13 +20,18 @@ const RELATED_COUNT = 5;
 const LEGAL = `<section class="legal-note"><h2>Yasal uyarı ve sorumluluk reddi</h2>
         <p>Bu sitede yer alan bilgi, yorum, tahmin ve tavsiyeler <strong>yatırım danışmanlığı kapsamında değildir</strong>. Yatırım danışmanlığı hizmeti, yetkili kuruluşlar tarafından kişilerin risk ve getiri tercihleri dikkate alınarak kişiye özel sunulur. Buradaki içerik geneldir; mali durumunuza ve risk-getiri tercihlerinize uygun olmayabilir.</p>
         <p>Fiyat tahminleri geçmiş verilerden türetilmiş istatistiksel kestirimlerdir; kesinlik, isabet ya da kâr garantisi taşımaz. Veriler üçüncü taraf kaynaklardan alınır ve doğruluğu garanti edilmez; gösterge niteliğindedir.</p>
-        <p>Bu platform hiçbir finansal ürün için alım-satım teklifi ya da çağrısı değildir. İçeriğe dayanarak alınan kararlardan ve doğabilecek doğrudan veya dolaylı zararlardan site sahibi sorumlu tutulamaz. Yatırım kararlarınızın sorumluluğu size aittir.</p></section>`;
+        <p>Bu platform hiçbir finansal ürün için alım-satım teklifi ya da çağrısı değildir. İçeriğe dayanarak alınan kararlardan ve doğabilecek doğrudan veya dolaylı zararlardan site sahibi sorumlu tutulamaz. Yatırım kararlarınızın sorumluluğu size aittir.</p>
+        <nav aria-label="Site bilgileri"><a href="/hakkimizda">Hakkımızda</a> · <a href="/yazar">Yazar ve metodoloji</a> · <a href="/iletisim">İletişim</a> · <a href="/gizlilik">Gizlilik</a></nav></section>`;
 const categories = [...new Set(articles.map(article => article.category))];
 const byCategory = category => articles.filter(article => article.category === category);
 
+/* `url` yazar sayfasına bakar: Article şemasının author'ı tıklanabilir bir
+   kimliğe bağlanmadığında E-E-A-T sinyali zayıf kalıyor. */
 const creator = {
   '@type': 'Person', '@id': `${siteUrl}/#creator`, name: 'Ali Doğan',
-  url: siteUrl, sameAs: [linkedInUrl], jobTitle: 'Yaratıcı ve geliştirici'
+  url: `${siteUrl}/yazar`, mainEntityOfPage: `${siteUrl}/yazar`,
+  sameAs: [linkedInUrl], jobTitle: 'Geliştirici ve içerik yazarı',
+  knowsAbout: ['altın piyasası', 'XAU/USD', 'makroekonomik göstergeler', 'zaman serisi tahmini'],
 };
 
 const escapeHtml = value => String(value)
@@ -264,6 +270,48 @@ const homeHtml = dropSchema(rawBaseHtml, 'ItemList')
   .replace('<div id="root"></div>', `<div id="root">${homeFallback}</div>`)
   .replace('</head>', `    ${jsonLd(homeItemList)}\n    ${jsonLd({ '@context': 'https://schema.org', ...creator })}\n  </head>`);
 
+/* Kurumsal sayfalar da ön render edilir: YMYL kategorisinde Google'ın
+   güven sinyali aradığı sayfalar bunlar ve JavaScript'siz görünmeleri gerekir. */
+const sitePageBody = page => `<main class="seo-prerender" data-seo-page="${escapeHtml(page.slug)}">
+      <nav aria-label="İçerik yolu"><a href="/">Ana Sayfa</a> / ${escapeHtml(page.title)}</nav>
+      <article>
+        <header><h1>${escapeHtml(page.title)}</h1><p>${escapeHtml(page.summary)}</p></header>
+        ${page.sections.map(section => `<section><h2>${escapeHtml(section.heading)}</h2>${section.paragraphs.map(p => `<p>${escapeHtml(p)}</p>`).join('')}</section>`).join('\n        ')}
+        <p><small>Son güncelleme: ${escapeHtml(page.updated)}</small></p>
+      </article>
+      <nav aria-label="Diğer sayfalar"><h2>Diğer sayfalar</h2><ul>${sitePages.filter(other => other.slug !== page.slug).map(other => `<li><a href="/${escapeHtml(other.slug)}">${escapeHtml(other.title)}</a></li>`).join('')}</ul></nav>
+      <footer>${LEGAL}<nav aria-label="Footer bağlantıları"><a href="/">Canlı ons paneli</a> · <a href="/rehber">Altın rehberleri</a> · <a href="/sitemap.xml">Sitemap</a></nav></footer>
+    </main>`;
+
+for (const page of sitePages) {
+  const url = `${siteUrl}/${page.slug}`;
+  const title = `${page.seoTitle} | Ons Altın Analiz`;
+  let html = dropSchema(dropSchema(rawBaseHtml, 'ItemList'), 'FAQPage');
+  html = setMeta(html, 'description', page.summary);
+  html = setMeta(html, 'og:title', title, true);
+  html = setMeta(html, 'og:description', page.summary, true);
+  html = setMeta(html, 'og:url', url, true);
+  html = setMeta(html, 'twitter:title', title);
+  html = setMeta(html, 'twitter:description', page.summary);
+  html = html.replace(/<title>.*?<\/title>/, `<title>${escapeHtml(title)}</title>`);
+  html = replaceAttribute(html, 'link rel="canonical"', 'href', url);
+  html = html.replace('</head>', `    ${jsonLd({
+    '@context': 'https://schema.org',
+    '@graph': [
+      { '@type': 'WebPage', '@id': url, url, name: title, description: page.summary,
+        dateModified: page.updated, inLanguage: 'tr-TR', author: { '@id': `${siteUrl}/#creator` } },
+      { '@type': 'BreadcrumbList', itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Ana Sayfa', item: `${siteUrl}/` },
+        { '@type': 'ListItem', position: 2, name: page.title, item: url },
+      ] },
+      creator,
+    ],
+  })}\n  </head>`);
+  html = html.replace('<div id="root"></div>', `<div id="root">${sitePageBody(page)}</div>`);
+  await mkdir(join(root, 'dist', page.slug), { recursive: true });
+  await writeFile(join(root, 'dist', page.slug, 'index.html'), html);
+}
+
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${(await siteRoutes(today)).map(route => `  <url><loc>${siteUrl}${route.path}</loc><lastmod>${route.lastmod}</lastmod><changefreq>${route.changefreq}</changefreq><priority>${route.priority}</priority></url>`).join('\n')}
@@ -272,4 +320,4 @@ ${(await siteRoutes(today)).map(route => `  <url><loc>${siteUrl}${route.path}</l
 
 await writeFile(join(root, 'dist/index.html'), homeHtml);
 await writeFile(join(root, 'dist/sitemap.xml'), sitemap);
-console.log(`${articles.length} rehber + dizin + ${features.length} panel sayfası, ön render edilmiş anasayfa ve sitemap oluşturuldu.`);
+console.log(`${articles.length} rehber + dizin + ${features.length} panel + ${sitePages.length} kurumsal sayfa, ön render edilmiş anasayfa ve sitemap oluşturuldu.`);
