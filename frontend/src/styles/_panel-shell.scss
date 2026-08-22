@@ -6,5 +6,5 @@
    başka bir sırada basıyordu. DashboardPage artık istenen sırayı doğrudan DOM'a
    yazıyor, dolayısıyla bu kurallar yalnız sırayı bozuyordu: grafik ve tahmin
    kartları "Ayrıntılar" bölümünün altına düşüyordu. Sıra = DOM sırası. */
-.skip-link { position:absolute; left:-9999px; padding:10px 14px; border-radius:9px; background:var(--gold); color:#0a1420; font-weight:800; font-size:12px; }
+.site-nav .skip-link, .skip-link { position:absolute; left:-9999px; padding:10px 14px; border-radius:9px; background:var(--gold-fill); color:var(--on-gold); font-weight:800; font-size:12px; }
 .skip-link:focus { left:10px; top:10px; z-index:40; }

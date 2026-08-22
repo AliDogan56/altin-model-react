@@ -1,7 +1,7 @@
 /* Ziynet kotasyon kartları. */
 .gram-grid { grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); }
 .quote { display:flex; flex-direction:column; gap:6px; padding:13px 14px;
-  border:1px solid var(--line); border-radius:12px; background:#0d1d30; }
+  border:1px solid var(--line); border-radius:12px; background:var(--surface-2); }
 .quote.up { border-left:3px solid var(--teal); }
 .quote.down { border-left:3px solid var(--red); }
 .quote header { display:flex; align-items:center; justify-content:space-between; gap:8px; }
@@ -10,15 +10,15 @@
 .quote strong { font-size:19px; font-variant-numeric:tabular-nums; line-height:1.1; }
 .quote small { color:var(--muted); font-size:10.5px; }
 /* Tik yönüne göre kısa parlama; key değişince animasyon yeniden başlar */
-@keyframes tick-up { from { color:var(--teal); } to { color:#eef4fa; } }
-@keyframes tick-down { from { color:var(--red); } to { color:#eef4fa; } }
+@keyframes tick-up { from { color:var(--teal); } to { color:var(--text); } }
+@keyframes tick-down { from { color:var(--red); } to { color:var(--text); } }
 .tick-up { animation:tick-up .7s ease-out; }
 .tick-down { animation:tick-down .7s ease-out; }
 .quote-range { position:relative; height:22px; margin-top:2px; }
 .quote-range::before { content:''; position:absolute; left:0; right:0; top:4px; height:3px;
-  border-radius:3px; background:linear-gradient(90deg,var(--teal),#3d5570,var(--red)); opacity:.45; }
+  border-radius:3px; background:linear-gradient(90deg,var(--teal-fill),var(--line-strong),var(--red-fill)); opacity:.45; }
 .quote-range i { position:absolute; top:0; width:3px; height:11px; margin-left:-1.5px;
-  border-radius:2px; background:#fff; box-shadow:0 0 6px #fff9; }
+  border-radius:2px; background:var(--tick-dot); box-shadow:0 0 6px rgb(var(--tick-dot-rgb) / .6); }
 .quote-range u,.quote-range em { position:absolute; top:12px; color:var(--muted);
   font-size:9.5px; font-style:normal; text-decoration:none; font-variant-numeric:tabular-nums; }
 .quote-range u { left:0; } .quote-range em { right:0; }

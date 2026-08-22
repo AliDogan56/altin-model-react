@@ -10,8 +10,8 @@
     <meta name="author" content="Ali Doğan" />
     <meta name="application-name" content="Ons Altın Analiz" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-    <meta name="theme-color" content="#0b1220" />
-    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#eef2f7" />
+    <meta name="color-scheme" content="light dark" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="shortcut icon" href="/favicon.svg" />
     <link rel="canonical" href="https://onsaltinanaliz.com/" />
@@ -55,6 +55,23 @@
         "offers": { "@type": "Offer", "price": "0", "priceCurrency": "TRY" },
         "disclaimer": "Bu uygulama karar destek ve araştırma aracıdır; kâr garantisi veya kişisel yatırım tavsiyesi değildir."
       }
+    </script>
+    <script>
+      /* Temayı ilk boyamadan ÖNCE damgala; React'e bırakılırsa koyu tema
+         seçmiş kullanıcı bir kare boyunca aydınlık ekran görüyor.
+         Anahtar ve varsayılan src/lib/theme.ts ile birebir aynı olmalı. */
+      (function () {
+        try {
+          var t = localStorage.getItem('oaa-theme');
+          if (t !== 'light' && t !== 'dark') t = 'light';
+          document.documentElement.dataset.theme = t;
+          document.documentElement.style.colorScheme = t;
+          if (t === 'dark') {
+            var m = document.querySelector('meta[name="theme-color"]');
+            if (m) m.setAttribute('content', '#07111f');
+          }
+        } catch (e) { document.documentElement.dataset.theme = 'light'; }
+      })();
     </script>
   </head>
   <body>

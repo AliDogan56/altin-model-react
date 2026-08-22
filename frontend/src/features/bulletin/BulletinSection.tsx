@@ -1,3 +1,5 @@
+import { useMinVisible } from '../../app/useMinVisible';
+import Spinner from '../../components/Spinner';
 import Collapsible from '../../components/Collapsible';
 import { PANEL_FEATURES, featureBy } from '../../content/panel';
 import { pct, shortDate } from '../../lib/format';
@@ -5,6 +7,7 @@ import { useDashboard } from '../dashboard/DashboardContext';
 
 function BulletinSection({ focus }: { focus?: string }) {
   const { news, features, featuresDate } = useDashboard();
+  const busy = useMinVisible(news.length === 0);
   return (
     <Collapsible id="bulletin" anchor="feature-bulten" openByDefault={focus===PANEL_FEATURES.find(f=>f.anchor==="feature-bulten")?.slug} title={featureBy("feature-bulten").title} hint={featureBy("feature-bulten").summary} summary={news.length?`${news.length} haber`:null}>
     <section className="panel block">
@@ -18,7 +21,10 @@ function BulletinSection({ focus }: { focus?: string }) {
     <p className="bulletin-asof">{featuresDate?`${shortDate(featuresDate,true)} tarihli veri setine göre.`:''} Makro serilerin
       yayın gecikmesi 1–6 gündür; sıfır değişim, seride yeni gözlem olmadığı anlamına da gelebilir.</p></div>
     <div>
-    <h3>Canlı haberler</h3>{news.slice(0,5).map((n)=><a key={n.url||n.title} href={n.url} target="_blank" rel="noreferrer">{n.title}<small>{n.source}</small></a>)}</div></div></section>
+    <h3>Canlı haberler</h3>
+    {busy
+      ? <div className="loading-row"><Spinner size="md" label="Başlıklar çekiliyor…"/></div>
+      : news.slice(0,5).map((n)=><a key={n.url||n.title} href={n.url} target="_blank" rel="noreferrer">{n.title}<small>{n.source}</small></a>)}</div></div></section>
     </Collapsible>
   );
 }

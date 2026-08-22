@@ -1,5 +1,5 @@
 /* Panel yüzeyi ve bölüm başlıkları. */
 .block h2{font-size:17px;margin:0}
-.panel{background:linear-gradient(145deg,#102339ef,#0a1727ef);border:1px solid var(--line);border-radius:18px;box-shadow:0 16px 44px #02071288}
+.panel{background:linear-gradient(145deg,rgb(var(--surface-3-rgb) / .94),rgb(var(--surface-rgb) / .94));border:1px solid var(--line);border-radius:18px;box-shadow:0 16px 44px rgb(var(--shadow-rgb) / var(--shadow-a1))}
 .bulletins h3{font-size:11px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin:0 0 8px}
-.primary{width:100%;border:0;border-radius:9px;padding:10px;margin-top:14px;background:var(--gold);color:#1c1605;font-weight:800;cursor:pointer}
+.primary{width:100%;border:0;border-radius:9px;padding:10px;margin-top:14px;background:var(--gold-fill);color:var(--on-gold);font-weight:800;cursor:pointer}

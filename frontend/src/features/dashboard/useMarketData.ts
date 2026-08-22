@@ -8,7 +8,8 @@ import { fetchScorecard, type Scorecard } from '../../services/api/metrics';
 import { subscribeHarem } from '../../services/realtime/harem';
 import type { Quote, RateState, SpotState, Tick } from '../../services/realtime/types';
 
-export type Status = { type: 'ok' | 'warn'; text: string };
+/** `busy`: bir çekim sürüyor — panel başlığında spinner bunu gösterir. */
+export type Status = { type: 'ok' | 'warn'; text: string; busy?: boolean };
 
 const SOURCES = 3;
 /** Sunucudaki saatlik job veri setini tazeliyor; sekme de arada bir yetişmeli. */
@@ -36,7 +37,7 @@ export const useMarketData = (): MarketData => {
   const [history, setHistory] = useState<[string, number][]>(model.history);
   const [candles, setCandles] = useState<Candle[]>([]);
   const [news, setNews] = useState<NewsArticle[]>([]);
-  const [status, setStatus] = useState<Status>({ type: 'warn', text: 'Canlı veriler bekleniyor' });
+  const [status, setStatus] = useState<Status>({ type: 'warn', text: 'Canlı veriler bekleniyor', busy: true });
   const [spot, setSpot] = useState<SpotState>({ price: model.latestPrice, change: 0, secondChange: 0, time: null, live: false });
   const [harem, setHarem] = useState<RateState>({ alis: null, satis: null, time: null, live: false });
   const [usdTry, setUsdTry] = useState<RateState>({ alis: null, satis: null, time: null, live: false });
@@ -51,7 +52,7 @@ export const useMarketData = (): MarketData => {
   const refresh = useCallback(async () => {
     if (running.current) return;          // üst üste binen çağrılar veriyi karıştırıyordu
     running.current = true;
-    setStatus({ type: 'warn', text: 'Canlı veriler alınıyor…' });
+    setStatus({ type: 'warn', text: 'Canlı veriler alınıyor…', busy: true });
     const next: FeatureMap = {};
 
     const gold = (async () => {

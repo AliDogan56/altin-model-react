@@ -1,39 +1,39 @@
 /* Yasal uyarı ve modal. */
-.inline-legal { margin:0; padding:10px 13px; border:1px solid #4a3d1c; border-radius:10px;
-  background:#1a170a55; color:var(--muted); font-size:11px; line-height:1.6; }
+.inline-legal { margin:0; padding:10px 13px; border:1px solid var(--gold-line-soft); border-radius:10px;
+  background:rgb(var(--gold-bg-rgb) / .33); color:var(--muted); font-size:11px; line-height:1.6; }
 .inline-legal a { color:var(--gold); }
 /* Ön render edilen sayfalardaki uyarı bloğu (JS yüklenmeden görünen sürüm) */
 .legal-note { margin-top:22px; padding-top:16px; border-top:1px solid var(--line); }
 .legal-note h2 { margin:0 0 9px; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--gold); }
-.legal-note p { margin:0 0 8px; color:#8298ae; font-size:11px; line-height:1.7; }
+.legal-note p { margin:0 0 8px; color:var(--muted); font-size:11px; line-height:1.7; }
 
 /* ---- Yasal uyarı modalı ---- */
-.nav-legal { min-height:40px; padding:0 13px; border:1px solid #4a3d1c; border-radius:9px;
-  background:#1a170a; color:var(--gold); font:inherit; font-size:12px; font-weight:800; cursor:pointer; }
-.nav-legal:hover { background:#241f0d; }
+.nav-legal { min-height:40px; padding:0 13px; border:1px solid var(--gold-line-soft); border-radius:9px;
+  background:var(--gold-bg); color:var(--gold); font:inherit; font-size:12px; font-weight:800; cursor:pointer; }
+.nav-legal:hover { background:var(--gold-bg); }
 .link-btn { padding:0; border:0; background:none; color:var(--gold); font:inherit;
   font-size:inherit; text-decoration:underline; cursor:pointer; }
 .legal-modal { position:fixed; inset:0; z-index:50; display:flex; align-items:center; justify-content:center; padding:16px; }
-.legal-backdrop { position:absolute; inset:0; background:#020712cc; backdrop-filter:blur(3px); }
+.legal-backdrop { position:absolute; inset:0; background:rgb(var(--bg-rgb) / .8); backdrop-filter:blur(3px); }
 .legal-sheet { position:relative; display:flex; flex-direction:column; width:min(720px,100%); max-height:min(86vh,760px);
-  border:1px solid #4a3d1c; border-radius:16px; background:linear-gradient(145deg,#111f31,#0a1523);
-  box-shadow:0 26px 70px #020712e6; overflow:hidden; }
+  border:1px solid var(--gold-line-soft); border-radius:16px; background:linear-gradient(145deg,var(--surface-2),var(--surface));
+  box-shadow:0 26px 70px rgb(var(--shadow-rgb) / var(--shadow-a3)); overflow:hidden; }
 .legal-sheet header { display:flex; align-items:center; justify-content:space-between; gap:12px;
   padding:16px 18px; border-bottom:1px solid var(--line); }
 .legal-sheet header h2 { margin:0; font-size:15px; color:var(--gold); }
 .legal-sheet header button { width:38px; height:38px; border:1px solid var(--line); border-radius:9px;
-  background:#122942; color:#dbe8f5; font-size:15px; cursor:pointer; }
+  background:var(--surface-3); color:var(--text); font-size:15px; cursor:pointer; }
 .legal-body { flex:1; overflow-y:auto; padding:16px 18px; overscroll-behavior:contain; }
-.legal-body section + section { margin-top:16px; padding-top:15px; border-top:1px solid #16283c; }
-.legal-body h3 { margin:0 0 6px; font-size:12.5px; color:#e6eef7; }
-.legal-body p { margin:0; color:#93a8bd; font-size:12px; line-height:1.75; }
+.legal-body section + section { margin-top:16px; padding-top:15px; border-top:1px solid var(--line); }
+.legal-body h3 { margin:0 0 6px; font-size:12.5px; color:var(--text); }
+.legal-body p { margin:0; color:var(--muted); font-size:12px; line-height:1.75; }
 .legal-sheet footer { padding:13px 18px; border-top:1px solid var(--line); }
 .legal-sheet footer .primary { width:100%; margin:0; }
 @media (max-width:650px) {
   .legal-modal { padding:0; align-items:flex-end; }
   .legal-sheet { max-height:88vh; border-radius:16px 16px 0 0; border-bottom:0; }
   .mobile-sections button { min-height:46px; display:flex; align-items:center; padding:6px 9px;
-    border:0; border-radius:9px; background:none; color:#fff; font:inherit; font-size:13.5px; font-weight:800; text-align:left; cursor:pointer; }
+    border:0; border-radius:9px; background:none; color:var(--text-strong); font:inherit; font-size:13.5px; font-weight:800; text-align:left; cursor:pointer; }
 }
 
 /* ---- Ana / yan özellik gruplaması ---- */

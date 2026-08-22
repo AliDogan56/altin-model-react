@@ -1,3 +1,5 @@
+import { useMinVisible } from '../../app/useMinVisible';
+import Spinner from '../../components/Spinner';
 import Collapsible from '../../components/Collapsible';
 import { PANEL_FEATURES, featureBy } from '../../content/panel';
 import { HORIZON_LABELS } from '../../content/site';
@@ -12,7 +14,8 @@ function LoanSection({ focus }: { focus?: string }) {
 
   const index = Math.max(0, forecast.horizons.indexOf(loan.days));
   const hasView = confident[index] !== false;
-  const ready = modelStatus === 'live' && hasView;
+  const busy = useMinVisible(modelStatus === 'loading');
+  const ready = modelStatus === 'live' && hasView && !busy;
 
   return (
     <Collapsible id="loan" anchor="feature-tl"
@@ -51,7 +54,9 @@ function LoanSection({ focus }: { focus?: string }) {
             <b>{tryMoney(costs.total)}<em> · {pct(costs.costRate)}</em></b></div>
         </div>
 
-        {!ready
+        {!ready && busy
+          ? <div className="loading-row"><Spinner size="md" label="Model sonucu bekleniyor…"/></div>
+          : !ready
           ? <p className="loan-note">{modelStatus !== 'live'
               ? 'Aktif model sonucu gelmeden altın getirisi ve finansman karşılaştırması gösterilmez.'
               : `Model ${loan.days} günlük vadede yön bildirmiyor; bu vade için karşılaştırma üretilmez.`}</p>

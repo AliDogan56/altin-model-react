@@ -1,3 +1,5 @@
+import { useMinVisible } from '../../app/useMinVisible';
+import Spinner from '../../components/Spinner';
 import { HORIZON_LABELS as LABELS } from '../../content/site';
 import { openLegal } from '../../content/site';
 import { BAND_COVERAGE } from '../../domain/model/predict';
@@ -6,7 +8,10 @@ import { useDashboard } from '../dashboard/DashboardContext';
 
 function ForecastCards() {
   const { values, forecast, horizonDays, setHorizonDays, modelStatus, confident, weights } = useDashboard();
-  const available = modelStatus === 'live';
+  /* Tampon: veri hızlı gelince spinner tek karede kaybolup dolumu
+     göstermiyordu; kart en az bir dolum boyunca yükleniyor kalır. */
+  const busy = useMinVisible(modelStatus === 'loading');
+  const available = modelStatus === 'live' && !busy;
   return (
     <>
     <div className="cards" id="feature-tahmin">{forecast.horizons.map((h,j)=>({h,j})).map(({h,j})=>{
@@ -22,7 +27,7 @@ function ForecastCards() {
         <small>{!available?'Aktif model sonucu olmadan fiyat gösterilmez.'
           :sure?<>%{BAND_COVERAGE} olasılık bandı<br/>{money(values.price*(1+forecast.mean[j]-forecast.err[j]))} – {money(values.price*(1+forecast.mean[j]+forecast.err[j]))}</>
           :'Model bu vadede sıfır getiri kuralını anlamlı biçimde yenemiyor; yön bildirmiyor.'}</small>
-        <em>{modelStatus==='loading'?'Model güncelleniyor…':modelStatus==='fallback'?'Model servisi çevrimdışı':horizonDays===h?'Grafikte gösteriliyor':'Grafikte göster'}</em></button>;})}</div>
+        <em>{busy?<Spinner size="sm" label="Model güncelleniyor…" inline/>:modelStatus==='fallback'?'Model servisi çevrimdışı':horizonDays===h?'Grafikte gösteriliyor':'Grafikte göster'}</em></button>;})}</div>
             <p className="inline-legal">Gösterilen tahminler istatistiksel kestirimdir; yatırım danışmanlığı kapsamında değildir ve kâr garantisi sunmaz. <button type="button" className="link-btn" onClick={openLegal}>Yasal uyarının tamamı</button></p></>
   );
 }

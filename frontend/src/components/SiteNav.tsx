@@ -5,6 +5,7 @@ import { GUIDES_BY_CATEGORY } from '../content/articles';
 import type { SeoArticle } from '../content/types';
 import { PANEL_FEATURES } from '../content/panel';
 import { NAV_SECTIONS, fold } from '../content/site';
+import ThemeToggle from './ThemeToggle';
 
 function SiteNav({current}:{current?:string}) {
   const [menu,setMenu]=useState<null|'guides'|'panel'|'mobile'>(null);
@@ -102,6 +103,7 @@ function SiteNav({current}:{current?:string}) {
           <Link className="guide-all" to="/rehber" onClick={close}>Tüm rehberleri gör <span aria-hidden="true">→</span></Link>
         </div>}
       </div>
+      <ThemeToggle/>
     </div>
 
     <button type="button" className="mobile-toggle" aria-expanded={menu==='mobile'} aria-controls="mobile-panel"
@@ -118,6 +120,7 @@ function SiteNav({current}:{current?:string}) {
           <div className="mobile-head">
             <input type="search" value={query} placeholder="Rehberlerde ara…" aria-label="Rehberlerde ara"
                    onChange={event=>setQuery(event.target.value)}/>
+            <ThemeToggle compact/>
             <button type="button" onClick={close} aria-label="Menüyü kapat">✕</button>
           </div>
           <div className="mobile-scroll">

@@ -127,6 +127,44 @@ content/    tek kaynak: makaleler, panel özellikleri, parametre grupları, site
   zoom düğmeleri, dört efsane anahtarı, günlük tahmin tablosu (karne bölümü bunu
   çok daha geniş örneklemle yapıyor). Modelin geçmiş beklentisi tek bir anahtarla,
   varsayılan kapalı
+- **İki tema var, varsayılan aydınlık.** Palet `styles/_tokens.scss` içinde **55 token**
+  olarak tanımlı; aydınlık palet `:root`'ta, koyu palet `:root[data-theme="dark"]`'ta ve
+  ikisi birebir aynı anahtarları taşır. Sistem tercihine göre otomatik geçiş **yok** —
+  varsayılanın aydınlık olması ürün kararı. Seçim `localStorage['oaa-theme']`'de saklanır;
+  `index.html` içindeki satır içi betik damgayı **ilk boyamadan önce** basar (React'e
+  bırakılırsa koyu tema seçen kullanıcı bir kare aydınlık ekran görüyor)
+- **SCSS'te sabit renk yok.** 324 kullanım token'a çevrildi; `_tokens.scss` dışında hiçbir
+  dosyada hex kalmadı. Alfalı renkler `-rgb` üçlüsü üzerinden kullanılır
+  (`rgb(var(--surface-rgb) / .67)`) — böylece yarı saydam katmanlar özgün alfasını korur
+- **Renk geçişi (`transition:color` / `border-color`) kullanılmıyor.** Özel değişkene bağlı
+  renk geçişi tema değişiminde hesaplanan değeri **bir tema geriden** bırakıyor (Chrome;
+  ziynet fiyatı ve tahmin kartı kenarlığında ölçüldü). `.theme-switching` sınıfı geçişi
+  bastırıyor ama sınıf kalkınca hata geri geliyordu; çözüm renk geçişini kaldırmak oldu.
+  Ziynet tik parlaması zaten `@keyframes` ile yapılıyor
+- **Yükleme göstergesi projeye özgü** (`components/Spinner.tsx` + `styles/_spinner.scss`):
+  uygulama ikonundaki altın sikke aşağıdan yukarı **doluyor**, üstünde ikonun analiz oku
+  çiziliyor, kenarında dönen yay var. Boyutlar `xs 12 / sm 16 / md 22 / lg 44`; 16 pikselin
+  altında ok çamura döndüğü için gizlenir. Gradyan ve kırpma yolu kimlikleri `useId` ile
+  üretilir — sabit id'ler aynı sayfadaki ikinci spinner'ı dolgusuz bırakıyordu
+- **Spinner en az bir dolum boyunca ekranda kalır** (`lib/hold.ts` + `app/useMinVisible.ts`).
+  Veri 80 ms'de gelince gösterge tek karede görünüp kayboluyor, dolum hiç okunmuyordu.
+  Asgari süre 1150 ms — `spinner-fill` döngüsünün sikkenin dolduğu anı. Karar mantığı saf
+  ve test edilir (`hold.test.ts`, 8 test); kanca yalnız ince bir sarmalayıcı.
+  Ölçüldü: tamponsuz tek kare → tamponla ~1 sn.
+  **Tuzak:** `nextHold` değişiklik yokken **aynı nesneyi** döndürmeli. Yeni nesne dönmek,
+  durumu effect içinde güncelleyen kancada sonsuz render döngüsü yaratıyor
+  (React #185, "Maximum update depth exceeded"); grafik ilk yüklemede bu yüzden patladı.
+  `hold.test.ts` bunu nesne kimliğiyle doğrular
+- **Spinner nerede dönüyor**: panel başlığındaki ONS ve USD/TL kartları (akış canlı
+  değilken durum noktasının yerini alır), yenile düğmesi, tahmin kartları, grafik vade
+  kartı, ziynet bölümü, bülten haberleri, TL getirisi, işlem bölgeleri ve ayrıntı
+  bölümlerinin yer tutucusu. Model servisi çevrimdışıysa ayrıntı yer tutucusu spinner
+  yerine durumu yazar — sonsuza kadar dönen gösterge yanıltıcı olurdu
+- **Kontrast ölçülüyor.** Her iki temada tüm görünür metinler WCAG AA'ya göre denetlendi
+  (anasayfa 418, rehber 132, kurumsal 59 öge): sıfır hata. Aydınlık temada `--text-dim`,
+  `--gold`, `--teal`, `--blue` bu denetim sonucu koyulaştırıldı
+- **`.skip-link` özgüllük hatası düzeltildi**: `.site-nav a` rengi eziyordu, atlama bağlantısı
+  altın zemin üzerinde okunmuyordu (koyu temada kontrast 1,13)
 - **Bölüm sırası DOM sırasıdır.** `_panel-shell.scss` içinde App.tsx monolitinden kalma
   `.content > .chart-block { order:2 }` / `.cards { order:3 }` gibi kurallar vardı; `.content`
   grid olduğu için bunlar DOM sırasını eziyor, **grafik ve tahmin kartları "Ayrıntılar"ın
@@ -136,6 +174,19 @@ content/    tek kaynak: makaleler, panel özellikleri, parametre grupları, site
   "Parametreleri göster" düğmesi silindi; girdiler artık `/v1/features/latest`'ten geldiği
   için elle değiştirme anlamını yitirmişti. Yerleşim tek sütun (`.layout{display:block}`),
   `wideChart` durumu ve `resetFields` de kalktı
+- **Grafikte mum görünümü var** (`domain/chart/candles.ts` + `ForecastChart`).
+  **Veri kısıtı:** fiyat kaynağı (xaus.com) yalnız tarih, kapanış, gün içi yüksek ve
+  düşük veriyor — **açılış yok** (uçtan doğrulandı: alanlar `d, c, h, l`). Bu yüzden
+  gövde "açılış → kapanış" değil **önceki kapanış → kapanış**, yani günün net hareketi;
+  fitil ise gerçek gün içi aralık. Her sayı ölçülmüş veridir, farklı olan gövdenin
+  tanımıdır ve grafiğin altında düz dille yazılıdır
+- **Mum modu ayrıntıları**: `Görünüm: Çizgi / Mum` anahtarı, varsayılan çizgi (acemi
+  okuyucu için sade). Fitiller `computeDomain`'in çekirdek kümesine katılır, yoksa
+  kırpılırlardı. Mum genişliği gün başına pikselden türer, 1–14 px arası kırpılı
+  (1 yılda 2,55 px, 1 ayda 12,5 px — ölçüldü). `candles` boşken (servis erişilemez)
+  mum düğmesi kapalı ve grafik çizgiye düşer; aksi hâlde grafik bomboş kalıyordu.
+  İpucu kartı mum modunda **gün içi aralık** satırı ekler ve altındaki karşılaştırma
+  satırlarını 21 px kaydırır
 - **Destek/direnç tek kaynaktan gelir.** Grafik ve pivot kartı aynı `buildLadder` çıktısını
   kullanır; grafikte yedi seviye de kendi adıyla çizilir (S1–S3, P, R1–R3) ve S1/R1 belirgin,
   S3/R3 soluk gösterilir. Önceden grafik `domain/supportResistance.ts` ile fiyatın fiilen

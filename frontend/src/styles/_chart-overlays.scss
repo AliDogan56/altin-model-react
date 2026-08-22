@@ -1,11 +1,11 @@
 /* Bugün çizgisi, köken tahmini ve direnç katmanları. */
 /* Vadesi gelmiş tahmin satırları */
-.crosshair .tip-divider { stroke:#2b4761; stroke-width:1; }
-.crosshair .tip-real { fill:#9fd8ff; font-size:12px; font-weight:800; }
-.crosshair .tip-error { fill:#b9cadd; font-size:12px; }
+.crosshair .tip-divider { stroke:var(--line-strong); stroke-width:1; }
+.crosshair .tip-real { fill:var(--blue-bright); font-size:12px; font-weight:800; }
+.crosshair .tip-error { fill:var(--text-soft); font-size:12px; }
 .crosshair .tip-error-ok { fill:var(--teal); font-size:12px; font-weight:800; }
 .crosshair .tip-error-bad { fill:var(--red); font-size:12px; font-weight:800; }
-.origin-key { background:#7aa2d8; }
+.origin-key { background:var(--blue-fill); }
 
 /* ============ Grafik tasarım dili ============
    Renk rolleri:  mavi = gerçekleşen · altın = model tahmini
@@ -14,25 +14,34 @@
    Diğer seviyeler sağ kenarda kısa tick + etiket olarak durur.                  */
 
 /* Zaman ekseni ikiye ayrılır: solda olan, sağda olacak olan */
-.future-zone { fill:#7f9dbd12; }
-.today-divider { stroke:#5f7d99; stroke-width:1.2; stroke-dasharray:4 4; opacity:.8; }
+.future-zone { fill:rgb(var(--zone-future-rgb) / .07); }
+.today-divider { stroke:var(--line-vivid); stroke-width:1.2; stroke-dasharray:4 4; opacity:.8; }
 
 /* Tek referans çizgisi + sağ kenarda birleşik canlı fiyat kartı */
 .now-line { stroke:var(--teal); stroke-width:1; stroke-dasharray:2 5; opacity:.5; }
-.now-dot-ons { fill:var(--teal); stroke:#07111f; stroke-width:2; }
-.now-dot-token { fill:var(--blue); stroke:#07111f; stroke-width:1.5; }
-.now-card { fill:#0d2a26; stroke:var(--teal); stroke-opacity:.55; }
+.now-dot-ons { fill:var(--teal); stroke:var(--line-soft); stroke-width:2; }
+.now-dot-token { fill:var(--blue); stroke:var(--line-soft); stroke-width:1.5; }
+.now-card { fill:var(--teal-bg); stroke:var(--teal); stroke-opacity:.55; }
 .now-tag { fill:var(--teal); font-size:10px; font-weight:800; letter-spacing:.06em; }
 .now-tag.alt { fill:var(--blue); }
-.now-value { fill:#fff; font-size:13px; font-weight:800; }
-.now-value.alt { fill:#cfe0f0; font-size:12px; }
+.now-value { fill:var(--text-strong); font-size:13px; font-weight:800; }
+.now-value.alt { fill:var(--text); font-size:12px; }
 
 /* Karşılaştırma katmanı ikincil: dolgu yok, yalnız kesikli çizgi. Dolgulu hâli
    canlı bandı ve gelecek gölgesini bastırıp altın tahmin çizgisini okunmaz yapıyordu. */
-.origin-forecast { fill:none; stroke:#7aa2d8; stroke-width:1.6; stroke-dasharray:6 4; }
+.origin-forecast { fill:none; stroke:var(--blue-fill); stroke-width:1.6; stroke-dasharray:6 4; }
 
 /* Momentum eşiği artık sağ kenarda kısa bir tick */
 .resistance { stroke:var(--red); stroke-width:1.2; stroke-dasharray:4 4; opacity:.7; }
 
 /* Katman kontrolleri tek grupta */
 .chart-legend { gap:13px; }
+
+/* Günlük mumlar. Gövde önceki kapanış → kapanış (kaynakta açılış yok),
+   fitil gerçek gün içi yüksek/düşük. */
+.candle-wick { stroke-width:1; }
+.candle-body { rx:0.5; }
+.candle.up .candle-wick { stroke:var(--teal-fill); }
+.candle.up .candle-body { fill:var(--teal-fill); stroke:var(--teal-fill); }
+.candle.down .candle-wick { stroke:var(--red-fill); }
+.candle.down .candle-body { fill:var(--red-fill); stroke:var(--red-fill); }

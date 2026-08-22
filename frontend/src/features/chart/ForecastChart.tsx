@@ -1,8 +1,10 @@
 import { useId, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import { model } from '../../data/artifact';
+import { buildCandles, candleWidth } from '../../domain/chart/candles';
 import { computeDomain, dropNear, pickTimeTicks } from '../../domain/chart/scale';
 import { BAND_COVERAGE, buildDailyPath } from '../../domain/model/predict';
 import type { Forecast } from '../../domain/model/types';
+import type { Candle } from '../../domain/indicators';
 import type { LadderItem } from '../../domain/pivots';
 import { longDate, money, shortDate } from '../../lib/format';
 import { useChartGestures } from './useChartGestures';
@@ -24,6 +26,9 @@ type ChartProps = {
   forecast: Forecast; originForecast: Forecast;
   available: boolean;
   history: [string, number][];
+  /** Günlük yüksek/düşük; mum görünümü bunlardan çizilir. */
+  candles: Candle[];
+  candleMode: boolean;
   rangeDays: number; horizonDays: number;
   showOrigin: boolean; onToggleOrigin: () => void;
   /** Pivot kartıyla **aynı** seviyeler; iki bölüm farklı sayı göstermesin. */
@@ -33,10 +38,12 @@ type ChartProps = {
   describedById?: string;
 };
 
-type Point = { i: number; v: number; date: string; kind: string; lo?: number; hi?: number };
+type Point = { i: number; v: number; date: string; kind: string; lo?: number; hi?: number;
+  /** Mum modunda gün içi yüksek/düşük; ipucu kartı bunları yazar. */
+  dayHigh?: number; dayLow?: number };
 
 function ForecastChart({
-  forecast, originForecast, available, history, rangeDays, horizonDays,
+  forecast, originForecast, available, history, candles, candleMode, rangeDays, horizonDays,
   showOrigin, onToggleOrigin, levels, levelPeriod, spot, describedById,
 }: ChartProps) {
   const svgRef = useRef<SVGSVGElement | null>(null);
@@ -55,11 +62,23 @@ function ForecastChart({
   const [zoom, setZoom] = useState(1);
   const [panDays, setPanDays] = useState(0);
 
+  /* Mumlar kapanış serisinden önce kurulur: ipucu kartı gün içi aralığı
+     buradan okur ve `hist` ile aynı x indekslerini paylaşırlar. */
+  const bars = useMemo(() => buildCandles(candles, rangeDays), [candles, rangeDays]);
+  const barByDate = useMemo(() => new Map(bars.map(b => [b.date, b])), [bars]);
+
   const hist = useMemo<Point[]>(() => {
     const shown = history.slice(-rangeDays);
-    return shown.map((d, i) => ({ i: i - (shown.length - 1), v: d[1], date: d[0], kind: 'Geçmiş' }));
-  }, [history, rangeDays]);
+    return shown.map((d, i) => {
+      const bar = barByDate.get(d[0]);
+      return { i: i - (shown.length - 1), v: d[1], date: d[0], kind: 'Geçmiş',
+        dayHigh: bar?.high, dayLow: bar?.low };
+    });
+  }, [history, rangeDays, barByDate]);
   const lastHistoryDate = hist.length ? hist[hist.length - 1].date : undefined;
+  /* Piyasa servisi erişilemezse `candles` boş kalır ama `history` pakete gömülü
+     yedekten gelir; mum modunda grafik bomboş görünüyordu. Veri yoksa çizgiye düş. */
+  const showCandles = candleMode && bars.length > 0;
   const future = buildDailyPath(model, forecast, horizonDays, lastHistoryDate)
     .map(d => ({ ...d, i: d.day, kind: d.day === 0 ? 'Bugün' : `${d.day}. gün` }));
 
@@ -81,6 +100,8 @@ function ForecastChart({
   const core = [
     ...hist.map(d => d.v), ...(available ? future.map(d => d.v) : []), spot.price,
     ...(originPath ? originPath.map(d => d.v) : []),
+    // Fitiller kapanış serisinin dışına taşar; ölçeğe katılmazsa kırpılırlardı.
+    ...(showCandles ? bars.flatMap(b => [b.high, b.low]) : []),
   ];
   /* Pivot seviyeleri ve bant "kırpılabilir" kümede: S3/R3 fiyattan %10 uzakta
      olabiliyor, çekirdek kümeye konsa fiyat çizgisini düz bir hat yapardı. */
@@ -210,7 +231,22 @@ function ForecastChart({
 
             {available && <polygon className="band" points={bandShape}/>}
             {originPath && <polyline className="origin-forecast" points={line(originPath)}/>}
-            <polyline className="history" points={line(hist)}/>
+            {/* Mum görünümü: gövde önceki kapanış → kapanış, fitil gün içi
+                yüksek/düşük. Kaynakta açılış yok; ayrıntı `domain/chart/candles.ts`. */}
+            {showCandles ? (() => {
+              const w = candleWidth(plotW / (visibleEnd - visibleStart));
+              return <g className="candles">{bars.map(b => {
+                if (b.i < visibleStart - 1 || b.i > visibleEnd + 1) return null;
+                const cx = x(b.i);
+                const top = y(Math.max(b.open, b.close));
+                const bottom = y(Math.min(b.open, b.close));
+                return <g key={b.date} className={`candle ${b.up ? 'up' : 'down'}`}>
+                  <line className="candle-wick" x1={cx} y1={y(b.high)} x2={cx} y2={y(b.low)}/>
+                  <rect className="candle-body" x={cx - w / 2} y={top}
+                    width={w} height={Math.max(1, bottom - top)}/>
+                </g>;
+              })}</g>;
+            })() : <polyline className="history" points={line(hist)}/>}
             {available && <polyline className="forecast" points={line(future)}/>}
             <circle className="now-dot-ons" cx={x(0)} cy={y(spot.price)} r="5"/>
           </g>
@@ -235,8 +271,13 @@ function ForecastChart({
             const isForecast = Number.isFinite(hover.lo) && Number.isFinite(hover.hi);
             const said = isForecast ? undefined : originByDate.get(hover.date);
             const errorPct = said ? (said.v - hover.v) / hover.v : null;
-            const boxW = isForecast ? (compact ? 190 : 214) : said ? (compact ? 190 : 214) : (compact ? 146 : 166);
-            const boxH = isForecast ? 92 : said ? 106 : 48;
+            /* Mum modunda gün içi aralık satırı eklenir; altındaki karşılaştırma
+               satırları bu kadar aşağı kayar ve kart o kadar uzar. */
+            const showRange = !isForecast && showCandles
+              && Number.isFinite(hover.dayHigh) && Number.isFinite(hover.dayLow);
+            const shift = showRange ? 21 : 0;
+            const boxW = isForecast || said ? (compact ? 200 : 224) : showRange ? (compact ? 190 : 214) : (compact ? 146 : 166);
+            const boxH = (isForecast ? 92 : said ? 106 : 48) + (isForecast ? 0 : shift);
             const cornerX = x(hover.i) < W / 2 ? W - m.r - boxW - 6 : m.l + 6;
             const boxX = pinned ? cornerX : Math.min(W - m.r - boxW - 6, Math.max(m.l + 5, x(hover.i) + 12));
             const boxY = pinned ? m.t + 6 : Math.min(H - m.b - boxH - 6, Math.max(10, y(hover.v) - boxH / 2));
@@ -266,12 +307,17 @@ function ForecastChart({
                 </> : <>
                   <text x="11" y="40" className="tip-real">Gerçekleşen</text>
                   <text x={boxW - 11} y="40" textAnchor="end" className="tip-value tip-real">{money(hover.v)}</text>
+                  {showRange && <>
+                    <text x="11" y="61" className="tip-min">Gün içi aralık</text>
+                    <text x={boxW - 11} y="61" textAnchor="end" className="tip-value tip-min">
+                      {money(hover.dayLow!)} – {money(hover.dayHigh!)}</text>
+                  </>}
                   {said && <>
-                    <line className="tip-divider" x1="11" y1="53" x2={boxW - 11} y2="53"/>
-                    <text x="11" y="71" className="tip-price">{originLabel} beklentisi</text>
-                    <text x={boxW - 11} y="71" textAnchor="end" className="tip-value tip-price">{money(said.v)}</text>
-                    <text x="11" y="92" className="tip-error">Sapma</text>
-                    <text x={boxW - 11} y="92" textAnchor="end"
+                    <line className="tip-divider" x1="11" y1={53 + shift} x2={boxW - 11} y2={53 + shift}/>
+                    <text x="11" y={71 + shift} className="tip-price">{originLabel} beklentisi</text>
+                    <text x={boxW - 11} y={71 + shift} textAnchor="end" className="tip-value tip-price">{money(said.v)}</text>
+                    <text x="11" y={92 + shift} className="tip-error">Sapma</text>
+                    <text x={boxW - 11} y={92 + shift} textAnchor="end"
                           className={`tip-value ${Math.abs(errorPct!) <= .01 ? 'tip-error-ok' : 'tip-error-bad'}`}>
                       {errorPct! >= 0 ? '+' : ''}{(errorPct! * 100).toFixed(2)}%</text>
                   </>}

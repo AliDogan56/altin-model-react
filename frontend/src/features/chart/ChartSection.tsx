@@ -1,5 +1,8 @@
+import { useMinVisible } from '../../app/useMinVisible';
+import Spinner from '../../components/Spinner';
 import { featureBy } from '../../content/panel';
 import { money, pct } from '../../lib/format';
+import { useState } from 'react';
 import { useDashboard } from '../dashboard/DashboardContext';
 import ForecastChart from './ForecastChart';
 
@@ -7,14 +10,20 @@ const RANGES: [number, string][] = [[30, '1 Ay'], [90, '3 Ay'], [180, '6 Ay'], [
 
 function ChartSection() {
   const {
-    history, spot, harem, rangeDays, setRangeDays, horizonDays, setHorizonDays,
+    history, candles, spot, harem, rangeDays, setRangeDays, horizonDays, setHorizonDays,
     showOrigin, setShowOrigin, forecast, originForecast, modelStatus, confident,
     pivotLadder, pivotPeriod,
   } = useDashboard();
 
   const price = harem.satis || spot.price;
   const index = Math.max(0, forecast.horizons.indexOf(horizonDays));
-  const available = modelStatus === 'live' && confident[index] !== false;
+  const busy = useMinVisible(modelStatus === 'loading');
+  /* Varsayılan çizgi: acemi okuyucu için en sade görünüm. Mum, gün içi
+     dalgalanmayı görmek isteyen için bir adım ötesi. */
+  const [candleMode, setCandleMode] = useState(false);
+  const hasCandles = candles.length > 0;
+  const showingCandles = candleMode && hasCandles;
+  const available = modelStatus === 'live' && confident[index] !== false && !busy;
   const target = price * (1 + forecast.mean[index]);
   const low = price * (1 + forecast.mean[index] - forecast.err[index]);
   const high = price * (1 + forecast.mean[index] + forecast.err[index]);
@@ -42,6 +51,15 @@ function ChartSection() {
               <button type="button" key={n} className={rangeDays === n ? 'active' : ''}
                 aria-pressed={rangeDays === n} onClick={() => setRangeDays(n)}>{label}</button>)}</div>
           </div>
+          <div className="tool-group"><span>Görünüm</span>
+            <div className="segmented">
+              <button type="button" className={candleMode ? '' : 'active'} aria-pressed={!candleMode}
+                onClick={() => setCandleMode(false)}>Çizgi</button>
+              <button type="button" className={candleMode ? 'active' : ''} aria-pressed={candleMode}
+                disabled={!hasCandles} title={hasCandles ? undefined : 'Günlük yüksek/düşük verisi bekleniyor'}
+                onClick={() => setCandleMode(true)}>Mum</button>
+            </div>
+          </div>
           <div className="tool-group"><span>Kaç gün sonrası</span>
             <div className="segmented">{forecast.horizons.map(n =>
               <button type="button" key={n} className={horizonDays === n ? 'active' : ''}
@@ -52,7 +70,8 @@ function ChartSection() {
 
       <ForecastChart
         forecast={forecast} originForecast={originForecast} available={available}
-        history={history} rangeDays={rangeDays} horizonDays={horizonDays}
+        history={history} candles={candles} candleMode={candleMode}
+        rangeDays={rangeDays} horizonDays={horizonDays}
         showOrigin={showOrigin} onToggleOrigin={() => setShowOrigin(v => !v)}
         levels={items} levelPeriod={periodLabel}
         spot={{ ...spot, price }} describedById="destek-direnc-aciklama"/>
@@ -82,7 +101,9 @@ function ChartSection() {
           <strong>{available ? money(target) : '—'}</strong>
           <small>{available
             ? `${pct(target / price - 1)} · ${money(low)}–${money(high)} arası`
-            : modelStatus === 'live' ? 'Model bu vadede yön bildirmiyor' : 'Model bekleniyor'}</small>
+            : modelStatus === 'live' ? 'Model bu vadede yön bildirmiyor'
+            : busy ? <Spinner size="sm" label="Model bekleniyor" inline/>
+            : 'Model servisi çevrimdışı'}</small>
         </article>
       </div>
 
@@ -109,6 +130,12 @@ function ChartSection() {
               : <>Fiyat şu an bu dönemin tüm seviyelerinin üzerinde; yukarıda hesaplanmış bir direnç kalmadı.</>}</p>
           </div>
         </div>
+        {showingCandles && <p className="level-caveat candle-note">
+          <b>Mumlar nasıl okunur?</b> İnce dikey çizgi (fitil) o günün <b>en yüksek ve
+          en düşük</b> fiyatını, kalın gövde ise günün <b>net hareketini</b> gösterir:
+          yeşil gövde önceki güne göre yükseliş, kırmızı düşüş. Fiyat kaynağı gün
+          açılışını vermediği için gövdenin alt ucu <b>önceki günün kapanışıdır</b>;
+          klasik mumdaki açılış yerine bu kullanılır. Fitildeki her sayı ölçülmüş veridir.</p>}
         <p className="level-caveat"><b>P</b> orta çizgidir (pivot noktası): fiyatın üstünde kalması
           olumlu, altına inmesi olumsuz okunur. Bu seviyeler geçmiş fiyattan formülle çıkarılır;
           garanti değildir, kırılmaları olağandır.</p>

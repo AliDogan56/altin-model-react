@@ -1,6 +1,6 @@
 /* Sayfa temeli ve panel başlığı. */
 *{box-sizing:border-box}
-body{margin:0;background:radial-gradient(circle at 12% -10%,#153957,transparent 34%),#07111f}
+body{margin:0;background:radial-gradient(circle at 12% -10%,var(--surface-3),transparent 34%),var(--bg)}
 .app{max-width:1500px;margin:auto;padding:24px}
 header{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin-bottom:20px}
 .eyebrow{color:var(--gold);font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}

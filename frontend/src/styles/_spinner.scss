@@ -1,0 +1,73 @@
+/* Yükleme göstergesi: uygulama ikonundaki sikke aşağıdan yukarı doluyor.
+   Renkler token'lardan gelir; iki temada da altın okunur kalır. */
+
+.spinner { display:inline-flex; align-items:center; gap:8px; vertical-align:middle; }
+.spinner.inline { gap:6px; }
+.spinner-label { color:var(--muted); font-size:12px; font-weight:700; letter-spacing:.01em; }
+.spinner.inline .spinner-label { font-size:inherit; font-weight:inherit; color:inherit; }
+
+.spinner-icon { flex:0 0 auto; overflow:visible; }
+
+/* Sikke gövdesi: dolum başlamadan önce görünen boş kap. */
+.spinner-well { fill:var(--spinner-well); }
+.spinner-rim  { fill:none; stroke:var(--gold-line); stroke-width:1.8; }
+
+/* Kenarda dönen yay — "çalışıyor" sinyalini taşıyan klasik ipucu. */
+.spinner-arc {
+  fill:none; stroke:var(--gold-fill); stroke-width:2.2; stroke-linecap:round;
+  stroke-dasharray:16 56; transform-origin:16px 16px;
+  animation:spinner-turn 1.15s linear infinite;
+}
+
+/* Altın dolumu: gruba translate uygulanır, layout tetiklemez. */
+.spinner-rise {
+  transform-origin:16px 16px;
+  animation:spinner-fill 2.1s cubic-bezier(.45,.05,.35,1) infinite;
+}
+.spinner-wave { opacity:.85; stroke:var(--spinner-light); stroke-width:1.2;
+  animation:spinner-drift 1.4s ease-in-out infinite alternate; }
+
+/* Analiz oku: dolum yükseldikçe çizilir. */
+.spinner-mark path {
+  fill:none; stroke:var(--spinner-light); stroke-width:2.4;
+  stroke-linecap:round; stroke-linejoin:round;
+  stroke-dasharray:22; stroke-dashoffset:22;
+  animation:spinner-draw 2.1s ease-in-out infinite;
+}
+/* 16 pikselin altında ok çamura dönüyor; sikke + dolum + yay yeterli. */
+.spinner-xs .spinner-mark, .spinner-sm .spinner-mark { display:none; }
+.spinner-xs .spinner-rim { stroke-width:2.4; }
+.spinner-xs .spinner-arc { stroke-width:3; }
+.spinner-mark path:last-child { stroke-dasharray:8; stroke-dashoffset:8; animation-delay:.16s; }
+
+@keyframes spinner-turn { to { transform:rotate(360deg); } }
+
+/* 0–55: dolar, 55–78: dolu bekler, 78–100: boşalır. */
+@keyframes spinner-fill {
+  0%          { transform:translateY(26px); }
+  55%, 78%    { transform:translateY(0); }
+  100%        { transform:translateY(26px); }
+}
+@keyframes spinner-drift { from { transform:translateX(-3px); } to { transform:translateX(3px); } }
+@keyframes spinner-draw {
+  0%, 12%   { stroke-dashoffset:22; }
+  52%, 82%  { stroke-dashoffset:0; }
+  100%      { stroke-dashoffset:22; }
+}
+
+/* Kart içinde tek başına duran yükleme satırı. */
+.loading-row {
+  display:flex; align-items:center; gap:10px; padding:16px 2px;
+  color:var(--muted); font-size:12.5px;
+}
+.loading-row .spinner-label { font-size:12.5px; }
+
+@media (prefers-reduced-motion:reduce) {
+  .spinner-arc, .spinner-rise, .spinner-wave, .spinner-mark path {
+    animation:none;
+  }
+  /* Hareket kapalıyken gösterge yine de "kısmen dolu" okunmalı. */
+  .spinner-rise { transform:translateY(12px); }
+  .spinner-mark path { stroke-dashoffset:0; }
+  .spinner-arc { stroke-dasharray:26 46; }
+}

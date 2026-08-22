@@ -5,35 +5,38 @@
 .gram-head h2 { margin:0 0 5px; font-size:15px; }
 .gram-head small { color:var(--muted); font-size:11px; line-height:1.6; display:block; max-width:62ch; }
 .gram-basis { flex:0 0 auto; text-align:right; padding:9px 13px; border:1px solid var(--line);
-  border-radius:10px; background:#0b1929; }
+  border-radius:10px; background:var(--surface); }
 .gram-basis span { display:block; color:var(--muted); font-size:9.5px; text-transform:uppercase; letter-spacing:.07em; }
 .gram-basis b { display:block; margin:3px 0 2px; color:var(--gold); font-size:16px; font-variant-numeric:tabular-nums; }
-.gram-basis small { color:#6d8299; font-size:9.5px; }
+.gram-basis small { color:var(--text-dim); font-size:9.5px; }
 
 .gram-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:12px; }
-.quote { padding:13px; border:1px solid var(--line); border-radius:12px; background:#0b1826; }
+.quote { padding:13px; border:1px solid var(--line); border-radius:12px; background:var(--surface); }
 .quote header { display:flex; align-items:baseline; justify-content:space-between; gap:8px; }
-.quote-name { color:#e7f0f9; font-size:12px; font-weight:800; }
+.quote-name { color:var(--text); font-size:12px; font-weight:800; }
 .quote-content { color:var(--muted); font-size:10px; font-style:normal; white-space:nowrap; }
 .quote-price { display:block; margin:8px 0 6px; font-size:21px; font-weight:800;
-  font-variant-numeric:tabular-nums; color:#fff; transition:color .35s ease; }
+  font-variant-numeric:tabular-nums; color:var(--text-strong); }
+/* Burada `transition:color` YOK: özel değişkene bağlı renk geçişi tema
+   değişiminde bir tema geriden geliyor (ölçüldü). Tik parlaması zaten
+   _quotes.scss'teki @keyframes ile yapılıyor. */
 .quote-price.tick-up { color:var(--teal); }
 .quote-price.tick-down { color:var(--red); }
 .quote-line { display:flex; justify-content:space-between; gap:10px; color:var(--muted); font-size:10.5px; }
-.quote-line b { color:#cfdcea; font-variant-numeric:tabular-nums; }
+.quote-line b { color:var(--text); font-variant-numeric:tabular-nums; }
 
-.quote-breakdown { margin-top:11px; padding-top:10px; border-top:1px solid #1b3249; }
+.quote-breakdown { margin-top:11px; padding-top:10px; border-top:1px solid var(--line); }
 .quote-breakdown > div { display:flex; justify-content:space-between; gap:10px; font-size:10.5px; color:var(--muted); }
 .quote-breakdown > div + div { margin-top:4px; }
-.quote-breakdown b { color:#cfdcea; font-variant-numeric:tabular-nums; }
+.quote-breakdown b { color:var(--text); font-variant-numeric:tabular-nums; }
 .quote-breakdown b.warn { color:var(--gold); }
 .quote-breakdown b.positive { color:var(--teal); }
-.premium-bar { display:block; margin-top:7px; height:4px; border-radius:3px; background:#132436; overflow:hidden; }
-.premium-bar i { display:block; height:100%; border-radius:3px; background:var(--gold); }
+.premium-bar { display:block; margin-top:7px; height:4px; border-radius:3px; background:var(--surface-3); overflow:hidden; }
+.premium-bar i { display:block; height:100%; border-radius:3px; background:var(--gold-fill); }
 
 .quote-change { margin:9px 0 0; color:var(--muted); font-size:10.5px; }
 .gram-note { margin:14px 0 0; color:var(--muted); font-size:11px; line-height:1.7; }
-.gram-note a { color:#9fd8ff; }
+.gram-note a { color:var(--blue-bright); }
 
 @media (max-width:650px) {
   .gram-grid { grid-template-columns:1fr; }

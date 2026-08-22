@@ -1,10 +1,10 @@
 /* Ufuk kartları aynı zamanda grafiğin vade seçicisidir. */
 #feature-tahmin { grid-template-columns:repeat(3,minmax(0,1fr)); }
 .forecast-card { appearance:none; width:100%; text-align:left; color:inherit; font:inherit;
-  cursor:pointer; position:relative; border:1px solid var(--line); transition:border-color .18s,transform .18s,box-shadow .18s; }
-.forecast-card:hover { transform:translateY(-2px); border-color:#6f8aa3; }
-.forecast-card.selected { border-color:var(--gold); box-shadow:0 0 0 1px #f3c96944,inset 0 0 28px #f3c9690b; }
-.forecast-card em { color:#8299ae; font-size:10px; font-style:normal; font-weight:800; }
+  cursor:pointer; position:relative; border:1px solid var(--line); transition:transform .18s; }
+.forecast-card:hover { transform:translateY(-2px); border-color:var(--line-vivid); }
+.forecast-card.selected { border-color:var(--gold); box-shadow:0 0 0 1px rgb(var(--gold-fill-rgb) / .27),inset 0 0 28px rgb(var(--gold-fill-rgb) / .04); }
+.forecast-card em { color:var(--muted); font-size:10px; font-style:normal; font-weight:800; }
 .forecast-card.selected em { color:var(--gold); }
 @media(max-width:650px) { #feature-tahmin { grid-template-columns:1fr; } .forecast-card em { grid-column:1 / -1; } }
 

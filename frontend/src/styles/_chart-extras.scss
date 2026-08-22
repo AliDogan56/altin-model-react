@@ -12,9 +12,9 @@
 
 /* Efsane hem açıklama hem katman anahtarı */
 .chart-legend button { display:flex; align-items:center; gap:5px; min-height:34px; padding:0 11px;
-  border:1px solid var(--line); border-radius:999px; background:#0d1d30; color:#b9cadd;
+  border:1px solid var(--line); border-radius:999px; background:var(--surface-2); color:var(--text-soft);
   font:inherit; font-size:10px; cursor:pointer; }
-.chart-legend button:hover { border-color:#8e773d; color:#fff; }
+.chart-legend button:hover { border-color:var(--gold-line); color:var(--text-strong); }
 .chart-legend button.off { opacity:.45; }
 .chart-legend button:disabled,.chart-legend .legend-unavailable { opacity:.35; cursor:not-allowed; }
 .chart-legend button.off i { filter:grayscale(1); }
@@ -25,16 +25,20 @@
   .chart-legend button { min-height:38px; font-size:11px; padding:0 12px; }
 }
 
-/* styles.scss'teki .band{fill:#f3c96920} üzerine: bant altın çizginin etrafında
+/* styles.scss'teki .band{fill:rgb(var(--gold-fill-rgb) / .13)} üzerine: bant altın çizginin etrafında
    yumuşak bir hale olmalı, sağ yarıyı kaplayan bir blok değil. */
-.band { fill:#e8c56a10; }
+.band { fill:rgb(var(--gold-fill-rgb) / .06); }
 
 /* Destek / direnç seviyeleri — yalnız geçmiş bölgesinde, ince ve ikincil */
 .sr line { stroke-width:1; stroke-dasharray:5 5; opacity:.55; }
 .sr text { font-size:11px; font-weight:700; opacity:.9; }
 .sr.res line { stroke:var(--red); } .sr.res text { fill:var(--red); }
 .sr.sup line { stroke:var(--teal); } .sr.sup text { fill:var(--teal); }
-.sr-key { background:linear-gradient(90deg,var(--teal) 50%,var(--red) 50%); }
+.sr-key { background:linear-gradient(90deg,var(--teal-fill) 50%,var(--red-fill) 50%); }
 .gram-grid em { color:var(--muted); font-size:10px; font-style:normal; }
 
 /* ---- Pivot seviyeleri ---- */
+
+/* Mum görünümü açıklaması; yalnız mum modunda görünür. */
+.candle-note { border-left:3px solid var(--gold-line); padding-left:11px; }
+.chart-tools button[disabled] { opacity:.45; cursor:not-allowed; }

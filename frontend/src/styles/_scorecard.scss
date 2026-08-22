@@ -1,22 +1,22 @@
 /* İsabet karnesi. */
-.score-block { border-color:#3a5470; background:linear-gradient(145deg,#102a44ef,#0a1727ef); }
+.score-block { border-color:var(--line-strong); background:linear-gradient(145deg,rgb(var(--surface-3-rgb) / .94),rgb(var(--surface-rgb) / .94)); }
 .score-head { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; }
 .score-head h2 { margin:6px 0 0; }
 .score-head p { max-width:640px; margin:7px 0 0; color:var(--muted); font-size:11.5px; line-height:1.6; }
 .score-days { flex:0 0 auto; display:flex; align-items:center; gap:9px; padding:11px 15px;
-  border:1px solid #3a5470; border-radius:12px; background:#0d2135; }
+  border:1px solid var(--line-strong); border-radius:12px; background:var(--surface-2); }
 .score-days b { font-size:30px; line-height:1; font-variant-numeric:tabular-nums; }
 .score-days span { color:var(--muted); font-size:10px; line-height:1.3; }
 .score-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:10px; margin-top:16px; }
 .score-grid > div { display:flex; flex-direction:column; gap:4px; padding:12px 13px;
-  border:1px solid var(--line); border-radius:11px; background:#0d1d30; }
+  border:1px solid var(--line); border-radius:11px; background:var(--surface-2); }
 .score-grid span { color:var(--muted); font-size:10px; letter-spacing:.04em; text-transform:uppercase; }
 .score-grid b { font-size:20px; font-variant-numeric:tabular-nums; }
-.score-grid small { color:#6f8399; font-size:10px; line-height:1.5; }
-.score-grid .good { border-color:#2f6b58; } .score-grid .good b { color:var(--teal); }
-.score-grid .bad { border-color:#6b3540; } .score-grid .bad b { color:var(--red); }
+.score-grid small { color:var(--text-dim); font-size:10px; line-height:1.5; }
+.score-grid .good { border-color:var(--teal-line); } .score-grid .good b { color:var(--teal); }
+.score-grid .bad { border-color:var(--red-line); } .score-grid .bad b { color:var(--red); }
 .score-note { margin-top:14px; padding:11px 13px; border-left:2px solid var(--gold);
-  color:var(--muted); font-size:11px; line-height:1.6; background:#1a170a55; border-radius:0 9px 9px 0; }
+  color:var(--muted); font-size:11px; line-height:1.6; background:rgb(var(--gold-bg-rgb) / .33); border-radius:0 9px 9px 0; }
 @media (max-width:650px) { .score-head { flex-direction:column; } .score-grid { grid-template-columns:1fr 1fr; } }
 
 /* ---- Yasal uyarı ---- */
@@ -25,8 +25,8 @@
 .score-table { margin-top:14px; border:1px solid var(--line); border-radius:11px; overflow:hidden; }
 .score-row { display:grid; grid-template-columns:1.2fr repeat(3,1fr); gap:8px; align-items:center;
   padding:11px 12px; font-size:12px; font-variant-numeric:tabular-nums; }
-.score-row + .score-row { border-top:1px solid #1b3249; }
-.score-row.head { background:#122840; color:#cbd9e8; font-size:10px; text-transform:uppercase;
+.score-row + .score-row { border-top:1px solid var(--line); }
+.score-row.head { background:var(--surface-3); color:var(--text); font-size:10px; text-transform:uppercase;
   letter-spacing:.06em; font-weight:800; }
 .score-row span { text-align:right; }
 .score-row span:first-child { text-align:left; display:flex; flex-direction:column; gap:2px; }
@@ -34,7 +34,7 @@
 .score-row.muted { opacity:.55; }
 .score-note { margin:12px 0 0; color:var(--muted); font-size:11px; line-height:1.6; max-width:75ch; }
 .score-version { margin:8px 0 0; color:var(--muted); font-size:10px; }
-.score-version code { color:#9fd8ff; }
+.score-version code { color:var(--blue-bright); }
 @media (max-width:650px) {
   .score-row { grid-template-columns:1fr 1fr; gap:6px 10px; font-size:11px; }
   .score-row.head { display:none; }
@@ -43,6 +43,6 @@
 }
 
 /* Karne artık Ayrıntılar sekmesinde; giriş cümlesi ve sürüm satırı sadeleşti. */
-.score-lede { margin:0 0 14px; color:#c2d2e2; font-size:12.5px; line-height:1.75; max-width:78ch; }
-.score-lede b { color:#fff; }
-.score-version { display:inline-block; margin-left:6px; color:#6d8299; }
+.score-lede { margin:0 0 14px; color:var(--text-soft); font-size:12.5px; line-height:1.75; max-width:78ch; }
+.score-lede b { color:var(--text-strong); }
+.score-version { display:inline-block; margin-left:6px; color:var(--text-dim); }

@@ -2,10 +2,10 @@
    Eski tasarım sd rozeti, "puan" birimi ve "net parametrik etki" gibi terimlerle
    konuşuyordu; hiçbir şey bilmeyen okuyucu için tek somut birim dolar. */
 .impact-block h2 { margin:0 0 10px; font-size:16px; }
-.impact-lede { margin:0 0 16px; color:#cfdcea; font-size:12.5px; line-height:1.75; max-width:78ch; }
-.impact-lede b { color:#fff; }
+.impact-lede { margin:0 0 16px; color:var(--text); font-size:12.5px; line-height:1.75; max-width:78ch; }
+.impact-lede b { color:var(--text-strong); }
 .impact-empty { margin:0; padding:12px 14px; border:1px solid var(--line); border-radius:10px;
-  background:#0d1d30; color:var(--muted); font-size:12px; line-height:1.6; }
+  background:var(--surface-2); color:var(--muted); font-size:12px; line-height:1.6; }
 
 .push-columns { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
 .push-group h3 { display:flex; align-items:baseline; justify-content:space-between; gap:8px;
@@ -17,33 +17,33 @@
 .push-group ul { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:13px; }
 
 .push-head { display:flex; align-items:baseline; justify-content:space-between; gap:10px; }
-.push-name { color:#e7f0f9; font-size:12.5px; font-weight:700; }
+.push-name { color:var(--text); font-size:12.5px; font-weight:700; }
 .push-usd { font-size:13px; font-weight:800; font-variant-numeric:tabular-nums; }
 .push.up .push-usd { color:var(--teal); }
 .push.down .push-usd { color:var(--red); }
-.push-bar { margin:6px 0 5px; height:6px; border-radius:4px; background:#132436; overflow:hidden; }
+.push-bar { margin:6px 0 5px; height:6px; border-radius:4px; background:var(--surface-3); overflow:hidden; }
 .push-bar i { display:block; height:100%; border-radius:4px; }
-.push.up .push-bar i { background:var(--teal); }
-.push.down .push-bar i { background:var(--red); }
+.push.up .push-bar i { background:var(--teal-fill); }
+.push.down .push-bar i { background:var(--red-fill); }
 .push-why { margin:0; color:var(--muted); font-size:11px; line-height:1.6; }
 .push-level { margin-left:5px; }
-.push-level.normal { color:#71839a; }
-.push-level.high { color:#c9b072; }
-.push-level.extreme { color:#e0a24f; font-weight:700; }
+.push-level.normal { color:var(--text-dim); }
+.push-level.high { color:var(--gold); }
+.push-level.extreme { color:var(--gold); font-weight:700; }
 
 .push-more { margin-top:14px; min-height:38px; padding:0 14px; border:1px solid var(--line);
-  border-radius:999px; background:#0d1d30; color:#b9cadd; font:inherit; font-size:11.5px; cursor:pointer; }
-.push-more:hover { border-color:#8e773d; color:#fff; }
+  border-radius:999px; background:var(--surface-2); color:var(--text-soft); font:inherit; font-size:11.5px; cursor:pointer; }
+.push-more:hover { border-color:var(--gold-line); color:var(--text-strong); }
 .push-more:focus-visible { outline:2px solid var(--gold); outline-offset:2px; }
 
 .impact-net { margin:16px 0 0; padding:12px 14px; border:1px solid var(--line); border-radius:10px;
-  background:#0b1929; color:#cfdcea; font-size:12.5px; line-height:1.75; }
+  background:var(--surface); color:var(--text); font-size:12.5px; line-height:1.75; }
 .impact-net b { font-variant-numeric:tabular-nums; }
 
 .impact-how { margin-top:14px; color:var(--muted); font-size:11.5px; }
-.impact-how summary { cursor:pointer; color:#9db3c9; min-height:32px; display:flex; align-items:center; }
+.impact-how summary { cursor:pointer; color:var(--muted); min-height:32px; display:flex; align-items:center; }
 .impact-how p { margin:8px 0 0; line-height:1.7; max-width:75ch; }
-.impact-how b { color:#cfdcea; }
+.impact-how b { color:var(--text); }
 
 @media (max-width:650px) {
   .push-columns { grid-template-columns:1fr; gap:20px; }

@@ -1,7 +1,7 @@
 /* Grafik çizgileri ve bantları. */
-.gridline{stroke:#20364d}
+.gridline{stroke:var(--line)}
 .axis{fill:var(--muted);font-size:12px}
-.band{fill:#f3c96920}
+.band{fill:rgb(var(--gold-fill-rgb) / .13)}
 .history{fill:none;stroke:var(--blue);stroke-width:2}
 .forecast{fill:none;stroke:var(--gold);stroke-width:3}
 .resistance{stroke:var(--red);stroke-dasharray:6 6}
