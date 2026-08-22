@@ -11,3 +11,5 @@ __pycache__/
 /backend/model-service/data/*
 !/backend/model-service/data/xauusd_training_5y.csv
 frontend/dist-local/
+.DS_Store
+.venv-model/
