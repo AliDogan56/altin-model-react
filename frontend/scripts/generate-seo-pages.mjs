@@ -58,6 +58,11 @@ const relatedOf = index => Array.from({ length: RELATED_COUNT },
    Ön render edilen sürümde de bulunmalı: Google'ın gördüğü ve JavaScript
    çalışmadan görünen HTML bu. */
 const panelBySlug = new Map(features.map(feature => [feature.slug, feature]));
+const panelJump = article => {
+  const feature = panelBySlug.get(article.panel);
+  return feature ? `<p class="article-jump"><a href="/panel/${escapeHtml(feature.slug)}">${escapeHtml(feature.title)} →</a> <small>canlı veride, hesaplanmış hâliyle</small></p>` : '';
+};
+
 const panelCta = article => {
   const feature = panelBySlug.get(article.panel);
   if (!feature) return '';
@@ -74,6 +79,7 @@ const articleBody = (article, related) => `<main class="seo-prerender" data-seo-
       <article>
         <header><p>${escapeHtml(article.keyword)}</p><h1>${escapeHtml(article.title)}</h1><p>${escapeHtml(article.summary)}</p></header>
         <p>${escapeHtml(article.intro)}</p>
+        ${panelJump(article)}
         ${article.sections.map(section => `<section><h2>${escapeHtml(section.heading)}</h2>${section.paragraphs.map(p => `<p>${escapeHtml(p)}</p>`).join('')}</section>`).join('\n        ')}
         <section><h2>Özet: ${escapeHtml(article.keyword)}</h2><ul>${article.points.map(point => `<li>${escapeHtml(point)}</li>`).join('')}</ul></section>
         <section><h2>Sık sorulan sorular</h2>${article.faq.map(item => `<h3>${escapeHtml(item.q)}</h3><p>${escapeHtml(item.a)}</p>`).join('')}</section>

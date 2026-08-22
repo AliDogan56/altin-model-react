@@ -62,3 +62,11 @@
   font-weight:800; font-size:13px; text-decoration:none; }
 .article-cta-link:hover { filter:brightness(1.08); }
 .article-cta-link:focus-visible { outline:2px solid #fff; outline-offset:2px; }
+
+/* Girişin hemen altındaki kompakt yönlendirme: yazı sonundaki kart ilk ekranda görünmüyor. */
+.article-jump { display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;
+  margin:0 0 22px; padding:12px 15px; border-left:3px solid var(--gold);
+  border-radius:0 10px 10px 0; background:#161d2a; }
+.article-jump a { color:var(--gold); font-weight:800; font-size:14px; text-decoration:none; }
+.article-jump a:hover { text-decoration:underline; }
+.article-jump small { color:var(--muted); font-size:11.5px; }
