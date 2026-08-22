@@ -210,9 +210,14 @@ satırlar listelenmez ama toplamlara dahildir.
   render edilmiş footer'dan (`LEGAL` sabiti) linklenir. Article şemasının `author`'ı artık
   `/yazar`'a bakar. `SitePageView` başlığa site adını bir kez ekler — `useDocumentMeta`
   zaten ekliyordu, iki kez markalanıyordu
-- **Makale derinliği.** En yüksek potansiyelli 10 makale ~210 kelimeden 1200+ kelimeye
-  çıkarıldı (7-8 bölüm, 8 SSS); kalan 20'si hâlâ ~500 kelime. Şablon payı %21. Bu 10 makale
-  modelin **kendi ölçülmüş sayılarını** kaynak olarak kullanır (MAE, yön, beceri, ağırlık)
+- **Makale derinliği.** 30 makalenin **tamamı** ~210 kelimeden 1101–1468 kelimeye çıkarıldı;
+  her biri 7-8 bölüm ve 8 SSS taşır, hepsinde bir tablo, 25'inde ayrıca liste var.
+  Ortalama 1218 kelime / 631 benzersiz kelime, şablon payı %21. Makaleler modelin
+  **kendi ölçülmüş sayılarını** kaynak olarak kullanır (MAE, yön, beceri, ağırlık) —
+  rakiplerin kopyalayamayacağı tek içerik bu
+- **Makaleler arası tekrar yok.** Aynı SSS sorusu birden fazla makalede geçince sayfalar
+  aynı snippet için birbiriyle yarışıyordu; 8 soru ve 10 bölüm başlığı ayrıştırıldı.
+  30 tablo başlığının hepsi benzersiz
 - **Makale şemasında tablo ve liste var** (`SeoTable`, `SeoList` — `content/types.ts`).
   Sayısal içerik düz paragrafta kayboluyordu. `ArticlePage` ve `generate-seo-pages.mjs`
   aynı işaretlemeyi basar; tablo `overflow-x:auto` saran divde, mobilde sayfa taşmıyor
