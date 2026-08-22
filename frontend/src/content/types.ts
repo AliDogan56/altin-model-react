@@ -1,5 +1,13 @@
-export type SeoSection = { heading: string; paragraphs: string[] };
+export type SeoSection = {
+  heading: string; paragraphs: string[];
+  table?: SeoTable; list?: SeoList;
+};
 export type SeoFaq = { q: string; a: string };
+/** Bölüm içi tablo: "kaç gram", "hangi seviye" gibi sayısal içerikte
+    düz paragraftan hem okunur hem taranabilir olarak daha iyi. */
+export type SeoTable = { caption: string; columns: string[]; rows: string[][] };
+export type SeoList = { ordered?: boolean; items: string[] };
+
 export type SeoArticle = {
   id: string; keyword: string; title: string; seoTitle?: string; updated: string;
   summary: string; intro: string; category: string;

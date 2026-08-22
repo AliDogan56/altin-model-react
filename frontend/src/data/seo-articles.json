@@ -4,51 +4,147 @@
     "keyword": "1 ons altın kaç gram",
     "title": "1 Ons Altın Kaç Gram Eder?",
     "seoTitle": "1 Ons Altın Kaç Gram",
-    "updated": "2026-08-18",
-    "summary": "1 troy ons altın 31,1035 gramdır. Troy ons ile normal ons farkını ve gram çevrimini örneklerle açıklıyoruz.",
-    "intro": "Değerli metal piyasasında kullanılan ons, günlük hayatta bilinen onstan farklıdır. 1 troy ons tam olarak 31,1034768 grama eşittir ve pratikte 31,1035 olarak yuvarlanır.",
+    "updated": "2026-08-22",
+    "summary": "1 troy ons altın 31,1035 gramdır. Troy ons ile normal ons farkı, ons fiyatından gram altın fiyatına geçiş formülü ve adım adım örnek hesap.",
+    "intro": "Altın fiyatlarını takip etmeye başlayan herkesin ilk karşılaştığı sorun birim karmaşasıdır. Uluslararası piyasa altını dolar/ons olarak fiyatlar, Türkiye'deki kuyumcu ise lira/gram olarak. İkisi arasında geçiş yapmak için bilmeniz gereken tek sabit vardır: bir troy ons 31,1035 gramdır. Bu sayıyı ve tek satırlık formülü öğrendiğinizde, ekrandaki ons fiyatının vitrindeki gram fiyatına nasıl döndüğünü kendiniz görebilirsiniz.",
     "sections": [
       {
-        "heading": "Troy ons ile normal ons farkı",
+        "heading": "1 ons altın kaç gram?",
         "paragraphs": [
-          "Normal ons (avoirdupois) yaklaşık 28,3495 gramdır ve gıda, posta gibi alanlarda kullanılır. Troy ons ise yalnızca değerli metaller için kullanılır ve 31,1035 gramdır.",
-          "Aradaki fark yüzde on civarındadır; küçük görünse de büyük tutarlarda ciddi sapma yaratır. Altınla ilgili her fiyat ve hesapta troy ons kullanıldığını varsaymak doğrudur."
+          "Bir troy ons altın tam olarak 31,1034768 gramdır. Günlük hesaplarda 31,1035 olarak yuvarlanır ve bu yuvarlama pratikte fark yaratmaz.",
+          "Bu sayı bir piyasa geleneği değil, tanımlı bir ölçü birimidir. Londra'dan New York'a, Şanghay'dan İstanbul'a kadar tüm değerli metal piyasaları aynı troy onsu kullanır. Altın, gümüş, platin ve paladyum fiyatları bu birim üzerinden kote edilir.",
+          "Ters yönde de işe yarar: 1 gram altın, bir troy onsun 1 ÷ 31,1035 = 0,03215 katıdır. Yani yaklaşık 32 gram bir onsa denk gelir."
         ]
       },
       {
-        "heading": "Gram çevrimi nasıl yapılır",
+        "heading": "Troy ons ile normal ons neden farklı",
         "paragraphs": [
-          "Ons fiyatını gram fiyatına çevirmek için ons fiyatını 31,1035'e bölmeniz yeterlidir. Bu size saf altının gram başına dolar fiyatını verir.",
-          "TL karşılığı için sonucu güncel USD/TRY kuruyla çarpın. Bu hesap saf (24 ayar) altını verir; piyasadaki ürünler ayar, işçilik ve satıcı marjı nedeniyle bu değerden farklı fiyatlanır."
+          "Günlük hayatta kullanılan ons, avoirdupois onsudur ve 28,3495 gramdır. Gıda ambalajlarında, posta ağırlıklarında karşınıza çıkan budur.",
+          "Troy ons ise yalnızca değerli metaller için kullanılır ve 31,1035 gramdır. Kökeni Orta Çağ Fransası'ndaki Troyes panayırlarına dayanır; değerli metal ticareti orada standartlaştığı için sistem o adla kaldı.",
+          "Aradaki fark yüzde 9,7'dir. Küçük görünse de büyük tutarlarda ciddi sapma yaratır: 10 onsluk bir hesapta yanlış birim kullanmak, yaklaşık 28 gramlık bir hata demektir. Altınla ilgili her fiyatta troy onsun geçerli olduğunu varsaymak güvenlidir."
+        ],
+        "table": {
+          "caption": "Ons ve gram karşılıkları",
+          "columns": [
+            "Birim",
+            "Gram karşılığı",
+            "Nerede kullanılır"
+          ],
+          "rows": [
+            [
+              "1 troy ons",
+              "31,1035 gram",
+              "Altın, gümüş, platin, paladyum"
+            ],
+            [
+              "1 normal (avoirdupois) ons",
+              "28,3495 gram",
+              "Gıda, posta, genel tartım"
+            ],
+            [
+              "1 gram",
+              "0,03215 troy ons",
+              "Türkiye'de perakende altın"
+            ],
+            [
+              "1 kilogram",
+              "32,1507 troy ons",
+              "Külçe altın, merkez bankası rezervi"
+            ]
+          ]
+        }
+      },
+      {
+        "heading": "Ons fiyatından gram altın fiyatına geçiş",
+        "paragraphs": [
+          "Türkiye'de gram altın fiyatı, uluslararası ons fiyatının doğrudan çevrilmiş hâlidir. Formül tek satırdır:",
+          "Gram saf altın (TL) = Ons fiyatı (USD) × Dolar/TL kuru ÷ 31,1035",
+          "Bu formül üç girdi ister: ons fiyatı, dolar kuru ve sabit bölen. Üçünden ikisi sürekli değişir, bu yüzden gram altın fiyatı ons sabitken bile hareket edebilir. Kur yükselirken ons düşerse gram altın yerinde sayabilir; ikisi birlikte yükselirse gram altın onstan hızlı artar."
+        ],
+        "list": {
+          "ordered": true,
+          "items": [
+            "Ons altının güncel dolar fiyatını okuyun (örnek: 3.400 dolar).",
+            "Güncel dolar/TL kuruyla çarpın (örnek: 41,00 → 139.400 lira).",
+            "31,1035'e bölün (139.400 ÷ 31,1035 = 4.482 lira).",
+            "Sonuç, bir gram saf altının teorik lira karşılığıdır.",
+            "Vitrindeki fiyat bunun biraz üzerindedir; fark makas ve kâr payıdır."
+          ]
+        }
+      },
+      {
+        "heading": "Örnek hesap ve tersine çevirme",
+        "paragraphs": [
+          "Ons 3.400 dolar, kur 41,00 lira olsun. Bir ons altının lira karşılığı 139.400 liradır. Bunu 31,1035'e böldüğünüzde gram başına 4.482 lira çıkar.",
+          "Tersine de çalışır. Elinizde gram fiyatı varsa ons fiyatını bulmak için 31,1035 ile çarpıp kura bölersiniz: 4.482 × 31,1035 ÷ 41,00 = 3.400 dolar. Kuyumcunun gram fiyatı bu hesabın belirgin şekilde üzerindeyse aradaki fark kuyumcu marjıdır.",
+          "22 ayar gram için bir adım daha gerekir: sonucu 0,916 ile çarpın. 24 ayar (has) altın 995 milyem kabul edilir; çarpan 0,995'tir."
         ]
       },
       {
-        "heading": "Sık yapılan hatalar",
+        "heading": "Neden Türkiye'de ons değil gram konuşulur",
         "paragraphs": [
-          "En yaygın hata 28,35 ile bölmektir; bu, gram fiyatını olduğundan yüksek gösterir. İkinci yaygın hata, alış ve satış fiyatlarını karıştırmaktır.",
-          "Üçüncüsü ayar farkını atlamaktır. 22 ayar bir üründe saf altın oranı yaklaşık 0,916'dır; hesabınızı bu katsayıyla düzeltmeden ürün fiyatıyla karşılaştırmak yanıltıcı olur."
+          "Bir ons altın, Türkiye'deki tipik alım tutarının çok üzerindedir. Perakende talebin büyük kısmı bir ile on gram arasında yoğunlaşır; gram bu ölçekte doğal birimdir.",
+          "Bir diğer neden ziynet geleneğidir. Çeyrek, yarım ve tam altın gram cinsinden tanımlanmıştır ve düğün, doğum gibi olaylarda dolaşan birim budur. Ons ise kurumsal ve uluslararası tarafın birimidir.",
+          "Yine de fiyatın kaynağı her zaman onstur. Türkiye'deki gram fiyatı bağımsız bir fiyat değil, ons fiyatının kur üzerinden çevrilmiş hâlidir. Bu yüzden altının gerçekte ne yaptığını anlamak istiyorsanız ons grafiğine bakmanız gerekir; gram grafiği ons ile kurun toplamını gösterir."
+        ]
+      },
+      {
+        "heading": "Sık karşılaşılan hatalar",
+        "paragraphs": [
+          "En sık hata, 28,35 ile bölmektir. Bu normal onsun karşılığıdır ve sonucu yüzde 10 şişirir.",
+          "İkinci hata, has altınla 22 ayarı karıştırmaktır. Kuyumcunun ilan ettiği \"gram altın\" genellikle has altındır; bilezik ve takı ise 22 ayardır ve gram başına yüzde 8 daha az saf altın içerir.",
+          "Üçüncüsü, kuru yanlış tarafından almaktır. Hesapta kullanılacak kur, dolar satış kurudur; alış kuruyla hesaplarsanız fiyatı olduğundan düşük bulursunuz."
+        ]
+      },
+      {
+        "heading": "Kilogram ve külçe ölçüleri",
+        "paragraphs": [
+          "Kurumsal tarafta işlem gören standart külçe, Londra teslim standardına göre yaklaşık 400 troy ons, yani 12,44 kilogramdır. Merkez bankası rezervleri bu birimle tutulur.",
+          "Perakende yatırımcının ulaşabildiği külçeler 1 gramdan 1 kilograma kadar değişir. Bir kilogram külçe 32,1507 troy onsa denk gelir.",
+          "Külçe büyüdükçe gram başına işçilik payı düşer. Bu yüzden aynı miktarda altını tek büyük külçe olarak almak, aynı ağırlığı çok sayıda küçük birim olarak almaktan ucuza gelir; karşılığında bölünebilirlikten feragat edersiniz."
         ]
       }
     ],
     "points": [
-      "1 troy ons = 31,1035 gram; değerli metallerde standart budur.",
-      "Normal ons 28,3495 gramdır ve altın hesabında kullanılmaz.",
-      "Gram dolar fiyatı = ons fiyatı ÷ 31,1035.",
-      "Gram TL fiyatı = (ons ÷ 31,1035) × USD/TRY.",
-      "22 ayar için saflık katsayısı yaklaşık 0,916'dır."
+      "1 troy ons altın 31,1035 gramdır; günlük hesapta bu yuvarlama yeterlidir.",
+      "Normal ons 28,3495 gramdır ve altınla ilgisi yoktur; aradaki fark yüzde 9,7'dir.",
+      "Gram saf altın (TL) = ons (USD) × dolar kuru ÷ 31,1035.",
+      "1 gram = 0,03215 troy ons; 1 kilogram = 32,1507 troy ons.",
+      "22 ayar için sonucu 0,916, has altın için 0,995 ile çarpın.",
+      "Gram fiyatı bağımsız değildir; ons ile kurun bileşik sonucudur."
     ],
     "faq": [
       {
-        "q": "1 kilo altın kaç ons?",
-        "a": "Yaklaşık 32,1507 troy ons eder."
+        "q": "1 ons altın kaç gram?",
+        "a": "Bir troy ons altın 31,1035 gramdır (tam değeri 31,1034768). Değerli metal piyasalarının tamamı bu birimi kullanır."
       },
       {
-        "q": "Neden troy ons kullanılıyor?",
-        "a": "Ortaçağ Avrupa'sından kalan bir ticaret standardıdır ve değerli metal piyasasında uluslararası kabul görmüştür."
+        "q": "Troy ons ile normal ons arasındaki fark nedir?",
+        "a": "Normal ons 28,3495 gram, troy ons 31,1035 gramdır. Aradaki fark yüzde 9,7'dir. Altın, gümüş ve platin fiyatlarında her zaman troy ons geçerlidir."
       },
       {
-        "q": "Çeyrek altın kaç gram?",
-        "a": "Standart çeyrek altın 1,75 gram ağırlığında ve 22 ayardır; içindeki saf altın yaklaşık 1,60 gramdır."
+        "q": "Ons altından gram altına nasıl geçilir?",
+        "a": "Ons fiyatını dolar kuruyla çarpıp 31,1035'e bölersiniz. Örneğin 3.400 dolar ons ve 41,00 kur, gram başına 4.482 lira eder."
+      },
+      {
+        "q": "1 gram altın kaç ons eder?",
+        "a": "1 gram altın 0,03215 troy onsa denktir. Yaklaşık 31 gram bir troy ons yapar."
+      },
+      {
+        "q": "1 kilogram altın kaç ons?",
+        "a": "1 kilogram altın 32,1507 troy onstur. Kurumsal ticarette kullanılan standart Londra külçesi ise yaklaşık 400 ons, yani 12,44 kilogramdır."
+      },
+      {
+        "q": "22 ayar gram altın hesabı nasıl yapılır?",
+        "a": "Önce has altın gram fiyatını bulun, sonra 0,916 ile çarpın. 22 ayar altın gram başına binde 916 saf altın içerir."
+      },
+      {
+        "q": "Neden Türkiye'de gram, dünyada ons kullanılıyor?",
+        "a": "Bir ons Türkiye'deki tipik alım tutarının çok üzerindedir ve ziynet geleneği gram üzerine kuruludur. Fiyatın kaynağı yine de onstur; gram fiyatı ons ile kurun çevrilmiş hâlidir."
+      },
+      {
+        "q": "Ons sabitken gram altın neden değişiyor?",
+        "a": "Çünkü formülde dolar kuru da var. Kur yükselirse ons hiç kıpırdamasa bile gram altın lira cinsinden pahalanır; ikisi ters yönde hareket ederse gram altın yerinde sayabilir."
       }
     ],
     "category": "Temel Kavramlar",
@@ -59,58 +155,137 @@
     "keyword": "canlı ons altın fiyatı",
     "title": "Canlı Ons Altın Fiyatı Nasıl Okunur?",
     "seoTitle": "Canlı Ons Altın Fiyatı Nasıl Okunur",
-    "updated": "2026-08-18",
-    "summary": "ONS/XAUUSD bir troy ons altının dolar değeridir. Canlı fiyatı alış-satış farkı, günlük değişim ve işlem saatleriyle birlikte okumayı öğrenin.",
-    "intro": "Ons altın fiyatı, bir troy ons (31,1035 gram) saf altının ABD doları cinsinden değeridir. Ekranda gördüğünüz tek bir sayı aslında üç ayrı bilgiyi birden taşır: son işlem fiyatı, o fiyatın hangi piyasada oluştuğu ve alıcı ile satıcı arasındaki farkın ne kadar açıldığı. Bu üçünü ayrı ayrı okumadan fiyatı yorumlamak yanıltıcı olur.",
+    "updated": "2026-08-22",
+    "summary": "Canlı ons altın fiyatı nereden gelir, neden her kaynakta biraz farklıdır ve alış-satış makası ne anlama gelir? Piyasa saatleri ve doğru okuma.",
+    "intro": "Canlı ons altın fiyatı, saniyeler içinde değişen bir sayıdır ve baktığınız kaynağa göre birkaç dolar farklılık gösterir. Bu fark bir hata değil, altın piyasasının yapısından kaynaklanır: altının tek bir merkezi borsası yoktur. Bu yazıda fiyatın nereden geldiğini, alış ile satış arasındaki farkın ne anlattığını, piyasanın hangi saatlerde açık olduğunu ve canlı fiyatı doğru okumanın ne demek olduğunu anlatıyoruz.",
     "sections": [
       {
-        "heading": "Alış, satış ve makas ne anlama gelir",
+        "heading": "Ons altın fiyatı nerede oluşur",
         "paragraphs": [
-          "Her canlı fiyat aslında bir çift sayıdır. Alış (bid), piyasanın sizden almaya razı olduğu fiyattır; satış (ask) ise size satmaya razı olduğu fiyat. İkisi arasındaki farka makas ya da spread denir ve bu fark doğrudan işlem maliyetinizdir.",
-          "Makas piyasa derinliğine göre değişir. Londra ve New York seansları çakıştığında ons altında makas tipik olarak en dar seviyesindedir. Asya sabahında, hafta sonlarında ya da önemli bir veri açıklamasının hemen öncesinde makas belirgin biçimde açılır. Dar makasta gördüğünüz fiyat gerçek piyasa fiyatına yakındır; geniş makasta ise ekrandaki sayı bir uzlaşı değil, iki tarafın da temkinli durduğu bir aralıktır."
+          "Altının hisse senedi gibi tek bir borsası yoktur. Fiyat, tezgah üstü olarak adlandırılan dağıtık bir piyasada, büyük bankalar ve aracı kurumlar arasındaki alım satımlarla oluşur. Bu piyasanın merkezi Londra'dır.",
+          "Buna paralel olarak New York'ta vadeli altın kontratları işlem görür ve fiyat oluşumuna katkı yapar. Spot fiyat ile vadeli fiyat birbirine yakın seyreder ama birebir aynı olmaz.",
+          "Sonuç olarak \"ons altın fiyatı\" dediğimiz sayı, bu dağıtık piyasadan derlenen bir referanstır. Farklı veri sağlayıcılar farklı katılımcıların kotasyonlarını topladığı için aralarında birkaç dolarlık sapma normaldir."
         ]
       },
       {
-        "heading": "Günlük değişim yüzdesi hangi ana göre hesaplanır",
+        "heading": "Alış, satış ve makas",
         "paragraphs": [
-          "Yüzde değişim, referans aldığınız başlangıç anına göre değişir. Kimi kaynak önceki günün kapanışını, kimi UTC gece yarısını, kimi de son 24 saati baz alır. Aynı anda iki farklı sitede farklı yüzdeler görmenizin en yaygın sebebi budur.",
-          "Bu paneldeki değişim günlük XAU/USD kapanışına göre hesaplanır. Canlı Harem ONS kotasyonu alış ve satış değerlerini gösterirken modelin tarihsel serisi tek ve tutarlı bir XAU/USD kaynağından gelir."
+          "Canlı ekranlarda tek bir sayı değil iki sayı görürsünüz. Alış, piyasanın sizden almaya razı olduğu fiyattır; satış ise size satmaya razı olduğu fiyat. Satış her zaman alıştan yüksektir.",
+          "Aradaki farka makas denir ve piyasanın likiditesini ölçer. Makas daraldıkça piyasa derin ve işlek, genişledikçe tedirgin ve ince demektir.",
+          "Ons altında makas normal koşullarda çok dardır. Ziynet ürünlerinde ise belirgin biçimde geniştir; çünkü fiziki ürünün saklama, taşıma ve doğrulama maliyeti vardır. Panel her ürün için makası hem lira hem yüzde olarak gösterir."
         ]
       },
       {
-        "heading": "Neden iki farklı ons fiyatı görüyorsunuz",
+        "heading": "Piyasa saatleri: altın ne zaman açık",
         "paragraphs": [
-          "Panelde tarihsel XAU/USD kapanış serisi ile canlı ONS alış-satış kotasyonu birlikte kullanılır.",
-          "Modelin eğitim, tahmin ve hata ölçümü aynı XAU/USD referansına bağlıdır; böylece farklı varlıkların baz farkı modele karışmaz."
+          "Altın piyasası hafta içi neredeyse kesintisiz açıktır. Pazar akşamı Asya seansıyla başlar, Avrupa ve Amerika seanslarıyla devam eder, cuma akşamı New York kapanışıyla durur.",
+          "Bu, hafta içi gece yarısı bile fiyatın hareket ettiği anlamına gelir. Sabah uyandığınızda gördüğünüz fiyat, gece Asya'da olan bitenle şekillenmiş olabilir.",
+          "Hafta sonu ise uluslararası piyasa kapalıdır. Kuyumcuların hafta sonu verdiği fiyat, cuma kapanışına kendi risk primini eklemiş bir tahmindir; pazartesi açılışta piyasa farklı bir yerden başlarsa fark ortaya çıkar."
+        ],
+        "table": {
+          "caption": "Altın piyasası seansları (Türkiye saati, yaklaşık)",
+          "columns": [
+            "Seans",
+            "Saat aralığı",
+            "Karakteri"
+          ],
+          "rows": [
+            [
+              "Asya (Tokyo, Şanghay)",
+              "03:00 – 11:00",
+              "Sakin, fiziki talep ağırlıklı"
+            ],
+            [
+              "Avrupa (Londra)",
+              "10:00 – 19:00",
+              "En derin likidite, referans fiyat"
+            ],
+            [
+              "Amerika (New York)",
+              "16:00 – 23:00",
+              "En oynak; ABD verileri burada çıkar"
+            ],
+            [
+              "Hafta sonu",
+              "Cuma 23:00 – Pazar 01:00",
+              "Piyasa kapalı, fiyat donuk"
+            ]
+          ]
+        }
+      },
+      {
+        "heading": "Neden her sitede biraz farklı fiyat görüyorsunuz",
+        "paragraphs": [
+          "Birinci neden veri kaynağıdır: her sağlayıcı farklı katılımcılardan kotasyon toplar. İkincisi gecikmedir; bazı kaynaklar gerçek zamanlı, bazıları birkaç saniye ya da dakika gecikmeli yayın yapar.",
+          "Üçüncüsü hangi sayının gösterildiğidir. Kimi kaynak alış, kimi satış, kimi ikisinin ortasını gösterir. Bu tercih tek başına birkaç dolarlık fark yaratır.",
+          "Bu yüzden iki kaynağı karşılaştırırken aynı yönü karşılaştırdığınızdan emin olun. Aradaki fark birkaç doları aşmıyorsa endişelenecek bir durum yoktur; onlarca dolarlık fark ise genellikle gecikmiş veriden kaynaklanır."
         ]
       },
       {
-        "heading": "Hafta sonu ve tatil saatlerinde fiyat",
+        "heading": "Canlı fiyatı doğru okuma",
         "paragraphs": [
-          "Spot altın piyasası cuma akşamı kapanır, pazar akşamı açılır. Bu aralıkta ONS fiyatı son kotasyonda kalabilir.",
-          "Pazartesi açılışında hafta sonu biriken haber akışı tek seferde fiyatlanabileceği için boşluk görülebilir."
+          "Canlı fiyatın en yanıltıcı yanı, saniyelik hareketlerin önemli görünmesidir. Beş dolarlık bir sıçrama ekranda dramatik durur ama yüzde 0,15'lik bir harekettir; günlük gürültü aralığının içindedir.",
+          "Anlamlı bir okuma için hareketi bir referansa oturtmak gerekir: günün açılışına göre nerede, haftanın aralığında nerede, pivot seviyelerine göre nerede.",
+          "Panel bu referansları canlı fiyatın yanında tutar. Gün içi aralık, dönem pivotları ve modelin vade beklentisi aynı ekranda durur; böylece anlık bir sayı yerine konumu okursunuz."
+        ]
+      },
+      {
+        "heading": "Ons fiyatından Türkiye fiyatına",
+        "paragraphs": [
+          "Ons fiyatı dolar cinsindendir; Türkiye'deki karşılığını görmek için dolar kuruna ihtiyaç vardır. Gram saf altın = ons × kur ÷ 31,1035.",
+          "Bu, canlı ons ekranını izlerken ikinci bir canlı veriyi de izlemeniz gerektiği anlamına gelir. Ons yükselirken kur gerilerse gram altın artmayabilir.",
+          "Panelde canlı ons, dolar/TL kuru ve bunlardan türeyen gram fiyatı aynı anda güncellenir. Ziynet ürünlerinin fiyatı da aynı zincirden hesaplanır ve piyasadaki satış fiyatıyla karşılaştırılır."
+        ]
+      },
+      {
+        "heading": "Sık yapılan hatalar",
+        "paragraphs": [
+          "İlk hata, hafta sonu fiyatını piyasa fiyatı sanmaktır. Uluslararası piyasa kapalıyken gördüğünüz sayı bir kotasyondur, oluşmuş bir fiyat değil.",
+          "İkincisi, alış ve satışı karıştırmaktır. Bir yerde alış, başka yerde satış fiyatına bakıp aradaki farkı \"fiyat sapması\" sanmak yaygın bir yanılgıdır.",
+          "Üçüncüsü, gecikmeli kaynağa güvenmektir. Hızlı hareket eden bir piyasada birkaç dakikalık gecikme, kararınızı gerçekte var olmayan bir fiyata dayandırmanıza yol açar."
         ]
       }
     ],
     "points": [
-      "Ons, 31,1035 gramlık troy ons birimidir; normal 1000 gramlık kilogram ölçüsüyle karıştırılmamalıdır.",
-      "Alış-satış farkı işlem maliyetinizdir; seans çakışmalarında daralır, veri öncesi açılır.",
-      "Yüzde değişimin referans anı kaynaktan kaynağa değişir, karşılaştırmadan önce kontrol edin.",
-      "Tarihsel ve canlı seri aynı XAU/USD referansını kullanır.",
-      "Hafta sonu spot piyasa kapalı olduğundan son kotasyon sabit kalabilir."
+      "Altının merkezi borsası yoktur; fiyat dağıtık bir piyasada oluşur ve kaynağa göre birkaç dolar değişir.",
+      "Alış ile satış arasındaki makas piyasanın likiditesini ölçer; ziynette ons altından belirgin geniştir.",
+      "Piyasa hafta içi neredeyse kesintisiz açıktır, hafta sonu kapalıdır.",
+      "En oynak saatler New York seansıdır; ABD verileri orada açıklanır.",
+      "Türkiye fiyatı için ons ile birlikte dolar kurunu da izlemek gerekir.",
+      "Saniyelik hareketler genellikle gürültüdür; anlam için referans seviyelere bakın."
     ],
     "faq": [
       {
-        "q": "Ons altın fiyatı hangi para biriminde gösterilir?",
-        "a": "Uluslararası standart ABD dolarıdır. TL karşılığını bulmak için ons fiyatını güncel USD/TRY kuruyla çarpıp 31,1035'e bölmeniz gerekir."
+        "q": "Canlı ons altın fiyatı nereden geliyor?",
+        "a": "Altının tek bir borsası yoktur; fiyat başta Londra olmak üzere bankalar ve aracı kurumlar arasındaki tezgah üstü işlemlerde oluşur. New York'taki vadeli kontratlar da fiyat oluşumuna katkı yapar."
       },
       {
-        "q": "Canlı fiyat kaç saniyede bir güncellenir?",
-        "a": "Paneldeki ONS/XAUUSD kotasyonu canlı bağlantı üzerinden saniyeler mertebesinde tazelenir."
+        "q": "Neden her sitede farklı ons fiyatı var?",
+        "a": "Üç neden var: veri sağlayıcının kotasyon topladığı katılımcılar, yayın gecikmesi ve gösterilen sayının alış mı satış mı orta fiyat mı olduğu. Birkaç dolarlık fark normaldir."
       },
       {
-        "q": "Alış fiyatından mı satış fiyatından mı bakmalıyım?",
-        "a": "Altın alacaksanız satış, satacaksanız alış fiyatı sizi ilgilendirir. Grafiklerde genelde ikisinin ortası ya da son işlem fiyatı gösterilir."
+        "q": "Alış satış makası ne demek?",
+        "a": "Piyasanın sizden almaya razı olduğu fiyat ile size satmaya razı olduğu fiyat arasındaki farktır. Dar makas derin ve işlek piyasa, geniş makas tedirgin ya da ince piyasa anlamına gelir."
+      },
+      {
+        "q": "Altın piyasası ne zaman açık?",
+        "a": "Hafta içi neredeyse kesintisiz açıktır: pazar akşamı Asya seansıyla başlar, cuma akşamı New York kapanışıyla biter. Hafta sonu uluslararası piyasa kapalıdır."
+      },
+      {
+        "q": "Hafta sonu gördüğüm fiyat gerçek mi?",
+        "a": "Piyasa kapalı olduğu için o sayı oluşmuş bir fiyat değil, kuyumcunun cuma kapanışına risk primi ekleyerek verdiği bir kotasyondur. Pazartesi açılışta fark ortaya çıkabilir."
+      },
+      {
+        "q": "En oynak saatler hangileri?",
+        "a": "New York seansı, yani Türkiye saatiyle öğleden sonra ve akşam. ABD enflasyon ve istihdam verileri ile Fed açıklamaları bu saatlerde çıkar ve fiyatı hızla hareket ettirir."
+      },
+      {
+        "q": "Ons fiyatından gram altını nasıl bulurum?",
+        "a": "Ons fiyatını dolar/TL kuruyla çarpıp 31,1035'e bölün. Sonuç, bir gram saf altının teorik lira karşılığıdır."
+      },
+      {
+        "q": "Beş dolarlık hareket önemli mi?",
+        "a": "Genellikle hayır. 3.400 dolar seviyesinde beş dolar, yüzde 0,15'lik bir harekettir ve günlük gürültü aralığının içindedir. Anlam için hareketi gün içi aralığa ve pivot seviyelerine göre okumak gerekir."
       }
     ],
     "category": "Temel Kavramlar",
@@ -122,7 +297,7 @@
     "title": "Has Altın ve Milyem Ne Demektir?",
     "seoTitle": "Has Altın ve Milyem Nedir",
     "updated": "2026-08-18",
-    "summary": "Has altın saf altındır, milyem ise saflığın binde cinsinden ifadesidir. Ayar karşılıklarını ve hesaplamadaki rolünü açıklıyoruz.",
+    "summary": "Has altın saf altındır, milyem ise saflığın binde cinsinden ifadesidir. 995, 916 ve 750 ayar karşılıklarını ve gram fiyatı hesabındaki rolünü açıklıyoruz.",
     "intro": "Kuyumcu vitrinlerinde ve altın fiyat listelerinde sık geçen iki terim vardır: has altın ve milyem. İkisi de aynı şeyi, saflığı tarif eder ama farklı biçimlerde.",
     "sections": [
       {
@@ -177,7 +352,7 @@
     "title": "Ons'tan Gram Altına Hesaplama",
     "seoTitle": "Ons Gram Altın Hesaplama",
     "updated": "2026-08-18",
-    "summary": "Ons fiyatından TL gram altın fiyatına geçiş formülü, ayar katsayıları ve kuyumcu fiyatıyla neden fark oluştuğu.",
+    "summary": "Ons fiyatından TL gram altın fiyatına geçiş formülü, 31,1035 böleni, ayar katsayıları ve kuyumcu fiyatıyla aranızda neden fark oluştuğu adım adım anlatılıyor.",
     "intro": "Ons fiyatını TL gram fiyatına çevirmek tek bir formülle yapılır. Sonucun kuyumcudaki fiyatla neden birebir tutmadığını anlamak ise formülden daha önemlidir.",
     "sections": [
       {
@@ -232,7 +407,7 @@
     "title": "XAUUSD Nedir, Ons Fiyatı Ne Anlama Gelir?",
     "seoTitle": "XAUUSD Nedir",
     "updated": "2026-08-18",
-    "summary": "XAUUSD, bir troy ons altının dolar fiyatıdır. Sembolün anlamını, işlem saatlerini ve gram altınla ilişkisini açıklıyoruz.",
+    "summary": "XAUUSD, bir troy ons altının dolar fiyatıdır. Sembolün anlamını, işlem saatlerini, alış-satış makasını ve Türkiye'deki gram altınla ilişkisini açıklıyoruz.",
     "intro": "XAUUSD, finans piyasalarında altının standart sembolüdür. XAU altının ISO 4217 kodudur; sondaki USD ise fiyatın hangi para biriminde ifade edildiğini gösterir. Yani XAUUSD, bir troy ons altının ABD doları cinsinden değeridir.",
     "sections": [
       {
@@ -287,7 +462,7 @@
     "title": "Ata, Yarım ve Tam Altın Arasındaki Fark",
     "seoTitle": "Ata Yarım ve Tam Altın Farkı",
     "updated": "2026-08-18",
-    "summary": "Ziynet altın çeşitlerinin gramajları, ayarları ve fiyat farklarının sebebi.",
+    "summary": "Ata, yarım ve tam altının gramajları, 916 milyem ayarı ve saf altın karşılıkları. Fiyat farkı nereden gelir, hangisi ne zaman uygun olur?",
     "intro": "Türkiye'de ziynet altınları standart gramajlarda üretilir. Aralarındaki fiyat farkı yalnızca ağırlıktan değil, işçilik ve talep farkından da kaynaklanır.",
     "sections": [
       {
@@ -341,51 +516,163 @@
     "keyword": "çeyrek altın kaç gram",
     "title": "Çeyrek Altın Kaç Gram ve Nasıl Fiyatlanır?",
     "seoTitle": "Çeyrek Altın Kaç Gram",
-    "updated": "2026-08-18",
-    "summary": "Çeyrek altın 1,75 gram ve 22 ayardır. İçindeki saf altın miktarını ve fiyatın nasıl hesaplandığını gösteriyoruz.",
-    "intro": "Çeyrek altın Türkiye'nin en yaygın ziynet ürünüdür. Fiyatını anlamak için iki sayıyı bilmek yeterlidir: toplam ağırlığı ve ayarı.",
+    "updated": "2026-08-22",
+    "summary": "Çeyrek altın 1,75 gram gelir ama içinde 1,603 gram saf altın vardır. Yarım, tam ve Ata altının gram karşılıkları, eski-yeni farkı ve fiyat hesabı.",
+    "intro": "Çeyrek altının kaç gram olduğu sorusunun tek bir cevabı yok gibi görünür, çünkü ortada iki ayrı sayı dolaşır: 1,75 gram ve 1,60 gram. İkisi de doğrudur ama farklı şeyi ölçerler. Birincisi sikkenin toplam ağırlığı, ikincisi içindeki saf altın miktarıdır. Aradaki fark, sikkenin ayarından gelir ve çeyrek altının fiyatının neden gram altının tam 1,75 katı olmadığını da açıklar.",
     "sections": [
       {
-        "heading": "Ağırlık ve saflık",
+        "heading": "Çeyrek altın kaç gram: iki sayı, iki anlam",
         "paragraphs": [
-          "Standart yeni tarihli çeyrek altın 1,75 gram ağırlığındadır ve 22 ayardır. 22 ayar, ürünün yaklaşık yüzde 91,6'sının saf altın olduğu anlamına gelir; kalan kısım dayanıklılık için eklenen alaşımdır.",
-          "Buna göre bir çeyrek altının içindeki saf altın miktarı yaklaşık 1,60 gramdır. Eski tarihli çeyrekler biraz daha ağır olabilir; bu yüzden ikinci el fiyatlarda küçük farklar görülür."
+          "Cumhuriyet çeyrek altını 1,75 gram ağırlığındadır. Bu, sikkeyi teraziye koyduğunuzda okuyacağınız değerdir ve alaşımın tamamını içerir.",
+          "Ancak sikke saf altından yapılmaz. Saf altın çok yumuşaktır; günlük kullanımda çizilir, deforme olur. Bu yüzden 916 milyem, yani binde 916 saflıkta üretilir. Kalan binde 84, dayanıklılık için eklenen bakır ve gümüş gibi metallerdir.",
+          "İçindeki saf altını bulmak için ağırlığı saflıkla çarpmak yeterlidir: 1,75 × 0,916 = 1,603 gram. Çeyrek altının parasal değerini belirleyen sayı budur. Kalan 0,147 gramlık alaşımın piyasa değeri, altının yanında ihmal edilebilir düzeydedir."
         ]
       },
       {
-        "heading": "Fiyat nasıl hesaplanır",
+        "heading": "Ziynet altınlarının gram ve saf altın karşılıkları",
         "paragraphs": [
-          "Çeyreğin ham madde değeri, saf gram altın fiyatının içindeki saf altın miktarıyla çarpılmasıyla bulunur. Saf gram 5.000 TL ise, çeyreğin ham madde değeri yaklaşık 8.000 TL eder.",
-          "Satış fiyatı bunun üzerine darphane işçiliği ve satıcı marjı eklenerek oluşur. Bu yüzden çeyrek altın, aynı miktar saf altını içeren gram altına göre genelde daha pahalıdır."
+          "Tüm ziynet altınları aynı mantıkla ölçeklenir. Yarım altın çeyreğin iki katı, tam altın dört katıdır; hepsi 916 milyem ayarındadır. Ata altını ise sikke standardı gereği tam altından biraz daha ağırdır.",
+          "Aşağıdaki tablo, her ürünün terazi ağırlığını ve içindeki saf altını bir arada gösterir. Bir ürünün ne kadar etmesi gerektiğini hesaplarken kullanmanız gereken sütun sağdaki sütundur."
+        ],
+        "table": {
+          "caption": "Ziynet altınlarının ağırlık ve saf altın karşılıkları (916 milyem)",
+          "columns": [
+            "Ürün",
+            "Toplam ağırlık",
+            "Saflık",
+            "İçindeki saf altın"
+          ],
+          "rows": [
+            [
+              "Çeyrek altın",
+              "1,75 gram",
+              "916 milyem",
+              "1,603 gram"
+            ],
+            [
+              "Yarım altın",
+              "3,50 gram",
+              "916 milyem",
+              "3,206 gram"
+            ],
+            [
+              "Tam altın",
+              "7,00 gram",
+              "916 milyem",
+              "6,412 gram"
+            ],
+            [
+              "Ata altın",
+              "7,216 gram",
+              "916 milyem",
+              "6,610 gram"
+            ],
+            [
+              "22 ayar gram",
+              "1,00 gram",
+              "916 milyem",
+              "0,916 gram"
+            ],
+            [
+              "Gram (has) altın",
+              "1,00 gram",
+              "995 milyem",
+              "0,995 gram"
+            ]
+          ]
+        }
+      },
+      {
+        "heading": "Eski ve yeni çeyrek arasındaki fark",
+        "paragraphs": [
+          "Piyasada \"eski çeyrek\" ve \"yeni çeyrek\" ayrımı duyarsınız. Ağırlık ve ayar açısından ikisi de aynıdır: 1,75 gram, 916 milyem. Fark basım tarihindedir; eski basım sikkeler daha uzun süre elden ele geçtiği için yıpranma payı taşır.",
+          "Bu yüzden eski çeyrek genellikle yeniden birkaç lira ucuza alınır. Aradaki fark altın miktarından değil, sikkenin fiziksel durumundan kaynaklanır. Yatırım amacıyla alıyorsanız ikisi arasındaki fark önemsizdir; hediyelik olarak alıyorsanız yeni basım tercih edilir.",
+          "Bir de \"ziynet çeyrek\" vardır: takı olarak kullanılmak üzere kenarına halka lehimlenmiş sikkelerdir. Lehim ve halka altın miktarını değiştirmez ama sikkenin bütünlüğünü bozduğu için satarken fiyatı düşürür."
         ]
       },
       {
-        "heading": "Çeyrek mi gram mı",
+        "heading": "Çeyrek altın fiyatı nasıl hesaplanır",
         "paragraphs": [
-          "Gram başına maliyet açısından külçe ve gram altın genelde daha avantajlıdır; işçilik payı düşüktür. Çeyrek altının avantajı bölünebilirlik ve yaygın kabul görmesidir.",
-          "Alış-satış makası da ürüne göre değişir. Çeyrek altında makas genelde gram altına göre daha geniştir. Kısa vadede alıp satmayı düşünüyorsanız bu fark toplam maliyetin belirleyici kalemi olur."
+          "Çeyrek altının teorik değeri üç adımda bulunur. Önce ons altının dolar fiyatını Türk lirasına çevirir, sonra grama indirger, sonra ürünün saf altın miktarıyla çarparsınız.",
+          "Gram saf altın fiyatı = ons fiyatı × dolar kuru ÷ 31,1035. Buradaki 31,1035 bir troy onsun gram karşılığıdır. Çıkan sayıyı 1,603 ile çarptığınızda çeyreğin ham altın değerini bulursunuz.",
+          "Örnek: ons 3.400 dolar ve kur 41,00 lira ise gram saf altın 4.482 lira eder. Çeyreğin ham değeri 4.482 × 1,603 = 7.185 lira olur. Kuyumcuda göreceğiniz satış fiyatı bunun üzerinde olacaktır; aradaki fark işçilik ve satıcı payıdır."
+        ],
+        "list": {
+          "ordered": true,
+          "items": [
+            "Ons altının güncel dolar fiyatını alın.",
+            "Dolar/TL kuruyla çarpın; ons altının lira karşılığını bulun.",
+            "31,1035'e bölün; bir gram saf altının lira fiyatını bulun.",
+            "Ürünün saf altın gramıyla çarpın (çeyrek için 1,603).",
+            "Çıkan sayı ham altın değeridir; kuyumcu fiyatı bunun üzerine işçilik ekler."
+          ]
+        }
+      },
+      {
+        "heading": "Neden kuyumcu fiyatı hesabınızdan yüksek çıkıyor",
+        "paragraphs": [
+          "Hesapladığınız ham değer ile vitrindeki etiket arasında her zaman bir fark olur. Bu fark üç kalemden oluşur: sikkenin basım maliyeti, kuyumcunun kâr marjı ve alış-satış makası.",
+          "Ölçtüğümüz kadarıyla bu fark gram altında yüzde 0,1 civarında kalırken, ziynet ürünlerinde yüzde 1 ile 2 arasına çıkar. Küçük birim ne kadar küçükse birim başına düşen basım maliyeti o kadar artar; bu yüzden çeyreğin primi tam altınınkinden yüksektir.",
+          "Panelin ziynet bölümü tam olarak bu ayrımı yapar: her ürün için ham altın değerini canlı ons ve kurdan hesaplar, vitrindeki satış fiyatıyla karşılaştırır ve aradaki payı yüzde olarak gösterir. Böylece \"bu fiyat makul mu\" sorusunu tahmine değil ölçüme dayanarak cevaplarsınız."
+        ]
+      },
+      {
+        "heading": "Hangi birimi almak daha mantıklı",
+        "paragraphs": [
+          "Saf altın gramı başına en ucuz birim, prim yüzdesi en düşük olandır. Yukarıdaki ölçüme göre bu genellikle gram altındır; ziynet sikkeleri her zaman biraz daha pahalıya gelir.",
+          "Buna karşılık ziynet altınının bir avantajı vardır: bölünebilirlik ve tanınırlık. Çeyrek altın Türkiye'de her kuyumcuda anında nakde çevrilir ve küçük tutarlarda satış yapmanıza izin verir. 100 gramlık bir külçeyi bozdurmak istediğinizde bu esnekliğe sahip olmazsınız.",
+          "Karar, tutara ve amaca bağlıdır. Büyük tutarda ve uzun vadeli tutacaksanız prim farkı birikir; gram veya külçe mantıklıdır. Küçük tutarda, hediye amaçlı ya da kısa vadede bozdurma ihtimaliyle alıyorsanız ziynetin esnekliği primini haklı çıkarabilir."
+        ]
+      },
+      {
+        "heading": "Sık yapılan hesap hataları",
+        "paragraphs": [
+          "En yaygın hata, çeyreğin fiyatını gram altın fiyatının 1,75 katı sanmaktır. Doğru çarpan 1,603'tür; 1,75 kullanmak ürünü olduğundan yüzde 9 pahalı hesaplamanıza yol açar.",
+          "İkinci hata, normal onsla troy onsu karıştırmaktır. Normal ons 28,3495 gramdır ve gıda ile posta sektöründe kullanılır. Değerli metallerde her zaman 31,1035 gramlık troy ons geçerlidir; yanlış bölen yüzde on hata demektir.",
+          "Üçüncü hata, hesabı kuyumcunun satış fiyatıyla karşılaştırmaktır. Ham altın değeri bir alt sınırdır, vitrin fiyatı değil. Doğru karşılaştırma, aynı ürünün farklı kuyumcularda ne kadar prim aldığına bakmaktır."
         ]
       }
     ],
     "points": [
-      "Standart çeyrek altın 1,75 gram ve 22 ayardır.",
-      "İçindeki saf altın yaklaşık 1,60 gramdır (0,916 saflık).",
-      "Ham madde değeri = saf gram fiyatı × 1,60.",
-      "Satış fiyatına darphane işçiliği ve satıcı marjı eklenir.",
-      "Gram başına maliyette külçe ve gram altın genelde daha avantajlıdır."
+      "Çeyrek altın 1,75 gram ağırlığındadır ama içinde 1,603 gram saf altın vardır.",
+      "Fark 916 milyem ayardan gelir: binde 916 altın, binde 84 dayanıklılık alaşımı.",
+      "Yarım 3,206 gram, tam 6,412 gram, Ata altın 6,610 gram saf altın taşır.",
+      "Gram saf altın fiyatı = ons × dolar kuru ÷ 31,1035.",
+      "Eski ve yeni çeyrek aynı ağırlık ve ayardadır; fark yıpranmadan kaynaklanır.",
+      "Ziynet ürünlerinde işçilik ve satıcı payı yüzde 1–2, gram altında yüzde 0,1 civarında ölçülmüştür."
     ],
     "faq": [
       {
-        "q": "Yarım ve tam altın kaç gram?",
-        "a": "Yarım altın 3,5 gram, tam altın 7 gramdır; ikisi de 22 ayardır."
+        "q": "Çeyrek altın kaç gram?",
+        "a": "Çeyrek altın 1,75 gram ağırlığındadır. 916 milyem saflıkta olduğu için içindeki saf altın miktarı 1,603 gramdır; fiyatı belirleyen sayı budur."
       },
       {
-        "q": "Eski çeyrek daha mı değerli?",
-        "a": "Ağırlık farkı varsa evet. Bazı eski tarihli çeyrekler biraz daha ağırdır."
+        "q": "Çeyrek altın kaç gram saf altın içerir?",
+        "a": "1,75 × 0,916 = 1,603 gram saf altın içerir. Kalan 0,147 gram, sikkeyi dayanıklı kılmak için eklenen bakır ve gümüş alaşımıdır."
       },
       {
-        "q": "Çeyrek altın neden gram altından pahalı?",
-        "a": "İçindeki saf altın başına düşen işçilik ve marj payı daha yüksektir."
+        "q": "Yarım ve tam altın kaç gramdır?",
+        "a": "Yarım altın 3,50 gram (3,206 gram saf), tam altın 7 gramdır (6,412 gram saf). Ata altın ise 7,216 gram ağırlığında olup 6,610 gram saf altın taşır."
+      },
+      {
+        "q": "Eski çeyrek ile yeni çeyrek arasında gram farkı var mı?",
+        "a": "Hayır. İkisi de 1,75 gram ve 916 milyemdir. Fiyat farkı yıpranma payından kaynaklanır; eski basım sikkeler genellikle birkaç lira daha ucuza alınır."
+      },
+      {
+        "q": "Çeyrek altın fiyatını kendim nasıl hesaplarım?",
+        "a": "Ons altını dolar kuruyla çarpın, 31,1035'e bölün ve çıkan gram fiyatını 1,603 ile çarpın. Bulduğunuz sayı ham altın değeridir; kuyumcu fiyatı bunun üzerine işçilik ekler."
+      },
+      {
+        "q": "Neden kuyumcu fiyatı hesapladığımdan yüksek?",
+        "a": "Aradaki fark basım maliyeti, kuyumcu marjı ve alış-satış makasıdır. Ziynet ürünlerinde bu pay yüzde 1–2 aralığında ölçülmüştür; gram altında yüzde 0,1 civarında kalır."
+      },
+      {
+        "q": "Gram altın mı çeyrek altın mı daha kârlı?",
+        "a": "Saf altın gramı başına maliyet gram altında daha düşüktür. Çeyreğin avantajı bölünebilirliği ve her kuyumcuda anında nakde çevrilebilmesidir; kısa vadede bozdurma ihtimaliniz varsa bu esneklik primi haklı çıkarabilir."
+      },
+      {
+        "q": "Çeyrek altın kaç lira eder?",
+        "a": "Fiyat ons altına ve dolar kuruna bağlı olarak dakika dakika değişir. Panelin ziynet bölümü her ürün için canlı satış fiyatını, hesaplanmış ham altın değerini ve aradaki işçilik payını yan yana gösterir."
       }
     ],
     "category": "Gram ve Ziynet Altın",
@@ -396,51 +683,152 @@
     "keyword": "gram altın fiyatı nasıl belirlenir",
     "title": "Gram Altın Fiyatı Nasıl Belirlenir?",
     "seoTitle": "Gram Altın Fiyatı Nasıl Belirlenir",
-    "updated": "2026-08-18",
-    "summary": "Gram altın fiyatı ons ve dolar kurundan türetilir. Formülü, iki bileşenin ayrı etkisini ve kuyumcu farkını açıklıyoruz.",
-    "intro": "Türkiye'de takip edilen gram altın fiyatı bağımsız bir fiyat değildir; uluslararası ons fiyatı ile USD/TRY kurundan türetilir. Bu yüzden gram altını anlamak için tek bir sayıya değil, iki ayrı bileşene bakmak gerekir.",
+    "updated": "2026-08-22",
+    "summary": "Gram altın fiyatı ons altın ve dolar kurundan tek formülle türer. Hesabın adımları, ayar farkları ve kuyumcu fiyatının neden farklı çıktığı.",
+    "intro": "Gram altın fiyatı Türkiye'de belirlenen bağımsız bir fiyat değildir. Uluslararası piyasada oluşan ons fiyatının, dolar kuru üzerinden lira cinsine çevrilmiş hâlidir. Bu yüzden gram altın iki ayrı kaynaktan hareket alır ve ikisi çoğu zaman aynı yöne gitmez. Bu yazıda fiyatın nasıl türediğini adım adım, ayar farklarını ve kuyumcu vitrinindeki sayının neden hesabınızdan farklı çıktığını anlatıyoruz.",
     "sections": [
       {
-        "heading": "Fiyat nasıl oluşur",
+        "heading": "Formül: tek satırda gram altın",
         "paragraphs": [
-          "Saf gram altının TL fiyatı, ons fiyatının dolar kuruyla çarpılıp 31,1035'e bölünmesiyle bulunur. Bu hesap 24 ayar altını temsil eder ve piyasadaki tüm ürün fiyatlarının çıkış noktasıdır.",
-          "Kuyumcuların ilan ettiği fiyat bu teorik değere işçilik, satıcı marjı ve alış-satış makası eklenerek oluşur. Bu yüzden hesapladığınız değer ile vitrindeki fiyat hiçbir zaman birebir aynı olmaz; fark ürün tipine göre değişir."
+          "Gram saf altının teorik lira fiyatı şu formülle bulunur:",
+          "Gram saf altın (TL) = Ons altın (USD) × Dolar/TL kuru ÷ 31,1035",
+          "Formüldeki 31,1035, bir troy onsun gram karşılığıdır ve değişmez. Değişen iki girdi ons fiyatı ve kurdur. Bu ikisi birbirinden bağımsız hareket ettiği için gram altın, ons sabitken bile yön değiştirebilir."
+        ],
+        "list": {
+          "ordered": true,
+          "items": [
+            "Ons altının güncel dolar fiyatını alın.",
+            "Güncel dolar/TL satış kuruyla çarpın.",
+            "Sonucu 31,1035'e bölün.",
+            "Çıkan sayı bir gram saf (has) altının teorik lira karşılığıdır.",
+            "22 ayar için 0,916, 18 ayar için 0,750 ile çarparak ayarı düşürün."
+          ]
+        }
+      },
+      {
+        "heading": "Örnek hesap",
+        "paragraphs": [
+          "Ons altın 3.400 dolar, dolar kuru 41,00 lira olsun. Bir ons altının lira karşılığı 3.400 × 41,00 = 139.400 liradır.",
+          "Bunu 31,1035'e böldüğünüzde gram başına 4.482 lira çıkar. Bu, bir gram has altının o andaki teorik değeridir.",
+          "22 ayar bir bilezik için aynı sayıyı 0,916 ile çarpmak gerekir: 4.482 × 0,916 = 4.106 lira. Aradaki fark takının içindeki alaşımdan kaynaklanır; 22 ayar altın gram başına binde 916 saf altın içerir."
         ]
       },
       {
-        "heading": "İki bileşeni ayırmak neden önemli",
+        "heading": "Ayar ve milyem: hangi gram, hangi fiyat",
         "paragraphs": [
-          "Gram altın yükseldiğinde bunun sebebi ons artışı da olabilir, TL'nin değer kaybı da. İkisini ayırmadan yapılan yorumlar sık yanılır. Ons düşerken kur daha hızlı yükseliyorsa gram altın yine kazandırır.",
-          "Bu ayrım özellikle karar verirken önemlidir. Kur kaynaklı bir yükseliş, uluslararası altın talebiyle ilgili hiçbir şey söylemez; sadece TL'nin zayıfladığını gösterir. İki bileşeni ayrı izlemek daha bilgilendiricidir."
+          "\"Gram altın\" ifadesi Türkiye'de genellikle has altını, yani 995 milyem saflıktaki külçe veya gram bar altını anlatır. Kuyumcu vitrinindeki bilezikler ise çoğunlukla 22 ayardır.",
+          "Bu ikisinin fiyatını doğrudan karşılaştırmak hataya yol açar. Aynı ağırlıktaki iki üründen 22 ayar olanı yüzde 8 daha az saf altın içerir; fiyatının da o oranda düşük olması beklenir.",
+          "Aşağıdaki tablo yaygın ayarların saflık karşılıklarını ve gram başına saf altın miktarını gösterir."
+        ],
+        "table": {
+          "caption": "Ayar, milyem ve gram başına saf altın",
+          "columns": [
+            "Ayar",
+            "Milyem",
+            "1 gramda saf altın",
+            "Nerede görülür"
+          ],
+          "rows": [
+            [
+              "24 ayar (has)",
+              "995–999",
+              "0,995–0,999 gram",
+              "Külçe, gram bar, yatırım altını"
+            ],
+            [
+              "22 ayar",
+              "916",
+              "0,916 gram",
+              "Bilezik, ziynet sikkeleri"
+            ],
+            [
+              "18 ayar",
+              "750",
+              "0,750 gram",
+              "Taşlı takı, yüzük"
+            ],
+            [
+              "14 ayar",
+              "585",
+              "0,585 gram",
+              "İthal takı, hafif ürünler"
+            ]
+          ]
+        }
+      },
+      {
+        "heading": "Neden kuyumcu fiyatı hesabınızdan farklı",
+        "paragraphs": [
+          "Hesapladığınız sayı ham altın değeridir; vitrinde gördüğünüz sayı ise satış fiyatıdır. Aradaki fark birkaç kalemden oluşur.",
+          "Birincisi alış-satış makasıdır: kuyumcu aynı ürünü size sattığı fiyattan daha ucuza geri alır. İkincisi işçilik ve üretim maliyetidir; sikke basımı ya da takı işçiliği bir maliyettir. Üçüncüsü kuyumcunun kâr marjıdır.",
+          "Ölçtüğümüz kadarıyla bu toplam pay gram altında yüzde 0,1 civarında kalırken ziynet ürünlerinde yüzde 1 ile 2 arasına çıkar. Panelin ziynet bölümü her ürün için ham altın değerini canlı olarak hesaplar ve vitrin fiyatıyla arasındaki payı yüzde olarak gösterir."
         ]
       },
       {
-        "heading": "Hangi kur kullanılır",
+        "heading": "Ons sabitken gram altın neden hareket ediyor",
         "paragraphs": [
-          "Pratikte serbest piyasa USD/TRY satış kuru kullanılır. Merkez Bankası'nın gösterge kuru ile serbest piyasa arasında küçük farklar oluşabilir ve bu fark gram fiyatına doğrudan yansır.",
-          "Kur ve ons farklı saatlerde hareket eder. Ons gece boyunca değişirken kur piyasası daha dar bir pencerede işlem görür. Sabah saatlerinde gram altın fiyatındaki sıçramaların bir kısmı bu zamanlama farkından kaynaklanır."
+          "Bu, en sık sorulan ve en çok kafa karıştıran durumdur. Cevap formülde saklıdır: gram altının içinde dolar kuru da vardır.",
+          "Ons hiç kıpırdamasa bile kur yüzde 1 yükselirse gram altın yüzde 1 pahalanır. Tersine, ons yüzde 2 yükselirken kur yüzde 2 gerilerse gram altın neredeyse yerinde sayar.",
+          "Bu yüzden \"altın yükseldi mi\" sorusunun iki farklı cevabı olabilir. Altının kendi değeri ons grafiğinde, sizin cebinizdeki karşılığı gram grafiğinde görünür. Yatırım kararı verirken ikisini ayrı ayrı okumak gerekir."
+        ]
+      },
+      {
+        "heading": "Kapalıçarşı fiyatı ve serbest piyasa",
+        "paragraphs": [
+          "Türkiye'de gram altının referans fiyatı büyük ölçüde Kapalıçarşı ve Borsa İstanbul kıymetli madenler piyasası üzerinden oluşur. Kuyumcular fiyatlarını bu referansın etrafında belirler.",
+          "Talebin arttığı dönemlerde serbest piyasa fiyatı teorik hesabın bir miktar üzerine çıkabilir. Bu farka piyasada \"kur farkı\" ya da \"talep primi\" denir ve genellikle geçicidir.",
+          "Tersi de olur: talebin zayıfladığı dönemlerde kuyumcu, elindeki stoku eritmek için teorik değere daha yakın fiyat verebilir. Bu yüzden aynı gün içinde farklı kuyumcularda farklı fiyat görmek olağandır."
+        ]
+      },
+      {
+        "heading": "Fiyat takip ederken dikkat edilmesi gerekenler",
+        "paragraphs": [
+          "Karşılaştırma yaparken her zaman aynı ayarı ve aynı yönü kullanın. Bir yerde alış, başka bir yerde satış fiyatına bakmak yanıltıcı bir fark yaratır.",
+          "Fiyatın hangi saatte alındığına da bakın. Altın piyasası hafta içi neredeyse kesintisiz açıktır; hafta sonu ise uluslararası piyasa kapalıdır ve kuyumcunun verdiği fiyat cuma kapanışına dayanır.",
+          "Son olarak, tek bir sayıya değil aralığa bakın. Panelde gram fiyatı canlı ons ve kurdan anlık hesaplanır; ziynet kartlarında ise her ürünün alışı, satışı, makası ve ham altın değeri yan yana durur."
         ]
       }
     ],
     "points": [
-      "Gram altın bağımsız bir fiyat değil, ons ve kurdan türetilen bir değerdir.",
-      "Saf gram TL = ons × USD/TRY ÷ 31,1035.",
-      "Kuyumcu fiyatı bu değere işçilik, marj ve makas ekler.",
-      "Yükselişin ons kaynaklı mı kur kaynaklı mı olduğunu ayırmak gerekir.",
-      "Ons ve kur farklı saatlerde hareket eder; sabah sıçramaları buradan doğabilir."
+      "Gram saf altın (TL) = ons (USD) × dolar kuru ÷ 31,1035.",
+      "Gram altın bağımsız bir fiyat değil, ons ile kurun bileşimidir.",
+      "22 ayar için sonucu 0,916, 18 ayar için 0,750 ile çarpın.",
+      "Vitrin fiyatı ham altın değerinin üzerindedir; fark makas, işçilik ve marjdır.",
+      "Ölçülen pay gram altında %0,1, ziynet ürünlerinde %1–2 aralığındadır.",
+      "Ons sabitken kur hareket ederse gram altın yine de değişir."
     ],
     "faq": [
       {
-        "q": "Gram altın fiyatını kim belirler?",
-        "a": "Kimse tek başına belirlemez. Uluslararası ons fiyatı ve döviz kuru birlikte belirler; kuyumcular üzerine kendi marjlarını ekler."
+        "q": "Gram altın fiyatı nasıl hesaplanır?",
+        "a": "Ons altının dolar fiyatını dolar/TL kuruyla çarpıp 31,1035'e bölersiniz. Örneğin 3.400 dolar ons ve 41,00 kur, gram has altın için 4.482 lira eder."
       },
       {
-        "q": "Neden her sitede farklı gram fiyatı var?",
-        "a": "Kullanılan kur, referans ons fiyatı ve eklenen marj farklıdır. Ayrıca alış mı satış mı gösterildiği değişir."
+        "q": "Gram altın fiyatını kim belirliyor?",
+        "a": "Kimse tek başına belirlemiyor. Fiyat, uluslararası ons fiyatının dolar kuru üzerinden liraya çevrilmesiyle oluşur; Türkiye'deki referans Kapalıçarşı ve Borsa İstanbul kıymetli madenler piyasasıdır."
       },
       {
-        "q": "Ons sabitken gram altın değişir mi?",
-        "a": "Evet. Kur hareket ediyorsa ons hiç değişmese bile gram altın fiyatı değişir."
+        "q": "22 ayar gram altın fiyatı nasıl bulunur?",
+        "a": "Önce has altın gram fiyatını hesaplayın, sonra 0,916 ile çarpın. 22 ayar altın gram başına binde 916 saf altın içerir, yani has altından yüzde 8 daha az."
+      },
+      {
+        "q": "Ons sabitken gram altın neden değişiyor?",
+        "a": "Çünkü formülde dolar kuru da var. Ons hiç hareket etmese bile kur yükselirse gram altın lira cinsinden pahalanır."
+      },
+      {
+        "q": "Neden kuyumcunun fiyatı benim hesabımdan yüksek?",
+        "a": "Hesapladığınız ham altın değeridir. Vitrin fiyatı bunun üzerine alış-satış makasını, işçiliği ve kuyumcu marjını ekler; gram altında bu pay yüzde 0,1, ziynette yüzde 1–2 civarında ölçülmüştür."
+      },
+      {
+        "q": "Has altın ile gram altın aynı şey mi?",
+        "a": "Genellikle evet. Türkiye'de \"gram altın\" denince 995 milyem ve üzeri saflıktaki yatırım altını kastedilir. Bilezik ve ziynet ürünleri ise 916 milyemdir."
+      },
+      {
+        "q": "Hangi dolar kurunu kullanmalıyım?",
+        "a": "Satın alma maliyetinizi hesaplıyorsanız dolar satış kurunu kullanın. Alış kuruyla hesaplarsanız fiyatı olduğundan düşük bulur ve kuyumcu fiyatını gereksiz yere yüksek sanırsınız."
+      },
+      {
+        "q": "Farklı kuyumcularda neden farklı fiyat var?",
+        "a": "Her kuyumcu kendi marjını ve stok durumunu fiyata yansıtır. Talebin yüksek olduğu dönemlerde serbest piyasa fiyatı teorik hesabın üzerine çıkabilir; bu fark genellikle geçicidir."
       }
     ],
     "category": "Gram ve Ziynet Altın",
@@ -452,7 +840,7 @@
     "title": "Gram Altın mı Ons Altın mı Takip Edilmeli?",
     "seoTitle": "Gram Altın mı Ons Altın mı",
     "updated": "2026-08-18",
-    "summary": "Ons uluslararası talebi, gram ise TL bazlı sonucu gösterir. Hangi kararda hangisine bakılacağını açıklıyoruz.",
+    "summary": "Ons uluslararası talebi, gram ise kur dahil TL sonucunu gösterir. Hangi kararda hangisine bakılır, ikisini karıştırmak neden hataya yol açar?",
     "intro": "Türkiye'deki yatırımcı iki fiyatı birden takip etmek zorundadır ve ikisi farklı sorulara cevap verir. Hangisine bakacağınız, hangi soruyu sorduğunuza bağlıdır.",
     "sections": [
       {
@@ -506,58 +894,155 @@
     "keyword": "altın fiyatını etkileyen faktörler",
     "title": "Altın Fiyatını Etkileyen Temel Faktörler",
     "seoTitle": "Altın Fiyatını Etkileyen Faktörler",
-    "updated": "2026-08-18",
-    "summary": "Reel faiz, dolar endeksi, enflasyon, merkez bankası alımları ve jeopolitik risk altın fiyatını nasıl hareket ettirir? Etkilerin yönü ve gücü.",
-    "intro": "Altının fiyatı tek bir sebeple açıklanamaz. Birbiriyle etkileşen birkaç büyüklük aynı anda çalışır ve zaman zaman birbirinin etkisini götürür. Bu yüzden 'enflasyon arttı, altın niye yükselmedi' sorusunun cevabı çoğu zaman başka bir kalemde saklıdır.",
+    "updated": "2026-08-22",
+    "summary": "Altın fiyatını gerçekten ne belirliyor? Reel faiz, dolar endeksi, enflasyon beklentisi, merkez bankası alımları ve risk iştahı tek tek açıklanıyor.",
+    "intro": "Altın fiyatı için her gün onlarca gerekçe okursunuz: jeopolitik gerilim, enflasyon, faiz, dolar, merkez bankaları. Hepsi bir ölçüde doğrudur ama etkileri eşit değildir ve aynı hızda çalışmazlar. Bu yazıda altını gerçekten hareket ettiren faktörleri, hangi mekanizmayla çalıştıklarını ve hangi vadede etki ettiklerini sırayla ele alıyoruz. Modelimizin kullandığı 19 göstergenin çoğu bu yazıda anlatılan zincirlerden birine bağlıdır.",
     "sections": [
       {
-        "heading": "Reel faiz: en güçlü tek bağlantı",
+        "heading": "Reel faiz: en güçlü tek belirleyici",
         "paragraphs": [
-          "Reel faiz, nominal faizden enflasyon beklentisinin düşülmüş hâlidir ve altının fırsat maliyetini doğrudan ölçer. Altın size faiz ödemez; devlet tahvili öder. Reel faiz yükseldiğinde tahvil tutmanın getirisi artar ve altın göreli olarak cazibesini kaybeder.",
-          "İlişki genelde ters yönlüdür ama mekanik değildir. Reel faizin yükseldiği bazı dönemlerde altın da yükselmiştir; bunun sebebi genelde aynı anda çalışan başka bir güçtür — merkez bankası alımları ya da jeopolitik risk gibi. Bu yüzden tek bir göstergeye bakarak sonuç çıkarmak yanıltır."
+          "Altın faiz ödemez, temettü dağıtmaz. Elinizde tutmanın maliyeti, o parayı faiz getiren bir varlıkta değerlendirmekten vazgeçmenizdir. Bu maliyeti belirleyen şey nominal faiz değil, enflasyondan arındırılmış reel faizdir.",
+          "Reel faiz yükseldiğinde tahvil tutmak cazipleşir, altının fırsat maliyeti artar ve fiyat baskılanır. Reel faiz düştüğünde, hele eksiye geçtiğinde, faiz getiren varlıklar alım gücü kaybettirir ve altın göreli olarak çekici hâle gelir.",
+          "Bu ilişki uzun vadeli veride en tutarlı olanıdır. ABD'nin 10 yıllık enflasyona endeksli tahvil getirisi (TIPS) piyasada reel faizin en yaygın göstergesidir ve modelin girdileri arasında yer alır."
         ]
       },
       {
-        "heading": "Dolar endeksi ve para birimi etkisi",
+        "heading": "Dolar endeksi: fiyatlama birimi etkisi",
         "paragraphs": [
-          "Altın uluslararası piyasada dolarla fiyatlanır. Dolar diğer para birimleri karşısında güçlendiğinde, dolar dışındaki alıcılar için altın pahalılaşır ve talep bir miktar geriler. Bu, dolar endeksi ile ons altın arasındaki genel ters ilişkinin temelidir.",
-          "Türkiye'deki yatırımcı için bu tablo ikiye ayrılır. Ons fiyatı düşerken TL bazlı gram altın yükselebilir; çünkü TL'nin dolar karşısındaki değer kaybı ons düşüşünü fazlasıyla telafi edebilir. Gram altın getirisi her zaman iki bileşenin çarpımıdır: ons hareketi ve kur hareketi."
+          "Altın dünya genelinde dolarla fiyatlanır. Dolar diğer para birimleri karşısında güçlendiğinde, dolar dışındaki alıcılar için altın kendi paralarıyla pahalanır; talep kısılır ve ons fiyatı baskılanır.",
+          "Bu bir korelasyondan çok bir muhasebe ilişkisidir; bu yüzden görece hızlı çalışır. Dolar endeksindeki sert bir hareket aynı gün içinde ons fiyatına yansır.",
+          "Türkiye'deki yatırımcı için burada bir incelik var: doların güçlenmesi ons altını düşürürken, dolar/TL kurunu yükselterek gram altını yukarı çekebilir. Bu yüzden ons düşerken gram altının artması bir çelişki değil, iki etkinin toplamıdır."
         ]
       },
       {
         "heading": "Enflasyon ve enflasyon beklentisi",
         "paragraphs": [
-          "Altının enflasyona karşı koruma sağladığı yaygın bir kabuldür, fakat ilişki gerçekleşmiş enflasyondan çok beklenen enflasyonla kurulur. Piyasa gelecekteki enflasyonu şimdiden fiyatladığı için, açıklanan veri beklentiyle uyumluysa fiyatta kayda değer bir hareket olmayabilir.",
-          "Bu beklentiyi ölçmenin pratik yolu başabaş enflasyon oranıdır: normal tahvil faizi ile enflasyona endeksli tahvil faizi arasındaki fark. Bu farkın açılması, piyasanın ileriye dönük enflasyon beklentisinin yükseldiğini gösterir ve altın için genelde destekleyicidir."
+          "Altının enflasyona karşı koruma sağladığı yaygın bir inanıştır ama ilişki doğrudan değildir. Altın gerçekleşen enflasyona değil, beklenen enflasyona tepki verir.",
+          "Bunun ölçüsü başabaş enflasyon oranıdır: normal tahvil getirisi ile enflasyona endeksli tahvil getirisi arasındaki fark. Piyasanın gelecekteki enflasyondan ne beklediğini gösterir.",
+          "Beklenti yükselirken nominal faiz aynı kalırsa reel faiz düşer ve altın desteklenir. Beklenti yükselirken merkez bankası faizi daha sert artırırsa reel faiz yükselir ve altın baskılanır. Yani enflasyonun kendisi değil, faizle arasındaki mesafe belirleyicidir."
         ]
       },
       {
-        "heading": "Merkez bankası alımları ve jeopolitik risk",
+        "heading": "Merkez bankası alımları",
         "paragraphs": [
-          "Merkez bankaları son yıllarda rezervlerinde altın payını artıran istikrarlı bir alıcı grubu hâline geldi. Bu talep fiyata duyarsızdır; yani fiyat yükseldiği için alımdan vazgeçilmez. Piyasada sürekli ve öngörülebilir bir taban oluşturması bakımından diğer taleplerden ayrılır.",
-          "Jeopolitik gerilim ve finansal stres dönemlerinde altına güvenli liman talebi gelir. Bu etki genelde keskin ama kısa ömürlüdür; olay fiyatlandıktan sonra fiyat çoğu zaman makro göstergelerin belirlediği seviyeye geri döner. Kalıcı yön değişimi yaratması için gerilimin ekonomik büyüklüklere yansıması gerekir."
+          "Son yıllarda altın talebinin en istikrarlı bileşeni merkez bankalarıdır. Rezerv çeşitlendirmesi ve dolara bağımlılığı azaltma amacıyla yapılan bu alımlar fiyata bir taban etkisi yapar.",
+          "Bu talep fiyata duyarsızdır; merkez bankaları altın pahalandı diye alımı kesmez, stratejik bir kararla uzun vadede pozisyon kurar. Bu yüzden düşüşlerde piyasadan gelen satışı emen bir alıcı olarak davranır.",
+          "Etkisi yavaş ve kümülatiftir. Günlük fiyat hareketini açıklamaz ama uzun vadeli seviyeyi yukarı taşır. Veriler üç aylık raporlarla geldiği için model bu faktörü doğrudan değil, fiyat serisinin kendisi üzerinden dolaylı olarak görür."
+        ]
+      },
+      {
+        "heading": "Risk iştahı ve güvenli liman talebi",
+        "paragraphs": [
+          "Jeopolitik gerilim, bankacılık krizi veya sert borsa düşüşlerinde altına yönelim artar. Bu etki gerçektir ama iki özelliği vardır: keskin ve kısa ömürlüdür.",
+          "Kriz haberiyle gelen yükseliş genellikle günler içinde yaşanır ve gerilim yatıştığında büyük ölçüde geri verilir. Kalıcı bir seviye değişimi yaratması için krizin faiz veya enflasyon beklentisini değiştirmesi gerekir.",
+          "Piyasanın korku düzeyini ölçmek için VIX endeksi kullanılır. Model hem VIX seviyesini hem beş günlük değişimini girdi olarak alır; ani sıçramalar altına yönelimin habercisi olabilir."
+        ]
+      },
+      {
+        "heading": "Fiyatın kendi davranışı: momentum ve oynaklık",
+        "paragraphs": [
+          "Makro tabloya ek olarak fiyatın kendi geçmişi de bilgi taşır. Kısa vadede altın momentum gösterir: son haftalarda yükselen fiyatın kısa vadede yükselmeye devam etme eğilimi ölçülebilir düzeydedir.",
+          "Oynaklık ise ayrı bir bilgi verir. Sakin dönemlerde fiyat hareketleri dar bir aralıkta kalır; oynaklık sıçradığında hem yukarı hem aşağı hareketlerin genliği büyür. Bu, tahminin belirsizlik bandını doğrudan etkiler.",
+          "Modelin teknik girdileri bu iki boyutu ölçer: 1, 5 ve 20 günlük getiriler momentumu; ATR, 20 günlük oynaklık ve 60 günlük zirveden düşüş ise piyasanın gerginliğini ve fiyatın kendi zirvesine göre konumunu."
+        ],
+        "table": {
+          "caption": "Faktörlerin etki yönü ve tipik hızı",
+          "columns": [
+            "Faktör",
+            "Yükseldiğinde altına etkisi",
+            "Etki hızı"
+          ],
+          "rows": [
+            [
+              "Reel faiz",
+              "Aşağı",
+              "Haftalar"
+            ],
+            [
+              "Dolar endeksi",
+              "Aşağı",
+              "Saatler–günler"
+            ],
+            [
+              "Enflasyon beklentisi",
+              "Yukarı",
+              "Haftalar"
+            ],
+            [
+              "VIX (korku endeksi)",
+              "Yukarı",
+              "Saatler–günler"
+            ],
+            [
+              "Merkez bankası alımı",
+              "Yukarı",
+              "Aylar–yıllar"
+            ],
+            [
+              "Getiri eğrisi dikleşmesi",
+              "Değişken",
+              "Haftalar"
+            ]
+          ]
+        }
+      },
+      {
+        "heading": "Faktörler birbiriyle çelişince ne olur",
+        "paragraphs": [
+          "Gerçek piyasada bu faktörler nadiren aynı yöne işaret eder. Dolar güçlenirken reel faiz düşebilir; enflasyon beklentisi artarken risk iştahı da yükselebilir.",
+          "Bu yüzden tek bir faktöre bakarak fiyat yorumu yapmak yanıltıcıdır. \"Dolar arttı, altın düşmeli\" cümlesi diğer beş faktörü yok sayar.",
+          "Modelin varlık sebebi tam olarak budur: on dokuz göstergenin bugünkü bileşimini geçmişteki benzer bileşimlerle karşılaştırır ve o durumların ortalama sonucunu verir. Panelin \"Model bu tahmini neden verdi\" kartı da hangi göstergenin tahmini yukarı, hangisinin aşağı çektiğini dolar cinsinden ayrı ayrı gösterir."
+        ]
+      },
+      {
+        "heading": "Türkiye'deki yatırımcı için ek katman: kur",
+        "paragraphs": [
+          "Yukarıdaki her şey ons altın için geçerlidir. Türkiye'de takip edilen gram altın ise ons ile dolar/TL kurunun çarpımıdır.",
+          "Bu, gram altının iki bağımsız kaynaktan hareket aldığı anlamına gelir. Ons yatay seyrederken kur yükselirse gram altın artar; ons yükselirken kur gerilerse gram altın yerinde sayabilir.",
+          "Altının gerçekte ne yaptığını görmek istiyorsanız ons grafiğine, cebinizdeki karşılığını görmek istiyorsanız gram grafiğine bakın. İkisini karıştırmak, altın hakkında yanlış sonuç çıkarmanın en yaygın yoludur."
         ]
       }
     ],
     "points": [
-      "Reel faiz altının fırsat maliyetini ölçer; genelde ters yönlü ve en güçlü tek bağlantıdır.",
-      "Güçlenen dolar ons altını baskılar, ancak TL bazlı getiride kur etkisi ons etkisini aşabilir.",
-      "Belirleyici olan gerçekleşen enflasyon değil, başabaş oranıyla ölçülen enflasyon beklentisidir.",
-      "Merkez bankası alımları fiyata duyarsız ve süreklidir; talep tabanı oluşturur.",
-      "Jeopolitik etki genelde keskin fakat kısa ömürlüdür."
+      "Reel faiz altının en güçlü tek belirleyicisidir; yükselirse altın baskılanır.",
+      "Dolar endeksi hızlı çalışır: dolar güçlenirse ons altın ucuzlar.",
+      "Altın gerçekleşen enflasyona değil, enflasyon beklentisine tepki verir.",
+      "Merkez bankası alımları günlük hareketi değil uzun vadeli seviyeyi belirler.",
+      "Jeopolitik risk etkisi keskin ama kısa ömürlüdür; kalıcı olması için faizi etkilemesi gerekir.",
+      "Türkiye'de gram altın ons ile kurun bileşimidir; ikisi ayrı ayrı okunmalıdır."
     ],
     "faq": [
       {
-        "q": "Altın enflasyona karşı gerçekten koruma sağlar mı?",
-        "a": "Uzun vadede büyük ölçüde evet, kısa vadede güvenilmez biçimde. Yıllık enflasyon verisi ile altın getirisi arasındaki bağ zayıftır; ilişki beklenti üzerinden kurulur."
+        "q": "Altın fiyatını en çok ne etkiler?",
+        "a": "Uzun vadeli veride en tutarlı ilişki reel faizle kurulur. Reel faiz yükseldiğinde altının fırsat maliyeti artar ve fiyat baskılanır; düştüğünde altın göreli olarak çekici hâle gelir."
       },
       {
-        "q": "Faiz artınca altın her zaman düşer mi?",
-        "a": "Hayır. Belirleyici olan nominal faiz değil reel faizdir. Faiz enflasyondan daha yavaş artıyorsa reel faiz düşer ve altın desteklenebilir."
+        "q": "Dolar yükselince altın neden düşer?",
+        "a": "Altın dolarla fiyatlandığı için dolar güçlendiğinde diğer para birimlerinden gelen alıcılar açısından pahalanır ve talep kısılır. Bu ilişki hızlı çalışır, çoğu zaman aynı gün içinde yansır."
       },
       {
-        "q": "Hangi göstergeyi ilk takip etmeliyim?",
-        "a": "Tek gösterge seçilecekse 10 yıllık ABD reel faizi en bilgilendiricisidir. Yanına dolar endeksi ve başabaş enflasyon eklendiğinde tablo büyük ölçüde tamamlanır."
+        "q": "Altın enflasyona karşı koruma sağlar mı?",
+        "a": "Doğrudan değil. Altın gerçekleşen enflasyona değil beklenen enflasyona tepki verir ve asıl belirleyici, enflasyon beklentisi ile faiz arasındaki mesafedir. Faiz enflasyondan hızlı artarsa altın enflasyon yüksekken bile düşebilir."
+      },
+      {
+        "q": "Merkez bankası alımları fiyatı ne kadar etkiliyor?",
+        "a": "Günlük fiyat hareketini açıklamaz ama uzun vadeli seviyeye taban oluşturur. Bu talep fiyata duyarsızdır; merkez bankaları pahalandı diye alımı kesmez."
+      },
+      {
+        "q": "Savaş ve kriz altını kalıcı olarak yükseltir mi?",
+        "a": "Genellikle hayır. Jeopolitik yükselişler keskin ama kısa ömürlüdür ve gerilim yatıştığında büyük ölçüde geri verilir. Kalıcı olması için krizin faiz veya enflasyon beklentisini değiştirmesi gerekir."
+      },
+      {
+        "q": "Faktörler çelişince hangisine bakmalı?",
+        "a": "Tek bir faktöre bakmak yanıltıcıdır. Panelin katkı kartı, on dokuz göstergenin her birinin bugünkü tahmini yukarı mı aşağı mı çektiğini dolar cinsinden ayrı ayrı gösterir."
+      },
+      {
+        "q": "Ons altın düşerken gram altın neden artıyor?",
+        "a": "Gram altın ons ile dolar/TL kurunun çarpımıdır. Ons gerilerken kur daha çok yükselirse gram altın artmaya devam eder; bu bir çelişki değil, iki etkinin toplamıdır."
+      },
+      {
+        "q": "VIX endeksi altınla nasıl ilişkili?",
+        "a": "VIX piyasanın korku düzeyini ölçer. Ani sıçramaları güvenli liman talebini artırarak altını destekleyebilir. Model hem VIX seviyesini hem beş günlük değişimini girdi olarak kullanır."
       }
     ],
     "category": "Fiyatı Etkileyen Faktörler",
@@ -734,7 +1219,7 @@
     "title": "Merkez Bankası Alımları Altını Nasıl Etkiler?",
     "seoTitle": "Merkez Bankalarının Altın Alımı",
     "updated": "2026-08-18",
-    "summary": "Merkez bankası alımları fiyata duyarsız ve süreklidir. Talep tabanı oluşturması ve makro ilişkileri nasıl bastırdığı.",
+    "summary": "Merkez bankası altın alımları fiyata duyarsız ve süreklidir. Talep tabanı oluşturması, düşüşleri sınırlaması ve makro ilişkileri nasıl bastırdığını anlatıyoruz.",
     "intro": "Merkez bankaları son yılların en dikkat çekici altın alıcısı hâline geldi. Bu talebin diğer talep kalemlerinden ayrılan bir özelliği var: fiyata duyarsız olması.",
     "sections": [
       {
@@ -789,7 +1274,7 @@
     "title": "Ons Altın Neden Düşüyor?",
     "seoTitle": "Ons Altın Neden Düşüyor",
     "updated": "2026-08-18",
-    "summary": "Düşüşlerin ardındaki tipik sebepler: yükselen reel faiz, güçlenen dolar, risk iştahının artması ve kâr satışları.",
+    "summary": "Altın düşüşlerinin tipik sebepleri: yükselen reel faiz, güçlenen dolar, artan risk iştahı ve kâr satışları. Düşüşün kalıcı mı geçici mi olduğunu ayırt etme.",
     "intro": "Altındaki düşüşler çoğu zaman yükselişleri hazırlayan aynı mekanizmaların tersine dönmesiyle açıklanır. Ayırt edici soru, düşüşün makro zeminden mi yoksa geçici pozisyon kapatmalarından mı kaynaklandığıdır.",
     "sections": [
       {
@@ -843,51 +1328,158 @@
     "keyword": "ons altın neden yükseliyor",
     "title": "Ons Altın Neden Yükseliyor?",
     "seoTitle": "Ons Altın Neden Yükseliyor",
-    "updated": "2026-08-18",
-    "summary": "Yükselişin arkasındaki dört tipik sebep: düşen reel faiz, zayıflayan dolar, artan merkez bankası alımı ve risk talebi.",
-    "intro": "Altın yükseldiğinde tek bir sebep aramak yanıltıcıdır. Genelde birkaç güç aynı yönde çalışır ve etkileri birbirini büyütür. Yükselişin kalıcı olup olmayacağı da hangi gücün baskın olduğuna bağlıdır.",
+    "updated": "2026-08-22",
+    "summary": "Ons altın neden yükseliyor? Reel faiz, dolar, merkez bankası alımı ve risk iştahı zincirleri; yükselişin kalıcı mı geçici mi olduğunu ayırt etme.",
+    "intro": "Altın yükseldiğinde ortaya çıkan açıklamalar genellikle o günün manşetinden devşirilir. Oysa yükselişlerin arkasında birkaç ayrı mekanizma vardır ve hangisinin çalıştığını bilmek, hareketin kalıcı mı geçici mi olduğunu ayırt etmenizi sağlar. Bu yazıda yükselişin başlıca nedenlerini, her birinin tipik süresini ve bir yükselişin sağlamlığını nasıl test edeceğinizi anlatıyoruz.",
     "sections": [
       {
         "heading": "Reel faizin gerilemesi",
         "paragraphs": [
-          "Yükselişlerin en yaygın ve en kalıcı sebebi reel faizin düşmesidir. Faiz getiren alternatiflerin reel getirisi azaldıkça altını elde tutmanın maliyeti düşer ve talep artar.",
-          "Bu kanaldan gelen yükselişler genelde daha istikrarlıdır; çünkü altta yatan makro değişim yavaş ilerler. Reel faiz düşüşü sürdüğü sürece destek devam eder."
+          "Altın yükselişlerinin en sağlam zemini reel faizin düşmesidir. Reel faiz, enflasyondan arındırılmış getiridir; düştüğünde faiz getiren varlıklarda kalmanın anlamı azalır.",
+          "Bu, altının fırsat maliyetini doğrudan düşürür. Faiz ödemeyen bir varlığı tutmanın bedeli, alternatifin ne kadar kazandırdığıdır; alternatif zayıfladıkça altın güçlenir.",
+          "Bu tip yükselişler yavaş başlar ve uzun sürer. Piyasa faiz indirimi beklemeye başladığında altın, indirim gerçekleşmeden haftalar önce hareket etmeye başlar."
         ]
       },
       {
         "heading": "Doların zayıflaması",
         "paragraphs": [
-          "Dolar diğer para birimleri karşısında değer kaybettiğinde, dolar dışı alıcılar için altın ucuzlar ve talep artar. Bu etki genelde reel faizle birlikte çalışır; ikisi aynı yöne baktığında hareket belirginleşir.",
-          "Türkiye'deki yatırımcı açısından bu durum çift etkilidir. Ons yükselirken TL de değer kaybediyorsa gram altındaki artış ons artışından belirgin biçimde büyük olur."
+          "Altın dolarla fiyatlandığı için doların zayıflaması ons fiyatını mekanik olarak yukarı iter. Dolar dışındaki alıcılar için altın ucuzlar, talep artar.",
+          "Bu etki hızlıdır ve genellikle aynı gün içinde görülür. Dolar endeksinde yüzde birlik bir düşüş, ons altında benzer büyüklükte bir yükselişle karşılanabilir.",
+          "Türkiye'deki yatırımcı açısından dikkat edilmesi gereken nokta şu: doların zayıflaması ons altını yükseltirken dolar/TL kurunu düşürebilir. Bu durumda ons yükselirken gram altın yerinde sayabilir, hatta gerileyebilir."
         ]
       },
       {
-        "heading": "Yapısal talep ve risk iştahı",
+        "heading": "Merkez bankası alımları",
         "paragraphs": [
-          "Merkez bankalarının rezerv çeşitlendirmesi son yılların en dikkat çekici talep kalemi oldu. Bu alımlar fiyat seviyesine duyarsızdır ve piyasada süreklilik taşıyan bir taban oluşturur.",
-          "Jeopolitik gerilim ve finansal stres dönemlerinde gelen güvenli liman talebi ise keskin ama kısa ömürlü hareketler üretir. Olay fiyatlandıktan sonra fiyat çoğu zaman makro göstergelerin işaret ettiği seviyeye geri döner."
+          "Merkez bankaları rezervlerini çeşitlendirmek için altın alır. Bu talep fiyata duyarsızdır: altın pahalandı diye alım kesilmez.",
+          "Etkisi günlük fiyat hareketinde görünmez ama yıllara yayılan bir taban oluşturur. Düşüşlerde piyasadan gelen satışı emen bir alıcı olarak davranır ve dip seviyeleri yukarı taşır.",
+          "Bu nedenle merkez bankası alımlarının güçlü olduğu dönemlerde altının geri çekilmeleri sığ kalır. Yükselişi başlatmaz ama düşüşü sınırlar."
+        ]
+      },
+      {
+        "heading": "Risk iştahının bozulması",
+        "paragraphs": [
+          "Jeopolitik gerilim, bankacılık sorunu ya da sert borsa düşüşleri altına yönelimi artırır. Bu tip yükselişler keskindir; birkaç gün içinde büyük hareketler görülebilir.",
+          "Ancak kısa ömürlüdür. Gerilim yatıştığında yükselişin önemli kısmı geri verilir. Kalıcı olması için krizin faiz beklentisini ya da enflasyon görünümünü değiştirmesi gerekir.",
+          "Bu ayrımı yapmak pratikte önemlidir. Haber kaynaklı bir sıçramanın peşinden alım yapmak, çoğu zaman hareketin en pahalı noktasından girmek anlamına gelir."
+        ],
+        "table": {
+          "caption": "Yükseliş nedenleri ve tipik ömrü",
+          "columns": [
+            "Neden",
+            "Başlama hızı",
+            "Tipik ömrü",
+            "Geri verme eğilimi"
+          ],
+          "rows": [
+            [
+              "Reel faizin düşmesi",
+              "Yavaş",
+              "Aylar",
+              "Düşük"
+            ],
+            [
+              "Doların zayıflaması",
+              "Hızlı",
+              "Günler–haftalar",
+              "Orta"
+            ],
+            [
+              "Merkez bankası alımı",
+              "Çok yavaş",
+              "Yıllar",
+              "Çok düşük"
+            ],
+            [
+              "Jeopolitik gerilim",
+              "Çok hızlı",
+              "Günler",
+              "Yüksek"
+            ],
+            [
+              "Momentum / teknik alım",
+              "Hızlı",
+              "Günler",
+              "Yüksek"
+            ]
+          ]
+        }
+      },
+      {
+        "heading": "Momentumun kendisi: yükseliş yükselişi besler",
+        "paragraphs": [
+          "Bazı yükselişlerin makro bir nedeni yoktur; fiyat yükseldiği için yükselir. Trend takipçisi stratejiler alım yapar, teknik seviyeler kırılır, geride kalma korkusu devreye girer.",
+          "Bu tip hareketler ölçülebilir düzeyde gerçektir ve modelin teknik girdileri bunu yakalamaya çalışır: 1, 5 ve 20 günlük getiriler momentumun gücünü ölçer.",
+          "Ama momentumun bir dayanağı olmadığı için tersine dönmesi de hızlı olur. Fiyat 60 günlük zirvesine çok yaklaşmışken gelen sert düşüşler bu yüzden sıradandır."
+        ]
+      },
+      {
+        "heading": "Bir yükselişin sağlamlığını test etmek",
+        "paragraphs": [
+          "Yükselişin arkasında ne olduğunu anlamak için altına değil, altını çevreleyen göstergelere bakmak gerekir. Reel faiz gerçekten düşüyor mu, dolar gerçekten zayıflıyor mu, yoksa yalnızca bir haber mi var?",
+          "Panelin katkı kartı tam olarak bu soruyu cevaplar: on dokuz göstergenin her birinin modelin bugünkü tahminini yukarı mı aşağı mı çektiğini dolar cinsinden ayrı ayrı gösterir.",
+          "Genel kural şudur: makro göstergeler yükselişi destekliyorsa hareket kalıcı olma eğilimindedir. Yalnızca momentum ve haber varsa geri verilme olasılığı yüksektir."
+        ],
+        "list": {
+          "items": [
+            "Reel faiz son haftalarda gerçekten düştü mü?",
+            "Dolar endeksi zayıflıyor mu, yoksa yatay mı?",
+            "Enflasyon beklentisi yükseliyor mu?",
+            "VIX sıçradı mı? Sıçradıysa yükseliş korku kaynaklı olabilir.",
+            "Fiyat 60 günlük zirvesine ne kadar yakın?",
+            "Yükseliş birden fazla göstergeyle mi destekleniyor, tek bir haberle mi?"
+          ]
+        }
+      },
+      {
+        "heading": "Yükselişte alım yapmak",
+        "paragraphs": [
+          "Yükselen bir piyasada alım yapmanın sorunu psikolojiktir: hareket ne kadar hızlıysa \"kaçırma\" hissi o kadar güçlüdür ve karar o kadar aceleye gelir.",
+          "Modelin ölçülmüş karnesi burada gerçekçi bir çerçeve sunar. En güçlü vadede bile yön isabeti yüzde 70 civarındadır ve ortalama yanılma yüzde 4,22'dir; yani tahmin doğru yönde olsa bile büyüklüğü sıkça şaşar.",
+          "Bu belirsizlik karşısında tek bir ana bahis oynamak yerine alımı zamana yaymak, yükseliş dönemlerinde özellikle korunaklıdır. Bu bir yatırım tavsiyesi değil, belirsizliğin yönetilmesine dair bir gözlemdir."
         ]
       }
     ],
     "points": [
-      "Reel faiz düşüşü kaynaklı yükselişler en kalıcı olanlardır.",
-      "Zayıf dolar dolar dışı alıcılar için altını ucuzlatır.",
-      "Merkez bankası alımları fiyata duyarsızdır, talep tabanı oluşturur.",
-      "Güvenli liman kaynaklı yükselişler keskin fakat kısa ömürlüdür.",
-      "TL bazında ons yükselişine kur etkisi eklendiğinde artış büyür."
+      "En kalıcı yükselişler reel faizin gerilemesinden doğar; yavaş başlar, uzun sürer.",
+      "Doların zayıflaması ons altını mekanik olarak yükseltir ama gram altını yükseltmeyebilir.",
+      "Merkez bankası alımları yükselişi başlatmaz, düşüşü sınırlar.",
+      "Jeopolitik kaynaklı sıçramalar keskindir ve büyük ölçüde geri verilir.",
+      "Momentum kaynaklı yükselişler gerçektir ama dayanağı yoktur; hızlı döner.",
+      "Sağlamlık testi: yükselişi birden fazla makro gösterge destekliyor mu?"
     ],
     "faq": [
       {
-        "q": "Yükseliş ne kadar sürer?",
-        "a": "Sebebine bağlıdır. Makro kaynaklı hareketler aylarca sürebilir, haber kaynaklı sıçramalar günler içinde geri verilebilir."
+        "q": "Ons altın neden yükseliyor?",
+        "a": "En kalıcı neden reel faizin gerilemesidir; altının fırsat maliyetini düşürür. Doların zayıflaması, merkez bankası alımları, risk iştahının bozulması ve momentum diğer başlıca nedenlerdir."
       },
       {
-        "q": "Yükselirken almak mantıklı mı?",
-        "a": "Bu bir yatırım tavsiyesi sorusudur ve platform tavsiye vermez. Genel ilke, giriş maliyetini zamana yaymaktır."
+        "q": "Bu yükseliş kalıcı mı?",
+        "a": "Yükselişi birden fazla makro gösterge destekliyorsa kalıcı olma eğilimindedir. Yalnızca bir haber ya da momentum varsa geri verilme olasılığı yüksektir; jeopolitik kaynaklı sıçramaların büyük kısmı gerilim yatıştığında geri verilir."
       },
       {
-        "q": "Ons yükselirken gram altın düşebilir mi?",
-        "a": "Evet, TL dolar karşısında yeterince değer kazanırsa mümkündür."
+        "q": "Faiz indirimi altını yükseltir mi?",
+        "a": "Beklentisi genellikle indirimin kendisinden daha etkilidir. Piyasa indirim beklemeye başladığında altın haftalar önce hareket eder; indirim açıklandığında fiyat çoktan büyük ölçüde yansımış olabilir."
+      },
+      {
+        "q": "Ons yükselirken gram altın neden artmıyor?",
+        "a": "Gram altın ons ile dolar/TL kurunun çarpımıdır. Doların zayıflaması ons altını yükseltirken kuru düşürebilir; iki etki birbirini götürdüğünde gram altın yerinde sayar."
+      },
+      {
+        "q": "Savaş haberi altını ne kadar yükseltir?",
+        "a": "Etki keskin ama kısa ömürlüdür; genellikle günler içinde yaşanır ve gerilim yatıştığında geri verilir. Kalıcı olması için krizin faiz ya da enflasyon beklentisini değiştirmesi gerekir."
+      },
+      {
+        "q": "Yükselişte altın almalı mıyım?",
+        "a": "Bu site yatırım tavsiyesi vermez. Söyleyebileceğimiz şey ölçüm: en güçlü vadede bile yön isabeti yüzde 70 civarında ve ortalama yanılma yüzde 4,22. Bu belirsizlik düzeyinde tek bir ana bahis oynamak risklidir."
+      },
+      {
+        "q": "Yükselişin nedenini nasıl anlarım?",
+        "a": "Altına değil onu çevreleyen göstergelere bakın: reel faiz, dolar endeksi, enflasyon beklentisi, VIX. Panelin katkı kartı hangi göstergenin tahmini yukarı, hangisinin aşağı çektiğini dolar cinsinden gösterir."
+      },
+      {
+        "q": "Altın zirveye yakınken düşer mi?",
+        "a": "Zirveye yakınlık tek başına düşüş sinyali değildir; güçlü trendlerde fiyat aylarca zirve yenileyebilir. Ancak momentum dışında dayanak yoksa geri çekilme olasılığı artar. Model bu konumu 60 günlük zirveden düşüş göstergesiyle izler."
       }
     ],
     "category": "Fiyatı Etkileyen Faktörler",
@@ -954,7 +1546,7 @@
     "title": "ATR ile Altında Oynaklık Nasıl Ölçülür?",
     "seoTitle": "ATR ile Altında Oynaklık",
     "updated": "2026-08-18",
-    "summary": "ATR günlük ortalama hareket genişliğini ölçer. Pozisyon büyüklüğü ve stop mesafesi belirlemede nasıl kullanıldığı.",
+    "summary": "ATR altında günlük ortalama hareket genişliğini ölçer. Pozisyon büyüklüğü, stop mesafesi ve belirsizlik bandı belirlemede nasıl kullanıldığını açıklıyoruz.",
     "intro": "ATR (Ortalama Gerçek Aralık), fiyatın belirli bir dönemde günlük olarak ne kadar hareket ettiğini ölçer. Yön hakkında bilgi vermez; yalnızca hareketin genliğini söyler.",
     "sections": [
       {
@@ -1008,51 +1600,162 @@
     "keyword": "ons altın destek direnç seviyeleri",
     "title": "Ons Altında Destek, Direnç ve Momentum",
     "seoTitle": "Ons Altında Destek ve Direnç",
-    "updated": "2026-08-18",
-    "summary": "Destek ve direnç seviyeleri nasıl belirlenir, neden kesin çizgiler değil bölgelerdir? Momentum göstergeleriyle birlikte okuma rehberi.",
-    "intro": "Destek ve direnç, fiyatın geçmişte tepki verdiği bölgelerdir. Yaygın yanılgı bunları tek bir sayı gibi düşünmektir; oysa gerçekte hepsi birer aralıktır ve genişlikleri piyasanın oynaklığıyla değişir.",
+    "updated": "2026-08-22",
+    "summary": "Ons altında destek ve direnç seviyeleri nasıl hesaplanır? Pivot formülleri, S1-S3 ile R1-R3 arasındaki fark ve seviyelerin doğru okunması.",
+    "intro": "Destek ve direnç, altın grafiğinde en çok konuşulan ama en çok yanlış anlaşılan iki kavramdır. Bunlar fiyatın çarpıp döneceği duvarlar değil, geçmiş fiyattan formülle çıkarılmış referans noktalarıdır. Bu yazıda seviyelerin nereden geldiğini, hangi formülle hesaplandığını, neden farklı kaynakların farklı sayılar verdiğini ve bir seviyeyi doğru okumanın ne demek olduğunu anlatıyoruz.",
     "sections": [
       {
-        "heading": "Seviyeler nasıl belirlenir",
+        "heading": "Destek ve direnç ne demek",
         "paragraphs": [
-          "En sağlam yöntem fiyatın birden çok kez dönüş yaptığı bölgeleri işaretlemektir. Bir seviyeye ne kadar çok temas edilmişse ve o temaslarda işlem hacmi ne kadar yüksekse, bölge o kadar anlamlıdır. Tek bir temasla oluşan seviyeler zayıftır.",
-          "Yuvarlak rakamlar ayrı bir kategori oluşturur. Piyasa katılımcıları emirlerini bu seviyelere yığdığı için kendi kendini gerçekleştiren bir etki doğar. Bu psikolojik seviyeler teknik olarak zayıf olsa bile pratikte işler."
+          "Destek, fiyatın altında yer alan ve düşüş sırasında alıcıların devreye girmesi beklenen bölgedir. Direnç ise fiyatın üstünde yer alan ve yükseliş sırasında satıcıların yoğunlaşması beklenen bölgedir.",
+          "Bu beklentinin arkasında psikolojik bir mekanizma vardır: piyasa katılımcıları benzer hesaplara bakar, benzer seviyeleri işaretler ve emirlerini oralara yerleştirir. Seviye kendi kendini bir ölçüde gerçekleştirir.",
+          "Ancak buradaki kelime \"beklenen\"dir, \"garanti\" değil. Güçlü bir trend içinde fiyat seviyeleri arka arkaya kırar ve hiçbirinde durmaz. Destek ve direnç bir tahmin aracı değil, bir konum haritasıdır: fiyatın şu an nerede olduğunu ölçmenize yarar."
         ]
       },
       {
-        "heading": "Bölge genişliği oynaklıkla ölçülür",
+        "heading": "Pivot seviyeleri nasıl hesaplanır",
         "paragraphs": [
-          "Bir destek bölgesinin ne kadar geniş çizileceği o dönemin oynaklığına bağlıdır. Ortalama gerçek aralık (ATR) bunun için pratik bir ölçüdür; günlük ATR'nin yarısı kadar bir tampon çoğu durumda makul bir başlangıçtır.",
-          "Oynaklık yükseldiğinde dar çizilmiş seviyeler sürekli delinir ve yanıltıcı sinyal üretir. Bu yüzden seviyeleri sabit tutmak yerine oynaklığa göre yeniden ölçeklemek gerekir."
+          "En yaygın ve en tekrarlanabilir yöntem pivot hesabıdır. Önceki tamamlanmış dönemin en yüksek (H), en düşük (L) ve kapanış (C) fiyatı alınır ve pivot noktası bulunur:",
+          "P = (H + L + C) ÷ 3",
+          "Bu orta çizginin etrafına, dönemin genişliğine (H − L) göre üç destek ve üç direnç yerleştirilir. Panelde iki yöntem sunuluyor: klasik ve Fibonacci. Varsayılan Fibonacci'dir, çünkü seviyeleri daha dengeli dağıtır ve uç seviyeleri fiyattan aşırı uzağa itmez."
+        ],
+        "table": {
+          "caption": "Pivot seviyelerinin formülleri (R = H − L, dönem genişliği)",
+          "columns": [
+            "Seviye",
+            "Fibonacci",
+            "Klasik"
+          ],
+          "rows": [
+            [
+              "R3",
+              "P + R",
+              "H + 2 × (P − L)"
+            ],
+            [
+              "R2",
+              "P + 0,618 × R",
+              "P + R"
+            ],
+            [
+              "R1",
+              "P + 0,382 × R",
+              "2 × P − L"
+            ],
+            [
+              "P (pivot)",
+              "(H + L + C) ÷ 3",
+              "(H + L + C) ÷ 3"
+            ],
+            [
+              "S1",
+              "P − 0,382 × R",
+              "2 × P − H"
+            ],
+            [
+              "S2",
+              "P − 0,618 × R",
+              "P − R"
+            ],
+            [
+              "S3",
+              "P − R",
+              "L − 2 × (H − P)"
+            ]
+          ]
+        }
+      },
+      {
+        "heading": "S1, S2, S3 ve R1, R2, R3 arasındaki fark",
+        "paragraphs": [
+          "Numaralar mesafeyi anlatır, gücü değil. S1 fiyata en yakın destektir, S3 en uzağıdır. Aynı şekilde R1 ilk direnç, R3 en uzak dirençtir.",
+          "Pratikte ilk seviyeler daha sık test edilir ve daha çok tepki üretir; uzak seviyelere yalnızca sert hareketlerde ulaşılır. Bir gün içinde R1'in test edilmesi olağandır, R3'e ulaşılması ise dikkate değer bir olaydır.",
+          "Bir seviye kırıldığında rol değiştirir. Kırılan direnç bir sonraki düşüşte destek gibi davranmaya başlar; kırılan destek de yükselişte direnç olur. Bu yüzden seviyeleri tek tek değil, bir merdiven olarak okumak gerekir."
         ]
       },
       {
-        "heading": "Momentum ile birlikte okumak",
+        "heading": "Haftalık mı aylık mı: dönem seçimi",
         "paragraphs": [
-          "Fiyatın bir dirence yaklaşma biçimi, seviyenin kendisinden daha bilgilendiricidir. Momentum zayıflayarak yaklaşılan direncin kırılma olasılığı düşüktür; güçlü momentumla ve genişleyen hacimle yaklaşılan direnç sıklıkla aşılır.",
-          "RSI ve hareketli ortalamaya uzaklık bu değerlendirme için yeterlidir. Aşırı alım bölgesinde dirence dayanan bir fiyat, aynı seviyeye nötr momentumla gelen fiyattan farklı okunmalıdır."
+          "Pivot hesabı her zaman tamamlanmış bir dönem üzerinden yapılır. Devam eden haftanın verisiyle hesaplanan seviye, hafta ilerledikçe değişeceği için referans olmaz.",
+          "Haftalık pivotlar birkaç günlük hareketler için uygundur; her hafta yenilenirler ve fiyata daha yakın dururlar. Aylık pivotlar daha geniş aralıklı ve daha kalıcıdır; haftalarca geçerliliğini korur.",
+          "Panel bu ayrımı otomatik yapar: bir hafta ancak beş işlem günü tamamlandıktan sonra \"tam\" sayılır ve pivot hesabına girer. Aynı kural aylar için de geçerlidir. Böylece yarım kalmış bir dönemin verisiyle üretilmiş yanıltıcı seviyeler ortaya çıkmaz."
+        ]
+      },
+      {
+        "heading": "Neden farklı sitelerde farklı seviyeler görüyorsunuz",
+        "paragraphs": [
+          "Aynı altın için üç farklı sitede üç farklı destek seviyesi görmek olağandır ve nedeni gizemli değildir. Üç kaynak farklı olabilir: kullanılan formül, seçilen dönem ve fiyat verisinin kendisi.",
+          "Formül farkı en büyüğüdür; klasik ve Fibonacci aynı veriden gözle görülür biçimde farklı sayılar üretir. Dönem farkı ikincisidir: haftalık pivot ile aylık pivot arasında yüzlerce dolar olabilir.",
+          "Üçüncüsü veri kaynağıdır. Altının merkezi bir borsası yoktur; farklı sağlayıcılar farklı kapanış saatleri kullanır. Bu yüzden bir seviyeye bakarken hangi yöntem ve hangi dönemle hesaplandığını bilmek, seviyenin kendisinden daha önemlidir. Panelde bu ikisi her zaman ekranda yazılıdır."
+        ]
+      },
+      {
+        "heading": "Seviyeleri okuma pratiği",
+        "paragraphs": [
+          "Seviyeleri kullanmanın en sağlıklı yolu, onları hedef değil bölge olarak görmektir. Fiyat bir seviyeye tam olarak dokunup dönmez; genellikle etrafında dar bir aralıkta salınır.",
+          "Bu yüzden grafikte seviyeleri ince çizgi yerine etiketli bölge olarak gösteriyoruz. Bölgenin genişliği fiyatın yaklaşık binde 3,5'i kadardır; bu, seviyenin bir nokta değil bir alan olduğunu görsel olarak hatırlatır.",
+          "Okuma sırası şudur: fiyat pivotun üstünde mi altında mı, hemen üstündeki ilk direnç ne kadar uzakta, hemen altındaki ilk destek ne kadar yakında. Bu üç cevap size fiyatın dönem içindeki konumunu verir."
+        ],
+        "list": {
+          "ordered": true,
+          "items": [
+            "Önce pivot noktasına (P) bakın: fiyat üstündeyse dönem içi görünüm olumlu okunur.",
+            "Fiyatın hemen üstündeki ilk dirençle arasındaki yüzdeyi ölçün.",
+            "Fiyatın hemen altındaki ilk desteğe olan mesafeyi ölçün.",
+            "İki mesafeyi karşılaştırın: hangisi yakınsa fiyat oraya daha duyarlıdır.",
+            "Seviye kırılırsa bir sonraki basamağı referans alın; kırılan seviye rol değiştirir."
+          ]
+        }
+      },
+      {
+        "heading": "Sık yapılan hatalar",
+        "paragraphs": [
+          "İlk hata, seviyeyi kesin bir dönüş noktası sanmaktır. Güçlü trendlerde destekler arka arkaya kırılır; \"burada dönmesi lazımdı\" cümlesi bir yöntem değildir.",
+          "İkinci hata, devam eden dönemin verisiyle hesap yapmaktır. Bu hafta bitmeden bu haftanın pivotunu hesaplarsanız, elinizdeki sayı her gün değişir ve hiçbir şeye referans olmaz.",
+          "Üçüncü hata, farklı kaynakların seviyelerini karıştırmaktır. Grafikte bir kaynağın seviyesine, tabloda başka bir kaynağınkine bakmak kafa karıştırır. Panelde grafikteki çizgilerle pivot kartındaki sayılar tek kaynaktan gelir ve birebir aynıdır."
         ]
       }
     ],
     "points": [
-      "Destek ve direnç kesin çizgiler değil, oynaklığa göre genişleyen bölgelerdir.",
-      "Çok temaslı ve yüksek hacimli bölgeler tek temaslı seviyelerden güçlüdür.",
-      "Yuvarlak rakamlar emir yığılması nedeniyle pratikte işler.",
-      "Bölge genişliği için ATR pratik bir ölçüdür.",
-      "Seviyeye yaklaşma biçimi (momentum) seviyenin kendisinden bilgilendiricidir."
+      "Pivot noktası P = (yüksek + düşük + kapanış) ÷ 3 formülüyle bulunur.",
+      "Fibonacci yönteminde seviyeler dönem genişliğinin 0,382 / 0,618 / 1,000 katlarında yer alır.",
+      "S1 ve R1 fiyata en yakın, S3 ve R3 en uzak seviyelerdir; numara mesafeyi anlatır.",
+      "Hesap yalnızca tamamlanmış dönemle yapılır; yarım hafta veya ay referans olmaz.",
+      "Kırılan direnç destek, kırılan destek direnç olur.",
+      "Farklı sitelerin farklı seviye vermesi normaldir: formül, dönem ve veri kaynağı farklıdır."
     ],
     "faq": [
       {
-        "q": "Destek kırılırsa ne olur?",
-        "a": "Kırılan destek sıklıkla direnç hâline gelir. Ancak tek bir mum kapanışıyla kırılma teyidi yapmak yanıltıcıdır."
+        "q": "Ons altında destek ve direnç nasıl hesaplanır?",
+        "a": "En yaygın yöntem pivot hesabıdır: önceki tamamlanmış haftanın veya ayın en yüksek, en düşük ve kapanış fiyatından P = (H + L + C) ÷ 3 bulunur, dönem genişliğine göre üç destek ve üç direnç yerleştirilir."
       },
       {
-        "q": "Hangi zaman diliminde bakmalıyım?",
-        "a": "Vadeniz neyse bir üst zaman dilimindeki seviyeler daha güçlüdür. Günlük işlem için haftalık seviyeler referans alınır."
+        "q": "Fibonacci pivot ile klasik pivot arasındaki fark nedir?",
+        "a": "İkisi de aynı pivot noktasını kullanır ama seviyeleri farklı yerleştirir. Fibonacci, dönem genişliğinin 0,382 / 0,618 / 1,000 katlarını kullanır ve daha dengeli dağıtır; klasik yöntem uç seviyeleri fiyattan daha uzağa iter."
       },
       {
-        "q": "Destek direnç tek başına yeterli mi?",
-        "a": "Hayır. Makro zeminden bağımsız okunan teknik seviyeler, güçlü bir haber akışında hızla geçersizleşir."
+        "q": "S1, S2, S3 ne anlama geliyor?",
+        "a": "Fiyatın altındaki üç destek seviyesidir. S1 en yakın, S3 en uzaktır. Numara seviyenin gücünü değil fiyata olan mesafesini gösterir."
+      },
+      {
+        "q": "Haftalık mı aylık pivot mu kullanmalıyım?",
+        "a": "Birkaç günlük hareketleri izliyorsanız haftalık, birkaç haftalık görünüm için aylık pivot daha uygundur. Aylık seviyeler daha geniş aralıklı ve daha kalıcıdır."
+      },
+      {
+        "q": "Neden her sitede farklı destek direnç seviyesi görüyorum?",
+        "a": "Üç neden var: kullanılan formül (klasik / Fibonacci), seçilen dönem (haftalık / aylık) ve fiyat verisinin kaynağı. Altının merkezi bir borsası olmadığı için kapanış fiyatı sağlayıcıya göre değişebilir."
+      },
+      {
+        "q": "Destek seviyesi kırılırsa ne olur?",
+        "a": "Kırılan destek genellikle sonraki yükselişte direnç gibi davranır. Fiyat bir alt basamağa yönelir ve referans artık S2 olur."
+      },
+      {
+        "q": "Bu seviyeler fiyatın döneceğini garanti eder mi?",
+        "a": "Hayır. Seviyeler geçmiş fiyattan formülle çıkarılmış referanslardır; güçlü trendlerde arka arkaya kırılmaları olağandır. Tahmin aracı değil, konum haritasıdır."
+      },
+      {
+        "q": "Grafikteki çizgilerle pivot tablosundaki sayılar aynı mı?",
+        "a": "Evet. Panelde iki bölüm tek kaynaktan beslenir; grafikteki S1–S3 ve R1–R3 bölgeleri, Ayrıntılar bölümündeki pivot kartındaki sayılarla birebir aynıdır. Dönem ve yöntemi oradan değiştirebilirsiniz."
       }
     ],
     "category": "Tahmin ve Teknik Analiz",
@@ -1064,7 +1767,7 @@
     "title": "Altında RSI Göstergesi Nasıl Okunur?",
     "seoTitle": "Altında RSI Göstergesi",
     "updated": "2026-08-18",
-    "summary": "RSI momentumun hızını ölçer. 70 ve 30 eşiklerinin neden mekanik bir alım-satım kuralı olmadığını açıklıyoruz.",
+    "summary": "RSI altında momentumun hızını ölçer. 70 ve 30 eşiklerinin neden mekanik bir alım-satım kuralı olmadığını, güçlü trendlerde nasıl yanılttığını açıklıyoruz.",
     "intro": "RSI (Göreceli Güç Endeksi), fiyatın son dönemdeki yükseliş ve düşüş hareketlerinin gücünü karşılaştırarak 0 ile 100 arasında bir değer üretir. Altında en yaygın kullanılan momentum göstergelerinden biridir.",
     "sections": [
       {
@@ -1118,58 +1821,157 @@
     "keyword": "ons altın tahmini",
     "title": "Ons Altın Tahmini Nasıl Yapılır?",
     "seoTitle": "Ons Altın Tahmini Nasıl Yapılır",
-    "updated": "2026-08-18",
-    "summary": "Ons altın tahmini reel faiz, dolar endeksi ve enflasyon beklentisi gibi ölçülebilir girdilere dayanır. Yöntemleri ve sınırlarını bu rehberde bulun.",
-    "intro": "Altın tahmini, fiyatın nereye gideceğini bilmek değil, hangi koşullarda hangi aralığın daha olası olduğunu tarif etmektir. Ciddi her yöntem bir nokta değeri değil, bir aralık ve o aralığa duyulan güveni birlikte üretir. Tek bir sayı veren tahminler, belirsizliği gizledikleri için genelde en az güvenilir olanlardır.",
+    "updated": "2026-08-22",
+    "summary": "Ons altın tahmini nasıl yapılır, hangi vadede güvenilir olur ve bir modelin isabeti nasıl ölçülür? Ölçülmüş hata payları ve yön isabetiyle.",
+    "intro": "Ons altın tahmini yapan çok kaynak var; kaçının tuttuğunu ölçen az. Bu yazı tahmin üretmenin nasıl işlediğini, hangi vadede anlamlı olduğunu ve bir tahmine güvenip güvenmeyeceğinize nasıl karar vereceğinizi anlatıyor. Kendi modelimizin ölçülmüş karnesini de gizlemeden paylaşıyoruz: nerede işe yaradığını da, hangi vadede söyleyecek bir şeyi olmadığını da.",
     "sections": [
       {
-        "heading": "Üç temel yaklaşım",
+        "heading": "Bir altın tahmini neye dayanır",
         "paragraphs": [
-          "Temel analiz, altını etkileyen makroekonomik büyüklüklerden yola çıkar: reel faiz, dolar endeksi, enflasyon beklentisi, merkez bankası alımları. Mantığı basittir; altın getiri üretmeyen bir varlık olduğu için, faiz getiren alternatiflerin cazibesi arttıkça altının fırsat maliyeti yükselir.",
-          "Teknik analiz yalnızca fiyat ve hacim geçmişine bakar; momentum, hareketli ortalamalar ve oynaklık ölçüleri kullanır. İstatistiksel ve makine öğrenmesi tabanlı yöntemler ise ikisini birleştirip geçmiş veriden ilişki çıkarmayı dener. Üçü de aynı sınırla karşılaşır: altın fiyatı büyük ölçüde öngörülemez bir bileşen taşır."
+          "Altın fiyat tahminleri kabaca üç aileye ayrılır. Teknik yaklaşım yalnızca fiyatın kendi geçmişine bakar: trend, momentum, oynaklık, destek ve direnç seviyeleri. Temel yaklaşım altını çevreleyen makro tabloya bakar: reel faiz, dolar endeksi, enflasyon beklentisi, merkez bankası alımları. Nicel yaklaşım ise ikisini birden bir modele girdi olarak verir ve ilişkiyi veriden öğrenmeye çalışır.",
+          "Kullandığımız yöntem üçüncüsüdür. Modele her gün için 19 gösterge veriyoruz: sekizi teknik (1, 5 ve 20 günlük getiri, 50 günlük ortalamadan sapma, RSI, ATR, 20 günlük oynaklık, 60 günlük zirveden düşüş), on biri makro (reel faiz değişimi, dolar endeksi getirisi, enflasyon beklentisi, getiri eğrisi, VIX, çekirdek enflasyon, petrol).",
+          "Model bu göstergelerden 7, 14 ve 30 gün sonrasının getirisini tahmin etmeye çalışır. Her vade ayrı ayrı eğitilir; birinde iyi olmak diğerinde iyi olmayı gerektirmez."
         ]
       },
       {
-        "heading": "Vade uzadıkça belirsizlik neden hızla büyür",
+        "heading": "Tahminin isabeti nasıl ölçülür",
         "paragraphs": [
-          "Bir haftalık tahminle altı aylık tahmin aynı işin uzun ve kısa hâli değildir. Kısa vadede fiyatın kendi momentumu ve mevcut piyasa koşulları baskındır; uzun vadede ise henüz gerçekleşmemiş faiz kararları, enflasyon verileri ve jeopolitik olaylar devreye girer.",
-          "Buna bir de veri sorunu eklenir. 180 günlük bir tahmini test etmek için birbirinden bağımsız 180 günlük pencereler gerekir. Dört yıllık günlük veri kulağa çok gelse de, 180 günlük ufuk için içinde yalnızca birkaç bağımsız pencere barındırır. Bu yüzden uzun vadeli tahminlerin güven bandı, kısa vadelilere göre orantısız biçimde geniştir."
+          "Bir modelin eğitim verisindeki performansı hiçbir şey ifade etmez; yeterince büyük bir model geçmişi ezberler. Anlamlı olan tek ölçüm, modelin daha önce hiç görmediği günlerde ne yaptığıdır.",
+          "Bunun için genişleyen pencereli walk-forward doğrulama kullanıyoruz: model yalnızca o güne kadarki veriyle eğitilir, sonraki dönemde sınanır, pencere ileri kaydırılır. Kat sınırlarında hedef örtüşmesi de temizlenir; 30 günlük hedef tahmin edilirken eğitim penceresi 30 gün öncesinden kesilir, böylece geleceğe ait hiçbir bilgi sızmaz.",
+          "Sonuçta her vade 500'den fazla bağımsız günde ölçülür. Aşağıdaki sayılar o sınavın sonucudur, iddia değil."
+        ],
+        "table": {
+          "caption": "Modelin katman dışı ölçülmüş performansı (Ağustos 2026)",
+          "columns": [
+            "Vade",
+            "Ortalama yanılma",
+            "Yönü bilme",
+            "Basit kurala üstünlük",
+            "Belirsizlik bandı"
+          ],
+          "rows": [
+            [
+              "7 gün",
+              "%2,32",
+              "%63,5",
+              "+%3,9",
+              "±%3,5"
+            ],
+            [
+              "14 gün",
+              "%3,17",
+              "%62,4",
+              "+%1,9",
+              "±%4,9"
+            ],
+            [
+              "30 gün",
+              "%4,22",
+              "%70,1",
+              "+%26,3",
+              "±%6,8"
+            ]
+          ]
+        }
+      },
+      {
+        "heading": "\"Basit kurala üstünlük\" neden en önemli sütun",
+        "paragraphs": [
+          "Yön isabetinin yüzde 63 çıkması kulağa iyi gelir, ama tek başına aldatıcıdır. Altın uzun vadede yukarı eğilimli olduğu için \"her zaman yükselir\" diyen bir kural bile yüzde 55 civarında tutturur.",
+          "Bu yüzden asıl referansımız \"fiyat olduğu yerde kalır\" kuralıdır. Model bu referansı ne kadar geçiyorsa gerçek katkısı odur. 30 günlük vadede yüzde 26'lık üstünlük anlamlı bir farktır; 14 günlük vadedeki yüzde 1,9 ise gürültüden ayırt edilemez.",
+          "Model bir vadede referansı anlamlı biçimde geçemiyorsa o vadenin ağırlığını kendisi kısar. Bugün 14 günlük vadenin ağırlığı 0,13'tür ve panel orada fiyat tahmini yerine açıkça \"görüş yok\" gösterir. Sayı üretip güven telkin etmek daha kolay olurdu; doğru olan bu değil."
         ]
       },
       {
-        "heading": "Bir tahmini değerlendirirken neye bakmalı",
+        "heading": "Hangi vade ne kadar anlamlı",
         "paragraphs": [
-          "İlk soru şudur: bu tahmin, hiçbir şey yapmayan basit bir kuraldan daha mı iyi? Yükselen bir piyasada 'her zaman artacak' demek yüksek isabet oranı verir ama hiçbir bilgi taşımaz. Bir modelin değeri, bu naif kuralı geçip geçmediğiyle ölçülür.",
-          "İkinci soru, tahminin girdilere gerçekten tepki verip vermediğidir. Reel faiz belirgin şekilde yükseldiğinde tahmin aşağı gitmiyorsa, o model girdileri kullanmıyor demektir; sadece geçmişteki ortalama eğilimi tekrarlıyordur. Üçüncüsü ise bandın dürüstlüğüdür: geçmişte ilan edilen %70 bandının içinde gerçekten sonuçların yaklaşık %70'i kalmış mı?"
+          "Ölçümlerimizde en güçlü vade 30 gündür: hem yön isabeti hem basit kurala üstünlük orada en yüksek. Bunun sezgisel bir açıklaması var; makro göstergelerin altın üzerindeki etkisi günler içinde değil haftalar içinde ortaya çıkar.",
+          "7 günlük vade ikinci sıradadır. Kısa vadede fiyatı sürükleyen şey büyük ölçüde momentum ve oynaklıktır; model bunu kısmen yakalar ama katkısı sınırlı kalır.",
+          "14 günlük vade ilginç bir boşluktur: kısa vadenin momentum sinyali zayıflamış, uzun vadenin makro sinyali henüz olgunlaşmamıştır. Modelin orada söyleyecek bir şeyi yok ve bunu ölçüm gösteriyor."
         ]
       },
       {
-        "heading": "Bu paneldeki yöntem",
+        "heading": "Neden altı aylık ya da yıl sonu tahmini vermiyoruz",
         "paragraphs": [
-          "Panel 7, 14 ve 30 günlük bağımsız tahminler üretir. Girdiler altının kısa dönem teknik göstergeleri ile ABD tahvil faizleri, reel faiz, dolar endeksi, enflasyon beklentisi ve oynaklık göstergelerinden oluşur. Eğitim ve hata ölçümü doğrudan XAU/USD serisine bağlıdır.",
-          "Her tahmin bir aralıkla birlikte sunulur ve modelin geçmiş performansı panelde açıkça gösterilir. Amaç kesin bir fiyat söylemek değil, hangi senaryonun hangi koşullarda daha olası olduğunu görünür kılmaktır."
+          "Uzun vadeli tahminlerin sorunu matematiksel değil, mantıksaldır. Altı ay sonrasını tahmin etmek için altı ay sonraki reel faizi, dolar kurunu ve enflasyonu bilmeniz gerekir. Bunlar bilinmiyor; onları da tahmin ederseniz hata üstüne hata bindirirsiniz.",
+          "Bir de ölçüm sorunu var. Beş yıllık veride birbirinden bağımsız kaç tane altı aylık pencere vardır? Ona yakın. On gözlemle bir modelin işe yarayıp yaramadığına karar veremezsiniz.",
+          "Bu yüzden modeli ölçebildiğimiz vadelerle sınırlı tutuyoruz. Panelde gördüğünüz her sayının arkasında 500'den fazla bağımsız gözlem var. Yıl sonu hedefi vermek yerine, o hedefi belirleyecek göstergelerin bugün nerede olduğunu gösteriyoruz."
+        ]
+      },
+      {
+        "heading": "Belirsizlik bandı ne anlama geliyor",
+        "paragraphs": [
+          "Tek bir sayı olarak sunulan tahmin yanıltıcıdır. Modelin çıktısı bir nokta değil, bir aralıktır ve panel bunu her zaman aralıkla birlikte gösterir.",
+          "Band, modelin geçmişteki katman dışı hatalarının dağılımından türetilir: hataların yüzde 80'inin içine düştüğü genişlik alınır. 30 günlük vadede bu genişlik yaklaşık ±%6,8'dir.",
+          "Band sabit değildir; güncel oynaklığa göre ölçeklenir. Piyasa sakinken daralır, çalkantılıyken genişler. Bandın genişlemesi modelin kötüleştiği anlamına gelmez; belirsizliğin arttığını dürüstçe bildirdiği anlamına gelir."
+        ]
+      },
+      {
+        "heading": "Bir altın tahminini değerlendirirken sorulacak sorular",
+        "paragraphs": [
+          "Karşınıza çıkan herhangi bir altın tahminini şu sorularla test edebilirsiniz. Cevapları yoksa o tahmin bir ölçüm değil, bir görüştür.",
+          "Bu sorular kendi modelimiz için de geçerlidir ve cevapları panelde açık durur. İsabet Karnesi bölümü her vade için ortalama yanılmayı, yön isabetini ve basit kurala üstünlüğü listeler; her yeniden eğitimde güncellenir."
+        ],
+        "list": {
+          "items": [
+            "Bu tahmin hangi vade için yapıldı ve o vadede geçmiş isabeti ölçüldü mü?",
+            "Ölçüm, modelin daha önce hiç görmediği günlerde mi yapıldı?",
+            "Kaç bağımsız gözlem üzerinde ölçüldü? Onlarca mı, yüzlerce mi?",
+            "Hiçbir şey yapmayan basit bir kuralı geçiyor mu, yoksa sadece trendi mi tekrarlıyor?",
+            "Tek bir sayı mı veriliyor, yoksa belirsizlik aralığıyla mı sunuluyor?",
+            "Model yanıldığında bu bir yerde raporlanıyor mu?"
+          ]
+        }
+      },
+      {
+        "heading": "Tahmini nasıl kullanmalı",
+        "paragraphs": [
+          "Tahmin bir hedef fiyat değildir. Modelin söylediği şey, bugünkü göstergeler geçmişte benzer bir konumdayken ortalama olarak ne olduğudur. Ortalama, tek bir gelecek için garanti vermez.",
+          "Doğru kullanım, tahmini bir girdi olarak görmektir. Modelin yön beklentisi, belirsizlik bandının genişliği ve o vadedeki ağırlık birlikte okunmalıdır. Ağırlığı düşük bir vadede modelin sessiz kalması, sessiz kalmaması gereken bir sinyaldir.",
+          "Model tek bir yön için tüm parayı yatırmanız gerektiğini söylemez ve zaten söyleyemez. Kişisel yatırım kararınız risk toleransınıza, vadenize ve mali durumunuza bağlıdır; bunları bilen tek kişi sizsiniz."
         ]
       }
     ],
     "points": [
-      "Ciddi tahmin nokta değeri değil, aralık ve güven düzeyi üretir.",
-      "Reel faiz, dolar endeksi ve enflasyon beklentisi en çok başvurulan üç girdidir.",
-      "Vade uzadıkça bağımsız gözlem sayısı azalır, belirsizlik orantısız büyür.",
-      "Bir modelin değeri naif 'hep yükselir' kuralını geçip geçmediğiyle ölçülür.",
-      "Girdilere tepki vermeyen model, tahmin değil ortalama tekrarı üretir."
+      "Model 19 göstergeden 7, 14 ve 30 günlük getiriyi tahmin eder; her vade ayrı eğitilir.",
+      "Ölçüm, modelin hiç görmediği 500'den fazla günde yapılır; veri sızıntısı temizlenir.",
+      "Yön isabeti 7 günde %63,5, 14 günde %62,4, 30 günde %70,1 ölçülmüştür.",
+      "Asıl kriter basit kurala üstünlüktür: 30 günde +%26,3, 14 günde yalnızca +%1,9.",
+      "14 günlük vadenin ağırlığı 0,13'tür; panel orada tahmin yerine \"görüş yok\" gösterir.",
+      "Altı aylık ve yıl sonu tahmini vermiyoruz; ölçülemeyen bir sayı üretmek yanıltıcıdır."
     ],
     "faq": [
       {
-        "q": "Altın tahmini ne kadar güvenilirdir?",
-        "a": "Kısa vadede sınırlı, uzun vadede çok sınırlıdır. Hiçbir yöntem altın fiyatını güvenilir biçimde öngöremez; iyi bir model belirsizliği gizlemek yerine ölçüp gösterir."
+        "q": "Ons altın tahmini ne kadar güvenilir?",
+        "a": "Vadeye göre değişir. Ölçümlerimizde 30 günlük vade en güçlüsüdür: yön isabeti %70,1 ve basit kurala üstünlüğü +%26,3. 14 günlük vadede model neredeyse hiçbir katkı sağlamıyor ve panel orada tahmin göstermiyor."
       },
       {
-        "q": "Hangi vade en anlamlı?",
-        "a": "Kısa vadeler istatistiksel olarak daha çok bağımsız gözlem içerdiği için daha ölçülebilirdir. Panel bu nedenle 7, 14 ve 30 günlük bağımsız modeller kullanır; 30 günlük sonuç daha geniş bantla okunmalıdır."
+        "q": "Model hangi verilerle çalışıyor?",
+        "a": "Sekiz teknik ve on bir makro olmak üzere 19 gösterge kullanılıyor: getiriler, RSI, ATR, oynaklık, zirveden düşüş, reel faiz, dolar endeksi, enflasyon beklentisi, getiri eğrisi, VIX, çekirdek enflasyon ve petrol."
       },
       {
-        "q": "Yapay zekâ tahmini klasik yöntemlerden üstün mü?",
-        "a": "Otomatik olarak değil. Veri miktarı sınırlıyken karmaşık modeller genelde ezberler. Belirleyici olan yöntemin adı değil, dürüst doğrulamadan geçip geçmediğidir."
+        "q": "Tahminin hata payı ne kadar?",
+        "a": "Ortalama yanılma 7 günde %2,32, 14 günde %3,17, 30 günde %4,22 ölçülmüştür. Panelde her tahmin ayrıca bir belirsizlik bandıyla sunulur; 30 gün için bu band yaklaşık ±%6,8'dir."
+      },
+      {
+        "q": "Neden 6 aylık veya yıl sonu tahmini yok?",
+        "a": "Altı ay sonrasını tahmin etmek için altı ay sonraki faizi, kuru ve enflasyonu bilmek gerekir. Ayrıca beş yıllık veride bağımsız altı aylık pencere sayısı ona yakındır; bu kadar az gözlemle bir modelin işe yarayıp yaramadığı ölçülemez."
+      },
+      {
+        "q": "Yapay zeka altın fiyatını bilebilir mi?",
+        "a": "Kesin olarak hayır. Model geçmişteki istatistiksel ilişkileri öğrenir ve bunları geleceğe yansıtır; ilişki değişirse yanılır. Yaptığı şey öngörü değil, olasılık tahminidir."
+      },
+      {
+        "q": "\"Görüş yok\" ne demek?",
+        "a": "Model o vadede basit bir referans kuralını geçemediğinde kendi ağırlığını kısar. Panel bu durumda sayı göstermek yerine açıkça görüş bildirmediğini yazar. Bugün 14 günlük vade bu durumdadır."
+      },
+      {
+        "q": "Belirsizlik bandı neye göre değişiyor?",
+        "a": "Band, modelin geçmiş hatalarının %80'inin içine düştüğü genişliktir ve güncel piyasa oynaklığına göre ölçeklenir. Piyasa çalkantılıyken genişler, sakinken daralır."
+      },
+      {
+        "q": "Bu tahminlere göre işlem yapabilir miyim?",
+        "a": "Bu site yatırım danışmanlığı sunmaz ve al-sat sinyali vermez. Tahmin, karar verirken bakabileceğiniz girdilerden yalnızca biridir; vade, risk toleransı ve mali durum kişiseldir."
       }
     ],
     "category": "Tahmin ve Teknik Analiz",
@@ -1181,7 +1983,7 @@
     "title": "Ons Altın Yıl Sonu Tahmini Nasıl Okunur?",
     "seoTitle": "Ons Altın Yıl Sonu Tahmini",
     "updated": "2026-08-18",
-    "summary": "Kurumların yıl sonu hedefleri neden bu kadar farklı çıkar ve bir yıl sonu tahmini nasıl değerlendirilmeli?",
+    "summary": "Kurumların yıl sonu altın hedefleri neden bu kadar farklı çıkar? Uzun vadeli tahminin ölçüm sorunu ve bir yıl sonu hedefini değerlendirirken sorulacak sorular.",
     "intro": "Her yıl sonuna doğru bankaların ve araştırma kuruluşlarının altın hedefleri yayımlanır. Aynı veriye bakan kurumların birbirinden çok farklı sayılar açıklaması şaşırtıcı değildir; çünkü bu tahminler bir öngörüden çok bir senaryo varsayımının sonucudur.",
     "sections": [
       {
@@ -1291,7 +2093,7 @@
     "title": "Altın Alım Zamanı Nasıl Belirlenir?",
     "seoTitle": "Altın Alım Zamanı Nasıl Belirlenir",
     "updated": "2026-08-18",
-    "summary": "Tek bir doğru an yoktur. Kademeli alım, oynaklık ve makas maliyeti üzerinden zamanlama yaklaşımını açıklıyoruz.",
+    "summary": "Altın alımında tek bir doğru an yoktur. Kademeli alım, oynaklık ve makas maliyeti üzerinden zamanlama yaklaşımını ve tahminin gerçek sınırlarını açıklıyoruz.",
     "intro": "Altında en iyi alım anını yakalamaya çalışmak, çoğu yatırımcının en çok kaybettiği alandır. Fiyatın dibini önceden bilmek mümkün olmadığı için pratik yaklaşım, tek bir ana bahis oynamak yerine giriş maliyetini zamana yaymaktır.",
     "sections": [
       {
@@ -1345,51 +2147,167 @@
     "keyword": "altın alırken nelere dikkat edilmeli",
     "title": "Altın Alırken Nelere Dikkat Edilmeli?",
     "seoTitle": "Altın Alırken Nelere Dikkat Edilmeli",
-    "updated": "2026-08-18",
-    "summary": "Ayar damgası, makas, işçilik payı, saklama ve satıcı seçimi. Alım öncesi kontrol listesi.",
-    "intro": "Altın alımında en çok kaybettiren şey fiyat tahmini değil, gözden kaçan maliyet kalemleridir. Aşağıdaki başlıklar alım öncesinde kontrol edilebilir ve sonucu doğrudan etkiler.",
+    "updated": "2026-08-22",
+    "summary": "Altın alırken makas, ayar, işçilik payı ve saklama maliyeti nasıl kontrol edilir? Ürün karşılaştırması ve alım öncesi kontrol listesi.",
+    "intro": "Altın almak basit görünür ama aynı gün, aynı şehirde, aynı miktarda altın için ödediğiniz tutar yüzde birkaç değişebilir. Fark altının kendisinden değil, aldığınız üründen ve satıcıdan gelir. Bu yazıda alım öncesinde kontrol edilmesi gereken kalemleri, ürünler arasındaki maliyet farkını ve en sık düşülen tuzakları sıralıyoruz.",
     "sections": [
       {
-        "heading": "Ürünün kendisi",
+        "heading": "Önce ne aldığınıza karar verin",
         "paragraphs": [
-          "Ayar damgasını kontrol edin; 916, 750 gibi milyem değerleri ürünün saflığını gösterir. Damgasız üründe saflığı doğrulamak alıcıya ek maliyet ve risk yükler.",
-          "Ağırlığı satıcının terazisinde teyit ettirin. Ziynet ürünlerinde standart ağırlıklar bellidir; sapma varsa sebebini sorun."
+          "Altın tek bir ürün değildir. Gram bar, ziynet sikkesi, bilezik, banka altın hesabı ve altın fonu birbirinden farklı maliyet ve likidite profillerine sahiptir.",
+          "Ayrım noktası şudur: fiziki altın elinizde durur, saklama sorumluluğu sizindir ve nakde çevirmek için alıcıya gitmeniz gerekir. Dijital altın saklama derdi yaratmaz ama karşı taraf riski taşır ve genellikle bir işlem komisyonu vardır.",
+          "Amacınız hediye ya da saklama ise fiziki ürün doğaldır. Amacınız yalnızca altının fiyat hareketinden yararlanmak ise dijital seçenekler daha düşük maliyetle aynı işi görebilir."
+        ],
+        "table": {
+          "caption": "Ürün tiplerinin karşılaştırması",
+          "columns": [
+            "Ürün",
+            "Tipik ek maliyet",
+            "Nakde çevirme",
+            "Saklama"
+          ],
+          "rows": [
+            [
+              "Gram / külçe altın",
+              "Düşük",
+              "Kuyumcu, kolay",
+              "Size ait"
+            ],
+            [
+              "Ziynet (çeyrek, yarım, tam)",
+              "Orta",
+              "Her kuyumcu, çok kolay",
+              "Size ait"
+            ],
+            [
+              "Bilezik ve takı",
+              "Yüksek (işçilik)",
+              "İşçilik geri alınmaz",
+              "Size ait"
+            ],
+            [
+              "Banka altın hesabı",
+              "Düşük–orta",
+              "Anında",
+              "Bankada"
+            ],
+            [
+              "Altın fonu / BYF",
+              "Yönetim ücreti",
+              "Borsa saatlerinde",
+              "Kurumda"
+            ]
+          ]
+        }
+      },
+      {
+        "heading": "Alış-satış makasını mutlaka sorun",
+        "paragraphs": [
+          "Makas, aynı ürünü aynı anda alıp satsanız kaybedeceğiniz tutardır. Alım anında ödediğiniz görünmez maliyet budur ve fiyat etiketine yazmaz.",
+          "Kuyumcuya \"bunu şu an geri alsanız kaça alırsınız\" diye sormak, makası öğrenmenin en doğrudan yoludur. Aradaki fark yüzde olarak hesaplanmalıdır; lira olarak bakmak ürünler arasında karşılaştırma yapmanızı engeller.",
+          "Makas ürüne göre değişir: gram altında dar, ziynette daha geniş, takıda en geniştir. Kısa vadede bozdurma ihtimaliniz varsa dar makaslı ürün seçmek doğrudan kâr getirir."
         ]
       },
       {
-        "heading": "Maliyet kalemleri",
+        "heading": "İşçilik payını hesaplayın",
         "paragraphs": [
-          "İlan edilen fiyatın alış mı satış mı olduğunu netleştirin ve makası hesaplayın. Aynı ürün için birkaç satıcıyı karşılaştırmak makasın makul olup olmadığını hızla gösterir.",
-          "İşçilik payını ayrıca sorun. Bilezik gibi ürünlerde işçilik toplam fiyatın önemli bir kısmını oluşturabilir ve satışta genelde geri alınmaz."
+          "Vitrindeki fiyat, ürünün içindeki saf altının değerinden her zaman yüksektir. Aradaki fark işçilik, basım maliyeti ve satıcı marjıdır.",
+          "Bunu ölçmek zor değil: ürünün saf altın gramını güncel gram fiyatıyla çarpın ve etiketle karşılaştırın. Çeyrek altın için saf altın miktarı 1,603 gramdır.",
+          "Ölçtüğümüz kadarıyla bu pay gram altında yüzde 0,1 civarında kalırken ziynet ürünlerinde yüzde 1–2 aralığına çıkar. Bilezik ve taşlı takıda çok daha yükseğe çıkabilir ve satarken bu payın büyük kısmı geri gelmez."
         ]
       },
       {
-        "heading": "Zamanlama ve saklama",
+        "heading": "Ayarı ve belgeyi kontrol edin",
         "paragraphs": [
-          "Piyasanın likit olduğu saatlerde işlem yapmak makas maliyetini düşürür. Hafta sonu ve gece işlemlerinde satıcılar risk primi ekler.",
-          "Saklama planınızı alım öncesinde yapın. Kasa maliyeti, sigorta ve taşıma riski toplam maliyetin parçasıdır ve sonradan hesaba katıldığında getiriyi beklenmedik biçimde azaltır."
+          "Her üründe ayar damgası aranmalıdır: 995 veya 999 has altını, 916 yirmi iki ayarı, 750 on sekiz ayarı gösterir. Damga yoksa ürünün saflığını doğrulayacak bir dayanağınız yok demektir.",
+          "Gram bar ve külçelerde üretici sertifikası ve seri numarası bulunur. Kapalı ambalajlı ürünlerde ambalajın açılmamış olması, satarken değerini korumasına yardımcı olur.",
+          "Faturayı mutlaka alın. Fatura hem ürünün ayarını ve ağırlığını belgeler hem de olası bir anlaşmazlıkta elinizdeki tek dayanaktır."
+        ],
+        "list": {
+          "items": [
+            "Ayar damgası var mı ve iddia edilen ayarla uyuşuyor mu?",
+            "Külçe ise sertifika ve seri numarası mevcut mu?",
+            "Ambalaj açılmamış mı?",
+            "Fatura ürünün ağırlığını, ayarını ve fiyatını yazıyor mu?",
+            "Satıcı aynı ürünü geri alıyor mu, hangi fiyattan?"
+          ]
+        }
+      },
+      {
+        "heading": "Zamanlama tuzağına düşmeyin",
+        "paragraphs": [
+          "Altın alımında en yaygın hata, fiyat hızla yükselirken \"kaçırmadan\" almak ve düşerken beklemeye geçmektir. Bu davranış ortalama maliyetinizi sistematik olarak yükseltir.",
+          "Kısa vadeli tahminler bu problemi çözmez. Kendi modelimizin ölçümlerinde bile en güçlü vade olan 30 günde yön isabeti yüzde 70 civarındadır; bu, on kararın üçünde yanılmak demektir.",
+          "Düzenli ve eşit tutarlı alım, zamanlama kararını ortadan kaldırdığı için pratikte daha savunulabilir bir yaklaşımdır. Fiyat düştüğünde daha çok gram, yükseldiğinde daha az gram alırsınız ve ortalama maliyet kendiliğinden dengelenir."
         ]
+      },
+      {
+        "heading": "Saklama ve sigorta",
+        "paragraphs": [
+          "Fiziki altının görünmeyen maliyeti saklamadır. Evde tutmak sıfır maliyetli görünür ama hırsızlık ve kayıp riskini tamamen size yükler; ev sigortalarının çoğu değerli maden için düşük bir üst sınır uygular.",
+          "Banka kiralık kasası bu riski azaltır, karşılığında yıllık bir ücret getirir. Küçük tutarlarda bu ücret altının getirisini anlamlı ölçüde aşabilir.",
+          "Karar, tutara bağlıdır. Birkaç çeyrek altın için kasa kiralamak mantıklı değildir; yüz gramın üzerindeki fiziki varlık için saklama planı yapmamak ise ihmaldir."
+        ]
+      },
+      {
+        "heading": "Alım öncesi kontrol listesi",
+        "paragraphs": [
+          "Aşağıdaki soruların hepsine cevabınız varsa alım kararınız bilgiye dayanıyor demektir. Biri eksikse, o eksik genellikle sonradan maliyet olarak geri döner."
+        ],
+        "list": {
+          "ordered": true,
+          "items": [
+            "Bu ürünün içinde kaç gram saf altın var?",
+            "Güncel gram fiyatıyla ham altın değeri ne kadar eder?",
+            "Etiket fiyatı ham değerin yüzde kaç üzerinde?",
+            "Satıcı aynı ürünü şu an kaça geri alır? Makas yüzde kaç?",
+            "Ayar damgası, sertifika ve fatura tamam mı?",
+            "Bu altını nerede saklayacağım ve maliyeti ne?",
+            "Ne kadar süre tutmayı planlıyorum, bu sürede bozdurma ihtimalim var mı?"
+          ]
+        }
       }
     ],
     "points": [
-      "Ayar damgasını ve ağırlığı mutlaka kontrol edin.",
-      "İlan edilen fiyatın alış mı satış mı olduğunu netleştirin.",
-      "İşçilik payı satışta genelde geri alınmaz.",
-      "Likit saatlerde işlem makas maliyetini düşürür.",
-      "Saklama maliyetini alım öncesinde hesaba katın."
+      "Ürün tipi maliyeti belirler: gram altın en düşük, takı en yüksek ek maliyeti taşır.",
+      "Makas görünmez maliyettir; \"şu an geri alsanız kaça\" sorusu bunu ortaya çıkarır.",
+      "İşçilik payı ölçülebilir: saf altın gramı × gram fiyatı, etiketle karşılaştırılır.",
+      "Ayar damgası, sertifika ve fatura üçü birden aranmalıdır.",
+      "Zamanlama tahmini güvenilmezdir; düzenli ve eşit tutarlı alım maliyeti dengeler.",
+      "Saklama sıfır maliyetli değildir; tutara göre kasa veya sigorta planlanmalıdır."
     ],
     "faq": [
       {
-        "q": "Faturasız altın alınır mı?",
-        "a": "Fatura ürünün kaynağını ve ayarını belgelemesi açısından önemlidir; satış aşamasında da işinizi kolaylaştırır."
+        "q": "Altın alırken en çok neye dikkat etmeli?",
+        "a": "Alış-satış makasına ve işçilik payına. İkisi de fiyat etiketinde yazmaz ama toplam maliyetinizi doğrudan belirler; ziynet ürünlerinde bu pay yüzde 1–2, takıda çok daha yüksektir."
       },
       {
-        "q": "Hangi ürün yatırıma daha uygun?",
-        "a": "Gram başına işçilik ve makas payı düşük olan külçe ve gram altın genelde öne çıkar."
+        "q": "Gram altın mı ziynet altını mı almalı?",
+        "a": "Saf altın gramı başına maliyet gram altında daha düşüktür. Ziynetin avantajı bölünebilirliği ve her kuyumcuda anında nakde çevrilebilmesidir; kısa vadede bozdurma ihtimaliniz varsa bu esneklik primi haklı çıkarabilir."
       },
       {
-        "q": "Online altın almak güvenli mi?",
-        "a": "Platformun teminat yapısına, denetimine ve fiziki teslimat şartlarına bakmak gerekir."
+        "q": "Bilezik yatırım için uygun mu?",
+        "a": "Genellikle değil. Bilezikte işçilik payı yüksektir ve satarken bu payın büyük kısmı geri gelmez. Yatırım amacıyla alıyorsanız gram bar veya ziynet sikkesi daha verimlidir."
+      },
+      {
+        "q": "Makas nasıl öğrenilir?",
+        "a": "Kuyumcuya aynı ürünü o an kaça geri alacağını sorun. Satış ile alış arasındaki farkı satış fiyatına bölerek yüzde olarak hesaplayın; ürünler arasında ancak yüzde cinsinden karşılaştırma yapılabilir."
+      },
+      {
+        "q": "Fiziki altın mı dijital altın mı?",
+        "a": "Fiziki altın elinizde durur ama saklama sorumluluğu sizindir. Dijital altın saklama derdi yaratmaz, karşılığında karşı taraf riski ve komisyon taşır. Amacınız yalnızca fiyat hareketiyse dijital seçenek genellikle daha ucuza gelir."
+      },
+      {
+        "q": "Altın alırken fatura şart mı?",
+        "a": "Evet. Fatura ürünün ağırlığını ve ayarını belgeler, olası bir anlaşmazlıkta elinizdeki tek dayanaktır ve satarken de işinizi kolaylaştırır."
+      },
+      {
+        "q": "Fiyat düşerken mi almalı?",
+        "a": "Zamanlamayı doğru yapmak sanıldığından zordur; ölçülmüş en iyi vadede bile yön isabeti yüzde 70 civarındadır. Düzenli ve eşit tutarlı alım, zamanlama kararını ortadan kaldırdığı için pratikte daha savunulabilir bir yaklaşımdır."
+      },
+      {
+        "q": "Eski altın almak mantıklı mı?",
+        "a": "Ağırlık ve ayar aynıysa içindeki altın da aynıdır. Eski basım sikkeler yıpranma nedeniyle birkaç lira ucuza alınır; yatırım amaçlıysa bu fark lehinize çalışır, hediyelikse yeni basım tercih edilir."
       }
     ],
     "category": "Alım Satım Rehberi",
@@ -1401,7 +2319,7 @@
     "title": "Altın Fiyatları Neden Her Yerde Farklı?",
     "seoTitle": "Altın Fiyatları Neden Farklı",
     "updated": "2026-08-18",
-    "summary": "Farklı kaynaklarda farklı altın fiyatı görmenizin sebepleri: alış-satış, referans kur, marj ve güncelleme gecikmesi.",
+    "summary": "Farklı kaynaklarda farklı altın fiyatı görmenizin sebepleri: alış-satış yönü, referans kur, kuyumcu marjı ve veri güncelleme gecikmesi tek tek açıklanıyor.",
     "intro": "Aynı anda üç farklı siteye bakıp üç farklı gram altın fiyatı görmek olağandır. Bunun birkaç somut sebebi vardır ve hiçbiri hata değildir.",
     "sections": [
       {
@@ -1456,7 +2374,7 @@
     "title": "Altında Alış-Satış Makası Nedir?",
     "seoTitle": "Altında Alış Satış Makası",
     "updated": "2026-08-18",
-    "summary": "Makas, altın alırken üstlendiğiniz ilk maliyettir. Ürüne ve saate göre nasıl değiştiğini ve nasıl azaltılacağını anlatıyoruz.",
+    "summary": "Makas, altın alırken üstlendiğiniz ilk ve görünmez maliyettir. Ürüne ve saate göre nasıl değiştiğini, nasıl ölçüleceğini ve nasıl azaltılacağını anlatıyoruz.",
     "intro": "Altın alırken ödediğiniz fiyat ile aynı anda satabileceğiniz fiyat aynı değildir. Aradaki farka makas denir ve işlem yaptığınız anda üstlendiğiniz gerçek maliyettir.",
     "sections": [
       {
@@ -1510,51 +2428,152 @@
     "keyword": "altın mı dolar mı",
     "title": "Altın mı Dolar mı: Neye Göre Karşılaştırılır?",
     "seoTitle": "Altın mı Dolar mı",
-    "updated": "2026-08-18",
-    "summary": "İkisi farklı riskler taşır. Karşılaştırmanın doğru ölçüsünü ve TL bazlı getirinin iki bileşenini açıklıyoruz.",
-    "intro": "Altın ve dolar sık sık birbirinin alternatifi gibi sunulur; oysa farklı şeyleri korurlar. Karşılaştırmayı anlamlı kılmak için önce neye karşı korunmak istediğinizi tanımlamak gerekir.",
+    "updated": "2026-08-22",
+    "summary": "Altın mı dolar mı sorusunun cevabı vadeye ve amaca bağlı. İki varlığın Türkiye'deki ilişkisi, örtüşme, ayrışma ve karar çerçevesi.",
+    "intro": "Türkiye'de tasarrufunu korumak isteyen herkesin karşılaştığı ikilem budur. Sorunun tek bir doğru cevabı yok, çünkü altın ve dolar aynı işi yapmaz. Üstelik Türkiye'de bu iki varlık birbirinin alternatifi olmaktan çok, biri diğerinin içinde yer alır: gram altın fiyatının kendisi dolar kurunu içerir. Bu yazıda ilişkiyi, ayrıştıkları noktaları ve kararı hangi soruların belirlediğini açıklıyoruz.",
     "sections": [
       {
-        "heading": "İki farklı risk",
+        "heading": "Türkiye'de altın zaten dolar içerir",
         "paragraphs": [
-          "Dolar, TL'nin değer kaybına karşı doğrudan bir korumadır ama kendisi de bir para birimidir ve ABD enflasyonu karşısında satın alma gücü kaybeder. Nominal olarak sabittir, reel olarak değil.",
-          "Altın hiçbir ülkenin yükümlülüğü değildir ve uzun vadede satın alma gücünü daha iyi korur. Buna karşılık oynaklığı dolardan yüksektir; kısa vadede belirgin dalgalanma gösterir."
+          "Bu ikilemi anlamanın anahtarı formülde: gram altın (TL) = ons altın (USD) × dolar/TL kuru ÷ 31,1035.",
+          "Yani gram altın alan biri, aynı zamanda dolara da pozisyon almış olur. Dolar/TL yükselirse ons hiç kıpırdamasa bile gram altın kazandırır.",
+          "Bu, altını doların bir alternatifi değil, doların üzerine eklenmiş ikinci bir katman yapar. Altın alarak dolardan vazgeçmiş olmazsınız; dolara ek olarak ons altının kendi hareketini de üstlenirsiniz."
         ]
       },
       {
-        "heading": "TL bazlı getiride ikisi birden var",
+        "heading": "İkisi ne zaman ayrışır",
         "paragraphs": [
-          "Türkiye'de altın tutmak aslında iki pozisyonu birden tutmaktır: ons altın ve dolar. TL bazlı gram altın getirisi, ons hareketi ile kur hareketinin çarpımıdır.",
-          "Bu yüzden 'altın mı dolar mı' sorusu tam olarak bir ya-ya-da sorusu değildir. Gram altın alan biri zaten dolar riski taşımaktadır; üstüne ons altının kendi hareketini de eklemiş olur."
+          "Doların dünya genelinde güçlendiği dönemlerde ons altın baskılanırken dolar/TL yükselir. Bu iki etki ters yönde çalışır; gram altın yerinde sayabilir ya da dolardan daha az kazandırabilir.",
+          "Tersine, doların dünya genelinde zayıfladığı dönemlerde ons altın yükselir ama dolar/TL'deki artış yavaşlar. Bu durumda gram altın dolardan belirgin biçimde iyi performans gösterir.",
+          "Ayrışmanın kritik değişkeni, doların küresel gücü ile dolar/TL kurunun ayrı şeyler olmasıdır. Birincisi altının dolar fiyatını, ikincisi liraya çevrimi belirler."
+        ],
+        "table": {
+          "caption": "Farklı senaryolarda gram altın ve dolar",
+          "columns": [
+            "Senaryo",
+            "Ons altın",
+            "Dolar/TL",
+            "Gram altın"
+          ],
+          "rows": [
+            [
+              "Dolar küresel güçleniyor, TL zayıf",
+              "Düşer",
+              "Yükselir",
+              "Yatay veya hafif artar"
+            ],
+            [
+              "Dolar küresel zayıflıyor, TL zayıf",
+              "Yükselir",
+              "Yükselir",
+              "Belirgin artar"
+            ],
+            [
+              "Dolar küresel zayıflıyor, TL güçlü",
+              "Yükselir",
+              "Düşer",
+              "Yatay kalabilir"
+            ],
+            [
+              "Küresel risk krizi",
+              "Sert yükselir",
+              "Yükselir",
+              "Sert artar"
+            ]
+          ]
+        }
+      },
+      {
+        "heading": "İki varlığın farklı işlevleri",
+        "paragraphs": [
+          "Dolar bir para birimidir: likit, bölünebilir, harcanabilir ve dünyanın her yerinde kabul görür. Faiz getirisi olan bir mevduata konabilir. Riski, doları basan ülkenin enflasyonu ve para politikasıdır.",
+          "Altın bir emtiadır: kimsenin yükümlülüğü değildir, karşı taraf riski taşımaz, ama faiz getirmez ve fiziki olarak saklanması gerekir. Riski, fiyat oynaklığıdır.",
+          "Bu yüzden ikisi aynı ihtiyaca hizmet etmez. Kısa vadede harcanacak ya da likit tutulması gereken tasarruf için altın uygunsuzdur; sistemik riske karşı uzun vadeli koruma arayan biri için doların kendisi yeterli olmayabilir."
         ]
       },
       {
-        "heading": "Karşılaştırmanın doğru ölçüsü",
+        "heading": "Oynaklık farkı",
         "paragraphs": [
-          "Nominal TL getirisi karşılaştırmak yanıltıcıdır çünkü enflasyonu içermez. Anlamlı karşılaştırma, aynı dönemdeki enflasyondan arındırılmış reel getiri üzerinden yapılır.",
-          "İkinci ölçü oynaklıktır. Aynı reel getiriyi daha az dalgalanmayla sağlayan seçenek, risk açısından üstündür. Vade uzadıkça altının oynaklık dezavantajı azalır, koruma avantajı belirginleşir."
+          "Altın dolardan belirgin biçimde daha oynaktır. Ons altında yüzde iki-üçlük günlük hareketler olağandır; dolar/TL bu büyüklükte günlük hareketleri çok daha seyrek gösterir.",
+          "Bu oynaklık iki yönlüdür. Altının hızlı kazandırdığı dönemler, hızlı kaybettirdiği dönemlerle aynı özelliğin sonucudur.",
+          "Modelin ölçtüğü belirsizlik bandı bu farkı somutlaştırır: 30 günlük vadede ons altın için band yaklaşık ±%6,8'dir. Yani bir ay sonrası için makul aralık, mevcut fiyatın yüzde yedi altı ile yüzde yedi üstü arasındadır."
         ]
+      },
+      {
+        "heading": "Vade sorusu",
+        "paragraphs": [
+          "Karar büyük ölçüde vadeye bağlıdır. Birkaç ay içinde ihtiyaç duyacağınız para için altın uygun değildir; makas, işçilik payı ve oynaklık kısa vadede aleyhinize çalışır.",
+          "Bir yılın üzerindeki vadelerde altının oynaklığı ortalamaya yaklaşır ve enflasyona karşı koruma işlevi daha görünür hâle gelir.",
+          "Kısa vadeli tahminler bu kararı çözmez. En güçlü ölçülmüş vademiz olan 30 günde bile ortalama yanılma yüzde 4,22'dir; bu, bir ay sonrası için verilen sayının sıkça şaştığı anlamına gelir."
+        ]
+      },
+      {
+        "heading": "Maliyet farkı",
+        "paragraphs": [
+          "Döviz alırken ödenen makas genellikle çok dardır. Fiziki altında ise makasa ek olarak işçilik ve satıcı payı vardır; ölçtüğümüz kadarıyla ziynet ürünlerinde yüzde 1–2 aralığında.",
+          "Bu, altına girip kısa sürede çıkmanın maliyetini dolara göre belirgin biçimde yükseltir. Uzun vadede bu tek seferlik maliyet önemini yitirir; kısa vadede kararın kendisini anlamsızlaştırabilir.",
+          "Saklama da bir maliyettir. Fiziki altın için kasa ya da sigorta gerekir; dolar mevduatta böyle bir kalem yoktur ve üstelik faiz getirir."
+        ]
+      },
+      {
+        "heading": "Karar çerçevesi",
+        "paragraphs": [
+          "\"Hangisi daha çok kazandırır\" sorusunun cevabı önceden bilinemez. Ama \"hangisi bana uygun\" sorusunun cevabı bilinebilir; aşağıdaki sorular bunu netleştirir.",
+          "Pratikte pek çok kişi ikisi arasında seçim yapmak yerine ikisini de bulundurur. Bu, hangisinin kazanacağını bilmek zorunda kalmadan her iki senaryoda da kısmen korunmak anlamına gelir."
+        ],
+        "list": {
+          "ordered": true,
+          "items": [
+            "Bu paraya ne zaman ihtiyacım olacak? Bir yıldan kısaysa oynaklık aleyhinize çalışır.",
+            "Yüzde on değer kaybını sindirebilir miyim? Altında bu olağan bir dalgalanmadır.",
+            "Fiziki saklama sorunumu nasıl çözerim, maliyeti ne?",
+            "Giriş-çıkış maliyetim ne kadar? Makas ve işçilik payı toplamda yüzde kaç?",
+            "Zaten dolar pozisyonum var mı? Gram altın aldığımda dolara ikinci kez pozisyon alıyor olabilirim.",
+            "Amacım enflasyondan korunmak mı, kısa vadeli getiri mi? İkisi farklı araç ister."
+          ]
+        }
       }
     ],
     "points": [
-      "Dolar TL değer kaybına karşı korur ama kendi enflasyonuna karşı korumasızdır.",
-      "Altın uzun vadede satın alma gücünü daha iyi korur, kısa vadede daha oynaktır.",
-      "TL bazlı gram altın zaten dolar riskini içinde barındırır.",
-      "Karşılaştırma nominal değil reel getiri üzerinden yapılmalıdır.",
-      "Oynaklık farkı vade uzadıkça altın lehine değişir."
+      "Gram altın dolar kurunu içerir; altın almak dolardan vazgeçmek değildir.",
+      "Doların küresel gücü ile dolar/TL kuru ayrı şeylerdir ve ayrışmayı belirler.",
+      "Dolar likittir ve faiz getirir; altın karşı taraf riski taşımaz ama faiz getirmez.",
+      "Altın dolardan belirgin biçimde daha oynaktır; 30 günlük band yaklaşık ±%6,8.",
+      "Kısa vadede altının giriş-çıkış maliyeti kararı anlamsızlaştırabilir.",
+      "Karar getiri tahminine değil, vadeye ve risk toleransına bağlıdır."
     ],
     "faq": [
       {
-        "q": "Hangisi daha çok kazandırır?",
-        "a": "Döneme göre değişir ve önceden bilinemez. Bu platform yatırım tavsiyesi vermez."
+        "q": "Altın mı dolar mı almalı?",
+        "a": "Cevap vadeye ve amaca bağlıdır. Kısa vadede ihtiyaç duyacağınız para için dolar daha uygundur; uzun vadeli enflasyon koruması arayanlar için altın işlevseldir. Bu bir yatırım tavsiyesi değil, iki aracın farklı işlevlerine dair bir ayrımdır."
       },
       {
-        "q": "İkisini birlikte tutmak mantıklı mı?",
-        "a": "Gram altın tutmak zaten dolar pozisyonu içerir; bunu bilerek dağılım yapmak gerekir."
+        "q": "Gram altın alırsam dolara da yatırım yapmış olur muyum?",
+        "a": "Evet. Gram altın fiyatı ons altın ile dolar/TL kurunun çarpımıdır; kur yükselirse ons hiç hareket etmese bile gram altın kazandırır."
       },
       {
-        "q": "Altın dolara endeksli mi?",
-        "a": "Doğrudan endeksli değildir ama dolarla fiyatlandığı için TL karşılığı kura duyarlıdır."
+        "q": "Dolar yükselirken altın da yükselir mi?",
+        "a": "Türkiye'de genellikle evet, ama nedeni farklıdır. Dolar/TL yükseldiğinde gram altın liraya çevrildiği için artar; buna karşılık doların küresel güçlenmesi ons altını düşürür ve iki etki birbirini kısmen götürür."
+      },
+      {
+        "q": "Hangisi enflasyona karşı daha iyi koruma?",
+        "a": "Uzun vadede altın, kimsenin yükümlülüğü olmadığı ve para arzından bağımsız olduğu için tercih edilir. Ancak koruma otomatik değildir; altın gerçekleşen enflasyona değil enflasyon beklentisiyle faiz arasındaki farka tepki verir."
+      },
+      {
+        "q": "Altın dolardan ne kadar oynak?",
+        "a": "Belirgin biçimde daha oynak. Ons altında yüzde iki-üçlük günlük hareketler olağandır. Modelin 30 günlük belirsizlik bandı yaklaşık ±%6,8'dir; yani bir ay sonrası için makul aralık oldukça geniştir."
+      },
+      {
+        "q": "İkisini birden tutmak mantıklı mı?",
+        "a": "Pek çok kişi böyle yapar, çünkü hangisinin kazanacağını önceden bilmek gerekmez. İkisini birlikte tutmak her iki senaryoda da kısmen korunmak anlamına gelir; oranı kişisel risk toleransı belirler."
+      },
+      {
+        "q": "Kısa vadede altın almak mantıklı mı?",
+        "a": "Maliyet açısından zordur. Makas ve işçilik payı ziynet ürünlerinde yüzde 1–2 aralığındadır ve kısa vadede bu tek seferlik maliyet getiriyi silebilir. Dolarda giriş-çıkış maliyeti çok daha düşüktür."
+      },
+      {
+        "q": "Dolar mevduatı altından iyi mi?",
+        "a": "Dolar mevduatı faiz getirir, altın getirmez; buna karşılık altın karşı taraf riski taşımaz ve para politikasından bağımsızdır. İkisi farklı riskleri karşılar; hangisinin iyi olduğu hangi riskten korunmak istediğinize bağlıdır."
       }
     ],
     "category": "Alım Satım Rehberi",
@@ -1566,7 +2585,7 @@
     "title": "Fiziki Altın mı Dijital Altın mı?",
     "seoTitle": "Fiziki Altın mı Dijital Altın mı",
     "updated": "2026-08-18",
-    "summary": "Maliyet, saklama, likidite ve karşı taraf riski açısından iki seçeneği karşılaştırıyoruz.",
+    "summary": "Fiziki altın mı dijital altın mı? Maliyet, saklama, likidite ve karşı taraf riski açısından iki seçeneği karşılaştırıyoruz.",
     "intro": "Altına yatırım yapmanın iki temel yolu var: fiziki ürün almak ya da altını temsil eden dijital bir enstrüman tutmak. İkisi aynı varlığa dayansa da taşıdıkları riskler farklıdır.",
     "sections": [
       {
@@ -1621,7 +2640,7 @@
     "title": "Hafta Sonu Altın Fiyatı Neden Farklı?",
     "seoTitle": "Hafta Sonu Altın Fiyatı",
     "updated": "2026-08-18",
-    "summary": "Spot piyasa hafta sonu kapalıdır. Sabit kalan ONS kotasyonu ve pazartesi açılış boşluğunun sebebi.",
+    "summary": "Spot altın piyasası hafta sonu kapalıdır. Sabit kalan ons kotasyonu neden gerçek fiyat değildir, pazartesi açılış boşluğu nasıl oluşur?",
     "intro": "Hafta sonu altın fiyatlarında gördüğünüz tuhaflıkların çoğu tek bir gerçekten kaynaklanır: uluslararası spot altın piyasası cuma akşamı kapanır ve pazar akşamına kadar açılmaz.",
     "sections": [
       {

@@ -30,7 +30,20 @@ function ArticlePage({article}:{article:SeoArticle}) {
       {feature && <p className="article-jump">
         <Link to={`/panel/${feature.slug}`}>{feature.title} <span aria-hidden="true">→</span></Link>
         <small>canlı veride, hesaplanmış hâliyle</small></p>}
-      {article.sections.map((section)=><section key={section.heading}><h2>{section.heading}</h2>{section.paragraphs.map((paragraph:string,i:number)=><p key={i}>{paragraph}</p>)}</section>)}
+      {article.sections.map((section)=><section key={section.heading}>
+        <h2>{section.heading}</h2>
+        {section.paragraphs.map((paragraph:string,i:number)=><p key={i}>{paragraph}</p>)}
+        {section.list && (section.list.ordered
+          ? <ol className="article-list">{section.list.items.map(item=><li key={item}>{item}</li>)}</ol>
+          : <ul className="article-list">{section.list.items.map(item=><li key={item}>{item}</li>)}</ul>)}
+        {section.table && <div className="article-table-wrap">
+          <table className="article-table">
+            <caption>{section.table.caption}</caption>
+            <thead><tr>{section.table.columns.map(col=><th key={col} scope="col">{col}</th>)}</tr></thead>
+            <tbody>{section.table.rows.map((row,i)=><tr key={i}>{row.map((cell,j)=>
+              j===0 ? <th key={j} scope="row">{cell}</th> : <td key={j}>{cell}</td>)}</tr>)}</tbody>
+          </table></div>}
+      </section>)}
       <section className="article-summary"><h2>Özet: {article.keyword}</h2><ul>{article.points.map((point:string)=><li key={point}>{point}</li>)}</ul></section>
       <section className="article-faq"><h2>Sık sorulan sorular</h2>{article.faq.map((item)=><div key={item.q}><h3>{item.q}</h3><p>{item.a}</p></div>)}</section>
       {/* Yazı sonundaki geniş kart; üstteki kompakt link okumadan ayrılanı yakalar. */}

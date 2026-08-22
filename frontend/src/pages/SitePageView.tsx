@@ -7,7 +7,8 @@ import { useDocumentMeta } from '../app/useDocumentMeta';
 
 /** Kurumsal sayfalar tek şablondan basılır; rehber makaleleriyle aynı okuma düzeni. */
 function SitePageView({ page }: { page: SitePage }) {
-  useDocumentMeta(`${page.seoTitle} | Ons Altın Analiz`, page.summary, `/${page.slug}`);
+  // useDocumentMeta site adını kendisi ekler; burada eklemek başlığı iki kez markalıyordu.
+  useDocumentMeta(page.seoTitle, page.summary, `/${page.slug}`);
   return (
     <main className="app article-page">
       <SiteNav/>

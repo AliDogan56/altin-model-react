@@ -21,6 +21,10 @@
 .seo-prerender header p { color:var(--muted); font-size:15px; }
 .seo-prerender p { margin:0 0 12px; }
 .seo-prerender ul { margin:0 0 14px; padding-left:18px; }
+.seo-prerender ol { margin:0 0 14px; padding-left:18px; }
+.seo-prerender table { width:100%; border-collapse:collapse; margin:0 0 14px; font-size:13px; }
+.seo-prerender th, .seo-prerender td { padding:6px 10px; border-bottom:1px solid #233c57; text-align:left; }
+.seo-prerender caption { margin-bottom:6px; color:#9fb2c8; font-size:12px; text-align:left; }
 .seo-prerender li { margin-bottom:9px; color:var(--muted); }
 .seo-prerender li strong { color:#e6eef7; font-weight:700; }
 .seo-prerender a { color:var(--gold); text-decoration:none; }

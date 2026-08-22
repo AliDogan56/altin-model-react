@@ -80,13 +80,23 @@ const panelCta = article => {
         </aside>`;
 };
 
+/* Tablo ve liste blokları bot tarafından da görülmeli: ön render bunları
+   React ile birebir aynı işaretlemeyle basar. */
+const sectionHtml = section => `<section><h2>${escapeHtml(section.heading)}</h2>${
+  section.paragraphs.map(p => `<p>${escapeHtml(p)}</p>`).join('')}${
+  section.list ? `<${section.list.ordered ? 'ol' : 'ul'}>${section.list.items.map(i => `<li>${escapeHtml(i)}</li>`).join('')}</${section.list.ordered ? 'ol' : 'ul'}>` : ''}${
+  section.table ? `<table><caption>${escapeHtml(section.table.caption)}</caption><thead><tr>${
+    section.table.columns.map(c => `<th scope="col">${escapeHtml(c)}</th>`).join('')}</tr></thead><tbody>${
+    section.table.rows.map(r => `<tr>${r.map((c, i) => i === 0
+      ? `<th scope="row">${escapeHtml(c)}</th>` : `<td>${escapeHtml(c)}</td>`).join('')}</tr>`).join('')}</tbody></table>` : ''}</section>`;
+
 const articleBody = (article, related) => `<main class="seo-prerender" data-seo-page="${escapeHtml(article.id)}">
       <nav aria-label="İçerik yolu"><a href="/">Ana Sayfa</a> / <a href="/rehber">Altın Rehberi</a> / ${escapeHtml(article.title)}</nav>
       <article>
         <header><p>${escapeHtml(article.keyword)}</p><h1>${escapeHtml(article.title)}</h1><p>${escapeHtml(article.summary)}</p></header>
         <p>${escapeHtml(article.intro)}</p>
         ${panelJump(article)}
-        ${article.sections.map(section => `<section><h2>${escapeHtml(section.heading)}</h2>${section.paragraphs.map(p => `<p>${escapeHtml(p)}</p>`).join('')}</section>`).join('\n        ')}
+        ${article.sections.map(sectionHtml).join('\n        ')}
         <section><h2>Özet: ${escapeHtml(article.keyword)}</h2><ul>${article.points.map(point => `<li>${escapeHtml(point)}</li>`).join('')}</ul></section>
         <section><h2>Sık sorulan sorular</h2>${article.faq.map(item => `<h3>${escapeHtml(item.q)}</h3><p>${escapeHtml(item.a)}</p>`).join('')}</section>
         ${panelCta(article)}
