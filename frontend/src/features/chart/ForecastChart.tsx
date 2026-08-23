@@ -49,6 +49,8 @@ function ForecastChart({
   const svgRef = useRef<SVGSVGElement | null>(null);
   /* Ölçüm SVG'de değil saran div'de: ResizeObserver <svg> için tetiklenmiyor. */
   const boxRef = useRef<HTMLDivElement | null>(null);
+  /* Gün gezinme çubuğu SVG'nin dışında; sabitlemeyi bozmaması için sarmalayıcı. */
+  const wrapRef = useRef<HTMLDivElement | null>(null);
   const clipId = useId();
   const { width: W, height: H } = useElementSize(boxRef);
   const ready = W > 60 && H > 60;
@@ -143,7 +145,7 @@ function ForecastChart({
     setHover(probePoints.reduce((a, b) => (Math.abs(b.i - day) < Math.abs(a.i - day) ? b : a)));
   };
   const gestures = useChartGestures({
-    svgRef, zoomBy, panByPixels, probeAt,
+    svgRef, keepRef: wrapRef, zoomBy, panByPixels, probeAt,
     clearProbe: () => setHover(null), pin: setPinned, pinned,
   });
 
@@ -187,7 +189,7 @@ function ForecastChart({
 
   const tagW = compact ? 68 : 88;
 
-  return <div className="chart-wrap">
+  return <div className="chart-wrap" ref={wrapRef}>
     <div className="chart-canvas" ref={boxRef}>
       <svg ref={svgRef} className={`chart ${compact ? 'compact' : ''}`} viewBox={`0 0 ${W} ${H}`}
            role="img" aria-labelledby={`${clipId}-title ${clipId}-desc`} aria-describedby={describedById}
@@ -248,6 +250,14 @@ function ForecastChart({
               })}</g>;
             })() : <polyline className="history" points={line(hist)}/>}
             {available && <polyline className="forecast" points={line(future)}/>}
+            {/* Canlı fiyat çizgisi: grafiği sağdaki fiyat etiketine bağlar.
+                Önceden yalnız 5 piksellik bir nokta vardı ve mum modunda
+                çizgi gizlendiği için anlık fiyat hiç okunmuyordu. */}
+            <line className="now-line" x1={m.l} y1={y(spot.price)} x2={W - m.r} y2={y(spot.price)}/>
+            {/* Destek çizgileri de yeşil; canlı fiyat kendi etiketiyle ayrışsın.
+                Etiket, S/R çizgilerindeki adlandırma düzeniyle aynı yerde durur. */}
+            <text className="now-line-label" x={m.l + 8} y={y(spot.price) + 12}>CANLI</text>
+            <circle className="now-dot-halo" cx={x(0)} cy={y(spot.price)} r="5"/>
             <circle className="now-dot-ons" cx={x(0)} cy={y(spot.price)} r="5"/>
           </g>
 
@@ -331,6 +341,7 @@ function ForecastChart({
 
     <div className="chart-legend">
       <span><i className="history-key"/>Gerçekleşen fiyat</span>
+      <span><i className="now-key"/>Canlı ons fiyatı</span>
       <span className={available ? undefined : 'legend-unavailable'}>
         <i className="forecast-key"/>{available ? 'Model beklentisi' : 'Model bekleniyor'}</span>
       {available && <span><i className="band-key"/>%{BAND_COVERAGE} olasılık aralığı</span>}
@@ -340,9 +351,19 @@ function ForecastChart({
         <i className="origin-key"/>{originLabel} beklentisini göster</button>}
     </div>
 
+    {/* Gün gün gezinme: parmakla sürüklemek kabaca yaklaştırır, bu düğmeler
+        tam güne oturtur. Klavye okları da aynı `step`'i kullanır. */}
+    {pinned && hover && <div className="day-stepper">
+      <button type="button" onClick={() => step(-1)} aria-label="Önceki gün">‹</button>
+      <b>{longDate(hover.date)}</b>
+      <button type="button" onClick={() => step(1)} aria-label="Sonraki gün">›</button>
+      <button type="button" className="day-stepper-close"
+        onClick={() => { setHover(null); setPinned(false); }}>Kapat</button>
+    </div>}
+
     <p className="sr-live" role="status" aria-live="polite">{spoken}</p>
     <p className="chart-hint">
-      {compact ? 'Parmakla kaydır · iki parmakla yakınlaştır · dokununca değerler sabitlenir'
+      {compact ? 'Parmağını grafikte gezdir · iki parmakla kaydır ve yakınlaştır'
                : 'Sürükleyerek kaydır · tekerlekle yakınlaştır · üzerine gelince o günün değerleri görünür'}
     </p>
   </div>;

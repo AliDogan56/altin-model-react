@@ -51,6 +51,8 @@
 .chart-legend span { display:flex; align-items:center; gap:5px; }
 .chart-legend i { display:inline-block; width:18px; height:4px; border-radius:4px; }
 .history-key { background:var(--blue-fill); }
+/* Canlı fiyat anahtarı: çizgideki kesikli deseni küçük ölçekte taklit eder. */
+.now-key { background:repeating-linear-gradient(90deg,var(--teal-fill) 0 5px,transparent 5px 8px); }
 .token-key { background:var(--blue-fill); }
 .ons-key { background:var(--teal-fill); }
 .forecast-key { background:var(--gold-fill); }

@@ -187,6 +187,26 @@ content/    tek kaynak: makaleler, panel özellikleri, parametre grupları, site
   mum düğmesi kapalı ve grafik çizgiye düşer; aksi hâlde grafik bomboş kalıyordu.
   İpucu kartı mum modunda **gün içi aralık** satırı ekler ve altındaki karşılaştırma
   satırlarını 21 px kaydırır
+- **Mobilde tek parmak seçim yapar, kaydırmaz.** Önceden tek parmak grafiği kaydırıyordu
+  ve bir günün değerini görmek için **tam o güne dokunmak** gerekiyordu; 90 mumun 250
+  piksele sığdığı ekranda gün başına ~3 piksel düşüyor, bu pratikte imkânsızdı. Artık
+  parmağı gezdirmek imleci gün gün taşır ve ipucu açık kalır. Kaydırma ve yakınlaştırma
+  **iki parmağa** taşındı (orta noktanın kayması kaydırma, açıklığın değişmesi zoom)
+- **Yakınlaştırılmışken kaydırmanın üç yolu var**: iki parmakla sürükleme; tek parmakla
+  çizim alanının kenarına (34 px) gitmek — orada grafik kendiliğinden kayar; ve gün
+  gezinme çubuğunun okları (`focusPoint` seçim pencereden çıkınca kaydırır)
+- **Gün gezinme çubuğu** (`.day-stepper`): imleç sabitlendiğinde grafiğin altında
+  `‹ tarih › Kapat` olarak çıkar, dokunmatik hedefleri 34 px. Sürükleme kabaca yaklaştırır,
+  oklar tam güne oturtur; klavye okları da aynı `step`'i kullanır.
+  **Tuzak:** çubuk SVG'nin dışında olduğu için "dışarı dokunma sabitlemeyi bozar" kuralı
+  düğmelere basınca ipucunu kapatıyordu; hareket kancasına `keepRef` (chart-wrap) eklendi
+- **Canlı fiyat grafikte kendi çizgisiyle işaretli.** Önce yalnız 5 piksellik bir nokta
+  vardı (aydınlık temada `--teal` koyu yeşil) ve mum modunda çizgi gizlendiği için anlık
+  fiyat hiç okunmuyordu. Artık: plot boyunca **kesikli yatay çizgi** (2 px, 7-5 desen,
+  `--teal-fill`), sol ucunda **CANLI** etiketi, noktada atan hale (`now-pulse`, `scale`
+  ile — CSS'te SVG `r` her tarayıcıda canlandırılamıyor) ve efsanede kendi anahtarı.
+  Destek çizgileri de yeşil olduğu için ayrım **kesikli desen + etiket + kalınlık**la
+  yapılır; CANLI etiketi çizginin **altına** yazılır, S/R etiketleri üstte durur
 - **Destek/direnç tek kaynaktan gelir.** Grafik ve pivot kartı aynı `buildLadder` çıktısını
   kullanır; grafikte yedi seviye de kendi adıyla çizilir (S1–S3, P, R1–R3) ve S1/R1 belirgin,
   S3/R3 soluk gösterilir. Önceden grafik `domain/supportResistance.ts` ile fiyatın fiilen

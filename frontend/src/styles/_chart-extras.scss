@@ -21,6 +21,11 @@
 .chart-legend button:focus-visible { outline:2px solid var(--gold); outline-offset:2px; }
 @media (max-width:650px) {
   .chart-tools .tool-group { display:flex; align-items:center; justify-content:space-between; gap:9px; }
+  /* Etiket sütunu sabit: `flex:0 1 auto` ile genişlik metne göre değişiyordu ve
+     kısa etiketli satır ("Görünüm") anahtarı diğerlerinden 18 px sola kaydırıyordu.
+     Sabit genişlik üç satırın da aynı x'te başlamasını garanti eder. */
+  .chart-tools .tool-group > span { flex:0 0 80px; }
+  .chart-tools .tool-group .segmented { flex:1 1 auto; min-width:0; }
   .chart-legend { gap:7px; }
   .chart-legend button { min-height:38px; font-size:11px; padding:0 12px; }
 }
@@ -42,3 +47,18 @@
 /* Mum görünümü açıklaması; yalnız mum modunda görünür. */
 .candle-note { border-left:3px solid var(--gold-line); padding-left:11px; }
 .chart-tools button[disabled] { opacity:.45; cursor:not-allowed; }
+
+/* Gün gün gezinme çubuğu; imleç sabitlendiğinde görünür.
+   Parmakla sürükleme kabaca yaklaştırır, bu düğmeler tam güne oturtur. */
+.day-stepper { display:flex; align-items:center; justify-content:center; gap:10px;
+  margin:8px auto 0; padding:5px 6px; width:fit-content; max-width:100%;
+  border:1px solid var(--line); border-radius:999px; background:var(--surface-2); }
+.day-stepper > b { color:var(--text-strong); font-size:12px; font-variant-numeric:tabular-nums;
+  white-space:nowrap; }
+.day-stepper button { min-width:34px; min-height:34px; padding:0 9px; border:0; border-radius:999px;
+  background:transparent; color:var(--gold); font:inherit; font-size:18px; font-weight:800;
+  line-height:1; cursor:pointer; }
+.day-stepper button:hover { background:var(--surface-3); color:var(--text-strong); }
+.day-stepper button:focus-visible { outline:2px solid var(--gold); outline-offset:2px; }
+.day-stepper .day-stepper-close { font-size:11px; font-weight:700; color:var(--muted);
+  min-width:auto; padding:0 11px; }

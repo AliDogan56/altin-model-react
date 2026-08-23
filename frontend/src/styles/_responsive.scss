@@ -64,7 +64,9 @@
   .chart-head { display:block; padding:0 7px; }
   .chart-head p { font-size:10px; }
   .chart-tools { display:grid; grid-template-columns:1fr; justify-content:stretch; margin-top:12px; gap:8px; }
-  .tool-group { width:100%; display:grid; grid-template-columns:54px 1fr; }
+  /* Yerleşim `_chart-extras.scss` içindeki daha özgül kuralda; burada yalnız
+     genişlik veriliyor (grid tanımı oradaki flex tarafından eziliyordu). */
+  .tool-group { width:100%; }
   .tool-group .segmented { width:100%; }
   .tool-group .segmented button { flex:1; padding:7px 5px; }
   .chart-tools > label { min-height:38px; padding:7px 10px; background:var(--surface); border:1px solid var(--line); border-radius:9px; }
