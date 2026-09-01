@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Collapsible from '../../components/Collapsible';
 import { PANEL_FEATURES, featureBy } from '../../content/panel';
+import { IMPACT_LABELS } from '../../content/parameters';
 import type { Impact } from '../../domain/model/impacts';
 import { money, pct } from '../../lib/format';
 import { useDashboard } from '../dashboard/DashboardContext';
@@ -30,7 +31,7 @@ function Row({ item }: { item: Impact }) {
 }
 
 function ImpactSection({ focus }: { focus?: string }) {
-  const { impacts, confident, forecast, horizonDays } = useDashboard();
+  const { impacts, confident, forecast, horizonDays, neutralized } = useDashboard();
   const [all, setAll] = useState(false);
   const feature = featureBy('feature-katki');
 
@@ -63,6 +64,15 @@ function ImpactSection({ focus }: { focus?: string }) {
                 bazıları aşağı çekiyor. Yanlarındaki tutar, <b>o gösterge tek başına</b> beklentiyi
                 kaç dolar oynattığını söyler.
               </p>
+
+              {/* Donmuş girdi tahmine katılmadı; bunu saklamak, kartta neden
+                  görünmediğini açıklamamak olurdu. */}
+              {neutralized.length > 0 && <p className="impact-note">
+                <b>Hesaba katılmayan gösterge:</b>{' '}
+                {neutralized.map(name => IMPACT_LABELS[name]?.label ?? name).join(', ')}.
+                Uzun süredir hiç değişmediği için tahmin edilen dönem hakkında güncel bilgi
+                taşımıyor; model bu göstergeye dayanmadan hesaplıyor.
+              </p>}
 
               <div className="push-columns">
                 <div className="push-group up">

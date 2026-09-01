@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import re
 import time
 from datetime import datetime, timedelta, timezone
@@ -6,6 +7,45 @@ from xml.etree import ElementTree
 
 import httpx
 from curl_cffi import requests as browser_requests
+
+log = logging.getLogger(__name__)
+
+XAU_PRIMARY_URL = "https://xaus.com/api/v1/history"
+# Yedek kaynak: birincil kaynak (xaus.com) 2026-08-31'de bir saatten uzun 503
+# döndü ve uç tamamen cevapsız kaldı. Yahoo'nun altın vadeli serisi aynı
+# alanları (tarih, kapanış, yüksek, düşük) ve aynı uzunlukta geçmişi veriyor.
+# Vadeli fiyat spot'tan ~%0,6 farklı; girdilerin tamamı getiri/oran olduğu için
+# model bundan etkilenmez, seri de tek kaynaktan geldiği için kendi içinde
+# tutarlıdır (kaynak harmanlanmıyor).
+XAU_FALLBACK_URL = ("https://query1.finance.yahoo.com/v8/finance/chart/GC=F"
+                    "?range=5y&interval=1d")
+
+
+def yahoo_to_points(payload: dict) -> dict:
+    """Yahoo grafik yanıtını birincil kaynağın gövdesine çevirir.
+
+    Eksik günler (tatil, yarım kayıt) atlanır; tüketiciler `points` içindeki
+    her satırın dolu olduğunu varsayıyor.
+    """
+    results = (payload.get("chart") or {}).get("result") or []
+    if not results:
+        raise httpx.RequestError("Yedek altın kaynağı beklenen gövdeyi döndürmedi")
+    result = results[0]
+    stamps = result.get("timestamp") or []
+    quote = ((result.get("indicators") or {}).get("quote") or [{}])[0]
+    points = []
+    for stamp, close, high, low in zip(stamps, quote.get("close", []),
+                                       quote.get("high", []), quote.get("low", [])):
+        if close is None or high is None or low is None:
+            continue
+        day = datetime.fromtimestamp(stamp, timezone.utc).date().isoformat()
+        points.append({"d": day, "c": round(float(close), 2),
+                       "h": round(float(high), 2), "l": round(float(low), 2)})
+    if not points:
+        raise httpx.RequestError("Yedek altın kaynağında kullanılabilir gün yok")
+    points.sort(key=lambda row: row["d"])
+    return {"symbol": "XAUUSD", "interval": "daily", "currency": "USD", "unit": "ounce",
+            "points": points, "count": len(points), "source": "yahoo:GC=F", "fallback": True}
 
 
 class MarketDataService:
@@ -24,7 +64,16 @@ class MarketDataService:
         return value
 
     async def xau_history(self) -> dict:
-        return await self._get("xau-history", "https://xaus.com/api/v1/history", 300)
+        """Birincil kaynak; erişilemezse yedek kaynağa düşer.
+
+        Kaynak düştüğünde uç 502 veriyordu ve grafik tamamen boş kalıyordu.
+        Yedek aynı gövdeyi döndürdüğü için tüketicilerde değişiklik gerekmiyor.
+        """
+        try:
+            return await self._get("xau-history", XAU_PRIMARY_URL, 300)
+        except (httpx.HTTPError, TimeoutError) as error:
+            log.warning("Birincil altın kaynağı erişilemedi (%s); yedeğe düşülüyor", error)
+            return yahoo_to_points(await self._get("xau-fallback", XAU_FALLBACK_URL, 300))
 
     async def fred_series(self, series_id: str) -> str:
         safe_id = re.sub(r"[^A-Z0-9_]", "", series_id.upper())

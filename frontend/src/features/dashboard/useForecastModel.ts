@@ -28,6 +28,8 @@ export type ForecastModel = {
   confident: boolean[];
   /** Eğitim aralığının dışına düşüp kırpılan girdiler. */
   clipped: string[];
+  /** Donmuş olduğu için tahmine katılmayan girdiler. */
+  neutralized: string[];
 };
 
 /** Parametre formu + tahmin. Sunucu modeli ulaşılamazsa tarayıcıdaki
@@ -84,5 +86,6 @@ export const useForecastModel = (live: FeatureMap, lastClose: number | null, spo
     weights: apiForecast?.weights ?? forecast.horizons.map(() => 0),
     confident: apiForecast?.confident ?? forecast.horizons.map(() => false),
     clipped: apiForecast?.clipped ?? [],
+    neutralized: apiForecast?.neutralized ?? [],
   }), [values, features, forecast, apiForecast, modelStatus, refreshForecast]);
 };

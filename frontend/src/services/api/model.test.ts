@@ -10,8 +10,21 @@ describe('parseForecast', () => {
     expect(result).toEqual({
       horizons: [7, 14, 30], mean: [0.01, 0.02, 0.03], err: [0.03, 0.04, 0.05],
       version: 'v1', weights: [0.9, 0.1, 0.6], confident: [true, false, true],
-      clipped: ['vix_level'], featureEffects: undefined,
+      clipped: ['vix_level'], neutralized: [], featureEffects: undefined,
     });
+  });
+
+  /* Donmuş girdiler tahmine katılmıyor; arayüz hangisinin dışarıda kaldığını
+     yazabilmek için bu listeyi okur. */
+  it('nötrlenen girdileri okur', () => {
+    const result = parseForecast({ ...valid, neutralized_features: ['core_cpi_yoy'] })!;
+    expect(result.neutralized).toEqual(['core_cpi_yoy']);
+  });
+
+  it('nötrlenen girdi listesi bozuksa boş sayılır', () => {
+    expect(parseForecast({ ...valid, neutralized_features: 'core_cpi_yoy' })!.neutralized).toEqual([]);
+    expect(parseForecast({ ...valid, neutralized_features: [1, 'core_cpi_yoy'] })!.neutralized)
+      .toEqual(['core_cpi_yoy']);
   });
 
   it('ağırlık gelmezse hepsini güvenli sayar', () => {

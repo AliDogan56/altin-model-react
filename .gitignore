@@ -2,6 +2,8 @@ node_modules/
 dist/
 backend/.venv/
 backend/data/*.sqlite3*
+# Dış kaynak önbelleği: yerel çalıştırmada oluşan çalışma zamanı verisi
+backend/data/cache/
 backend/models/*.joblib
 backend/models/active.json
 __pycache__/

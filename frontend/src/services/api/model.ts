@@ -10,6 +10,8 @@ export type ApiForecast = {
   confident: boolean[];
   /** Eğitim aralığının dışına düşüp kırpılan girdiler. */
   clipped: string[];
+  /** Güncel bilgi taşımadığı için hesaba katılmayan girdiler. */
+  neutralized: string[];
   featureEffects?: Record<string, FeatureMap>;
 };
 
@@ -48,12 +50,13 @@ export const parseForecast = (raw: unknown): ApiForecast | null => {
   const confident = Array.isArray(data.confident) && data.confident.length === horizons.length
     ? data.confident.map(Boolean)
     : weights.map(weight => weight >= CONFIDENT_WEIGHT);
-  const clipped = Array.isArray(data.clipped_features)
-    ? data.clipped_features.filter((item): item is string => typeof item === 'string')
-    : [];
+  const strings = (value: unknown): string[] => (Array.isArray(value)
+    ? value.filter((item): item is string => typeof item === 'string') : []);
+  const clipped = strings(data.clipped_features);
+  const neutralized = strings(data.neutralized_features);
 
   return {
-    horizons, mean, err, weights, confident, clipped,
+    horizons, mean, err, weights, confident, clipped, neutralized,
     version: typeof data.version === 'string' ? data.version : undefined,
     featureEffects: (data.feature_effects as Record<string, FeatureMap> | undefined) ?? undefined,
   };

@@ -49,3 +49,9 @@
   .push-columns { grid-template-columns:1fr; gap:20px; }
   .impact-lede, .impact-net { font-size:12px; }
 }
+
+/* Donmuş girdi uyarısı: gösterge listesinde neden görünmediğini açıklar. */
+.impact-note { margin:0 0 14px; padding:9px 12px; border:1px solid var(--gold-line);
+  border-radius:10px; background:var(--gold-bg); color:var(--text-soft);
+  font-size:12px; line-height:1.6; }
+.impact-note b { color:var(--text-strong); }

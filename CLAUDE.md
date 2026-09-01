@@ -21,7 +21,7 @@ ilgili servise iletilir (`api-gateway/app/services/router_service.py`).
 
 | Servis | Uç | Not |
 |---|---|---|
-| market | `GET /v1/market/xau` | xaus.com günlük OHLC, 300 sn önbellek |
+| market | `GET /v1/market/xau` | xaus.com günlük OHLC, 300 sn önbellek, **yedek kaynaklı** |
 | market | `GET /v1/market/fred?id=` | FRED CSV (curl_cffi ile), 900 sn önbellek, son 800 gün |
 | market | `GET /v1/market/news` | Google News RSS, 10 başlık |
 | model | `GET /v1/features/latest` | **tahmin girdilerinin tek kaynağı** — eğitim setiyle birebir |
@@ -47,6 +47,25 @@ tabloları ve `/v1/snapshots` ucu artık mevcut değil.
 - **Hedefler**: 7, 14 ve 30 takvim günü sonrasının ilk işlem günündeki getirisi
 - Henüz vadesi dolmamış hedefler boş bırakılır; ilgili ufkun eğitiminde o satır atlanır
 - Güncel dosya: **1197 satır**, 2021-11-16 → 2026-08-21
+
+## Fiyat kaynağı ve yedeği
+
+Birincil kaynak `xaus.com/api/v1/history`. **2026-08-31'de bir saatten uzun 503
+döndü**; `/v1/market/xau` 502 verdi (grafik boş kaldı) ve model-service'in saatlik
+job'u `HTTP Error 503` ile düştü (veri seti dondu). İki yol da aynı kaynağa
+doğrudan bağlıydı.
+
+Artık ikisinde de yedek var: `query1.finance.yahoo.com/.../GC=F?range=5y&interval=1d`.
+
+- Yedek gövdeyi birincil kaynağın şemasına çevirir (`d, c, h, l`); tüketicilerde
+  değişiklik gerekmedi. market-service yanıta `source` ve `fallback` alanları ekler
+- **Kaynak harmanlanmaz**: yedeğe düşüldüğünde serinin tamamı Yahoo'dan gelir,
+  yani seri kendi içinde tutarlıdır — spot ile vadeliyi uç uca eklemek yok
+- `GC=F` vadeli fiyat; spot'tan ~%0,6 farklı. 19 girdinin tamamı getiri/oran
+  olduğu için model seviye farkından etkilenmez
+- Eksik günler (boş `close/high/low`) atlanır, satırlar tarih sırasına sokulur
+- Testler: market-service `test_xau_fallback.py` (8), model-service
+  `test_dataset_fallback.py` (10)
 
 ## Eğitim ve yeniden öğrenme
 
@@ -255,6 +274,33 @@ content/    tek kaynak: makaleler, panel özellikleri, parametre grupları, site
 ağın katkısı neredeyse tamamen kısılmıştır; çıktı "sıfıra yakın tahmin" değil **"görüş yok"**
 olarak sunulmalıdır. Bugünkü örnek: 7g %0,61 (ağırlık 0,92) · 14g %0,06 (**0,13**) · 30g %0,72
 (0,64) — ufuklar arası eğri bu yüzden monoton değil.
+
+### Donmuş girdiler tahmine katılmaz
+
+`services/freshness.py` — bir makro girdi son **15 işlem gününde hiç değişmediyse**
+tahmin anında eğitim ortalamasına çekilir (ölçekli uzayda sıfırlanır) ve yanıtta
+`neutralized_features` olarak bildirilir. Karar sunucuda verilir; istemciye
+bırakılsa çağıran atlayıp eski davranışa dönebilirdi.
+
+**Neden:** `core_cpi_yoy` aylık yayımlandığı için 2026-08-03'ten beri sabitti
+(20 işlem günü). Buna rağmen 30 günlük tahminin +%3,54'ünün **+3,02 puanını**
+tek başına taşıyordu ve değeri 2,15, eğitim penceresinin **mutlak minimumu** —
+model hiç görmediği bölgede ekstrapolasyon yapıyordu. Nötrleme sonrası aynı
+girdiyle 30 günlük tahmin **+%3,58 -> +%0,70**.
+
+Eşik ölçümle seçildi: 2026-08-31'de diğer makro girdilerin en uzun sabit kalma
+süresi 4 gün, `core_cpi_yoy` 20 gün. 15 ikisini ayırır, normal yayın
+gecikmelerini yakalamaz.
+
+**Girdiyi eğitimden çıkarmak denendi ve geri alındı:** 18 girdiyle yeniden
+eğitim ölçülen beceriyi yarıya indirdi (30g +%26,3 -> +%11,8; 14g tamamen
+devre dışı) ve yönü **hiç değiştirmedi** (+%3,58 -> +%3,70) — ağ aynı rejimi
+`vix_level` ve `yield_curve` üzerinden yeniden öğrendi. Nötrleme modeli
+değiştirmez, yalnız bilgi taşımayan girdiye dayanmamasını sağlar.
+
+**Ödünleşim:** servis edilen tahmin, karnede ölçülen tahminden farklılaşır;
+İsabet Karnesi nötrlemesiz modeli ölçer. Arayüz hangi göstergenin hesaba
+katılmadığını katkı kartında yazar.
 
 ### Parametre katkısı hakkında
 

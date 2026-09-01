@@ -68,11 +68,19 @@ class ModelService:
             self.version = artifact["version"]
             return
 
-    def predict(self, features: dict, price: float):
+    def predict(self, features: dict, price: float, neutralize: tuple[str, ...] = ()):
+        """`neutralize` içindeki girdiler eğitim ortalamasına çekilir.
+
+        Donmuş bir girdi (ör. aylık yayımlanan `core_cpi_yoy`, 20 işlem günüdür
+        aynı) tahmin edilen dönem hakkında bilgi taşımaz ama ağırlığı sürer:
+        2026-08-31'de 30 günlük tahminin +%3,54'ünün +3,02 puanı tek başına
+        ondan geliyordu. Nötrlemek modeli değiştirmez, yalnız o girdiye
+        dayanmamasını sağlar."""
         if self.active is None: raise ValueError("XAU/USD modeli henüz eğitilmedi")
         missing = [name for name in self.features if name not in features]
         if missing: raise ValueError(f"Eksik XAU/USD model girdileri: {', '.join(missing)}")
         vector = np.asarray([float(features[name]) for name in self.features])
+        neutral_index = [self.features.index(name) for name in neutralize if name in self.features]
         means, errors, weights = [], [], []
         effects: dict[str, dict[str, float]] = {}
         clipped: set[str] = set()
@@ -80,6 +88,8 @@ class ModelService:
             state = self.active["per_horizon"][horizon]
             raw_scaled = (vector - state["x_mean"]) / state["x_std"]
             scaled = np.clip(raw_scaled, -6, 6)
+            for index in neutral_index:
+                scaled[index] = 0.0
             # Eğitim aralığının dışına düşen girdi sessizce kırpılıyordu; çağıran
             # tahminin hangi girdide dayanağını yitirdiğini göremiyordu.
             clipped.update(name for name, value in zip(self.features, raw_scaled)
@@ -107,6 +117,7 @@ class ModelService:
                 "mean": means, "error": errors, "base_price": price,
                 "prices": [price * (1 + value) for value in means],
                 "clipped_features": sorted(clipped),
+                "neutralized_features": sorted(name for name in neutralize if name in self.features),
                 "weights": weights,
                 "confident": [w >= CONFIDENT_WEIGHT for w in weights],
                 "feature_effects": effects}

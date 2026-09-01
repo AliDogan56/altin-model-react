@@ -4,13 +4,23 @@ from __future__ import annotations
 
 import csv
 import io
+import logging
 import math
 from bisect import bisect_right
 from dataclasses import dataclass
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta, timezone
 from statistics import fmean, pstdev
 
+log = logging.getLogger(__name__)
+
 XAU_HISTORY_URL = "https://xaus.com/api/v1/history"
+# Yedek kaynak: birincil kaynak 2026-08-31'de 503 vermeye başladı ve saatlik
+# job "HTTP Error 503" ile düştü; veri seti donup kaldı. Yahoo'nun altın vadeli
+# serisi aynı alanları ve aynı uzunlukta geçmişi veriyor. Vadeli fiyat spot'tan
+# ~%0,6 farklı; girdilerin tamamı getiri/oran olduğu için model bundan
+# etkilenmez ve seri tek kaynaktan geldiği için kendi içinde tutarlıdır.
+XAU_FALLBACK_URL = ("https://query1.finance.yahoo.com/v8/finance/chart/GC=F"
+                    "?range=5y&interval=1d")
 FRED_URL = "https://fred.stlouisfed.org/graph/fredgraph.csv"
 HORIZONS = (7, 14, 30)
 FRED_IDS = ("DGS10", "DGS2", "DFII10", "DTWEXBGS", "DCOILWTICO", "VIXCLS", "CPILFESL")
@@ -130,13 +140,44 @@ def build_rows(bars: list[XauBar], series: dict[str, Series]) -> list[dict[str, 
     return rows
 
 
+def yahoo_bars(payload: dict) -> list[XauBar]:
+    """Yahoo grafik yanıtını günlük barlara çevirir; eksik günler atlanır."""
+    results = (payload.get("chart") or {}).get("result") or []
+    if not results:
+        raise ValueError("Yedek altın kaynağı beklenen gövdeyi döndürmedi")
+    result = results[0]
+    quote = ((result.get("indicators") or {}).get("quote") or [{}])[0]
+    bars = []
+    for stamp, close, high, low in zip(result.get("timestamp") or [], quote.get("close", []),
+                                       quote.get("high", []), quote.get("low", [])):
+        if close is None or high is None or low is None:
+            continue
+        day = datetime.fromtimestamp(stamp, timezone.utc).date()
+        bars.append(XauBar(day, float(high), float(low), float(close)))
+    if not bars:
+        raise ValueError("Yedek altın kaynağında kullanılabilir gün yok")
+    bars.sort(key=lambda bar: bar.day)
+    return bars
+
+
+def fetch_bars(requests) -> list[XauBar]:
+    """Birincil kaynak; erişilemezse yedeğe düşer."""
+    try:
+        response = requests.get(XAU_HISTORY_URL, impersonate="chrome", timeout=30)
+        response.raise_for_status()
+        payload = response.json()
+        return [XauBar(date.fromisoformat(row["d"]), float(row["h"]), float(row["l"]), float(row["c"]))
+                for row in payload["points"]]
+    except Exception as error:
+        log.warning("Birincil altın kaynağı erişilemedi (%s); yedeğe düşülüyor", error)
+        fallback = requests.get(XAU_FALLBACK_URL, impersonate="chrome", timeout=30)
+        fallback.raise_for_status()
+        return yahoo_bars(fallback.json())
+
+
 def fetch_dataset() -> list[dict[str, float | str]]:
     from curl_cffi import requests
-    response = requests.get(XAU_HISTORY_URL, impersonate="chrome", timeout=30)
-    response.raise_for_status()
-    payload = response.json()
-    bars = [XauBar(date.fromisoformat(row["d"]), float(row["h"]), float(row["l"]), float(row["c"]))
-            for row in payload["points"]]
+    bars = fetch_bars(requests)
     start = (bars[0].day - timedelta(days=400)).isoformat()
     macro: dict[str, Series] = {}
     for series_id in FRED_IDS:
