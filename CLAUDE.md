@@ -422,11 +422,11 @@ arayüzde ayrı bir not olarak yazılır.
 
 ## SEO
 
-- 38 rehber makalesi (`data/seo-articles.json`), 11 panel özelliği (`data/panel-features.json`),
+- 39 rehber makalesi (`data/seo-articles.json`), 11 panel özelliği (`data/panel-features.json`),
   4 kurumsal sayfa (`data/site-pages.json`: hakkımızda, yazar, iletişim, gizlilik)
-- `scripts/generate-seo-pages.mjs` build sonrası: 38 rehber + `/rehber` dizini + 11 panel
+- `scripts/generate-seo-pages.mjs` build sonrası: 39 rehber + `/rehber` dizini + 11 panel
   sayfası + `/panel` dizini + 4 kurumsal sayfa + ön render edilmiş anasayfa +
-  **56 URL'lik sitemap**
+  **57 URL'lik sitemap**
 - **Güven sayfaları (E-E-A-T).** YMYL kategorisinde Google'ın aradığı sinyaller sitede hiç
   yoktu. Dört sayfa `SitePageView` şablonuyla render edilir, ön render edilir ve her ön
   render edilmiş footer'dan (`LEGAL` sabiti) linklenir. Article şemasının `author`'ı artık
@@ -462,8 +462,35 @@ Anahtar kelime araştırması sonucu iki boşluk kapatıldı; ikisi de yeni kate
   kullanır; rakiplerin statik örnek hesaplarından ayrıştığı yer burası
 
 Kalite kapıları makineyle denetlendi: 854–1211 kelime, 7–8 bölüm, 8 SSS, 6 madde, özet
-130–160 karakter, her makalede tablo. Site genelinde **304 SSS sorusu, 267 bölüm başlığı
-ve 41 tablo başlığının tamamı benzersiz** — aynı snippet için yarışan sayfa yok.
+130–160 karakter, her makalede tablo. Site genelinde **SSS soruları, bölüm başlıkları
+ve tablo başlıklarının tamamı benzersiz** — aynı snippet için yarışan sayfa yok.
+
+### Search Console ölçümü planı düzeltti (2026-09-01)
+
+İlk plan SERP kompozisyonuna dayanıyordu ve sıralaması **yanlış çıktı**. Mülkün ilk
+verisi (13–29 Ağustos, 16 gün, 44 tıklama, 1.161 gösterim, 132 sorgu) şunu gösterdi:
+
+| tema | tıklama | gösterim | ort. konum |
+|---|---|---|---|
+| destek-direnç / teknik | **19** | 153 | 13,5 |
+| yorum / analiz talebi | 3 | 124 | 25,0 |
+| çeyrek / gram çevrimi | 0 | 113 | **80,9** |
+| FED / faiz | 0 | 60 | 24,4 |
+| **gram altın / kur** | 0 | **0** | — |
+
+- Planın 1. kümesi (gram/kur) **hiç gösterim almadı**; 5. kümesi (teknik) sorgu bazlı
+  tıklamaların **%73'ünü** getirdi. 132 sorgunun tamamı ons eksenli — Google siteyi
+  "ons altın teknik analiz" olarak sınıflandırmış
+- Çeyrek/gram çevrimi alanında site **80. sırada**; alan kuyumcu ve hesap makinesi
+  siteleriyle doymuş. Bu küme donduruldu
+- `ons-altin-yorum` makalesi bu ölçümden çıktı: `ons altın yorum` sorgusu 60 gösterim
+  ve **konum 11,5** ile ilk sayfanın hemen altında, sıfır tıklamayla duruyordu ve sitede
+  "yorum" kelimesini hedefleyen tek bir sayfa yoktu
+- Trafiğin **%76'sı mobil**, mobil TO masaüstünün iki katı (%4,21 / %2,48)
+- **Uyarı:** 8 yeni gram/işçilik makalesi bu ölçümden sonra yayımlandı, indekslenmediler.
+  Veri onların potansiyelini yanlışlamaz; ölçüm 3–4 hafta sonra tekrarlanmalı
+- Çözümleyici: oturum scratchpad'inde `gsc_analiz.py` (TR/EN sütun ve sayı biçimlerini
+  tanır; GSC dışa aktarımı `Pozisyon` başlığını kullanıyor, `Ortalama konum` değil)
 - Meta açıklamaları 130–160 karakter aralığında (bazıları 75 karakterdi)
 - **Her rehber, canlı karşılığı olan panel bölümüne bağlanır.** `seo-articles.json` içindeki
   `panel` alanı hedef slug'ı verir; hem `ArticlePage` hem `generate-seo-pages.mjs` bir CTA

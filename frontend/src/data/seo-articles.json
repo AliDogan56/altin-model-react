@@ -6115,5 +6115,191 @@
         "a": "Saflık açısından ziynetle aynıdır ama standart bir üründür. Takı amacı yoksa binde 995 saflıktaki gram altın birikim için daha verimlidir."
       }
     ]
+  },
+  {
+    "id": "ons-altin-yorum",
+    "keyword": "ons altın yorum",
+    "title": "Ons Altın Yorumu: Bugün Model Ne Diyor?",
+    "seoTitle": "Ons Altın Yorumu",
+    "updated": "2026-09-01",
+    "category": "Tahmin ve Teknik Analiz",
+    "panel": "ons-altin-tahmini",
+    "summary": "Ons altın yorumlarının çoğu denetlenemez. Bir yorumun taşıması gereken üç sayı, bizim ölçülmüş karnemiz ve bugünkü canlı görüşün nerede durduğu.",
+    "intro": "Ons altın yorumu arayan kişi tek bir şey ister: fiyat nereye gidiyor ve bunu söyleyen kişi haklı çıkıyor mu. İkinci kısım neredeyse hiç cevaplanmaz. Piyasa yorumlarının büyük bölümü geçmiş isabetini yayımlamaz, dolayısıyla okuyucunun elinde kanaatin doğruluğunu tartacak hiçbir ölçü kalmaz. Bu sayfa hem yorumun nasıl okunacağını hem de bu sitedeki görüşün hangi sayılara dayandığını anlatıyor.",
+    "points": [
+      "Yorum bir kanaattir; kanaatin değeri geçmiş isabetiyle ölçülür.",
+      "Bir yorum en az üç şey söylemeli: yön, vade ve daha önce ne kadar tuttuğu.",
+      "Bu sitedeki görüş modelin çıktısıdır ve karnesi açıkça yayımlanır.",
+      "30 günlük yön isabeti 529 bağımsız günde %72,6 ölçüldü.",
+      "Model 14 günlük vadede neredeyse hiç görüş bildirmiyor; ağırlığı 0,08.",
+      "Güncel görüş bu sayfada değil, sürekli güncellenen panelde durur."
+    ],
+    "sections": [
+      {
+        "heading": "Yorum ile tahmin arasındaki fark",
+        "paragraphs": [
+          "Tahmin bir sayıdır: fiyatın belirli bir vadede nerede olacağına dair sayısal bir çıktı. Yorum ise o sayının etrafındaki gerekçedir; hangi etkenlerin baskın olduğunu, riskin nereden gelebileceğini anlatır.",
+          "İkisi birbirinin yerine geçmez. Gerekçesiz bir sayı okuyucuya neden öyle olduğunu söylemez; sayısız bir gerekçe ise doğrulanamaz. İşe yarayan yorum ikisini birlikte verir ve her ikisinin de geçmişte ne kadar tuttuğunu açıklar.",
+          "Bu ayrımı kurmadan okunan yorumlar, kulağa ne kadar makul geldiğine göre değerlendirilir. Oysa akıcı bir gerekçe ile isabetli bir gerekçe farklı şeylerdir."
+        ]
+      },
+      {
+        "heading": "Bir yorumun taşıması gereken üç sayı",
+        "paragraphs": [
+          "Karşınıza çıkan her ons altın yorumunda üç şeyi arayın. Birincisi yön: yukarı mı aşağı mı, ve ne kadar. İkincisi vade: bu görüş kaç günlük. Üçüncüsü, ve en çok atlananı: aynı yöntemin daha önce ne kadar isabet ettiği.",
+          "Üçüncü sayı olmadan ilk ikisi bir iddia olmaktan öteye geçmez. Bir kişi yılda yüz yorum yapar; bunların yarısı tutar. Hangi yarının hatırlandığı ise seçicidir.",
+          "Aşağıdaki tablo, karşılaştığınız yorum türlerini bu üç sayı üzerinden ayırır."
+        ],
+        "table": {
+          "caption": "Ons altın yorumunun kaynakları ve denetlenebilirliği",
+          "columns": [
+            "Yorum kaynağı",
+            "Vade belirtir mi",
+            "Geçmiş isabeti açık mı",
+            "Nasıl okunmalı"
+          ],
+          "rows": [
+            [
+              "Kişisel piyasa yorumu",
+              "Genellikle hayır",
+              "Hayır",
+              "Gerekçesi için okunur, sayı için değil"
+            ],
+            [
+              "Kurum hedefi",
+              "Evet, çoğunlukla yıl sonu",
+              "Nadiren",
+              "Varsayımları sorulmalı"
+            ],
+            [
+              "Teknik seviye yorumu",
+              "Kısa vade",
+              "Kısmen",
+              "Seviyeler doğrulanabilir"
+            ],
+            [
+              "Ölçülmüş model çıktısı",
+              "Evet",
+              "Evet",
+              "Karne sütunuyla birlikte okunur"
+            ]
+          ]
+        }
+      },
+      {
+        "heading": "Bu sitedeki görüş neye dayanıyor",
+        "paragraphs": [
+          "Buradaki yorum bir kişinin kanaati değil, bir modelin çıktısıdır. Model ons altının 7, 14 ve 30 günlük getirisini tahmin eder; girdileri tahvil getirileri, reel faiz, dolar endeksi, enflasyon beklentisi, oynaklık ve petrol gibi uluslararası serilerdir.",
+          "Önemli olan kısım şu: modelin isabeti, hiç görmediği günler üzerinde ölçülür ve sonuç yayımlanır. Yani buradaki görüşün geçmişte ne kadar tuttuğunu okuyabilirsiniz. Aşağıdaki sayılar sitenin canlı ölçüm ucundan gelir ve model her yeniden eğitildiğinde güncellenir."
+        ],
+        "table": {
+          "caption": "Yoruma dayanak olan ölçülmüş isabet",
+          "columns": [
+            "Vade",
+            "Yönü bilme",
+            "Ortalama yanılma",
+            "Basit kurala üstünlük",
+            "Ölçülen gün"
+          ],
+          "rows": [
+            [
+              "7 gün",
+              "%60,3",
+              "%2,39",
+              "%2,5",
+              "537"
+            ],
+            [
+              "14 gün",
+              "%61,7",
+              "%3,17",
+              "%1,3",
+              "535"
+            ],
+            [
+              "30 gün",
+              "%72,6",
+              "%4,41",
+              "%21,3",
+              "529"
+            ]
+          ]
+        }
+      },
+      {
+        "heading": "Modelin sustuğu yer",
+        "paragraphs": [
+          "İyi bir yorumun en zor kısmı, bilmediğini söylemektir. Bu modelde her vadenin bir ağırlığı vardır ve ağırlık, o vadedeki tahminin basit bir kuralı yenip yenmediğinden çıkar.",
+          "14 günlük vadenin ağırlığı bugün 0,08. Bu, modelin o vadede neredeyse hiçbir şey söylemediği anlamına gelir ve panelde \"görüş yok\" olarak yazılır. Sıfıra yakın bir tahmini gerçek bir görüş gibi sunmak, okuyucuyu yanıltmanın en sessiz yoludur.",
+          "Aynı şekilde altı aylık ya da yıl sonu görüşü de verilmez; o vadelerde isabeti ölçecek kadar bağımsız gözlem yoktur."
+        ]
+      },
+      {
+        "heading": "Gün içi yorum ayrı bir sorudur",
+        "paragraphs": [
+          "\"Bugün ne olur\" ile \"otuz günde ne olur\" farklı sorulardır ve farklı araçlar ister. Gün içi tarafta panel, 5 dakikalık mumlardan hız, ivme, RSI, MACD ve hacim gücünü hesaplayıp tek bir momentum skoruna indirir.",
+          "Buradaki kritik nokta sabit eşik kullanılmamasıdır: aynı on dolarlık hareket sakin bir seansta güçlü, çalkantılı bir seansta zayıf okunur. Yön ancak hareket seansın kendi dalgalanmasından ayırt edilebildiğinde bildirilir; ayırt edilemiyorsa bölüm \"yönsüz\" der.",
+          "Bu ikisini karıştırmamak gerekir. Gün içi momentumun aşağı olması, otuz günlük görüşün de aşağı olduğu anlamına gelmez."
+        ]
+      },
+      {
+        "heading": "Yorum okurken üç uyarı işareti",
+        "paragraphs": [
+          "Birincisi, vadesi belirtilmemiş yorum. \"Altın yükselecek\" cümlesi vadesiz olduğu için hiçbir zaman yanlışlanamaz; er ya da geç doğru çıkar.",
+          "İkincisi, aralık vermeyen yorum. Tek bir hedef rakamı, belirsizliği gizler. Ölçülmüş bir görüş her zaman bir bant da verir; bu sitede 30 günlük bant yaklaşık artı eksi yüzde yedidir.",
+          "Üçüncüsü, geçmişini anmayan yorum. Bir kaynak önceki görüşlerinin ne olduğunu ve ne kadar tuttuğunu yayımlamıyorsa, bugünkü görüşünü tartacak ölçü yoktur."
+        ],
+        "list": {
+          "items": [
+            "Vade yazılı mı?",
+            "Aralık ya da belirsizlik bandı var mı?",
+            "Geçmiş isabet açık mı?",
+            "Kaynak hangi durumda \"bilmiyorum\" diyor?"
+          ]
+        }
+      },
+      {
+        "heading": "Bugünkü görüş bu sayfada değil",
+        "paragraphs": [
+          "Bu sayfa yöntemi anlatır, güncel rakamı değil. Bir yorumun tazeliği önemlidir ve sabit bir makale bunu sağlayamaz; yayımlandığı gün doğru olan sayı bir hafta sonra yanıltıcı olur.",
+          "Güncel görüş panelde durur ve fiyat aktıkça yeniden hesaplanır: seçtiğiniz vadedeki beklenen getiri, belirsizlik bandı, tahmine hangi göstergenin ne kadar katkı verdiği ve gün içi momentumun yönü. Aşağıdaki bağlantı doğrudan oraya götürür.",
+          "Bu sayfanın işi, oraya bakarken neye dikkat edeceğinizi bilmenizi sağlamak."
+        ]
+      }
+    ],
+    "faq": [
+      {
+        "q": "Ons altın yorumu ile tahmini arasındaki fark nedir?",
+        "a": "Tahmin sayısal çıktıdır, yorum o sayının gerekçesidir. İşe yarayan bir görüş ikisini birlikte verir ve her ikisinin geçmişte ne kadar tuttuğunu da açıklar."
+      },
+      {
+        "q": "Bir altın yorumunun güvenilir olduğunu nasıl anlarım?",
+        "a": "Üç şeyi arayın: vade belirtilmiş mi, bir aralık verilmiş mi ve aynı yöntemin geçmiş isabeti yayımlanmış mı. Üçüncüsü olmadan ilk ikisi denetlenemez."
+      },
+      {
+        "q": "Bu sitedeki yorum kime ait?",
+        "a": "Bir kişiye değil, ons altını tahmin eden bir modele. Modelin isabeti hiç görmediği günler üzerinde ölçülür ve sayılar sitede yayımlanır."
+      },
+      {
+        "q": "Modelin yön isabeti ne kadar?",
+        "a": "30 günlük vadede 529 bağımsız günde %72,6 ölçüldü. 7 günlük vadede %60,3, 14 günlük vadede %61,7."
+      },
+      {
+        "q": "Neden bazı vadelerde görüş bildirilmiyor?",
+        "a": "Her vadenin bir ağırlığı var ve ağırlık, tahminin basit bir kuralı yenip yenmediğinden çıkıyor. 14 günlük vadenin ağırlığı 0,08 olduğu için panel orada \"görüş yok\" yazar."
+      },
+      {
+        "q": "Gün içi yorum ile 30 günlük görüş aynı şeyi mi söyler?",
+        "a": "Hayır, farklı sorulardır. Gün içi momentum seansın kendi dalgalanmasına göre ölçülür; aşağı yönlü olması uzun vadeli görüşün de aşağı olduğu anlamına gelmez."
+      },
+      {
+        "q": "Yıl sonu ons altın yorumu neden verilmiyor?",
+        "a": "O vadede isabeti ölçecek kadar bağımsız gözlem yok. Ölçülemeyen bir görüş yayımlamak, karnenin taşıdığı anlamı da bozardı."
+      },
+      {
+        "q": "Güncel yorumu nerede görebilirim?",
+        "a": "Panelde. Bu sayfa yöntemi anlatır; beklenen getiri, belirsizlik bandı, gösterge katkıları ve gün içi momentum fiyat aktıkça panelde yeniden hesaplanır."
+      }
+    ]
   }
 ]
