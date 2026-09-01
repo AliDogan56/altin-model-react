@@ -487,6 +487,28 @@ verisi (13–29 Ağustos, 16 gün, 44 tıklama, 1.161 gösterim, 132 sorgu) şun
   ve **konum 11,5** ile ilk sayfanın hemen altında, sıfır tıklamayla duruyordu ve sitede
   "yorum" kelimesini hedefleyen tek bir sayfa yoktu
 - Trafiğin **%76'sı mobil**, mobil TO masaüstünün iki katı (%4,21 / %2,48)
+
+### İndeksleme durumu (Coverage raporu, 28 Ağustos 2026)
+
+Sitenin **48 URL'sinin 31'i dizinde, 17'si değil** ve sayı **22 Ağustos'tan beri sabit** —
+indeksleme yayla yapmış. Dizine eklenmeyenlerin dökümü:
+
+| sebep | sayfa |
+|---|---|
+| Bulunamadı (404) | 1 |
+| Keşfedildi, henüz taranmadı | 10 |
+| Tarandı, dizine eklenmedi | 6 |
+
+- **404'ün kaynağı bulundu:** `paxg-usdt-nedir`. PAXG kaynağı projeden çıkarılırken makale
+  de silinmiş ama URL Google'ın hafızasında kalmıştı. `frontend/nginx.conf` içine konu
+  olarak en yakın sayfaya **301** eklendi (`fiziki-altin-mi-dijital-altin-mi`); 404
+  bırakmak birikmiş sinyali çöpe atardı. Kural `location =` ile yazıldı, tam eşleşme
+  `^~ /rehber/` kuralından önce değerlendirilir
+- "Keşfedildi ama taranmadı" 10 sayfa, yeni sitelerde tarama bütçesinin dar olmasından
+  gelir; "tarandı ama eklenmedi" 6 sayfa ise kalite/benzerlik sinyalidir
+- **Sonuç:** 48 URL'nin %35'i dizinde değilken sayfa eklemek, hareket etmeyen bir kuyruğa
+  eklemek demek. Hangi sayfaların hangi kovada olduğu yalnız GSC arayüzünde görünür
+  (dışa aktarım sayı verir, URL vermez) ve eylem ona göre belirlenmeli
 - `enflasyon-fed-altin` **yerinde yeniden yazıldı** (id ve URL korundu, birikmiş konum
   kaybolmasın diye). Sorguların tamamı "nasıl etkiler" kalıbında geliyordu; başlık ve
   anahtar kelime o dile çevrildi. Asıl boşluk **tutanaklardı**: `fed tutanakları altını
