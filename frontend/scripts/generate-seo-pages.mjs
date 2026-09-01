@@ -173,6 +173,7 @@ for (const [index, feature] of features.entries()) {
       <article>
         <header><h1>${escapeHtml(feature.title)}</h1><p>${escapeHtml(feature.summary)}</p></header>
         <p>${escapeHtml(feature.intro)}</p>
+        ${(feature.sections ?? []).map(sectionHtml).join('\n        ')}
         <p><a href="/">Canlı panelde bu bölümü aç</a></p>
       </article>
       <nav aria-label="Diğer panel bölümleri"><h2>Panelin diğer bölümleri</h2><ul>${others.map(item => `<li><a href="/panel/${escapeHtml(item.slug)}">${escapeHtml(item.title)}</a></li>`).join('')}</ul></nav>
@@ -190,6 +191,11 @@ for (const [index, feature] of features.entries()) {
     .replace('<div id="root"></div>', `<div id="root">${fallback}</div>`)
     .replace('</head>', `    ${jsonLd(schema)}\n  </head>`);
   html = replaceAttribute(html, 'link\\s+rel="canonical"', 'href', url);
+  /* Anlatısı olmayan panel sayfası dizine girmemeli: React o adreste panonun
+     kendisini render ediyor, yani 11 URL'de aynı sayfa. `follow` kalır ki
+     buradaki iç bağlantılar yine taransın. Ölçüm: 28 Ağustos Coverage
+     raporunda 11 panel URL'inin 11'i de "dizine eklenmedi" durumundaydı. */
+  if (!feature.sections?.length) html = setMeta(html, 'robots', 'noindex,follow');
   html = setMeta(html, 'description', feature.summary);
   html = setMeta(html, 'og:title', title, true);
   html = setMeta(html, 'og:description', feature.summary, true);

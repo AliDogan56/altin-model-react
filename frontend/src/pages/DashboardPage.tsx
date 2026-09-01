@@ -10,6 +10,7 @@ import BulletinSection from '../features/bulletin/BulletinSection';
 import ChartSection from '../features/chart/ChartSection';
 import { useDashboard } from '../features/dashboard/DashboardContext';
 import PanelHeader from '../features/dashboard/PanelHeader';
+import PanelIntro from '../features/dashboard/PanelIntro';
 import { useFeatureFocus } from '../features/dashboard/useFeatureFocus';
 import ForecastCards from '../features/forecast/ForecastCards';
 import SeoContent from '../features/guides/SeoContent';
@@ -36,7 +37,10 @@ function DashboardPage({ focus }: { focus?: string }) {
   return (
     <main className="app">
       <SiteNav/>
-      <PanelHeader/>
+      {/* Panel sayfasında sayfanın kendi anlatısı önce gelir; pano onun altında
+          durur. Bölümsüz panellerde blok hiç basılmaz ve başlık panoda kalır. */}
+      {feature?.sections?.length ? <PanelIntro feature={feature}/> : null}
+      <PanelHeader demoted={!!feature?.sections?.length}/>
       <div className="layout">
         <section className="content">
           <div className="section-label"><span>Ana görünüm</span></div>

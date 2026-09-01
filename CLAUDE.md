@@ -422,11 +422,11 @@ arayüzde ayrı bir not olarak yazılır.
 
 ## SEO
 
-- 39 rehber makalesi (`data/seo-articles.json`), 11 panel özelliği (`data/panel-features.json`),
+- 37 rehber makalesi (`data/seo-articles.json`), 11 panel özelliği (`data/panel-features.json`),
   4 kurumsal sayfa (`data/site-pages.json`: hakkımızda, yazar, iletişim, gizlilik)
-- `scripts/generate-seo-pages.mjs` build sonrası: 39 rehber + `/rehber` dizini + 11 panel
+- `scripts/generate-seo-pages.mjs` build sonrası: 37 rehber + `/rehber` dizini + 4 dizine açık panel
   sayfası + `/panel` dizini + 4 kurumsal sayfa + ön render edilmiş anasayfa +
-  **57 URL'lik sitemap**
+  **48 URL'lik sitemap**
 - **Güven sayfaları (E-E-A-T).** YMYL kategorisinde Google'ın aradığı sinyaller sitede hiç
   yoktu. Dört sayfa `SitePageView` şablonuyla render edilir, ön render edilir ve her ön
   render edilmiş footer'dan (`LEGAL` sabiti) linklenir. Article şemasının `author`'ı artık
@@ -507,8 +507,67 @@ indeksleme yayla yapmış. Dizine eklenmeyenlerin dökümü:
 - "Keşfedildi ama taranmadı" 10 sayfa, yeni sitelerde tarama bütçesinin dar olmasından
   gelir; "tarandı ama eklenmedi" 6 sayfa ise kalite/benzerlik sinyalidir
 - **Sonuç:** 48 URL'nin %35'i dizinde değilken sayfa eklemek, hareket etmeyen bir kuyruğa
-  eklemek demek. Hangi sayfaların hangi kovada olduğu yalnız GSC arayüzünde görünür
-  (dışa aktarım sayı verir, URL vermez) ve eylem ona göre belirlenmeli
+  eklemek demek
+
+### Dizine eklenmeyenlerin tamamı panel sayfaları (drilldown, 28 Ağustos)
+
+URL dökümü çekildiğinde tek bir örüntü çıktı: **16 sayfanın 11'i `/panel/*`** ve o tarihte
+sitede **12 panel URL'i vardı (hub + 10 slug + hub'ın kendisi)** — yani panel bölümünün
+**tamamı** dizin dışı. Kalan 5: `/hakkimizda`, `/iletisim` ve üç rehber
+(`bir-ons-altin-kac-gram`, `gram-altin-fiyati-nasil-belirlenir`, `merkez-bankalari-altin-alimi`).
+
+**Sebebi ölçüldü — ince ve şablon içerik:**
+
+| | panel sayfası | rehber sayfası |
+|---|---|---|
+| gövde metni | ~350 kelime | ~1.300–1.500 kelime |
+| metin satırı | 47 | — |
+| **başka panelle ortak satır** | **42** | — |
+| **sayfaya özgü kelime** | **121** | 1.478 |
+
+Yani her panel sayfasının **%89'u diğer on paneille birebir aynı**; özgün kısmı başlık,
+özet ve tek bir giriş paragrafından ibaret. Google dördünü tarayıp indekslememiş,
+yedisini taramaya bile değer görmemiş. Bu, "Tarandı - dizine eklenmedi" durumunun
+ders kitabı tanımı.
+
+**Üç gram sayfası tek sayfada birleştirildi.** `bir-ons-altin-kac-gram` ve
+`gram-altin-fiyati-nasil-belirlenir` aynı konuyu (formül, ayar/milyem, kuyumcu farkı)
+üçüncü kez anlatıyordu; Google dizinde yalnız `ons-gram-altin-hesaplama`'yı tutmuştu.
+Başka yerde olmayan içerik — troy ons ile normal ons ayrımı ve külçe ölçüleri — hayatta
+kalan sayfaya bir bölüm olarak taşındı, kümenin en çok aranan sorusu (`1 ons altın kaç
+gram?`) SSS'ye eklendi ve iki URL `nginx.conf` içinde **301** ile oraya yönlendirildi.
+`ZiynetSection` içindeki iç link de doğrudan hedefe çevrildi; iç bağlantının
+yönlendirmeden geçmesi gereksiz.
+
+### Asıl sebep ince içerik değil, yinelenen içerikti
+
+Ön render'a metin eklemek işe yaramazdı. `app/App.tsx` içinde `/panel/:slug`
+**`<Dashboard focus={slug}/>`** render eder; yani React hidrasyonunda ön render edilen
+metin tamamen atılır ve 11 URL de aynı panoyu gösterir. Deneyle ölçüldü
+(`/panel/altin-tl-getirisi`, JS sonrası): `.seo-prerender` **yok**, h1
+**"Canlı Ons Altın Tahmin ve Senaryo Analiz Paneli"** — yani panelin değil panonun
+başlığı. Anasayfa `/` aynı panonun kanonik hâli ve dizinde; Google birini seçip
+kalanını elemiş.
+
+**Çözüm — `PanelIntro`:** panel özelliği isteğe bağlı `sections` taşır. Taşıyorsa
+`DashboardPage` panonun **üstüne** o panele ait blok basar (kendi `h1`'i, özeti,
+bölümleri) ve `PanelHeader` başlığını `h2`'ye indirir — sayfada tek `h1` kalır.
+Aynı bölümler ön render'da da basılır, böylece ön render ile render **aynı** şeyi
+gösterir. Taşımıyorsa sayfa `noindex,follow` alır ve `scripts/site-routes.mjs`
+onu sitemap'e koymaz. Yani **dizine girmenin koşulu içerik taşımaktır**; ayrı bir
+bayrak yok, unutulamaz.
+
+- İçerik yazılan dört panel ölçümün kazanan dediği kümeden: `altin-pivot-seviyeleri`,
+  `altin-momentum-gucu`, `ons-altin-tahmini`, `altin-teknik-gostergeler`
+- Ön render'daki özgün kelime **121 → 594-786**; sitemap 57 → **50 URL**, panel 12 → 4
+- `routes.test.ts` değişti: sitemap artık uygulama rotalarının **alt kümesi**.
+  Ters yön hâlâ hata (sitemap'te olup rotada olmayan yol 404 verir) ve ayrı bir test
+  sitemap'teki panel listesinin tam olarak `sections` taşıyanlar olduğunu doğrular
+- **Ölçüm tuzağı:** `.panel-intro` kendisi bir `<section>`. `intro.querySelector('section p')`
+  ata birleştiricisi yüzünden lede'yi yakalıyor; bölüm paragrafını ölçmek için
+  `:scope > section p` gerekir. İlk ölçümde punto yanlış okundu
+- Atlama bağlantısı metnin **başında**: okuyucu panoyu kullanmaya geliyor, 1500 piksel
+  metin kaydırmak zorunda kalmasın
 - `enflasyon-fed-altin` **yerinde yeniden yazıldı** (id ve URL korundu, birikmiş konum
   kaybolmasın diye). Sorguların tamamı "nasıl etkiler" kalıbında geliyordu; başlık ve
   anahtar kelime o dile çevrildi. Asıl boşluk **tutanaklardı**: `fed tutanakları altını

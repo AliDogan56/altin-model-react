@@ -16,7 +16,12 @@ export const siteRoutes = async (today = new Date().toISOString().slice(0, 10)) 
     { path: '/', lastmod: today, changefreq: 'daily', priority: '1.0' },
     { path: '/rehber', lastmod: today, changefreq: 'weekly', priority: '0.9' },
     { path: '/panel', lastmod: today, changefreq: 'weekly', priority: '0.9' },
-    ...features.map(f => ({ path: `/panel/${f.slug}`, lastmod: today, changefreq: 'daily', priority: '0.8' })),
+    /* Yalnız kendi anlatısı olan panel sayfası sitemap'e girer. Bölümsüz bir
+       panel URL'i React'te panonun kendisini render ettiği için 11 adreste aynı
+       sayfa demektir; Google hepsini eledi (28 Ağustos Coverage: 11/11 dizin dışı).
+       Ön render bu ayrımı `noindex` ile de tekrarlar. */
+    ...features.filter(f => f.sections?.length)
+      .map(f => ({ path: `/panel/${f.slug}`, lastmod: today, changefreq: 'daily', priority: '0.8' })),
     ...articles.map(a => ({ path: `/rehber/${a.id}`, lastmod: a.updated, changefreq: 'monthly', priority: '0.8' })),
     ...pages.map(p => ({ path: `/${p.slug}`, lastmod: p.updated, changefreq: 'yearly', priority: p.priority })),
   ];

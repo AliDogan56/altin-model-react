@@ -1,156 +1,5 @@
 [
   {
-    "id": "bir-ons-altin-kac-gram",
-    "keyword": "1 ons altın kaç gram",
-    "title": "1 Ons Altın Kaç Gram Eder?",
-    "seoTitle": "1 Ons Altın Kaç Gram",
-    "updated": "2026-08-22",
-    "summary": "1 troy ons altın 31,1035 gramdır. Troy ons ile normal ons farkı, ons fiyatından gram altın fiyatına geçiş formülü ve adım adım örnek hesap.",
-    "intro": "Altın fiyatlarını takip etmeye başlayan herkesin ilk karşılaştığı sorun birim karmaşasıdır. Uluslararası piyasa altını dolar/ons olarak fiyatlar, Türkiye'deki kuyumcu ise lira/gram olarak. İkisi arasında geçiş yapmak için bilmeniz gereken tek sabit vardır: bir troy ons 31,1035 gramdır. Bu sayıyı ve tek satırlık formülü öğrendiğinizde, ekrandaki ons fiyatının vitrindeki gram fiyatına nasıl döndüğünü kendiniz görebilirsiniz.",
-    "sections": [
-      {
-        "heading": "1 ons altın kaç gram?",
-        "paragraphs": [
-          "Bir troy ons altın tam olarak 31,1034768 gramdır. Günlük hesaplarda 31,1035 olarak yuvarlanır ve bu yuvarlama pratikte fark yaratmaz.",
-          "Bu sayı bir piyasa geleneği değil, tanımlı bir ölçü birimidir. Londra'dan New York'a, Şanghay'dan İstanbul'a kadar tüm değerli metal piyasaları aynı troy onsu kullanır. Altın, gümüş, platin ve paladyum fiyatları bu birim üzerinden kote edilir.",
-          "Ters yönde de işe yarar: 1 gram altın, bir troy onsun 1 ÷ 31,1035 = 0,03215 katıdır. Yani yaklaşık 32 gram bir onsa denk gelir."
-        ]
-      },
-      {
-        "heading": "Troy ons ile normal ons neden farklı",
-        "paragraphs": [
-          "Günlük hayatta kullanılan ons, avoirdupois onsudur ve 28,3495 gramdır. Gıda ambalajlarında, posta ağırlıklarında karşınıza çıkan budur.",
-          "Troy ons ise yalnızca değerli metaller için kullanılır ve 31,1035 gramdır. Kökeni Orta Çağ Fransası'ndaki Troyes panayırlarına dayanır; değerli metal ticareti orada standartlaştığı için sistem o adla kaldı.",
-          "Aradaki fark yüzde 9,7'dir. Küçük görünse de büyük tutarlarda ciddi sapma yaratır: 10 onsluk bir hesapta yanlış birim kullanmak, yaklaşık 28 gramlık bir hata demektir. Altınla ilgili her fiyatta troy onsun geçerli olduğunu varsaymak güvenlidir."
-        ],
-        "table": {
-          "caption": "Ons ve gram karşılıkları",
-          "columns": [
-            "Birim",
-            "Gram karşılığı",
-            "Nerede kullanılır"
-          ],
-          "rows": [
-            [
-              "1 troy ons",
-              "31,1035 gram",
-              "Altın, gümüş, platin, paladyum"
-            ],
-            [
-              "1 normal (avoirdupois) ons",
-              "28,3495 gram",
-              "Gıda, posta, genel tartım"
-            ],
-            [
-              "1 gram",
-              "0,03215 troy ons",
-              "Türkiye'de perakende altın"
-            ],
-            [
-              "1 kilogram",
-              "32,1507 troy ons",
-              "Külçe altın, merkez bankası rezervi"
-            ]
-          ]
-        }
-      },
-      {
-        "heading": "Ons fiyatından gram altın fiyatına geçiş",
-        "paragraphs": [
-          "Türkiye'de gram altın fiyatı, uluslararası ons fiyatının doğrudan çevrilmiş hâlidir. Formül tek satırdır:",
-          "Gram saf altın (TL) = Ons fiyatı (USD) × Dolar/TL kuru ÷ 31,1035",
-          "Bu formül üç girdi ister: ons fiyatı, dolar kuru ve sabit bölen. Üçünden ikisi sürekli değişir, bu yüzden gram altın fiyatı ons sabitken bile hareket edebilir. Kur yükselirken ons düşerse gram altın yerinde sayabilir; ikisi birlikte yükselirse gram altın onstan hızlı artar."
-        ],
-        "list": {
-          "ordered": true,
-          "items": [
-            "Ons altının güncel dolar fiyatını okuyun (örnek: 3.400 dolar).",
-            "Güncel dolar/TL kuruyla çarpın (örnek: 41,00 → 139.400 lira).",
-            "31,1035'e bölün (139.400 ÷ 31,1035 = 4.482 lira).",
-            "Sonuç, bir gram saf altının teorik lira karşılığıdır.",
-            "Vitrindeki fiyat bunun biraz üzerindedir; fark makas ve kâr payıdır."
-          ]
-        }
-      },
-      {
-        "heading": "Örnek hesap ve tersine çevirme",
-        "paragraphs": [
-          "Ons 3.400 dolar, kur 41,00 lira olsun. Bir ons altının lira karşılığı 139.400 liradır. Bunu 31,1035'e böldüğünüzde gram başına 4.482 lira çıkar.",
-          "Tersine de çalışır. Elinizde gram fiyatı varsa ons fiyatını bulmak için 31,1035 ile çarpıp kura bölersiniz: 4.482 × 31,1035 ÷ 41,00 = 3.400 dolar. Kuyumcunun gram fiyatı bu hesabın belirgin şekilde üzerindeyse aradaki fark kuyumcu marjıdır.",
-          "22 ayar gram için bir adım daha gerekir: sonucu 0,916 ile çarpın. 24 ayar (has) altın 995 milyem kabul edilir; çarpan 0,995'tir."
-        ]
-      },
-      {
-        "heading": "Neden Türkiye'de ons değil gram konuşulur",
-        "paragraphs": [
-          "Bir ons altın, Türkiye'deki tipik alım tutarının çok üzerindedir. Perakende talebin büyük kısmı bir ile on gram arasında yoğunlaşır; gram bu ölçekte doğal birimdir.",
-          "Bir diğer neden ziynet geleneğidir. Çeyrek, yarım ve tam altın gram cinsinden tanımlanmıştır ve düğün, doğum gibi olaylarda dolaşan birim budur. Ons ise kurumsal ve uluslararası tarafın birimidir.",
-          "Yine de fiyatın kaynağı her zaman onstur. Türkiye'deki gram fiyatı bağımsız bir fiyat değil, ons fiyatının kur üzerinden çevrilmiş hâlidir. Bu yüzden altının gerçekte ne yaptığını anlamak istiyorsanız ons grafiğine bakmanız gerekir; gram grafiği ons ile kurun toplamını gösterir."
-        ]
-      },
-      {
-        "heading": "Sık karşılaşılan hatalar",
-        "paragraphs": [
-          "En sık hata, 28,35 ile bölmektir. Bu normal onsun karşılığıdır ve sonucu yüzde 10 şişirir.",
-          "İkinci hata, has altınla 22 ayarı karıştırmaktır. Kuyumcunun ilan ettiği \"gram altın\" genellikle has altındır; bilezik ve takı ise 22 ayardır ve gram başına yüzde 8 daha az saf altın içerir.",
-          "Üçüncüsü, kuru yanlış tarafından almaktır. Hesapta kullanılacak kur, dolar satış kurudur; alış kuruyla hesaplarsanız fiyatı olduğundan düşük bulursunuz."
-        ]
-      },
-      {
-        "heading": "Kilogram ve külçe ölçüleri",
-        "paragraphs": [
-          "Kurumsal tarafta işlem gören standart külçe, Londra teslim standardına göre yaklaşık 400 troy ons, yani 12,44 kilogramdır. Merkez bankası rezervleri bu birimle tutulur.",
-          "Perakende yatırımcının ulaşabildiği külçeler 1 gramdan 1 kilograma kadar değişir. Bir kilogram külçe 32,1507 troy onsa denk gelir.",
-          "Külçe büyüdükçe gram başına işçilik payı düşer. Bu yüzden aynı miktarda altını tek büyük külçe olarak almak, aynı ağırlığı çok sayıda küçük birim olarak almaktan ucuza gelir; karşılığında bölünebilirlikten feragat edersiniz."
-        ]
-      }
-    ],
-    "points": [
-      "1 troy ons altın 31,1035 gramdır; günlük hesapta bu yuvarlama yeterlidir.",
-      "Normal ons 28,3495 gramdır ve altınla ilgisi yoktur; aradaki fark yüzde 9,7'dir.",
-      "Gram saf altın (TL) = ons (USD) × dolar kuru ÷ 31,1035.",
-      "1 gram = 0,03215 troy ons; 1 kilogram = 32,1507 troy ons.",
-      "22 ayar için sonucu 0,916, has altın için 0,995 ile çarpın.",
-      "Gram fiyatı bağımsız değildir; ons ile kurun bileşik sonucudur."
-    ],
-    "faq": [
-      {
-        "q": "1 ons altın kaç gram?",
-        "a": "Bir troy ons altın 31,1035 gramdır (tam değeri 31,1034768). Değerli metal piyasalarının tamamı bu birimi kullanır."
-      },
-      {
-        "q": "Troy ons ile normal ons arasındaki fark nedir?",
-        "a": "Normal ons 28,3495 gram, troy ons 31,1035 gramdır. Aradaki fark yüzde 9,7'dir. Altın, gümüş ve platin fiyatlarında her zaman troy ons geçerlidir."
-      },
-      {
-        "q": "Ons altından gram altına nasıl geçilir?",
-        "a": "Ons fiyatını dolar kuruyla çarpıp 31,1035'e bölersiniz. Örneğin 3.400 dolar ons ve 41,00 kur, gram başına 4.482 lira eder."
-      },
-      {
-        "q": "1 gram altın kaç ons eder?",
-        "a": "1 gram altın 0,03215 troy onsa denktir. Yaklaşık 31 gram bir troy ons yapar."
-      },
-      {
-        "q": "1 kilogram altın kaç ons?",
-        "a": "1 kilogram altın 32,1507 troy onstur. Kurumsal ticarette kullanılan standart Londra külçesi ise yaklaşık 400 ons, yani 12,44 kilogramdır."
-      },
-      {
-        "q": "22 ayar gram altın hesabı nasıl yapılır?",
-        "a": "Önce has altın gram fiyatını bulun, sonra 0,916 ile çarpın. 22 ayar altın gram başına binde 916 saf altın içerir."
-      },
-      {
-        "q": "Neden Türkiye'de gram, dünyada ons kullanılıyor?",
-        "a": "Bir ons Türkiye'deki tipik alım tutarının çok üzerindedir ve ziynet geleneği gram üzerine kuruludur. Fiyatın kaynağı yine de onstur; gram fiyatı ons ile kurun çevrilmiş hâlidir."
-      },
-      {
-        "q": "Ons sabitken gram altın neden değişiyor?",
-        "a": "Çünkü formülde dolar kuru da var. Kur yükselirse ons hiç kıpırdamasa bile gram altın lira cinsinden pahalanır; ikisi ters yönde hareket ederse gram altın yerinde sayabilir."
-      }
-    ],
-    "category": "Temel Kavramlar",
-    "panel": "ziynet-altin-fiyatlari"
-  },
-  {
     "id": "canli-ons-altin-fiyati",
     "keyword": "canlı ons altın fiyatı",
     "title": "Canlı Ons Altın Fiyatı Nasıl Okunur?",
@@ -463,7 +312,7 @@
     "keyword": "ons gram altın hesaplama",
     "title": "Ons'tan Gram Altına Hesaplama",
     "seoTitle": "Ons Gram Altın Hesaplama",
-    "updated": "2026-08-22",
+    "updated": "2026-09-01",
     "summary": "Ons fiyatından TL gram altın fiyatına geçiş formülü, 31,1035 böleni, ayar katsayıları ve kuyumcu fiyatıyla aranızda neden fark oluştuğu adım adım anlatılıyor.",
     "intro": "Ons fiyatını gören ama kuyumcuda gram fiyatı duyan herkes aynı çeviriyi yapmak zorunda kalır. Hesap üç sabit ve iki değişkenden oluşur ve bir kez öğrendiğinizde ekrandaki dolar fiyatının vitrindeki lira fiyatına nasıl döndüğünü kendiniz doğrulayabilirsiniz. Bu yazıda formülü, ayar katsayılarını, ters yönde hesabı ve kuyumcu fiyatıyla aranızdaki farkın nereden geldiğini adım adım anlatıyoruz.",
     "sections": [
@@ -482,6 +331,44 @@
             "31,1035'e bölün — bir gram saf altının lira fiyatı çıkar.",
             "Ayar düşürmek için milyem katsayısıyla çarpın (22 ayar: 0,916).",
             "Ziynet ürünü için ürünün saf altın gramıyla çarpın (çeyrek: 1,603)."
+          ]
+        }
+      },
+      {
+        "heading": "1 ons altın kaç gram: troy ons ve diğer birimler",
+        "paragraphs": [
+          "Altın fiyatının bölündüğü sayı 31,1035'tir çünkü değerli metaller **troy ons** ile tartılır. Günlük hayatta karşılaştığınız ons ise avoirdupois onsudur ve 28,3495 gramdır; gıda ambalajında ya da posta ağırlığında kullanılan birim odur.",
+          "Aradaki fark yüzde 9,7. Küçük görünür ama büyük tutarlarda ciddi sapma yaratır: on onsluk bir hesapta yanlış birimi kullanmak yaklaşık 28 gramlık bir hataya karşılık gelir.",
+          "Kurumsal tarafta işlem gören standart külçe, Londra teslim standardına göre yaklaşık 400 troy ons, yani 12,44 kilogramdır. Perakende yatırımcının ulaşabildiği külçeler 1 gramdan 1 kilograma kadar değişir ve külçe büyüdükçe gram başına işçilik payı düşer."
+        ],
+        "table": {
+          "caption": "Ons, gram ve kilogram karşılıkları",
+          "columns": [
+            "Birim",
+            "Gram karşılığı",
+            "Nerede kullanılır"
+          ],
+          "rows": [
+            [
+              "1 troy ons",
+              "31,1035 gram",
+              "Altın, gümüş, platin, paladyum"
+            ],
+            [
+              "1 normal (avoirdupois) ons",
+              "28,3495 gram",
+              "Gıda, posta, genel tartım"
+            ],
+            [
+              "1 gram",
+              "0,03215 troy ons",
+              "Türkiye'de perakende altın"
+            ],
+            [
+              "1 kilogram",
+              "32,1507 troy ons",
+              "Külçe altın, merkez bankası rezervi"
+            ]
           ]
         }
       },
@@ -624,8 +511,8 @@
         "a": "Hesapladığınız ham altın değeridir. Vitrin fiyatı üzerine makası, işçiliği ve kuyumcu marjını ekler; bu pay gram altında yüzde 0,1, ziynette yüzde 1–2 civarında ölçülmüştür."
       },
       {
-        "q": "Hesabımı yaparken ons ve kuru aynı andan almam şart mı?",
-        "a": "Formülde dolar kuru da var. Ons hiç hareket etmese bile kur yükselirse gram altın lira cinsinden pahalanır."
+        "q": "1 ons altın kaç gram?",
+        "a": "1 troy ons 31,1035 gramdır ve altın fiyatı bu birimle kotedilir. Günlük hayattaki normal ons 28,3495 gram olduğu için ikisini karıştırmak yüzde 9,7'lik hata yaratır."
       }
     ],
     "category": "Temel Kavramlar",
@@ -1099,162 +986,6 @@
       {
         "q": "Çeyrek altın kaç lira eder?",
         "a": "Fiyat ons altına ve dolar kuruna bağlı olarak dakika dakika değişir. Panelin ziynet bölümü her ürün için canlı satış fiyatını, hesaplanmış ham altın değerini ve aradaki işçilik payını yan yana gösterir."
-      }
-    ],
-    "category": "Gram ve Ziynet Altın",
-    "panel": "ziynet-altin-fiyatlari"
-  },
-  {
-    "id": "gram-altin-fiyati-nasil-belirlenir",
-    "keyword": "gram altın fiyatı nasıl belirlenir",
-    "title": "Gram Altın Fiyatı Nasıl Belirlenir?",
-    "seoTitle": "Gram Altın Fiyatı Nasıl Belirlenir",
-    "updated": "2026-08-22",
-    "summary": "Gram altın fiyatı ons altın ve dolar kurundan tek formülle türer. Hesabın adımları, ayar farkları ve kuyumcu fiyatının neden farklı çıktığı.",
-    "intro": "Gram altın fiyatı Türkiye'de belirlenen bağımsız bir fiyat değildir. Uluslararası piyasada oluşan ons fiyatının, dolar kuru üzerinden lira cinsine çevrilmiş hâlidir. Bu yüzden gram altın iki ayrı kaynaktan hareket alır ve ikisi çoğu zaman aynı yöne gitmez. Bu yazıda fiyatın nasıl türediğini adım adım, ayar farklarını ve kuyumcu vitrinindeki sayının neden hesabınızdan farklı çıktığını anlatıyoruz.",
-    "sections": [
-      {
-        "heading": "Formül: tek satırda gram altın",
-        "paragraphs": [
-          "Gram saf altının teorik lira fiyatı şu formülle bulunur:",
-          "Gram saf altın (TL) = Ons altın (USD) × Dolar/TL kuru ÷ 31,1035",
-          "Formüldeki 31,1035, bir troy onsun gram karşılığıdır ve değişmez. Değişen iki girdi ons fiyatı ve kurdur. Bu ikisi birbirinden bağımsız hareket ettiği için gram altın, ons sabitken bile yön değiştirebilir."
-        ],
-        "list": {
-          "ordered": true,
-          "items": [
-            "Ons altının güncel dolar fiyatını alın.",
-            "Güncel dolar/TL satış kuruyla çarpın.",
-            "Sonucu 31,1035'e bölün.",
-            "Çıkan sayı bir gram saf (has) altının teorik lira karşılığıdır.",
-            "22 ayar için 0,916, 18 ayar için 0,750 ile çarparak ayarı düşürün."
-          ]
-        }
-      },
-      {
-        "heading": "Örnek hesap",
-        "paragraphs": [
-          "Ons altın 3.400 dolar, dolar kuru 41,00 lira olsun. Bir ons altının lira karşılığı 3.400 × 41,00 = 139.400 liradır.",
-          "Bunu 31,1035'e böldüğünüzde gram başına 4.482 lira çıkar. Bu, bir gram has altının o andaki teorik değeridir.",
-          "22 ayar bir bilezik için aynı sayıyı 0,916 ile çarpmak gerekir: 4.482 × 0,916 = 4.106 lira. Aradaki fark takının içindeki alaşımdan kaynaklanır; 22 ayar altın gram başına binde 916 saf altın içerir."
-        ]
-      },
-      {
-        "heading": "Ayar ve milyem: hangi gram, hangi fiyat",
-        "paragraphs": [
-          "\"Gram altın\" ifadesi Türkiye'de genellikle has altını, yani 995 milyem saflıktaki külçe veya gram bar altını anlatır. Kuyumcu vitrinindeki bilezikler ise çoğunlukla 22 ayardır.",
-          "Bu ikisinin fiyatını doğrudan karşılaştırmak hataya yol açar. Aynı ağırlıktaki iki üründen 22 ayar olanı yüzde 8 daha az saf altın içerir; fiyatının da o oranda düşük olması beklenir.",
-          "Aşağıdaki tablo yaygın ayarların saflık karşılıklarını ve gram başına saf altın miktarını gösterir."
-        ],
-        "table": {
-          "caption": "Ayar, milyem ve gram başına saf altın",
-          "columns": [
-            "Ayar",
-            "Milyem",
-            "1 gramda saf altın",
-            "Nerede görülür"
-          ],
-          "rows": [
-            [
-              "24 ayar (has)",
-              "995–999",
-              "0,995–0,999 gram",
-              "Külçe, gram bar, yatırım altını"
-            ],
-            [
-              "22 ayar",
-              "916",
-              "0,916 gram",
-              "Bilezik, ziynet sikkeleri"
-            ],
-            [
-              "18 ayar",
-              "750",
-              "0,750 gram",
-              "Taşlı takı, yüzük"
-            ],
-            [
-              "14 ayar",
-              "585",
-              "0,585 gram",
-              "İthal takı, hafif ürünler"
-            ]
-          ]
-        }
-      },
-      {
-        "heading": "Neden kuyumcu fiyatı hesabınızdan farklı",
-        "paragraphs": [
-          "Hesapladığınız sayı ham altın değeridir; vitrinde gördüğünüz sayı ise satış fiyatıdır. Aradaki fark birkaç kalemden oluşur.",
-          "Birincisi alış-satış makasıdır: kuyumcu aynı ürünü size sattığı fiyattan daha ucuza geri alır. İkincisi işçilik ve üretim maliyetidir; sikke basımı ya da takı işçiliği bir maliyettir. Üçüncüsü kuyumcunun kâr marjıdır.",
-          "Ölçtüğümüz kadarıyla bu toplam pay gram altında yüzde 0,1 civarında kalırken ziynet ürünlerinde yüzde 1 ile 2 arasına çıkar. Panelin ziynet bölümü her ürün için ham altın değerini canlı olarak hesaplar ve vitrin fiyatıyla arasındaki payı yüzde olarak gösterir."
-        ]
-      },
-      {
-        "heading": "Ons sabitken gram altın neden hareket ediyor",
-        "paragraphs": [
-          "Bu, en sık sorulan ve en çok kafa karıştıran durumdur. Cevap formülde saklıdır: gram altının içinde dolar kuru da vardır.",
-          "Ons hiç kıpırdamasa bile kur yüzde 1 yükselirse gram altın yüzde 1 pahalanır. Tersine, ons yüzde 2 yükselirken kur yüzde 2 gerilerse gram altın neredeyse yerinde sayar.",
-          "Bu yüzden \"altın yükseldi mi\" sorusunun iki farklı cevabı olabilir. Altının kendi değeri ons grafiğinde, sizin cebinizdeki karşılığı gram grafiğinde görünür. Yatırım kararı verirken ikisini ayrı ayrı okumak gerekir."
-        ]
-      },
-      {
-        "heading": "Kapalıçarşı fiyatı ve serbest piyasa",
-        "paragraphs": [
-          "Türkiye'de gram altının referans fiyatı büyük ölçüde Kapalıçarşı ve Borsa İstanbul kıymetli madenler piyasası üzerinden oluşur. Kuyumcular fiyatlarını bu referansın etrafında belirler.",
-          "Talebin arttığı dönemlerde serbest piyasa fiyatı teorik hesabın bir miktar üzerine çıkabilir. Bu farka piyasada \"kur farkı\" ya da \"talep primi\" denir ve genellikle geçicidir.",
-          "Tersi de olur: talebin zayıfladığı dönemlerde kuyumcu, elindeki stoku eritmek için teorik değere daha yakın fiyat verebilir. Bu yüzden aynı gün içinde farklı kuyumcularda farklı fiyat görmek olağandır."
-        ]
-      },
-      {
-        "heading": "Fiyat takip ederken dikkat edilmesi gerekenler",
-        "paragraphs": [
-          "Karşılaştırma yaparken her zaman aynı ayarı ve aynı yönü kullanın. Bir yerde alış, başka bir yerde satış fiyatına bakmak yanıltıcı bir fark yaratır.",
-          "Fiyatın hangi saatte alındığına da bakın. Altın piyasası hafta içi neredeyse kesintisiz açıktır; hafta sonu ise uluslararası piyasa kapalıdır ve kuyumcunun verdiği fiyat cuma kapanışına dayanır.",
-          "Son olarak, tek bir sayıya değil aralığa bakın. Panelde gram fiyatı canlı ons ve kurdan anlık hesaplanır; ziynet kartlarında ise her ürünün alışı, satışı, makası ve ham altın değeri yan yana durur."
-        ]
-      }
-    ],
-    "points": [
-      "Gram saf altın (TL) = ons (USD) × dolar kuru ÷ 31,1035.",
-      "Gram altın bağımsız bir fiyat değil, ons ile kurun bileşimidir.",
-      "22 ayar için sonucu 0,916, 18 ayar için 0,750 ile çarpın.",
-      "Vitrin fiyatı ham altın değerinin üzerindedir; fark makas, işçilik ve marjdır.",
-      "Ölçülen pay gram altında %0,1, ziynet ürünlerinde %1–2 aralığındadır.",
-      "Ons sabitken kur hareket ederse gram altın yine de değişir."
-    ],
-    "faq": [
-      {
-        "q": "Gram altın fiyatı nasıl hesaplanır?",
-        "a": "Ons altının dolar fiyatını dolar/TL kuruyla çarpıp 31,1035'e bölersiniz. Örneğin 3.400 dolar ons ve 41,00 kur, gram has altın için 4.482 lira eder."
-      },
-      {
-        "q": "Gram altın fiyatını kim belirliyor?",
-        "a": "Kimse tek başına belirlemiyor. Fiyat, uluslararası ons fiyatının dolar kuru üzerinden liraya çevrilmesiyle oluşur; Türkiye'deki referans Kapalıçarşı ve Borsa İstanbul kıymetli madenler piyasasıdır."
-      },
-      {
-        "q": "22 ayar gram altın fiyatı nasıl bulunur?",
-        "a": "Önce has altın gram fiyatını hesaplayın, sonra 0,916 ile çarpın. 22 ayar altın gram başına binde 916 saf altın içerir, yani has altından yüzde 8 daha az."
-      },
-      {
-        "q": "Ons hiç hareket etmezken gram altın fiyatı değişebilir mi?",
-        "a": "Çünkü formülde dolar kuru da var. Ons hiç hareket etmese bile kur yükselirse gram altın lira cinsinden pahalanır."
-      },
-      {
-        "q": "Neden kuyumcunun fiyatı benim hesabımdan yüksek?",
-        "a": "Hesapladığınız ham altın değeridir. Vitrin fiyatı bunun üzerine alış-satış makasını, işçiliği ve kuyumcu marjını ekler; gram altında bu pay yüzde 0,1, ziynette yüzde 1–2 civarında ölçülmüştür."
-      },
-      {
-        "q": "Has altın ile gram altın aynı şey mi?",
-        "a": "Genellikle evet. Türkiye'de \"gram altın\" denince 995 milyem ve üzeri saflıktaki yatırım altını kastedilir. Bilezik ve ziynet ürünleri ise 916 milyemdir."
-      },
-      {
-        "q": "Kuyumcular hangi dolar kurunu esas alıyor?",
-        "a": "Satın alma maliyetinizi hesaplıyorsanız dolar satış kurunu kullanın. Alış kuruyla hesaplarsanız fiyatı olduğundan düşük bulur ve kuyumcu fiyatını gereksiz yere yüksek sanırsınız."
-      },
-      {
-        "q": "Farklı kuyumcularda neden farklı fiyat var?",
-        "a": "Her kuyumcu kendi marjını ve stok durumunu fiyata yansıtır. Talebin yüksek olduğu dönemlerde serbest piyasa fiyatı teorik hesabın üzerine çıkabilir; bu fark genellikle geçicidir."
       }
     ],
     "category": "Gram ve Ziynet Altın",

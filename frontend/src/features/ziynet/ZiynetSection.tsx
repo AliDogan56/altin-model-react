@@ -67,7 +67,7 @@ function ZiynetSection() {
         {gramPrice == null && <b>Kur akışı beklendiği için ham değer ve işçilik payı hesaplanamıyor. </b>}
         {missingChange > 0 && `${missingChange} üründe günlük değişim gösterilmiyor; kaynağın bildirdiği önceki kapanış gün aralığıyla bağdaşmıyor. `}
         Bu fiyatlar ons ve kurdan nasıl türer:{' '}
-        <a href="/rehber/gram-altin-fiyati-nasil-belirlenir">Gram altın fiyatı nasıl belirlenir?</a> ·{' '}
+        <a href="/rehber/ons-gram-altin-hesaplama">Ons’tan gram altına hesaplama</a> ·{' '}
         <a href="/rehber/ceyrek-altin-kac-gram">Çeyrek altın kaç gram?</a> ·{' '}
         <a href="/rehber/altin-makasi-nedir">Alış-satış makası nedir?</a>
       </p>

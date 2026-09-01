@@ -4,7 +4,11 @@ import TickSparkline from '../../components/TickSparkline';
 import { money2, tryRate } from '../../lib/format';
 import { useDashboard } from './DashboardContext';
 
-function PanelHeader() {
+/**
+ * `demoted`: panel sayfasında h1'i panelin kendi başlığı taşır, bu başlık h2'ye
+ * iner. Sayfada tek h1 kalsın ve 11 panel URL'i aynı h1'i paylaşmasın diye.
+ */
+function PanelHeader({ demoted = false }: { demoted?: boolean }) {
   const { harem, usdTry, haremTicks, status, refresh, refreshForecast, version, modelStatus } = useDashboard();
   /* Akış çoğu zaman bir saniyeden hızlı kuruluyor; tamponsuz spinner tek
      karede kaybolup dolumu göstermiyordu. */
@@ -13,7 +17,9 @@ function PanelHeader() {
   const fetching = useMinVisible(!!status.busy);
   return (
     <header id="panel">
-    <div id="icerik"><span className="eyebrow">Özgün Altın Tahmin Modeli</span><h1>Canlı Ons Altın Tahmin ve Senaryo Analiz Paneli</h1><p>Tahmin, eğitim ve hata ölçümü doğrudan XAU/USD günlük verisiyle yapılır.</p></div>
+    <div id="icerik"><span className="eyebrow">Özgün Altın Tahmin Modeli</span>{demoted
+      ? <h2>Canlı Ons Altın Tahmin ve Senaryo Analiz Paneli</h2>
+      : <h1>Canlı Ons Altın Tahmin ve Senaryo Analiz Paneli</h1>}<p>Tahmin, eğitim ve hata ölçümü doğrudan XAU/USD günlük verisiyle yapılır.</p></div>
     <div className="header-market">
     <div className="live-price ons-price"><span>{onsBusy?<Spinner size="xs"/>:<i className="ok"/>}ONS / XAUUSD</span><strong>{harem.satis&&!onsBusy?money2(harem.satis):<Spinner size="sm" label="Bağlanıyor…" inline/>}</strong>
     <div className="bid-ask"><b>Alış {harem.alis?money2(harem.alis):'—'}</b><b>Satış {harem.satis&&!onsBusy?money2(harem.satis):'—'}</b></div><TickSparkline ticks={haremTicks}/>

@@ -1,0 +1,39 @@
+/* ---- Panel sayfasının kendi anlatısı -------------------------------------
+   `/panel/<slug>` React'te panonun kendisini render eder; ön render edilen
+   metin hidrasyonda kaybolurdu ve 11 panel URL'i Google'a aynı sayfa gibi
+   görünüyordu (28 Ağustos Coverage: 11/11 dizin dışı). Bu blok ön render ile
+   uygulamanın aynı şeyi göstermesini sağlar.
+
+   Yerleşim kararı: okuyucu buraya panoyu kullanmaya geliyor, o yüzden metin
+   ölçülü tutulur (satır uzunluğu sınırlı, punto okunur) ve hemen üstünde
+   panoya atlama bağlantısı durur. */
+.panel-intro {
+  display:grid; gap:18px;
+  max-width:1180px; margin:18px auto 0; padding:22px 24px;
+  border:1px solid var(--line); border-radius:14px;
+  background:rgb(var(--surface-rgb) / .67);
+}
+
+.panel-intro > header { display:grid; gap:8px; }
+.panel-intro h1 { margin:0; font-size:clamp(23px,3.2vw,34px); line-height:1.14; letter-spacing:-.02em; }
+.panel-intro .panel-intro-lede { max-width:70ch; margin:0; color:var(--text); font-size:15.5px; line-height:1.55; }
+
+.panel-intro > p,
+.panel-intro section p { max-width:70ch; margin:0 0 11px; color:var(--text-soft); font-size:14.5px; line-height:1.7; }
+.panel-intro section p:last-child { margin-bottom:0; }
+
+.panel-intro section { display:block; }
+.panel-intro section + section { margin-top:4px; }
+.panel-intro h2 { margin:0 0 9px; font-size:17px; letter-spacing:-.01em; }
+
+.panel-intro .article-list { max-width:70ch; margin:2px 0 0; padding-left:18px; color:var(--text-soft); font-size:14px; line-height:1.65; }
+.panel-intro .article-list li + li { margin-top:5px; }
+
+/* Panoya atlama: metnin başında durur, okuyucu asıl aracı aramasın. */
+.panel-intro-jump { margin:-6px 0 0; }
+.panel-intro-jump a { font-size:14px; font-weight:700; color:var(--gold); }
+
+@media (max-width:760px) {
+  .panel-intro { margin:12px 10px 0; padding:18px 16px; gap:14px; }
+  .panel-intro h2 { font-size:16px; }
+}

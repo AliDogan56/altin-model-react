@@ -6,7 +6,77 @@
     "title": "Ons Altın Tahmini: 7, 14 ve 30 Günlük Projeksiyon",
     "seoTitle": "Ons Altın Tahmini · 7, 14, 30 Günlük",
     "summary": "Bağımsız sinir ağı modellerinin 7, 14 ve 30 günlük ons altın tahminleri ve her biri için %70 olasılık bandı.",
-    "intro": "Panelin tahmin kartları, modelin üç farklı vade için ürettiği fiyat projeksiyonunu ve bu projeksiyonun belirsizlik bandını gösterir. Her kart tek bir sayı değil, bir aralık sunar: bandın genişliği o vadede belirsizliğin ne kadar büyük olduğunu anlatır. Vade uzadıkça bant belirgin biçimde genişler, çünkü uzak geleceğe dair bilgi azalır."
+    "intro": "Panelin tahmin kartları, modelin üç farklı vade için ürettiği fiyat projeksiyonunu ve bu projeksiyonun belirsizlik bandını gösterir. Her kart tek bir sayı değil, bir aralık sunar: bandın genişliği o vadede belirsizliğin ne kadar büyük olduğunu anlatır. Vade uzadıkça bant belirgin biçimde genişler, çünkü uzak geleceğe dair bilgi azalır.",
+    "sections": [
+      {
+        "heading": "Tahmin neye dayanıyor",
+        "paragraphs": [
+          "Model ons altının 7, 14 ve 30 günlük getirisini tahmin eder. Girdileri uluslararası serilerdir: tahvil getirileri, enflasyona endeksli tahvilden türeyen reel faiz, dolar endeksi, enflasyon beklentisi, getiri eğrisi, oynaklık endeksi, petrol ve fiyatın kendi davranışından çıkan teknik ölçüler.",
+          "Her vade bağımsız eğitilir; ortak bir ağ yoktur. Bu yüzden ufuklar arası eğri düz olmak zorunda değildir ve bir vadede güçlü olan görüş diğerinde zayıf olabilir.",
+          "Tahmin bir fiyat hedefi değil, bir getiri beklentisi ve onun etrafındaki bir bantttır. Bant, modelin geçmişte yaptığı hataların dağılımından çıkar."
+        ]
+      },
+      {
+        "heading": "İsabet nasıl ölçülüyor",
+        "paragraphs": [
+          "Ölçüm, modelin eğitim sırasında hiç görmediği günler üzerinde yapılır. Katlar zaman sırasına göre genişler ve her katın eğitim penceresi, tahmin ufkunun uzunluğu kadar geriden kesilir; böylece kat sınırında hedef örtüşmesi temizlenir.",
+          "En önemli sütun \"basit kurala üstünlük\"tür. Karşılaştırma kuralı şudur: hiç tahmin etme, fiyat aynı kalır de. Bu kuralı yenemeyen bir model pratikte bilgi taşımıyor demektir ve o vadede ağırlığı sıfırlanır."
+        ],
+        "table": {
+          "caption": "Vadelerin karnesi ve ne anlama geldiği",
+          "columns": [
+            "Sütun",
+            "Ne ölçer",
+            "Nasıl okunur"
+          ],
+          "rows": [
+            [
+              "Ortalama yanılma",
+              "Tahminin ortalama sapması",
+              "Küçük olması iyidir"
+            ],
+            [
+              "Yönü bilme",
+              "Yukarı/aşağı isabeti",
+              "%50 rastgele demektir"
+            ],
+            [
+              "Basit kurala üstünlük",
+              "Sıfır-getiri kuralını yenme",
+              "Negatifse model işe yaramıyor"
+            ],
+            [
+              "Ağırlık",
+              "Servis edilen tahmindeki payı",
+              "0'a yakınsa görüş yok demektir"
+            ]
+          ]
+        }
+      },
+      {
+        "heading": "Modelin sustuğu vadeler",
+        "paragraphs": [
+          "Her vadenin bir ağırlığı vardır ve bu ağırlık katman dışı ölçümden çıkar. Ağırlığı sıfıra yakın bir vadede panel sayısal bir tahmin göstermez, açıkça \"görüş yok\" yazar.",
+          "Bu bir arıza değil, tasarımın parçası. Sıfıra yakın bir tahmini gerçek bir görüş gibi sunmak, okuyucuyu yanıltmanın en sessiz yoludur; bir vadede bilgi yoksa bunun söylenmesi gerekir.",
+          "Aynı sebeple altı aylık ya da yıl sonu tahmini verilmez: o vadelerde isabeti ölçecek kadar bağımsız gözlem yoktur."
+        ]
+      },
+      {
+        "heading": "Bandı doğru okumak",
+        "paragraphs": [
+          "Panelde gördüğünüz aralık, modelin katman dışı hatalarının seksiminci yüzdeliğinden gelir ve tahmin anındaki oynaklığa göre ölçeklenir. Piyasa normalden çalkantılıysa bant genişler, sakinse daralır.",
+          "Bandın anlamı şudur: sonucun bu aralığın dışına çıkması olağandır, sadece daha az olasıdır. Aralığı bir garanti gibi okumak, bandın var oluş sebebini ortadan kaldırır."
+        ]
+      },
+      {
+        "heading": "Donmuş girdiler tahmine katılmaz",
+        "paragraphs": [
+          "Bazı makro göstergeler aylık yayımlanır ve iki yayın arasında sabit kalır. Sabit bir girdi yeni bilgi taşımaz ama modelin çıktısını sürüklemeye devam edebilir.",
+          "Bu yüzden son on beş işlem gününde hiç değişmemiş bir makro girdi tahmin anında eğitim ortalamasına çekilir ve yanıtta bildirilir. Karar sunucuda verilir, istemciye bırakılmaz.",
+          "Ödünleşimi açıkça söylemek gerekir: servis edilen tahmin, karnede ölçülen tahminden bu yüzden farklılaşır. Karne nötrlemesiz modeli ölçer."
+        ]
+      }
+    ]
   },
   {
     "slug": "altin-fiyat-grafigi",
@@ -42,7 +112,46 @@
     "title": "Ons Altın Teknik Göstergeleri",
     "seoTitle": "Ons Altın Teknik Göstergeleri",
     "summary": "RSI, MACD, Stochastic, ADX, CCI, Williams %R, ATR ve ROC değerleri ile SMA/EMA 5-200 hareketli ortalamalar.",
-    "intro": "Teknik göstergeler günlük kapanış, yüksek ve düşük verilerinden hesaplanır. Panel bilinçli olarak alım-satım kararı üretmez; yalnız göstergenin bulunduğu durumu yazar. Aşırı alım bölgesi yükselişin biteceği anlamına gelmez — güçlü trendlerde bir gösterge haftalarca orada kalabilir. Hareketli ortalama tablosu fiyatın hangi ortalamaların üstünde veya altında olduğunu özetler."
+    "intro": "Teknik göstergeler günlük kapanış, yüksek ve düşük verilerinden hesaplanır. Panel bilinçli olarak alım-satım kararı üretmez; yalnız göstergenin bulunduğu durumu yazar. Aşırı alım bölgesi yükselişin biteceği anlamına gelmez — güçlü trendlerde bir gösterge haftalarca orada kalabilir. Hareketli ortalama tablosu fiyatın hangi ortalamaların üstünde veya altında olduğunu özetler.",
+    "sections": [
+      {
+        "heading": "Hangi göstergeler, neden bunlar",
+        "paragraphs": [
+          "Bu bölüm ons altının günlük serisinden hesaplanan teknik göstergeleri tek yerde toplar: fiyatın hareketli ortalamadan sapması, merkezlenmiş RSI, ATR ile ölçülen oynaklık, kısa ve orta vadeli getiriler ve son dönem zirvesinden düşüş.",
+          "Bunlar rastgele seçilmedi: aynı göstergeler modelin girdileri arasında yer alır. Yani burada gördüğünüz sayılar yalnız bilgi amaçlı değil, tahmini fiilen üreten büyüklüklerdir.",
+          "Hepsi aynı günlük kapanış serisinden hesaplanır; grafik, pivot kartı ve model aynı veriyi kullanır."
+        ]
+      },
+      {
+        "heading": "Göstergeyi eşik olarak kullanmamak",
+        "paragraphs": [
+          "En yaygın hata, tek bir göstergeden mekanik kural çıkarmaktır. RSI yetmişin üstündeyse sat, otuzun altındaysa al gibi kurallar güçlü trendlerde uzun süre yanlış sinyal üretir; gösterge yüksekte kalırken fiyat yükselmeye devam eder.",
+          "Doğru kullanım göstergeyi bir bağlam olarak okumaktır: fiyat kendi geçmişine göre nerede duruyor, oynaklık normalin neresinde. Karar bu bağlamla, tek bir eşikle değil.",
+          "Panel bu yüzden gösterge değerlerini eşiklerle renklendirmez; sayıyı ve ne anlama geldiğini yazar."
+        ]
+      },
+      {
+        "heading": "Oynaklık neden ayrı bir bilgi",
+        "paragraphs": [
+          "ATR ve yirmi günlük oynaklık, fiyatın yönü hakkında hiçbir şey söylemez; ne kadar oynadığını söyler. Bu, aynı yüzdelik hareketin farklı dönemlerde farklı anlama gelmesinin sebebidir.",
+          "Pratik karşılığı şudur: oynaklık yüksekken belirsizlik bandı genişler, aynı tahmin daha az bağlayıcı olur. Panelin tahmin bandı bu oranı hesaba katarak ölçeklenir."
+        ],
+        "list": {
+          "items": [
+            "Yön göstergeleri: ortalamadan sapma, getiriler, zirveden düşüş.",
+            "Ölçek göstergeleri: ATR, 20 günlük oynaklık.",
+            "İkisini karıştırmayın: ölçek büyüklüğü yönü belirlemez."
+          ]
+        }
+      },
+      {
+        "heading": "Gün içi ile günlük ayrımı",
+        "paragraphs": [
+          "Buradaki göstergeler günlük kapanışlardan hesaplanır ve günler ölçeğinde konuşur. Gün içi hareket için ayrı bir bölüm vardır ve o beş dakikalık mumlardan beslenir.",
+          "İkisini karıştırmak sık yapılan bir hatadır: gün içi momentumun aşağı olması, günlük göstergelerin de zayıfladığı anlamına gelmez. Farklı zaman ölçekleri farklı sorular cevaplar."
+        ]
+      }
+    ]
   },
   {
     "slug": "altin-pivot-seviyeleri",
@@ -51,7 +160,72 @@
     "title": "Ons Altın Pivot Seviyeleri: Destek ve Direnç",
     "seoTitle": "Ons Altın Pivot Seviyeleri",
     "summary": "Haftalık ve aylık dönem için klasik ve Fibonacci pivot noktaları; canlı fiyat kendi yerinde işaretli merdiven düzeni.",
-    "intro": "Pivot seviyeleri, önceki dönemin yüksek, düşük ve kapanış değerlerinden standart bir formülle hesaplanır. Grafikteki destek-direnç katmanı fiyatın kendi geçmişinden çıkarılan bölgeleri gösterirken, pivot herkesin aynı şekilde bulduğu deterministik seviyelerdir; ikisinin çakıştığı yerler daha güçlü kabul edilir. Seviyeler fiyata göre sıralanır ve canlı fiyat aralarındaki yerine yerleşir."
+    "intro": "Pivot seviyeleri, önceki dönemin yüksek, düşük ve kapanış değerlerinden standart bir formülle hesaplanır. Grafikteki destek-direnç katmanı fiyatın kendi geçmişinden çıkarılan bölgeleri gösterirken, pivot herkesin aynı şekilde bulduğu deterministik seviyelerdir; ikisinin çakıştığı yerler daha güçlü kabul edilir. Seviyeler fiyata göre sıralanır ve canlı fiyat aralarındaki yerine yerleşir.",
+    "sections": [
+      {
+        "heading": "Seviyeler nereden geliyor",
+        "paragraphs": [
+          "Bu bölüm destek ve direnç seviyelerini fiyatın geçmişte döndüğü noktaları gözle seçerek değil, tamamlanmış bir dönemin yüksek, düşük ve kapanış değerlerinden formülle üretir. Dönem haftalık ya da aylık seçilebilir, yöntem klasik ya da Fibonacci olabilir.",
+          "Formülün kendisi tartışmasızdır: aynı veriyle herkes aynı sayıyı bulur. Tartışılabilir olan hangi dönemin ve hangi yöntemin kullanılacağıdır, o yüzden ikisi de sizin seçiminize bırakılmıştır ve grafik seçiminizi anında izler.",
+          "Merdivende yedi seviye vardır: üç destek, pivot ve üç direnç. Grafikte her biri kendi adıyla çizilir; S1 ve R1 belirgin, S3 ve R3 soluk gösterilir çünkü fiyattan uzaklaştıkça seviyenin bağlayıcılığı azalır."
+        ],
+        "table": {
+          "caption": "Pivot merdiveninin okunuşu",
+          "columns": [
+            "Seviye",
+            "Anlamı",
+            "Grafikteki görünümü"
+          ],
+          "rows": [
+            [
+              "R1 – R3",
+              "Fiyatın üstündeki dirençler",
+              "Kırmızı, uzaklaştıkça soluklaşır"
+            ],
+            [
+              "P",
+              "Dönemin denge noktası",
+              "Altın rengi, kesikli"
+            ],
+            [
+              "S1 – S3",
+              "Fiyatın altındaki destekler",
+              "Yeşil, uzaklaştıkça soluklaşır"
+            ]
+          ]
+        }
+      },
+      {
+        "heading": "Dönem ne zaman tamamlanmış sayılır",
+        "paragraphs": [
+          "Bu ayrıntı seviyelerin doğruluğunu doğrudan belirler. Hafta cumartesi girdiğinde tamamlanmış sayılır, ay ise bittiğinde. Önceden koşulsuz olarak sondan bir önceki grup alınıyordu ve cuma kapanışı gelmiş olsa bile içinde bulunulan hafta \"devam ediyor\" kabul ediliyordu.",
+          "Sonucu ölçüldü: 22 Ağustos cumartesi günü kart hâlâ 10–14 Ağustos haftasını kullanıyor, altın o günden beri yüzde beş yükseldiği için R3 dahil bütün seviyeler fiyatın altında kalıyordu. Yani merdiven bir hafta bayattı ve hiçbir işe yaramıyordu.",
+          "Şimdi takvim kuralı açık ve test edilebilir; grafik ile bu kart her zaman aynı sayıyı gösterir."
+        ]
+      },
+      {
+        "heading": "Seviyeyi nasıl kullanmalı",
+        "paragraphs": [
+          "Pivot seviyeleri bir tahmin değildir. Fiyatın nereye gideceğini söylemezler; fiyatın hangi noktalarda tepki verme ihtimalinin arttığını söylerler. Bu ayrım önemlidir çünkü seviyeler kırılmak için de vardır.",
+          "Pratik kullanım, seviyeyi bir karar noktası olarak görmektir: fiyat oraya geldiğinde ne yapacağınıza önceden karar verirsiniz. Seviyenin tutacağını varsayıp plan yapmak, kırıldığında plansız kalmak demektir."
+        ],
+        "list": {
+          "items": [
+            "Seviyeyi hedef değil karar noktası olarak kullanın.",
+            "Dönemi kararınızın vadesine göre seçin: kısa vade haftalık, uzun vade aylık.",
+            "Fiyat seviyenin gürültü kadar yakınındaysa o seviye zaten test ediliyordur.",
+            "Kırılım gücü ayrı bir sorudur; gün içi momentum bölümü onu ölçer."
+          ]
+        }
+      },
+      {
+        "heading": "Bu bölümün söylemediği şey",
+        "paragraphs": [
+          "Seviyelerin kırılma olasılığını bu kart vermez; yalnız seviyelerin nerede olduğunu verir. Kırılım gücü gün içi momentum bölümünde, seansın kendi oynaklığına göre ölçülür.",
+          "Ayrıca seviyeler ons altın (XAU/USD) üzerinden hesaplanır. Gram altında karşılık aramak için kur çevrimini kendiniz yapmanız gerekir; kur hareketi seviyeleri kaydırır."
+        ]
+      }
+    ]
   },
   {
     "slug": "tahmine-parametre-katkisi",
@@ -96,6 +270,66 @@
     "title": "Gün İçi Momentum ve Kırılım Gücü",
     "seoTitle": "Ons Altın Gün İçi Momentum ve Kırılım Gücü",
     "summary": "Ons altının gün içi hareketinin yönü, 0-100 arası momentum gücü ve ilk destek/direnci kırma ihtimali; eşikler seansın kendi oynaklığına göre uyarlanır.",
-    "intro": "Fiyatın yükselip düştüğünü görmek kolaydır; asıl soru mevcut hareketin bir seviyeyi kırmaya yetip yetmediğidir. Bu bölüm ons altının 5 dakikalık gün içi mumlarından hız, ivme, RSI, MACD ve hacim gücünü hesaplar, hepsini o seansın kendi dalgalanmasına bölerek 0-100 arası tek bir momentum skoruna indirir. Ardından günlük pivot merdivenindeki ilk destek ve direnci bulur ve seansın kalanında beklenen hareketin o seviyeyi kapatmaya yetip yetmediğini ölçer. Sabit eşik yoktur: aynı dolar hareketi sakin bir seansta güçlü, çalkantılı bir seansta zayıf okunur."
+    "intro": "Fiyatın yükselip düştüğünü görmek kolaydır; asıl soru mevcut hareketin bir seviyeyi kırmaya yetip yetmediğidir. Bu bölüm ons altının 5 dakikalık gün içi mumlarından hız, ivme, RSI, MACD ve hacim gücünü hesaplar, hepsini o seansın kendi dalgalanmasına bölerek 0-100 arası tek bir momentum skoruna indirir. Ardından günlük pivot merdivenindeki ilk destek ve direnci bulur ve seansın kalanında beklenen hareketin o seviyeyi kapatmaya yetip yetmediğini ölçer. Sabit eşik yoktur: aynı dolar hareketi sakin bir seansta güçlü, çalkantılı bir seansta zayıf okunur.",
+    "sections": [
+      {
+        "heading": "Hangi soruyu cevaplıyor",
+        "paragraphs": [
+          "Bu bölümün sorusu \"fiyat çıkıyor mu iniyor mu\" değil. Soru şu: mevcut hareket, en yakın destek ya da direnci kırmaya yetecek güçte mi? İkisi farklı sorulardır ve çoğu gösterge yalnız birincisini cevaplar.",
+          "Hesap gün içi beş dakikalık mumlardan yapılır. Hız, seans sürüklenmesi, ivme, RSI, MACD ve varsa hacim gücü ayrı ayrı ölçülür, hepsi o seansın kendi dalgalanmasına bölünür ve tek bir 0–100 skoruna indirilir."
+        ]
+      },
+      {
+        "heading": "Sabit eşik yok, ölçek seansın kendisi",
+        "paragraphs": [
+          "Bu bölümde \"70 üzeri güçlü\" gibi bir eşik yoktur ve bilinçli olarak yoktur. Her gösterge, o seansın mum getirisi standart sapması biriminde işaretli bir sayıya çevrilir. Aynı on dolarlık hareket sakin bir seansta güçlü, çalkantılı bir seansta zayıf okunur.",
+          "Aynı kural seviye kümelemesine ve \"bu seviye test ediliyor\" marjına da uygulanır. Hiçbir yerde sabit dolar eşiği kullanılmaz; ölçek her zaman o günün oynaklığıdır.",
+          "Bileşenlerin ağırlıkları ise eşik değil editoryal tercihtir ve açıkça yazılıdır: hız 0,25 · sürüklenme 0,20 · ivme 0,20 · hacim 0,15 · RSI 0,10 · MACD 0,10. Bir bileşen eksikse ağırlığı kalanlara dağıtılır."
+        ]
+      },
+      {
+        "heading": "Yön ayrı bir sorudur",
+        "paragraphs": [
+          "Güç ile yön aynı şey değildir. Güç, sinyalin büyüklüğü ile göstergelerin hemfikirliğinden çıkar. Yön ise iki kapı birden ister: göstergelerin ortak sinyali gürültüden ayırt edilebilmeli ve fiyatın kendisi rastgele yürüyüşten sapmış olmalı.",
+          "İkinci kapı sonradan eklendi çünkü yalnız istatistiğe bakmak sahte yön üretiyordu: sürüklenmesi olmayan bir seride küçük ama tutarlı bileşenler \"yukarı\" dedirtebiliyordu. Şimdi fiyatın kendisi de hareket etmiş olmalı.",
+          "Sapma iki zaman ölçeğinden baskın olana bakılır: son bir saatlik itiş ya da seans açılışından beri biriken sürüklenme. Yalnız saatlik pencereye bakmak gün boyu süren yavaş trendleri görünmez kılıyordu."
+        ],
+        "table": {
+          "caption": "Yön için gereken iki koşul",
+          "columns": [
+            "Koşul",
+            "Ne sorar",
+            "Sağlanmazsa"
+          ],
+          "rows": [
+            [
+              "Göstergeler hemfikir mi",
+              "Bileşik sinyal gürültüden ayrılıyor mu",
+              "Yönsüz"
+            ],
+            [
+              "Fiyat gerçekten hareket etti mi",
+              "Saatlik itiş ya da seans sürüklenmesi",
+              "Yönsüz"
+            ]
+          ]
+        }
+      },
+      {
+        "heading": "Kırılım gücü nasıl hesaplanıyor",
+        "paragraphs": [
+          "Kırılım gücü iki şeyin geometrik ortalamasıdır: seviyeye ulaşmak ve onu kırmaya yetecek momentum. Ulaşma oranı, seansın kalanında beklenen hareketin seviyeye olan uzaklığa bölümüdür ve birde doyurulur.",
+          "Doyurma önemlidir. Ham oran kullanıldığında fiyat seviyeye çok yaklaştığında oran fırlıyor ve her şey \"güçlü\" çıkıyordu. Seviyenin dibinde durmak onu kırmakla aynı şey değildir.",
+          "Ayrıca fiyat bir seviyenin gürültü kadar yakınındaysa o seviye hedef sayılmaz; \"test ediliyor\" olarak ayrıca bildirilir ve hesap bir sonraki gerçek seviyeyi hedefler."
+        ]
+      },
+      {
+        "heading": "Sınırları",
+        "paragraphs": [
+          "Bu bölüm bir işlem tavsiyesi değildir ve seviyelerin kırılması olağandır. Söylediği tek şey, mevcut hareketin büyüklüğünün seansın kendi ölçeğinde ne anlama geldiğidir.",
+          "Yön belirsizken hedef verilmez. \"Yönsüz\" çıktısı bir eksiklik değil, kasıtlı bir cevaptır: hareket seansın gürültüsünden ayırt edilemiyorsa bir seviyenin kırılacağını söylemek uydurma olur."
+        ]
+      }
+    ]
   }
 ]
