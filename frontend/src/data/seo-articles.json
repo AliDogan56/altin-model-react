@@ -1894,160 +1894,199 @@
   },
   {
     "id": "enflasyon-fed-altin",
-    "keyword": "FED faiz kararı altın etkisi",
-    "title": "Enflasyon ve FED Kararları Altını Nasıl Etkiler?",
-    "seoTitle": "FED Kararları Altını Nasıl Etkiler",
-    "updated": "2026-08-22",
-    "summary": "FED faiz kararları altını doğrudan değil beklenti üzerinden etkiler. Karar günü fiyat hareketinin neden çoğu zaman ters yönde olduğunu açıklıyoruz.",
-    "intro": "Fed toplantısı ve ABD enflasyon verisi, altın piyasasının takvimindeki en oynak iki olaydır. Ancak fiyatın verinin kendisine değil, verinin beklentiden ne kadar saptığına ve merkez bankasının buna nasıl yanıt vereceğine tepki verdiğini bilmek gerekir. Bu yazıda enflasyon-faiz-altın zincirini, beklenti mekanizmasını ve veri günlerinde neyin izleneceğini anlatıyoruz.",
+    "keyword": "fed faiz kararı altını nasıl etkiler",
+    "title": "FED Faiz Kararı Altını Nasıl Etkiler?",
+    "seoTitle": "FED Faiz Kararı ve Altın",
+    "updated": "2026-09-01",
+    "category": "Fiyatı Etkileyen Faktörler",
+    "panel": "tahmine-parametre-katkisi",
+    "summary": "FED kararı altını kararın kendisiyle değil sürpriziyle etkiler. Toplantı, basın toplantısı ve tutanaklar ayrı olaylardır; hangisi ne zaman fiyatlanır?",
+    "intro": "FED faiz kararı, altın takvimindeki en oynak olaydır. Ama fiyatı hareket ettiren şey kararın kendisi değildir: piyasa kararı çoktan fiyatlamıştır ve hareket, gerçekleşenin beklenenden ne kadar saptığından doğar. Üstelik tek bir olay da yoktur — karar metni, Powell'ın basın toplantısı ve üç hafta sonra yayımlanan tutanaklar üç ayrı fiyatlama anıdır. Bu yazı dördünü ayırıyor ve altının hangisine neden tepki verdiğini anlatıyor.",
+    "points": [
+      "Fiyatlanan şey karar değil, kararın beklentiden sapmasıdır.",
+      "FED takviminde dört ayrı olay var; üçü fiyat hareketi üretir.",
+      "Tutanaklar karardan üç hafta sonra gelir ve ayrı bir oynaklık yaratır.",
+      "Karar günü fiyat çoğu zaman iki kez hareket eder: metin ve basın toplantısı.",
+      "Kararın altına etkisi doğrudan değil, reel faiz ve dolar üzerinden geçer.",
+      "Bu zincirin girdileri modelde var; günlük katkıları panelde dolar cinsinden yazılı."
+    ],
     "sections": [
       {
-        "heading": "Zincirin işleyişi",
+        "heading": "Fiyatlanan şey karar değil, sürpriz",
         "paragraphs": [
-          "Enflasyon doğrudan altını hareket ettirmez. Zincir üç halkadan geçer: enflasyon verisi → merkez bankasının faiz patikası beklentisi → reel faiz → altın.",
-          "Bu yüzden yüksek bir enflasyon verisi altını yükseltebileceği gibi düşürebilir de. Belirleyici olan, verinin Fed'i daha şahin mi daha güvercin mi yapacağıdır.",
-          "Enflasyon beklentiden yüksek gelirse piyasa daha yüksek ya da daha uzun süre yüksek kalacak bir faiz fiyatlar. Nominal faiz enflasyon beklentisinden hızlı artarsa reel faiz yükselir ve altın baskılanır."
+          "Toplantı gününden haftalar önce piyasa bir beklenti oluşturur ve fiyatlar bu beklentiye göre şekillenir. Karar açıklandığında, beklenen sonuç çıkarsa fiyatta kayda değer bir hareket olmayabilir; çünkü o sonuç zaten fiyatın içindedir.",
+          "Hareketi yaratan, gerçekleşen ile beklenenin farkıdır. Bu yüzden \"faiz arttı ama altın yükseldi\" gibi ilk bakışta ters görünen sonuçlar olağandır: artış beklenenden küçükse, ya da metin bundan sonrası için yumuşak bir dil taşıyorsa, piyasa için bu bir gevşeme sinyalidir.",
+          "Buradan çıkan pratik kural şu: karar açıklanmadan önce beklentinin ne olduğunu bilmiyorsanız, açıklandıktan sonraki hareketi yorumlayamazsınız."
         ]
       },
       {
-        "heading": "Beklenti mi gerçekleşme mi",
+        "heading": "FED takviminde dört ayrı olay var",
         "paragraphs": [
-          "Piyasalar bilinen bilgiyi fiyatlamıştır. Fed'in faiz indireceği aylardır bekleniyorsa, indirim açıklandığında altındaki hareket sınırlı kalır; fiyat çoktan yansımıştır.",
-          "Asıl hareket sapmadan gelir. Beklenen ile açıklanan arasındaki fark, piyasanın yeniden fiyatlama yapması gereken kısımdır.",
-          "Bu yüzden \"Fed faiz indirdi ama altın düştü\" gibi görünüşte tuhaf sonuçlar sıradan hâle gelir. İndirim beklenenden küçükse ya da açıklama metni beklenenden şahinse, sonuç ters yönde olur."
-        ]
-      },
-      {
-        "heading": "Veri günlerinde ne izlenir",
-        "paragraphs": [
-          "Altın açısından en önemli ABD verileri, enflasyon ve istihdam başlıkları altında toplanır. Bunların hepsi doğrudan faiz patikası beklentisini değiştirir.",
-          "Aşağıdaki tablo başlıca olayları ve altına tipik etki kanalını gösterir. Etki yönü verinin beklentiden sapma yönüne bağlıdır; tabloda \"yüksek gelirse\" durumu esas alınmıştır."
+          "\"FED kararı\" tek bir ana işaret ediyor gibi görünür ama pratikte birbirinden günler hatta haftalar ayrı dört olay vardır. Üçü doğrudan fiyat hareketi üretir.",
+          "Bunları ayırmak önemlidir çünkü her biri farklı bir bilgi taşır ve piyasa her birine ayrı tepki verir. Aynı toplantı döngüsünde altın üç kez hareket edebilir."
         ],
         "table": {
-          "caption": "Altını en çok hareket ettiren ABD veri başlıkları",
+          "caption": "FED döngüsündeki olaylar ve altına etkisi",
           "columns": [
             "Olay",
-            "Ne ölçer",
-            "Beklentiden yüksek gelirse",
-            "Kanal"
+            "Ne zaman",
+            "Ne bilgi taşır",
+            "Tipik etki"
           ],
           "rows": [
             [
-              "TÜFE / çekirdek TÜFE",
-              "Tüketici enflasyonu",
-              "Altına baskı",
-              "Daha şahin faiz beklentisi"
+              "Toplantı öncesi beklenti",
+              "Haftalar önce",
+              "Piyasanın fiyatladığı senaryo",
+              "Fiyata yavaşça işlenir"
             ],
             [
-              "Tarım dışı istihdam",
-              "İş gücü piyasası gücü",
-              "Altına baskı",
-              "Faiz indirimi ertelenir"
+              "Karar metni",
+              "Toplantı günü",
+              "Faiz seviyesi ve yönlendirme dili",
+              "Anlık, sert"
             ],
             [
-              "Fed faiz kararı",
-              "Politika faizi",
-              "Altına baskı",
-              "Reel faiz doğrudan yükselir"
+              "Basın toplantısı",
+              "Karardan ~30 dk sonra",
+              "Başkanın tonu ve soru cevaplar",
+              "İkinci ve sık sık daha büyük hareket"
             ],
             [
-              "Fed toplantı tutanakları",
-              "Kurul üyelerinin eğilimi",
-              "Şahinse baskı",
-              "Beklenti patikası"
-            ],
-            [
-              "ÜFE",
-              "Üretici enflasyonu",
-              "Altına baskı",
-              "TÜFE'nin öncü göstergesi"
-            ],
-            [
-              "GSYH büyümesi",
-              "Ekonomik aktivite",
-              "Karışık",
-              "Hem faiz hem risk iştahı"
+              "Toplantı tutanakları",
+              "~3 hafta sonra",
+              "Üyeler arasındaki görüş ayrılığı",
+              "Daha küçük ama gerçek"
             ]
           ]
         }
       },
       {
-        "heading": "Çekirdek enflasyon neden daha önemli",
+        "heading": "Tutanaklar neden ayrı bir olay",
         "paragraphs": [
-          "Manşet enflasyon gıda ve enerjiyi içerir; bu iki kalem hava koşulları ve petrol fiyatı gibi geçici etkenlerle sert dalgalanır.",
-          "Çekirdek enflasyon bunları dışarıda bırakır ve fiyat artışının kalıcı eğilimini gösterir. Merkez bankaları politika kararlarını ağırlıklı olarak buna bakarak alır.",
-          "Bu yüzden manşet düşerken çekirdek yapışkan kalırsa piyasa faiz indirimini ertelemeyi fiyatlar ve altın enflasyon düşmesine rağmen baskı görebilir. Modelin girdileri arasında çekirdek tüketici enflasyonunun yıllık oranı bu nedenle yer alır."
+          "Toplantı tutanakları, karardan yaklaşık üç hafta sonra yayımlanır ve o gün alınan kararın arkasındaki tartışmayı gösterir. Karar metni tek bir sonuç bildirir; tutanaklar o sonuca ne kadar zorlukla varıldığını anlatır.",
+          "Piyasa için değerli olan kısım budur. Kararın oybirliğiyle mi yoksa bölünmüş bir kurulla mı alındığı, bir sonraki toplantıda yönün değişme ihtimalini gösterir. Bölünmüş bir kurul, yönlendirmenin göründüğü kadar sağlam olmadığı anlamına gelir.",
+          "Tutanak günü hareketleri karar günü kadar sert olmaz ama yok da değildir; özellikle metnin dili ile tutanaklardaki tartışma arasında fark varsa fiyat bunu düzeltir."
         ]
       },
       {
-        "heading": "Toplantı günü oynaklığı",
+        "heading": "Karar günü fiyat neden iki kez hareket eder",
         "paragraphs": [
-          "Fed karar günlerinde altındaki gün içi hareket, normal bir günün belirgin biçimde üzerine çıkar. Bu oynaklık iki aşamalıdır: önce karar metni, sonra başkanın basın toplantısı.",
-          "İlk tepki çoğu zaman kalıcı olmaz. Metnin ilk okunuşuyla gelen hareket, basın toplantısındaki ton belirginleştikçe tersine dönebilir.",
-          "Bu belirsizlik modelin belirsizlik bandına da yansır: band, güncel piyasa oynaklığına göre ölçeklenir ve oynak dönemlerde genişler. Bandın genişlemesi modelin kötüleştiği değil, belirsizliği dürüstçe bildirdiği anlamına gelir."
+          "Karar metni yayımlandığında ilk hareket olur: faiz seviyesi ve metnin ileriye dönük dili anında fiyatlanır. Yaklaşık yarım saat sonra basın toplantısı başlar ve çoğu zaman ikinci, bazen daha büyük bir hareket gelir.",
+          "Sebep şu: metin kısa ve dikkatle yazılmıştır, basın toplantısı ise soru cevap içerir. Başkanın metinde olmayan bir vurgusu ya da bir soruya verdiği kaçamak cevap, metnin yarattığı fiyatlamayı tersine çevirebilir.",
+          "Bu yüzden karar açıklandıktan hemen sonraki fiyatı nihai sonuç sanmak yanlıştır. Günün asıl yönü çoğu zaman basın toplantısı bittiğinde belli olur."
         ]
       },
       {
-        "heading": "Türkiye'deki yatırımcı için ek boyut",
+        "heading": "Enflasyon verisi kararın habercisidir",
         "paragraphs": [
-          "Fed kararları yalnızca ons altını değil dolar/TL kurunu da etkiler. Şahin bir Fed doları küresel olarak güçlendirir, bu da gelişmekte olan ülke paralarına baskı yapar.",
-          "Sonuç, gram altın açısından iki karşıt etkidir: ons altın düşer, dolar/TL yükselir. Hangisinin baskın çıkacağı önceden bilinmez.",
-          "Bu yüzden Fed günlerinde \"altın düştü\" haberi Türkiye'de her zaman gram altının düştüğü anlamına gelmez. İki grafiği ayrı okumak gerekir."
+          "FED kararının kendisi bir sonuçtur; o sonucu üreten şey büyük ölçüde enflasyon verisidir. Bu yüzden aylık enflasyon açıklamaları, karar gününden önce beklentiyi şekillendirerek altını dolaylı olarak hareket ettirir.",
+          "Manşet enflasyon yerine çekirdek enflasyona bakılmasının sebebi de budur: enerji ve gıda kalemleri kısa vadede sert oynadığı için manşet rakam gürültülüdür, çekirdek ise politikayı belirleyen eğilimi daha iyi gösterir.",
+          "Pratik sonuç: enflasyon verisi beklentiyi değiştirdiği anda altın hareket eder; karar günü geldiğinde o hareketin bir kısmı çoktan olmuştur."
         ]
       },
       {
-        "heading": "Veri günlerinde ne yapmamalı",
+        "heading": "Bu zincir modelin girdilerinde nerede duruyor",
         "paragraphs": [
-          "Veri açıklandıktan sonraki ilk dakikalarda alım satım yapmak, makasın en geniş olduğu ana denk gelir. Likidite geçici olarak incelir ve fiyat hızla salınır.",
-          "İlk tepkiyi trend sanmak da yaygın bir hatadır. Hareketin kalıcı olup olmadığı genellikle seans sonuna doğru belirginleşir.",
-          "Modelin ölçülmüş karnesi burada gerçekçi bir çerçeve verir: 7 günlük vadede ortalama yanılma yüzde 2,32'dir. Yani bir veri günündeki hareketin bir hafta sonra nerede olacağı, model açısından bile geniş bir aralıktır."
+          "FED kararının altına etkisi doğrudan değildir; reel faiz, tahvil getirileri ve dolar üzerinden geçer. Bu ara halkalar modelin girdileri arasındadır: 10 ve 2 yıllık tahvil getirileri, enflasyona endeksli tahvilden türeyen reel faiz, enflasyon beklentisi, getiri eğrisi ve dolar endeksi.",
+          "Panelin parametre katkısı bölümü, o günkü tahmine hangi göstergenin ne kadar katkı verdiğini dolar cinsinden gösterir. Yani \"FED kararı altını nasıl etkiledi\" sorusunun o güne ait sayısal karşılığını okuyabilirsiniz.",
+          "Bir ayrıntı önemli: çekirdek enflasyon aylık yayımlandığı için iki yayın arasında sabit kalır. Sabit kalan bir girdinin tahmine katkı vermesi yanıltıcı olur, bu yüzden 15 işlem günü boyunca hiç değişmeyen makro girdiler tahmin anında eğitim ortalamasına çekilir ve yanıtta bildirilir."
+        ],
+        "table": {
+          "caption": "FED zincirinin modeldeki karşılıkları",
+          "columns": [
+            "Halka",
+            "Modeldeki girdi",
+            "Ne ölçer"
+          ],
+          "rows": [
+            [
+              "Politika faizi",
+              "2 yıllık tahvil getirisi",
+              "Piyasanın kısa vadeli faiz beklentisi"
+            ],
+            [
+              "Faiz beklentisi",
+              "Getiri eğrisi (10y − 2y)",
+              "Beklenen politika yönü"
+            ],
+            [
+              "Reel getiri",
+              "10 yıllık reel faiz",
+              "Altını tutmanın fırsat maliyeti"
+            ],
+            [
+              "Enflasyon beklentisi",
+              "20 günlük breakeven değişimi",
+              "Fiyatlanan enflasyon"
+            ],
+            [
+              "Dolar",
+              "Dolar endeksi ve 5 günlük değişimi",
+              "Fiyatlama biriminin gücü"
+            ]
+          ]
+        }
+      },
+      {
+        "heading": "Karar gününde yapılan dört hata",
+        "paragraphs": [
+          "Karar günleri, oynaklığın en yüksek ve kararların en aceleci olduğu günlerdir. Aşağıdakiler ölçülebilir maliyeti olan yaygın hatalardır.",
+          "Özellikle ilk madde önemli: açıklamadan sonraki ilk dakikalarda alış-satış makası genişler, yani aynı işlem normal bir günden pahalıya gelir."
+        ],
+        "list": {
+          "items": [
+            "Açıklamanın ilk dakikalarında işlem yapmak — makas genişler, maliyet artar.",
+            "Karar metnindeki ilk hareketi günün sonucu sanmak; basın toplantısı henüz başlamamıştır.",
+            "Manşet enflasyona bakıp çekirdeği atlamak.",
+            "Beklentiyi bilmeden gerçekleşen rakamı yorumlamak."
+          ]
+        }
+      },
+      {
+        "heading": "Kararı okurken sorulacak üç soru",
+        "paragraphs": [
+          "Birincisi: piyasa ne bekliyordu ve gerçekleşen bundan ne kadar saptı? Sapma yoksa büyük hareket beklemek için sebep yoktur.",
+          "İkincisi: metnin ileriye dönük dili sertleşti mi yumuşadı mı? Faizin bugünkü seviyesinden çok, bundan sonrasına dair sinyal fiyatlanır.",
+          "Üçüncüsü: bu değişiklik reel faizi hangi yöne itiyor? Altına etki bu halkadan geçtiği için, zincirin ortasını atlayıp doğrudan sonuç çıkarmak çoğu yanlış yorumun kaynağıdır.",
+          "Bu üç soruya cevap verebiliyorsanız, karar günü hareketini yorumlamak için haber başlıklarına ihtiyacınız kalmaz."
         ]
       }
-    ],
-    "points": [
-      "Zincir şudur: enflasyon verisi → faiz beklentisi → reel faiz → altın.",
-      "Fiyat verinin kendisine değil, beklentiden sapmasına tepki verir.",
-      "Çekirdek enflasyon manşetten daha belirleyicidir; politika kararı ona bakar.",
-      "Fed günlerinde oynaklık iki aşamalıdır: karar metni ve basın toplantısı.",
-      "İlk tepki sıklıkla tersine döner; hareket seans sonuna doğru netleşir.",
-      "Fed kararı hem ons altını hem dolar/TL kurunu etkiler; gram altında iki etki çarpışır."
     ],
     "faq": [
       {
-        "q": "FED faiz artırırsa altın düşer mi?",
-        "a": "Genellikle evet, ama otomatik değil. Belirleyici olan artışın beklenip beklenmediğidir. Beklenen bir artış zaten fiyatlanmıştır; hareket ancak beklentiden sapma olduğunda gelir."
+        "q": "FED faiz kararı altını nasıl etkiler?",
+        "a": "Doğrudan değil, reel faiz ve dolar üzerinden. Ayrıca fiyatlanan şey kararın kendisi değil beklentiden sapmasıdır; beklenen karar çıkarsa büyük hareket olmayabilir."
       },
       {
-        "q": "Enflasyon yükselince altın neden düşebiliyor?",
-        "a": "Çünkü yüksek enflasyon merkez bankasını daha şahin yapar. Nominal faiz enflasyon beklentisinden hızlı artarsa reel faiz yükselir ve altın baskılanır."
+        "q": "FED tutanakları altını nasıl etkiler?",
+        "a": "Tutanaklar karardan yaklaşık üç hafta sonra gelir ve kurul içindeki görüş ayrılığını gösterir. Bölünmüş bir kurul, yönlendirmenin sanıldığı kadar sağlam olmadığı anlamına gelir ve fiyat bunu düzeltir."
       },
       {
-        "q": "Çekirdek enflasyon neden daha önemli?",
-        "a": "Gıda ve enerjiyi dışarıda bıraktığı için fiyat artışının kalıcı eğilimini gösterir. Merkez bankaları politika kararlarını ağırlıklı olarak çekirdek veriye bakarak alır."
+        "q": "FED faiz artırırsa altın kesin düşer mi?",
+        "a": "Hayır. Artış beklenenden küçükse ya da metnin dili bundan sonrası için yumuşaksa altın yükselebilir. Yön, sapmanın işaretine bağlıdır."
       },
       {
-        "q": "Hangi ABD verileri altını en çok etkiler?",
-        "a": "Tüketici enflasyonu (özellikle çekirdek), tarım dışı istihdam ve Fed faiz kararı ile toplantı tutanakları. Hepsi faiz patikası beklentisini doğrudan değiştirir."
+        "q": "FED kararı piyasaları nasıl etkiler?",
+        "a": "Aynı mekanizma tüm varlıklarda çalışır: beklentiden sapma faiz beklentisini, o da tahvil getirilerini ve doları hareket ettirir. Altın bu zincirin sonunda yer alır."
       },
       {
-        "q": "Fed toplantısı günü ne olur?",
-        "a": "Oynaklık iki aşamada artar: önce karar metni, sonra başkanın basın toplantısı. İlk tepki çoğu zaman kalıcı olmaz ve ton belirginleştikçe tersine dönebilir."
+        "q": "Karar günü fiyat neden iki kez hareket ediyor?",
+        "a": "Önce karar metni fiyatlanır, yaklaşık yarım saat sonra basın toplantısı başlar. Soru cevap bölümü metnin yarattığı fiyatlamayı tersine çevirebilir; günün yönü çoğu zaman toplantı bitince belli olur."
       },
       {
-        "q": "Fed kararı gram altını nasıl etkiler?",
-        "a": "İki karşıt kanaldan. Şahin bir Fed ons altını düşürürken doları güçlendirip dolar/TL kurunu yükseltir. Hangisinin baskın çıkacağı önceden bilinmez; iki grafiği ayrı okumak gerekir."
+        "q": "Karar gününde işlem yapmalı mıyım?",
+        "a": "Açıklamanın ilk dakikaları en pahalı andır; alış-satış makası genişler ve aynı işlem normal bir günden fazlaya mal olur. Acele etmemek ölçülebilir bir tasarruftur."
       },
       {
-        "q": "Veri açıklandığı anda işlem yapmalı mıyım?",
-        "a": "İlk dakikalar makasın en geniş, likiditenin en ince olduğu andır. Bu site alım satım tavsiyesi vermez; söyleyebileceğimiz, o anın maliyet açısından en elverişsiz an olduğudur."
+        "q": "Enflasyon verisi ile FED kararı arasındaki ilişki ne?",
+        "a": "Enflasyon kararı üreten girdidir. Veri beklentiyi değiştirdiği anda altın hareket eder; karar günü geldiğinde hareketin bir kısmı çoktan olmuştur."
       },
       {
-        "q": "Faiz indirimi bekleniyorsa altın şimdiden yükselir mi?",
-        "a": "Genellikle evet. Piyasa beklentiyi önceden fiyatlar; altın indirim gerçekleşmeden haftalar önce hareket etmeye başlayabilir ve indirim açıklandığında tepki sınırlı kalır."
+        "q": "FED kararının o günkü etkisini sayısal olarak görebilir miyim?",
+        "a": "Panelin parametre katkısı bölümü, tahmine hangi göstergenin ne kadar katkı verdiğini dolar cinsinden gösterir. Tahvil getirileri, reel faiz, getiri eğrisi ve dolar endeksi orada ayrı satırlardır."
       }
-    ],
-    "category": "Fiyatı Etkileyen Faktörler",
-    "panel": "tahmine-parametre-katkisi"
+    ]
   },
   {
     "id": "merkez-bankalari-altin-alimi",

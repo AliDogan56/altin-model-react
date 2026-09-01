@@ -487,6 +487,13 @@ verisi (13–29 Ağustos, 16 gün, 44 tıklama, 1.161 gösterim, 132 sorgu) şun
   ve **konum 11,5** ile ilk sayfanın hemen altında, sıfır tıklamayla duruyordu ve sitede
   "yorum" kelimesini hedefleyen tek bir sayfa yoktu
 - Trafiğin **%76'sı mobil**, mobil TO masaüstünün iki katı (%4,21 / %2,48)
+- `enflasyon-fed-altin` **yerinde yeniden yazıldı** (id ve URL korundu, birikmiş konum
+  kaybolmasın diye). Sorguların tamamı "nasıl etkiler" kalıbında geliyordu; başlık ve
+  anahtar kelime o dile çevrildi. Asıl boşluk **tutanaklardı**: `fed tutanakları altını
+  nasıl etkiler` sorgusu konum **9,8**'de duruyordu ama sayfada tutanaklar hiç geçmiyordu.
+  Sayfa artık FED döngüsünü dört ayrı olay olarak ele alıyor (beklenti · karar metni ·
+  basın toplantısı · tutanaklar). Komşu makalelerle iş bölümü: onlar **mekanizmayı**
+  (reel faiz, dolar endeksi, enflasyon), bu sayfa **olayı** anlatır
 - **Uyarı:** 8 yeni gram/işçilik makalesi bu ölçümden sonra yayımlandı, indekslenmediler.
   Veri onların potansiyelini yanlışlamaz; ölçüm 3–4 hafta sonra tekrarlanmalı
 - Çözümleyici repoda: `tools/gsc_analiz.py`. GSC dışa aktarımını (ZIP ya da CSV) okuyup
