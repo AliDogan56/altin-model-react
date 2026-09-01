@@ -9,7 +9,7 @@
 .segmented button { border:0; background:transparent; color:var(--muted); padding:6px 9px; border-radius:6px; font-size:10px; font-weight:800; cursor:pointer; }
 .segmented button.active { background:var(--accent-surface); color:var(--on-accent); }
 .chart-wrap { margin-top:7px; }
-.market-snapshot { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; margin:13px 0 6px; }
+.market-snapshot { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:8px; margin:13px 0 6px; }
 .snapshot-card { display:grid; gap:5px; min-width:0; padding:11px 12px; border:1px solid var(--line);
   border-radius:11px; background:linear-gradient(145deg,var(--surface-2),var(--surface)); }
 .snapshot-card span { color:var(--muted); font-size:9px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
@@ -19,6 +19,13 @@
 .snapshot-card.support { border-left:3px solid var(--teal); }
 .snapshot-card.resistance-card { border-left:3px solid var(--red); }
 .snapshot-card.now { border-left:3px solid var(--blue); }
+/* Momentum kartı destek/direncin hemen yanında: söylediği şey tam olarak
+   "bu seviyeler kırılır mı". Kenarlık yönü kodlar — destek/direnç kartlarıyla
+   aynı renk dili; yönsüzken renk iddia edilmez. Mavi burada kullanılamaz,
+   "Şu anki fiyat" kartı onu almış. */
+.snapshot-card.momentum-card.up { border-left:3px solid var(--teal); }
+.snapshot-card.momentum-card.down { border-left:3px solid var(--red); }
+.snapshot-card.momentum-card.flat { border-left:3px solid var(--line-strong); }
 /* viewBox artık ölçülen piksel kutusuyla birebir aynı (ResizeObserver): ölçek 1,
    yani mektup kutusu (boş kenar) yok ve SVG içindeki punto ekranda göründüğü kadar.
    touch-action:pan-y — dikey sayfa kaydırma serbest, yatay sürükleme ve iki parmak

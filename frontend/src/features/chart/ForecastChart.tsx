@@ -115,6 +115,7 @@ function ForecastChart({
 
   const x = (i: number) => m.l + (i - visibleStart) / (visibleEnd - visibleStart) * plotW;
   const y = (v: number) => m.t + (domain.max - v) / (domain.max - domain.min) * plotH;
+  const inDomain = (v: number) => v >= domain.min && v <= domain.max;
   const line = (points: { i: number; v: number }[]) => points.map(d => `${x(d.i)},${y(d.v)}`).join(' ');
   const bandShape = `${future.map(d => `${x(d.i)},${y(d.hi)}`).join(' ')} `
     + `${[...future].reverse().map(d => `${x(d.i)},${y(d.lo)}`).join(' ')}`;
@@ -217,8 +218,7 @@ function ForecastChart({
             {/* Pivot seviyeleri: pivot kartındakiyle birebir aynı sayılar.
                 S1/R1 belirgin, S3/R3 daha soluk; her biri kendi adıyla etiketli. */}
             {levels.map(level => {
-              const inside = level.value >= domain.min && level.value <= domain.max;
-              if (!inside) return null;
+              if (!inDomain(level.value)) return null;
               const support = level.name.startsWith('S');
               const kind = level.name === 'P' ? 'pivot' : support ? 'sup' : 'res';
               const top = y(level.value * (1 + ZONE_HALF_WIDTH));

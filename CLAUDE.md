@@ -24,6 +24,8 @@ ilgili servise iletilir (`api-gateway/app/services/router_service.py`).
 | market | `GET /v1/market/xau` | xaus.com günlük OHLC, 300 sn önbellek, **yedek kaynaklı** |
 | market | `GET /v1/market/fred?id=` | FRED CSV (curl_cffi ile), 900 sn önbellek, son 800 gün |
 | market | `GET /v1/market/news` | Google News RSS, 10 başlık |
+| market | `GET /v1/market/xau/intraday` | Yahoo 5 günlük 5 dakikalık mumlar, 60 sn önbellek |
+| market | `GET /v1/market/xau/momentum` | gün içi momentum, seviye merdiveni ve kırılım gücü |
 | model | `GET /v1/features/latest` | **tahmin girdilerinin tek kaynağı** — eğitim setiyle birebir |
 | model | `POST /v1/predict` | `{price, features}` → getiri, bant, `feature_effects`, `weights`, `confident`, `clipped_features` |
 | model | `GET /v1/learning/metrics` | aktif model + katman dışı metrikler |
@@ -146,7 +148,7 @@ content/    tek kaynak: makaleler, panel özellikleri, parametre grupları, site
   zoom düğmeleri, dört efsane anahtarı, günlük tahmin tablosu (karne bölümü bunu
   çok daha geniş örneklemle yapıyor). Modelin geçmiş beklentisi tek bir anahtarla,
   varsayılan kapalı
-- **İki tema var, varsayılan aydınlık.** Palet `styles/_tokens.scss` içinde **55 token**
+- **İki tema var, varsayılan aydınlık.** Palet `styles/_tokens.scss` içinde **56 token**
   olarak tanımlı; aydınlık palet `:root`'ta, koyu palet `:root[data-theme="dark"]`'ta ve
   ikisi birebir aynı anahtarları taşır. Sistem tercihine göre otomatik geçiş **yok** —
   varsayılanın aydınlık olması ürün kararı. Seçim `localStorage['oaa-theme']`'de saklanır;
@@ -315,13 +317,116 @@ içinde ve **19 girdinin tamamını** kapsar; eskiden 14'lük bir liste vardı v
 (60 günlük zirveden düşüş) kartta hiç görünmüyordu. Dolar karşılığı 1$'ın altında kalan
 satırlar listelenmez ama toplamlara dahildir.
 
+## Gün içi momentum ve kırılım gücü
+
+`backend/market-service/app/services/momentum_service.py` (saf modül, I/O yok) +
+`frontend/src/features/momentum/MomentumSection.tsx`. Soru "fiyat çıkıyor mu iniyor mu"
+değil: **mevcut hareket ilk seviyeyi kırmaya yetiyor mu.**
+
+Girdi Yahoo'nun 5 günlük / 5 dakikalık mumları (`/v1/market/xau/intraday`), seviye
+merdiveni ise **günlük OHLC** serisinden kurulur.
+
+- **Sabit eşik yok.** Her gösterge o seansın mum getirisi standart sapması biriminde
+  işaretli bir sayıya çevrilir; aynı 10 dolarlık hareket sakin seansta güçlü,
+  çalkantılı seansta zayıf okunur. Kümeleme toleransı ve "seviye test ediliyor"
+  marjı da aynı sigmadan türer
+- Bileşen ağırlıkları eşik değil **editoryal tercih**: hız 0,25 · sürüklenme 0,20 ·
+  ivme 0,20 · hacim 0,15 · RSI 0,10 · MACD 0,10. Eksik bileşenin ağırlığı kalanlara
+  dağıtılır; hacim yoksa bu yanıtta `has_volume: false` olarak bildirilir
+- **Güç** = sinyalin büyüklüğü × göstergelerin hemfikirliği, lojistikle 0-100'e
+  sıkıştırılmış. **Yön** ayrı bir sorudur ve iki koşul ister: `|t| >= 1` **ve**
+  fiyatın kendisinin rastgele yürüyüşten sapması; sağlanmazsa `NEUTRAL`
+- **Sapma iki zaman ölçeğinden baskın olana bakar**: son bir saatlik *hız* ya da
+  seans açılışından beri biriken *sürüklenme*. Önce yalnız hıza bakılıyordu ve gün
+  boyu süren yavaş trendler görünmüyordu — ölçüldü (2026-09-01): son 1 saat
+  z = −0,83 iken seansın tamamı −96 $ ve z = −1,65, bölüm "yön yok" diyordu.
+  Sürüklenme n ile birikirken gürültü yalnız √n ile büyüdüğü için uzun pencere
+  aynı eşikte daha güçlü bir testtir; **duyarlılık eşik gevşetilerek değil, tahmin
+  edici güçlendirilerek** artırıldı. Aynı düzeltmeden sonra canlı veri
+  `NEUTRAL · 6` yerine `DOWN · 60` verdi. Seansta bir pencereden az mum varsa
+  sürüklenme hiç katılmaz
+- **Kırılım gücü** iki şeyin geometrik ortalaması: seviyeye *ulaşmak* (beklenen
+  hareket ÷ uzaklık, **1'de doyurulur**) ve onu kırmaya yetecek momentum
+
+### Ölçümle düzeltilen üç tasarım hatası
+
+1. **Gücü t istatistiğine bağlamak.** Bileşenler birlikte sıfıra çöktüğünde t yüksek
+   kalıyor ve çalkantılı seans sakin seanstan güçlü okunuyordu (72 > 63). Büyüklük ×
+   tutarlılığa geçince 3 < 51 oldu
+2. **Yalnız t'ye bakıp yön vermek.** Sürüklenmesiz seride küçük ama tutarlı bileşenler
+   t'yi 1'in üstüne çıkarıp sahte yön üretiyordu (hız 0,00 iken "UP"). `|hız| >= 1`
+   ikinci kapı olarak eklendi
+3. **Ham ulaşma oranı.** Fiyat seviyeye 0,2 sigma yakınken oran 88'e fırlıyor ve her şey
+   `STRONG` çıkıyordu. Oran 1'de doyuruldu; seviyenin dibinde olmak onu kırmak değildir
+4. **Yönü tek pencereye bağlamak.** Yalnız son bir saate bakılıyordu; gün boyu süren
+   trend görünmüyordu (yukarıdaki −96 $ örneği). Seans sürüklenmesi hem bileşen hem
+   yön kapısı olarak eklendi. Sahte yön üreten senaryolar korundu: sürüklenmesiz seri
+   ve aynı sürüklenmenin çalkantılı hâli hâlâ `NEUTRAL`; güç sıralaması
+   zayıf 48 < orta 77 < güçlü 93
+
+### Seviye merdiveni üç çerçeveden gelir
+
+İlk sürümde merdiven gün içi akışın **önceki seansından** türetiliyordu ve iki ayrı
+kusur veriyordu (2026-09-01'de ölçüldü):
+
+- Akışın önceki seansı **kırpık** geliyor: türetilen aralık 32,14 $, günlük mumun
+  gerçek aralığı 56,0 $. Seviyeler olduğu gibi yanlıştı (S2 4413,47 yerine 4380,30)
+- Fiyat merdivenin ucuna gelince bölüm **susuyordu**. Oysa bir sonraki anlamlı seviye
+  vardı: haftalık S2 4314,50 ve 14 Ağustos salınım dibi 4315,00
+
+Artık pivotlar **günlük mumdan** hesaplanır ve üç çerçeve tek merdivende birleşir:
+günlük pivotlar, **haftalık** pivotlar (hafta cumartesi girince tamamlanmış sayılır —
+pivot kartıyla aynı kural) ve son 40 günün **salınım tepe/dipleri** (iki komşusunu aşan
+fraktal). Birbirine tolerans kadar yakın seviyeler tek seviyede toplanır ve kaç kaynağın
+oraya işaret ettiği `sources` ile bildirilir — yukarıdaki 4314,75 iki kaynak taşır,
+yani teyitlidir. Devam eden günün mumu merdivene **girmez**.
+
+### Üzerinde durulan seviye hedef değildir
+
+Kullanıcı bildirdi: gösterilen seviye çoktan kırılmıştı. Fiyat bir seviyenin gürültü
+kadar yakınındaysa o seviye "kırılacak" değil **test ediliyor** demektir. Bu yüzden
+`support`/`resistance`/`breakout` bu marjın içindeki seviyeleri **atlar** ve hedef bir
+sonraki gerçek seviye olur; temas edilen seviye ayrıca `touching` alanında döner ve
+arayüzde ayrı bir not olarak yazılır.
+
+### Arayüz
+
+- Bölüm "Ayrıntılar" içinde `Collapsible`; panel özelliği `altin-momentum-gucu`,
+  çapa `feature-momentum`. `altin-destek-direnc` rehberi (başlığı zaten "Destek, Direnç
+  ve Momentum") buraya bağlanır
+- **Momentum grafiğe çizilmez.** Hedef ve test edilen seviye grafikte mavi çizgi-nokta
+  deseniyle işaretlenmişti; pivot merdiveni zaten çizili olduğu için grafik kalabalıklaştı
+  ve geri alındı. Momentum artık grafiğin **altındaki özet kartlarda**, "Yukarıda ilk
+  direnç"in hemen yanında duruyor (`.snapshot-card.momentum-card`, dizgi 4 → 5 sütun;
+  mobilde 2 sütunda direnç kartıyla aynı satıra düşüyor). Kenarlık yönü kodlar:
+  yukarı yeşil, aşağı kırmızı, yönsüz nötr — mavi kullanılamaz, "Şu anki fiyat" kartı almış
+- **Seviyeler tek kaynaktan: panelin pivot merdiveni.** Hem özet kart hem Ayrıntılar'daki
+  momentum bölümü `pivotLadder`'ı ve kartların fiyatını kullanır; momentum servisi yalnız
+  **yön, güç, trend ve seansın beklenen hareketini** sağlar. Önce ikisi servisin kendi
+  merdivenini gösteriyordu ve aynı ekranda iki farklı "ilk direnç" çıkıyordu
+  (ölçüldü: kart $4.398 ↔ momentum hedefi $4.436)
+- **Hedef yönden çıkar**: yukarı yönlüyse *ilk direnç*, aşağı yönlüyse *ilk destek*;
+  `NEUTRAL` iken hedef verilmez — yön belirsizken "şu seviyeyi kırar" demek uydurma olur.
+  Seçim ve hesap `domain/momentum/breakPotential.ts` içinde, iki bileşen de oradan okur
+- **Hesap oransaldır.** Momentum gün içi vadeliden (Yahoo `GC=F`), kartlar spottan (Harem)
+  besleniyor; aradaki ~%1 seviye farkı ancak oranda sadeleşir. Testle sabit: fiyat
+  çerçevesi %0,95 ötelenince skor 10 ondalığa kadar değişmiyor. Formül servisinkiyle
+  aynı — doyurulmuş ulaşma × güç, geometrik ortalama
+- Servisin `support`/`resistance`/`touching`/`breakout`/`ladder` alanları API'de duruyor
+  ama **arayüz onları kullanmaz**; istemci (`services/api/momentum.ts`) yalnız momentum
+  büyüklüklerini çevirir
+- Etiket sözlüğü tek kaynakta: `content/momentum.ts` (`DIRECTION`, `TREND`, `BREAK`,
+  `BREAK_SHORT`); hem momentum bölümü hem özet kart oradan okur
+- Yanıt `services/api/momentum.ts` → `parseMomentum` ile doğrulanır; bozuk şema `null`
+  döner ve bölüm hiç görünmez. Kullanılmayan seviye alanları bozuk gelse bölüm yine ayakta
+
 ## SEO
 
-- 30 rehber makalesi (`data/seo-articles.json`), 10 panel özelliği (`data/panel-features.json`),
+- 30 rehber makalesi (`data/seo-articles.json`), 11 panel özelliği (`data/panel-features.json`),
   4 kurumsal sayfa (`data/site-pages.json`: hakkımızda, yazar, iletişim, gizlilik)
-- `scripts/generate-seo-pages.mjs` build sonrası: 30 rehber + `/rehber` dizini + 10 panel
+- `scripts/generate-seo-pages.mjs` build sonrası: 30 rehber + `/rehber` dizini + 11 panel
   sayfası + `/panel` dizini + 4 kurumsal sayfa + ön render edilmiş anasayfa +
-  **47 URL'lik sitemap**
+  **48 URL'lik sitemap**
 - **Güven sayfaları (E-E-A-T).** YMYL kategorisinde Google'ın aradığı sinyaller sitede hiç
   yoktu. Dört sayfa `SitePageView` şablonuyla render edilir, ön render edilir ve her ön
   render edilmiş footer'dan (`LEGAL` sabiti) linklenir. Article şemasının `author`'ı artık
@@ -358,8 +463,8 @@ satırlar listelenmez ama toplamlara dahildir.
 ## Test
 
 ```
-frontend: 13 dosya, 85 test (vitest: domain + lib + app/routes + services)
-backend : model-service 23 test (pytest)
+frontend: 18 dosya, 145 test (vitest: domain + lib + app/routes + services)
+backend : model-service 46 test, market-service 48 test (pytest)
 ```
 
 Vitest bu Node sürümünde `.bin/vitest` sarmalayıcısıyla çalışmıyor:

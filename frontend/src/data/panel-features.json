@@ -88,5 +88,14 @@
     "seoTitle": "Altın İşlem Bölgeleri",
     "summary": "Modelin güven bandından türetilen örnek alım, kâr alma ve risk kesme bölgeleri ile risk yüzdesine göre pozisyon büyüklüğü.",
     "intro": "Bu bölüm modelin bir aylık tahmin bandını alır ve bandın alt-üst uçlarından örnek seviyeler türetir. Gösterilen bölgeler bir işlem önerisi değildir; yalnız bandın pratikte hangi fiyat aralıklarına denk geldiğini görünür kılar. Pozisyon hesabı, belirlediğiniz portföy büyüklüğü ve risk yüzdesine göre örnek bir miktar üretir."
+  },
+  {
+    "slug": "altin-momentum-gucu",
+    "anchor": "feature-momentum",
+    "collapsible": true,
+    "title": "Gün İçi Momentum ve Kırılım Gücü",
+    "seoTitle": "Ons Altın Gün İçi Momentum ve Kırılım Gücü",
+    "summary": "Ons altının gün içi hareketinin yönü, 0-100 arası momentum gücü ve ilk destek/direnci kırma ihtimali; eşikler seansın kendi oynaklığına göre uyarlanır.",
+    "intro": "Fiyatın yükselip düştüğünü görmek kolaydır; asıl soru mevcut hareketin bir seviyeyi kırmaya yetip yetmediğidir. Bu bölüm ons altının 5 dakikalık gün içi mumlarından hız, ivme, RSI, MACD ve hacim gücünü hesaplar, hepsini o seansın kendi dalgalanmasına bölerek 0-100 arası tek bir momentum skoruna indirir. Ardından günlük pivot merdivenindeki ilk destek ve direnci bulur ve seansın kalanında beklenen hareketin o seviyeyi kapatmaya yetip yetmediğini ölçer. Sabit eşik yoktur: aynı dolar hareketi sakin bir seansta güçlü, çalkantılı bir seansta zayıf okunur."
   }
 ]

@@ -3,6 +3,7 @@ import { model } from '../../data/artifact';
 import type { Candle } from '../../domain/indicators';
 import type { FeatureMap } from '../../domain/model/types';
 import { fetchNews, fetchXauHistory, type NewsArticle } from '../../services/api/market';
+import { fetchMomentum, type Momentum } from '../../services/api/momentum';
 import { fetchLatestFeatures } from '../../services/api/model';
 import { fetchScorecard, type Scorecard } from '../../services/api/metrics';
 import { subscribeHarem } from '../../services/realtime/harem';
@@ -20,6 +21,7 @@ const STALE_AFTER_MS = 5 * 60 * 1000;
 export type MarketData = {
   live: FeatureMap; lastClose: number | null;
   history: [string, number][]; candles: Candle[]; news: NewsArticle[];
+  momentum: Momentum | null;
   status: Status; spot: SpotState; harem: RateState; usdTry: RateState;
   ziynet: Record<string, Quote>; haremTicks: Tick[];
   /** Modelin katman dışı karnesi; servis erişilemezse null. */
@@ -45,6 +47,8 @@ export const useMarketData = (): MarketData => {
   const [haremTicks, setHaremTicks] = useState<Tick[]>([]);
   const [scorecard, setScorecard] = useState<Scorecard | null>(null);
   const [featuresDate, setFeaturesDate] = useState<string | null>(null);
+  /* Gün içi momentum; 5 dakikalık mumlardan hesaplanır, piyasa servisinden gelir. */
+  const [momentum, setMomentum] = useState<Momentum | null>(null);
 
   const running = useRef(false);
   const lastFetchedAt = useRef(0);
@@ -77,7 +81,11 @@ export const useMarketData = (): MarketData => {
     /* Karne artefakttan değil servisten gelir; tarayıcıdaki nötr yedek onu üretemiyordu. */
     const karne = fetchScorecard().then(setScorecard).catch(() => setScorecard(null));
     const headlines = fetchNews().then(setNews);
+    /* Seans yeni başladıysa servis 503 verir; bu arıza değil, veri henüz
+       yetmiyor demektir. Bölüm o an gizlenir. */
+    const pulse = fetchMomentum().then(setMomentum).catch(() => setMomentum(null));
 
+    await pulse;
     const settled = await Promise.allSettled([gold, inputs, headlines]);
     await karne;
     setLive(v => ({ ...v, ...next }));
@@ -121,6 +129,6 @@ export const useMarketData = (): MarketData => {
   ), []);
 
   return useMemo(
-    () => ({ live, lastClose, history, candles, news, status, spot, harem, usdTry, ziynet, haremTicks, scorecard, featuresDate, refresh }),
-    [live, lastClose, history, candles, news, status, spot, harem, usdTry, ziynet, haremTicks, scorecard, featuresDate, refresh]);
+    () => ({ live, lastClose, history, candles, news, momentum, status, spot, harem, usdTry, ziynet, haremTicks, scorecard, featuresDate, refresh }),
+    [live, lastClose, history, candles, news, momentum, status, spot, harem, usdTry, ziynet, haremTicks, scorecard, featuresDate, refresh]);
 };

@@ -14,6 +14,7 @@ import { useFeatureFocus } from '../features/dashboard/useFeatureFocus';
 import ForecastCards from '../features/forecast/ForecastCards';
 import SeoContent from '../features/guides/SeoContent';
 import ImpactSection from '../features/impact/ImpactSection';
+import MomentumSection from '../features/momentum/MomentumSection';
 import IndicatorsSection from '../features/indicators/IndicatorsSection';
 import LoanSection from '../features/loan/LoanSection';
 import PivotSection from '../features/pivots/PivotSection';
@@ -51,6 +52,9 @@ function DashboardPage({ focus }: { focus?: string }) {
               </section>}
           <ErrorBoundary title="Grafik yüklenemedi"><ChartSection/></ErrorBoundary>
           <div className="section-label"><span>Ayrıntılar</span><small>Başlığa dokunarak açın</small></div>
+          {/* Momentum piyasa servisinden gelir; model servisine bağlı olmadığı için
+              `detailsBusy` ile kapatılmaz. */}
+          <ErrorBoundary title="Momentum bölümü yüklenemedi"><MomentumSection focus={focus}/></ErrorBoundary>
           {/* Servis çevrimdışıyken bu bölümler hiç gelmez; sonsuza kadar dönen
               bir spinner göstermek yanıltıcı olurdu, durumu yazıyoruz. */}
           {detailsBusy && (modelStatus==='fallback'

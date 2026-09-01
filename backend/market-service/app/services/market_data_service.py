@@ -19,6 +19,50 @@ XAU_PRIMARY_URL = "https://xaus.com/api/v1/history"
 # tutarlıdır (kaynak harmanlanmıyor).
 XAU_FALLBACK_URL = ("https://query1.finance.yahoo.com/v8/finance/chart/GC=F"
                     "?range=5y&interval=1d")
+# Gün içi seri: momentum ve kırılım gücü hesabının tek girdisi. Birincil kaynak
+# yalnız günlük veriyor; 5 dakikalık mumlar **hacimle birlikte** yalnız burada.
+# 5 günlük pencere, bir önceki seansın kapanışını ve gün içi oynaklık
+# referansını da kapsar.
+XAU_INTRADAY_URL = ("https://query1.finance.yahoo.com/v8/finance/chart/GC=F"
+                    "?range=5d&interval=5m")
+
+
+def yahoo_to_bars(payload: dict) -> list[dict]:
+    """Yahoo gün içi yanıtını `t/o/h/l/c/v` mumlarına çevirir.
+
+    Eksik mumlar (seans dışı boş kutular) atlanır. Hacim kaynakta bazen 0 ya da
+    None gelir; alan korunur ve tüketiciye hacmin gerçekten var olup olmadığını
+    ayırt etme imkânı bırakılır.
+    """
+    results = (payload.get("chart") or {}).get("result") or []
+    if not results:
+        raise httpx.RequestError("Gün içi altın kaynağı beklenen gövdeyi döndürmedi")
+    result = results[0]
+    quote = ((result.get("indicators") or {}).get("quote") or [{}])[0]
+    volumes = quote.get("volume") or []
+    bars = []
+    for index, stamp in enumerate(result.get("timestamp") or []):
+        close = _at(quote.get("close"), index)
+        high, low, opened = (_at(quote.get("high"), index), _at(quote.get("low"), index),
+                             _at(quote.get("open"), index))
+        if close is None or high is None or low is None:
+            continue
+        volume = _at(volumes, index)
+        bars.append({
+            "t": datetime.fromtimestamp(stamp, timezone.utc).isoformat(),
+            "o": round(float(opened if opened is not None else close), 2),
+            "h": round(float(high), 2), "l": round(float(low), 2),
+            "c": round(float(close), 2),
+            "v": int(volume) if volume else 0,
+        })
+    if not bars:
+        raise httpx.RequestError("Gün içi altın kaynağında kullanılabilir mum yok")
+    bars.sort(key=lambda bar: bar["t"])
+    return bars
+
+
+def _at(values, index):
+    return values[index] if values and index < len(values) else None
 
 
 def yahoo_to_points(payload: dict) -> dict:
@@ -74,6 +118,16 @@ class MarketDataService:
         except (httpx.HTTPError, TimeoutError) as error:
             log.warning("Birincil altın kaynağı erişilemedi (%s); yedeğe düşülüyor", error)
             return yahoo_to_points(await self._get("xau-fallback", XAU_FALLBACK_URL, 300))
+
+    async def xau_intraday(self) -> dict:
+        """5 dakikalık gün içi mumlar; momentum hesabının veri kaynağı.
+
+        Önbellek 60 sn: mum aralığı 5 dakika olduğu için daha sık çekmek yeni
+        bilgi getirmez, kaynağı gereksiz yorar.
+        """
+        bars = yahoo_to_bars(await self._get("xau-intraday", XAU_INTRADAY_URL, 60))
+        return {"symbol": "XAUUSD", "interval": "5m", "source": "yahoo:GC=F",
+                "bars": bars, "count": len(bars)}
 
     async def fred_series(self, series_id: str) -> str:
         safe_id = re.sub(r"[^A-Z0-9_]", "", series_id.upper())

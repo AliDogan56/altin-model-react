@@ -1,5 +1,7 @@
 import { useMinVisible } from '../../app/useMinVisible';
 import Spinner from '../../components/Spinner';
+import { BREAK_SHORT, DIRECTION } from '../../content/momentum';
+import { breakPotential, momentumTarget } from '../../domain/momentum/breakPotential';
 import { featureBy } from '../../content/panel';
 import { money, pct } from '../../lib/format';
 import { useState } from 'react';
@@ -12,7 +14,7 @@ function ChartSection() {
   const {
     history, candles, spot, harem, rangeDays, setRangeDays, horizonDays, setHorizonDays,
     showOrigin, setShowOrigin, forecast, originForecast, modelStatus, confident,
-    pivotLadder, pivotPeriod,
+    pivotLadder, pivotPeriod, momentum,
   } = useDashboard();
 
   const price = harem.satis || spot.price;
@@ -35,6 +37,20 @@ function ChartSection() {
   const support = items.find(i => !i.above);              // fiyatın hemen altı
   const periodLabel = pivotPeriod === 'monthly' ? 'Aylık' : 'Haftalık';
   const away = (level: number) => level / price - 1;
+
+  /* Momentumun hedefi komşu kartın seviyesidir: yukarı yönlüyse ilk direnç,
+     aşağı yönlüyse ilk destek. Aynı seçim Ayrıntılar'daki momentum bölümünde de
+     kullanılır — seçim `domain/momentum` içinde, iki yerde ayrı yazılmaz.
+     Hesap oransal: momentum gün içi vadeliden, kartlar spottan besleniyor ve
+     aradaki ~%1 seviye farkı ancak oranda sadeleşir. */
+  const pulseHedef = momentum ? momentumTarget(momentum.direction, support, resistance) : null;
+  const pulseGuc = momentum && pulseHedef
+    ? breakPotential(pulseHedef.level.value, price,
+        momentum.session.expectedMove / momentum.price, momentum.strength)
+    : null;
+  const pulse = pulseHedef && pulseGuc
+    ? { baslik: pulseHedef.side === 'resistance' ? 'İlk direnci' : 'İlk desteği', guc: pulseGuc }
+    : null;
 
   return (
     <section id="feature-grafik" className="panel block chart-block">
@@ -96,6 +112,22 @@ function ChartSection() {
             ? `${resistance.name} · +${pct(away(resistance.value))} uzakta`
             : 'Fiyat tüm seviyelerin üzerinde'}</small>
         </article>
+        {/* Gün içi momentum, **komşu kartların** seviyesinden bahseder: yukarı
+            yönlüyse üstteki direnci, aşağı yönlüyse alttaki desteği kırma gücü.
+            Momentum servisinin kendi merdiveni daha geniş (günlük + haftalık +
+            salınım) ve başka bir seviye seçebiliyor; kartın komşusundan farklı
+            bir sayı söylemesi kafa karıştırıyordu. */}
+        {momentum && (
+          <article className={`snapshot-card momentum-card ${DIRECTION[momentum.direction].tone}`}>
+            <span>Gün içi momentum</span>
+            <strong>{DIRECTION[momentum.direction].label} · {momentum.strength}</strong>
+            <small>{pulse
+              ? `${pulse.baslik} kırma gücü: ${BREAK_SHORT[pulse.guc.strength].toUpperCase()}`
+              : momentum.direction === 'NEUTRAL'
+                ? 'Yön belirginleşmeden seviye hedefi verilmiyor'
+                : 'Bu yönde gösterilen seviye yok'}</small>
+          </article>
+        )}
         <article className="snapshot-card target">
           <span>{horizonDays} gün sonrası</span>
           <strong>{available ? money(target) : '—'}</strong>
