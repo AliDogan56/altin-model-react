@@ -4792,5 +4792,1328 @@
     ],
     "category": "Alım Satım Rehberi",
     "panel": "altin-fiyat-grafigi"
+  },
+  {
+    "id": "gram-altin-tahmini",
+    "keyword": "gram altın tahmini",
+    "title": "Gram Altın Tahmini Nasıl Yapılır?",
+    "seoTitle": "Gram Altın Tahmini",
+    "updated": "2026-09-01",
+    "category": "Gram Altın ve Kur",
+    "panel": "altin-tl-getirisi",
+    "summary": "Gram altın tahmini tek değil iki tahmin gerektirir: ons altın ve dolar kuru. İkisini ayırmadan verilen gram hedeflerinin neden ölçülemediğini anlatıyoruz.",
+    "intro": "Gram altın tahmini arayan çoğu kişi tek bir sayı bekler. Oysa gram altın fiyatı iki ayrı piyasanın çarpımıdır: ons altının dolar fiyatı ve dolar/TL kuru. Bir gram hedefi vermek, aslında iki tahmini birden vermek demektir ve bu iki tahminin isabeti ayrı ayrı ölçülmedikçe ortaya çıkan rakam denetlenemez. Bu yazıda gram tahmininin nasıl kurulduğunu, nerede ölçülebilir olduğunu ve hangi noktada spekülasyona döndüğünü anlatıyoruz.",
+    "points": [
+      "Gram altın fiyatı ons ve kurun çarpımıdır; gram tahmini iki tahmin gerektirir.",
+      "Bu sitedeki model yalnızca ons altını (XAU/USD) tahmin eder, kuru tahmin etmez.",
+      "Modelin 30 günlük yön isabeti 529 bağımsız günde %72,6 olarak ölçüldü.",
+      "Kur tahmini eklenmeden verilen gram hedefinin hata payı ölçülemez.",
+      "Doğru kullanım: ons tahminini alıp kuru senaryo olarak değiştirmek.",
+      "İki belirsizlik çarpıldığı için gram bandı ons bandından her zaman geniştir."
+    ],
+    "sections": [
+      {
+        "heading": "Gram altın tahmini neden iki tahmindir",
+        "paragraphs": [
+          "Gram altının TL fiyatı, ons altının dolar fiyatı ile dolar/TL kurunun çarpımından ve sabit bir bölenden oluşur. Bu bir yorum değil, tanım gereği böyledir: uluslararası piyasada altın dolar cinsinden ons olarak fiyatlanır, Türkiye'de ise lira cinsinden gram olarak alınır.",
+          "Bunun doğrudan sonucu şudur: gram altının yarın nerede olacağını söylemek için hem ons altının hem de kurun yarın nerede olacağını söylemek gerekir. Bu iki soru birbirinden bağımsızdır ve farklı dinamikleri vardır. Ons altını Fed faizi, reel getiri ve dolar endeksi sürükler; kuru ise yurt içi para politikası ve dış denge belirler.",
+          "Tek bir gram rakamı veren içerik, bu iki tahmini birleştirmiş ama genellikle hangisinden ne kadar geldiğini söylememiştir. Rakam tutmadığında hangi ayağın yanıldığı da anlaşılamaz."
+        ],
+        "table": {
+          "caption": "Gram tahminini oluşturan iki bileşen",
+          "columns": [
+            "Bileşen",
+            "Neyi ölçer",
+            "Bu sitede durumu"
+          ],
+          "rows": [
+            [
+              "Ons altın (XAU/USD)",
+              "Uluslararası altın talebi ve reel faiz",
+              "Modelleniyor, isabeti ölçülüyor"
+            ],
+            [
+              "Dolar/TL kuru",
+              "Yurt içi para politikası ve dış denge",
+              "Modellenmiyor, canlı değeri gösteriliyor"
+            ],
+            [
+              "Sabit bölen (31,1035)",
+              "Ons–gram birim çevrimi",
+              "Değişmez"
+            ]
+          ]
+        }
+      },
+      {
+        "heading": "Bu sitede hangi yarısı ölçülüyor",
+        "paragraphs": [
+          "Buradaki model yalnızca ons altını tahmin eder. Girdilerinin tamamı uluslararası serilerdir: tahvil getirileri, reel faiz, dolar endeksi, enflasyon beklentisi, oynaklık endeksi ve petrol. Kur bu girdilerin arasında yoktur ve modelin çıktısı da kur içermez.",
+          "Bunun bilinçli bir tercih olmasının sebebi ölçülebilirlik. Ons tahmininin isabeti, modelin hiç görmediği günler üzerinde ölçülür ve sayı olarak yayımlanır. Kur için böyle bir ölçüm yapılmadığı sürece, kur eklenmiş bir gram tahmininin hata payı hakkında dürüstçe söylenebilecek hiçbir şey yoktur.",
+          "Panelin TL getirisi bölümü tam da bu ayrımı korur: ons tahminini alır, kuru bugünkü değeriyle sabit tutar ve sonucu TL cinsinden gösterir. Böylece rakamın hangi kısmının ölçüldüğü bellidir."
+        ],
+        "list": {
+          "items": [
+            "Modelin tahmin ettiği: ons altının 7, 14 ve 30 günlük getirisi.",
+            "Modelin tahmin etmediği: dolar/TL kurunun yönü.",
+            "Panelde gördüğünüz TL rakamı: ölçülmüş ons tahmini + bugünkü kur."
+          ]
+        }
+      },
+      {
+        "heading": "Ons tarafının isabeti ne kadar",
+        "paragraphs": [
+          "Tahminin denetlenebilir yarısının karnesi açık. Her vade için modelin hiç görmediği günlerde ortalama yanılma, yönü doğru bilme oranı ve basit bir kurala göre üstünlüğü ölçülür. Bu üçüncü sütun önemlidir: \"hiç tahmin etme, fiyat aynı kalır de\" kuralını yenemeyen bir model pratikte bilgi taşımıyor demektir.",
+          "Aşağıdaki sayılar sitenin canlı ölçüm ucundan gelir ve model her yeniden eğitildiğinde güncellenir. Sabit bir pazarlama rakamı değildir."
+        ],
+        "table": {
+          "caption": "Ons tahmininin katman dışı karnesi",
+          "columns": [
+            "Vade",
+            "Ortalama yanılma",
+            "Yönü bilme",
+            "Basit kurala üstünlük",
+            "Ölçülen gün"
+          ],
+          "rows": [
+            [
+              "7 gün",
+              "%2,39",
+              "%60,3",
+              "%2,5",
+              "537"
+            ],
+            [
+              "14 gün",
+              "%3,17",
+              "%61,7",
+              "%1,3",
+              "535"
+            ],
+            [
+              "30 gün",
+              "%4,41",
+              "%72,6",
+              "%21,3",
+              "529"
+            ]
+          ]
+        }
+      },
+      {
+        "heading": "Kur eklenince belirsizlik neden büyür",
+        "paragraphs": [
+          "İki belirsiz sayıyı çarptığınızda sonucun belirsizliği ikisinden de büyük olur. Ons tahmininin 30 günlük bandı yaklaşık artı eksi yüzde yedidir. Kur için benzer bir bant eklendiğinde gram bandı bu ikisinin bileşimi kadar genişler.",
+          "Pratikte bu şu demektir: ons için \"yüzde üç artar, artı eksi yedi\" diyebilen bir model, gram için çok daha geniş bir aralık söylemek zorundadır. Dar bir gram aralığı gören okuyucunun ilk sorusu, kur belirsizliğinin nereye gittiği olmalıdır.",
+          "Bu yüzden gram tarafında tek sayı yerine senaryo tablosu kullanmak daha dürüsttür. Kuru bir varsayım olarak açıkça yazmak, onu sessizce tahmine gömmekten iyidir."
+        ]
+      },
+      {
+        "heading": "Gram tahmini yerine kurulabilecek doğru soru",
+        "paragraphs": [
+          "\"Gram altın ne olur\" sorusunu ölçülebilir hale getirmenin yolu onu ikiye bölmektir. Önce ons tarafına ölçülmüş tahmini koyarsınız, sonra kuru kendi varsayımınızla değiştirirsiniz. Ortaya çıkan şey bir kehanet değil, kendi varsayımınızın sonucudur ve sorumluluğu nettir.",
+          "Bu yaklaşımın pratik faydası şu: kur beklentiniz değiştiğinde tüm hesabı yeniden yapmanız gerekmez, sadece tek bir sayıyı değiştirirsiniz. Ons tarafı ölçülmüş haliyle yerinde durur."
+        ],
+        "list": {
+          "ordered": true,
+          "items": [
+            "Modelin ons getirisini ve belirsizlik bandını alın.",
+            "Kur için kendi varsayımınızı yazın; tahmin değil varsayım olduğunu kabul edin.",
+            "İkisini çarpıp gram karşılığını çıkarın.",
+            "Kur varsayımını yukarı ve aşağı oynatıp sonucun ne kadar değiştiğine bakın."
+          ]
+        }
+      },
+      {
+        "heading": "Yaygın üç hata",
+        "paragraphs": [
+          "Birincisi, gram hedefini ons hedefiyle karıştırmak. Ons yatay kalsa bile kur hareket ederse gram değişir; bu durumda altın \"yükseldi\" demek yanıltıcıdır çünkü uluslararası değeri sabittir.",
+          "İkincisi, geçmiş gram getirisine bakıp modelin isabetini değerlendirmek. Geçmiş gram getirisinin içinde kur da vardır ve model kuru hiç tahmin etmemiştir. Modeli gram üzerinden yargılamak, ölçmediği bir işten sorumlu tutmaktır.",
+          "Üçüncüsü, farklı tarihlerdeki gram fiyatlarını doğrudan karşılaştırmak. Aradaki fark ons kaynaklı mı kur kaynaklı mı ayrılmadıkça bu karşılaştırma bir şey söylemez."
+        ]
+      },
+      {
+        "heading": "Gram tahminini nasıl okumalı",
+        "paragraphs": [
+          "Bir gram altın tahminiyle karşılaştığınızda sorulacak üç soru var: kur için hangi varsayım kullanıldı, ons tarafının isabeti daha önce ölçüldü mü, ve verilen aralık ne kadar geniş. Bu üçüne cevap veremeyen bir tahmin, sayı gibi görünen bir görüştür.",
+          "Buradaki panel bu üç soruya açıkça cevap verir: kur bugünkü değeriyle sabittir, ons tarafının karnesi yayımlanır ve belirsizlik bandı her vadede gösterilir. Kalan kısım sizin kur varsayımınızdır ve o kısmı sizin adınıza uydurmuyoruz."
+        ]
+      }
+    ],
+    "faq": [
+      {
+        "q": "Gram altın tahmini ons altın tahmininden neden farklı?",
+        "a": "Gram fiyatı ons ile kurun çarpımıdır. Ons tahmini tek bir piyasayı, gram tahmini iki piyasayı birden öngörmeyi gerektirir. Bu yüzden gram tahmininin belirsizliği her zaman daha büyüktür."
+      },
+      {
+        "q": "Bu sitede gram altın için sayısal hedef veriliyor mu?",
+        "a": "Hayır. Model yalnız ons altını tahmin eder. Panelde gördüğünüz TL karşılığı, ölçülmüş ons tahmininin bugünkü kurla çevrilmiş halidir; kur için bir tahmin içermez."
+      },
+      {
+        "q": "Kur sabit tutulursa tahmin yanlış olmaz mı?",
+        "a": "Yanlış değil, eksiktir ve bu eksiklik açıkça bildirilir. Kuru sabit tutmak, sonucun tamamen ons hareketinden geldiğini garanti eder; kur beklentinizi kendiniz ekleyebilirsiniz."
+      },
+      {
+        "q": "Modelin ons tahmini gram için ne kadar işe yarar?",
+        "a": "Gram hareketinin altın kaynaklı kısmını verir. Uzun vadede gram getirisinin önemli bölümü kurdan gelebilir, ancak altının kendi değer hareketini görmek için ons tarafı gereklidir."
+      },
+      {
+        "q": "Neden kur da modellenmiyor?",
+        "a": "Kur tahmini ayrı bir problem ve ayrı bir veri seti gerektirir. Ölçülmemiş bir kur modelini mevcut karneye eklemek, yayımlanan isabet sayılarını anlamsız hale getirirdi."
+      },
+      {
+        "q": "Gram altın tahmini için hangi vade en anlamlı?",
+        "a": "Ons tarafında en yüksek ölçülen üstünlük 30 günlük vadededir; yön isabeti 529 günde %72,6 çıkmıştır. Daha kısa vadelerde modelin basit kurala üstünlüğü belirgin biçimde azalır."
+      },
+      {
+        "q": "Gram altın bandı neden ons bandından geniş olmalı?",
+        "a": "İki belirsiz büyüklük çarpıldığında sonucun belirsizliği ikisinin bileşimi kadar olur. Ons bandı kadar dar bir gram bandı gören okuyucu, kur riskinin hesaba katılmadığından şüphelenmelidir."
+      },
+      {
+        "q": "Kendi gram tahminimi nasıl kurarım?",
+        "a": "Modelin ons getirisini alın, kur için kendi varsayımınızı yazın, ikisini çarpın. Ardından kur varsayımını yukarı ve aşağı oynatıp sonucun ne kadar kaydığına bakın; asıl bilgi bu duyarlılıktadır."
+      }
+    ]
+  },
+  {
+    "id": "gram-altin-ons-mu-kur-mu",
+    "keyword": "gram altın neden yükseldi ons mu kur mu",
+    "title": "Gram Altın Yükseldi: Ons mu Kur mu İtti?",
+    "seoTitle": "Gram Altını Ons mu Kur mu Yükseltti",
+    "updated": "2026-09-01",
+    "category": "Gram Altın ve Kur",
+    "panel": "altin-tl-getirisi",
+    "summary": "Gram altındaki her hareket ikiye ayrılabilir: altının kendi değeri ve kur. Ayrıştırmanın formülü, örnek hesabı ve kararınızı neden değiştirdiği.",
+    "intro": "Gram altın yükseldiğinde iki farklı şey olmuş olabilir: altın gerçekten değerlenmiştir ya da lira değer kaybetmiştir. İkisi tamamen farklı anlamlar taşır ama ekranda aynı görünür. Bu yazı, gram altındaki bir hareketi ons katkısı ve kur katkısı olarak nasıl ayıracağınızı, hesabın neden çarpımsal olduğunu ve bu ayrımın alım satım kararınızı nasıl değiştirdiğini anlatıyor.",
+    "points": [
+      "Gram getirisi, ons getirisi ile kur getirisinin çarpımıdır; toplamı değil.",
+      "Ons sabitken gram yükseliyorsa kazanç altından değil kurdan gelmiştir.",
+      "Ayrıştırma tek satırlık bir hesaptır ve iki tarihin verisi yeterlidir.",
+      "Kur kaynaklı yükseliş, altının uluslararası değerini artırmaz.",
+      "Dövizle karşılaştırma yaparken yalnız ons tarafı anlamlıdır.",
+      "İki katkı ters yönde olabilir; gram yatayken ikisi birbirini götürüyor olabilir."
+    ],
+    "sections": [
+      {
+        "heading": "Hareketi ikiye ayıran formül",
+        "paragraphs": [
+          "Gram altın fiyatı ons fiyatı ile kurun çarpımından türediği için, yüzde değişimleri de çarpımsal birleşir. Gram getirisi artı bir, ons getirisi artı bir ile kur getirisi artı birin çarpımına eşittir. Küçük hareketlerde bu neredeyse toplama benzer, ama hareket büyüdükçe iki katkının çarpımından gelen ek bir terim ortaya çıkar.",
+          "Pratikte iki tarih arasındaki ons fiyatını ve kuru bilmek yeterlidir. Her biri için yüzde değişimi hesaplar, sonra hangisinin daha büyük olduğuna bakarsınız. Sonuç, gram altındaki hareketin ne kadarının altından ne kadarının kurdan geldiğini söyler.",
+          "Bu hesap bir tahmin değildir; geçmişe dönük, kesin ve tartışmasızdır. Yine de çoğu fiyat sayfası bunu yapmaz ve okuyucu iki farklı olayı tek bir rakamın arkasında görür."
+        ]
+      },
+      {
+        "heading": "Örnek: aynı gram artışı, iki farklı hikâye",
+        "paragraphs": [
+          "Aşağıdaki tabloda gram altının yüzde beş yükseldiği üç ayrı senaryo var. Gram tarafındaki sonuç üçünde de aynı, ama arkasındaki olay tamamen farklı. Birinci satırda altın gerçekten değerlenmiş, üçüncü satırda ise altın dolar bazında gerilerken lira daha hızlı değer kaybetmiştir.",
+          "Üçüncü satır özellikle önemlidir: gram altın kazandırmış görünür ama altın uluslararası piyasada ucuzlamıştır. Dövizle ya da başka bir varlıkla karşılaştırma yapan biri için bu ayrım kararı tersine çevirebilir."
+        ],
+        "table": {
+          "caption": "Yüzde 5 gram artışının üç farklı kaynağı",
+          "columns": [
+            "Senaryo",
+            "Ons değişimi",
+            "Kur değişimi",
+            "Gram sonucu",
+            "Gerçekte ne oldu"
+          ],
+          "rows": [
+            [
+              "Altın kaynaklı",
+              "+%5,0",
+              "%0,0",
+              "+%5,0",
+              "Altın değerlendi"
+            ],
+            [
+              "Paylaşık",
+              "+%2,5",
+              "+%2,4",
+              "+%5,0",
+              "İkisi birlikte"
+            ],
+            [
+              "Kur kaynaklı",
+              "-%2,0",
+              "+%7,1",
+              "+%5,0",
+              "Altın ucuzladı, lira değer kaybetti"
+            ]
+          ]
+        }
+      },
+      {
+        "heading": "Neden toplama değil çarpma",
+        "paragraphs": [
+          "Yüzdeleri toplamak küçük hareketlerde kabul edilebilir bir yaklaşımdır ama büyük hareketlerde hata birikir. Ons yüzde on, kur yüzde on arttıysa gram yüzde yirmi değil yüzde yirmi bir artar; aradaki fark iki katkının birbirini büyütmesinden gelir.",
+          "Türkiye koşullarında yıllık bazda her iki bileşen de çift haneli olabildiği için bu fark ihmal edilebilir değildir. Uzun dönemli getirileri toplayarak hesaplayan bir tablo, gram getirisini sistematik olarak eksik gösterir."
+        ]
+      },
+      {
+        "heading": "İki katkı ters yöne gittiğinde",
+        "paragraphs": [
+          "En kafa karıştırıcı durum, gram altının yatay durmasıdır. Bu çoğu zaman hiçbir şey olmadığı anlamına gelmez; ons düşerken kurun yükselmesi ya da tersi, iki hareketin birbirini götürmesi demektir.",
+          "Böyle günlerde \"altın durgun\" demek yanlış olur. Uluslararası piyasada belirgin bir hareket olmuş, ama TL cinsinden sonuç sıfıra yakın çıkmıştır. Bu ayrımı görmek, bir sonraki hareketin hangi taraftan geleceğini düşünmek için gereklidir.",
+          "Panelin ons grafiği ile TL getirisi bölümünü yan yana okumak bu durumu görünür kılar; biri hareketliyken diğeri yatay olabilir."
+        ]
+      },
+      {
+        "heading": "Ayrıştırma kararınızı nasıl değiştirir",
+        "paragraphs": [
+          "Amacınız enflasyona ve kur riskine karşı korunmaksa, gram getirisinin kur kaynaklı olması sizin için sorun değildir; koruma zaten çalışmıştır. Ama amacınız altının kendi değer artışından kazanmaksa, kur kaynaklı bir yükseliş beklediğiniz şey değildir.",
+          "Aynı şekilde alım zamanlaması da değişir. Ons yüksek ama kur düşükken alınan altın, ons düşük kur yüksekken alınan altından farklı bir risk taşır. İkisinde de gram fiyatı aynı olabilir."
+        ],
+        "list": {
+          "items": [
+            "Kur korunması arıyorsanız: kur katkısı işinizi görmüştür.",
+            "Altının değer artışını arıyorsanız: yalnız ons katkısına bakın.",
+            "Başka varlıklarla karşılaştırıyorsanız: karşılaştırmayı ons üzerinden yapın.",
+            "Gram yatayken bile iki bileşenin ayrı ayrı hareket etmiş olabileceğini unutmayın."
+          ]
+        }
+      },
+      {
+        "heading": "Ayrıştırmayı kendiniz yapmak",
+        "paragraphs": [
+          "İki tarih seçin. Her tarih için ons altın fiyatını ve dolar/TL kurunu not edin. Her biri için yüzde değişimi bulun, sonra gram değişimini bu ikisinin çarpımsal birleşimiyle kontrol edin. Sonuç gramda gördüğünüz değişime çok yakın çıkmalıdır; küçük fark, ürünün milyem ve işçilik payından gelir.",
+          "Hesabın tutmadığı tek durum, farklı kaynaklardan alınmış fiyatlar kullanmaktır. Ons fiyatını bir yerden, kuru başka bir saatteki değerden almak sonucu bozar."
+        ],
+        "list": {
+          "ordered": true,
+          "items": [
+            "İki tarih için ons fiyatını yazın, yüzde değişimi bulun.",
+            "Aynı tarihler için kuru yazın, yüzde değişimi bulun.",
+            "İki değişimi çarpımsal birleştirin.",
+            "Sonucu gerçekleşen gram değişimiyle karşılaştırın."
+          ]
+        }
+      },
+      {
+        "heading": "Sık düşülen yanılgı",
+        "paragraphs": [
+          "\"Altın bu yıl yüzde kırk kazandırdı\" cümlesi Türkiye'de neredeyse her zaman gram üzerinden kurulur ve içinde kur vardır. Aynı dönemde altının dolar bazında getirisi çok daha düşük, hatta negatif olabilir.",
+          "Bu cümleyi kuran kişi yanlış söylemiyor olabilir; ama dinleyen, altının uluslararası piyasada bu kadar değerlendiğini sanır. Ayrıştırma, cümleyi doğru anlamanın tek yoludur."
+        ]
+      }
+    ],
+    "faq": [
+      {
+        "q": "Gram altın yükselirken altın gerçekten değerlenmiş olmayabilir mi?",
+        "a": "Evet. Ons fiyatı düşerken kur yeterince yükselirse gram altın artar. Bu durumda altın uluslararası piyasada ucuzlamış, lira ise daha hızlı değer kaybetmiştir."
+      },
+      {
+        "q": "Ons ve kur katkısı nasıl hesaplanır?",
+        "a": "İki tarih arasında ons fiyatının ve kurun yüzde değişimini ayrı ayrı bulun. Gram değişimi bu ikisinin çarpımsal birleşimidir; hangisinin büyük olduğu hareketin kaynağını gösterir."
+      },
+      {
+        "q": "Yüzdeleri toplasam olmaz mı?",
+        "a": "Küçük hareketlerde yaklaşık sonuç verir ama büyük hareketlerde eksik kalır. Ons ve kur onar puan arttığında gram yüzde yirmi değil yüzde yirmi bir artar."
+      },
+      {
+        "q": "Gram altın yatay kalmışsa hiçbir şey olmamış mıdır?",
+        "a": "Hayır. Ons düşerken kurun yükselmesi ikisinin birbirini götürmesi anlamına gelir. TL sonucu sıfır olsa da uluslararası tarafta belirgin bir hareket olmuş olabilir."
+      },
+      {
+        "q": "Altını başka yatırımlarla karşılaştırırken hangi seriyi kullanmalıyım?",
+        "a": "Karşılaştırma dövizli varlıklarlaysa ons tarafını kullanın. Gram getirisi kur etkisi taşıdığı için TL dışı varlıklarla doğrudan karşılaştırılamaz."
+      },
+      {
+        "q": "Hesabım gerçekleşen gram fiyatını neden tam tutmuyor?",
+        "a": "Aradaki küçük fark ürünün milyemi, işçilik payı ve alış-satış yönünden gelir. Fark yüzde birkaçı aşıyorsa muhtemelen farklı saatlere ait fiyatlar kullanılmıştır."
+      },
+      {
+        "q": "Bu ayrıştırma gelecek için bir şey söyler mi?",
+        "a": "Doğrudan söylemez; geçmişe dönük bir muhasebedir. Ama hangi bileşenin hareketi taşıdığını görmek, riskin nereden geldiğini anlamayı sağlar."
+      },
+      {
+        "q": "Panelde bu ayrımı nerede görebilirim?",
+        "a": "Ons grafiği altının kendi hareketini, TL getirisi bölümü ise kur dahil sonucu gösterir. İkisini yan yana okumak ayrıştırmanın görsel karşılığıdır."
+      }
+    ]
+  },
+  {
+    "id": "gram-altin-2026-senaryolari",
+    "keyword": "gram altın 2026 tahmini",
+    "title": "Gram Altın 2026: Hedef Değil Senaryo Tablosu",
+    "seoTitle": "Gram Altın 2026 Senaryoları",
+    "updated": "2026-09-01",
+    "category": "Gram Altın ve Kur",
+    "panel": "ons-altin-tahmini",
+    "summary": "2026 için tek bir gram altın rakamı vermiyoruz. Bunun yerine ons ve kur varsayımlarını açıkça yazan bir senaryo tablosu ve nasıl okunacağı burada.",
+    "intro": "Yıl sonu gram altın hedefleri her yıl yayımlanır ve aralarındaki fark çoğu zaman binlerce liradır. Bunun sebebi tahmincilerin beceriksizliği değil, sorunun yapısıdır: gram hedefi iki ayrı varsayım gerektirir ve bu varsayımlar genellikle yazılmaz. Biz tek rakam vermek yerine varsayımları görünür kılan bir tablo kuruyoruz ve tablonun neden bir tahmin olmadığını açıkça söylüyoruz.",
+    "points": [
+      "Uzun vadeli gram hedefi iki varsayım gerektirir ve ikisi de açıkça yazılmalıdır.",
+      "Senaryo tablosu tahmin değildir; aritmetiktir ve her satırı doğrulanabilir.",
+      "Bir yılda modelin ölçebildiği bağımsız gözlem sayısı çok azdır.",
+      "Ons tarafında ölçülmüş en uzun vade 30 gündür, bir yıl değil.",
+      "Tablo, kur varsayımı değiştiğinde sonucun ne kadar kaydığını gösterir.",
+      "Aynı gram sonucuna çok farklı ons–kur bileşimleriyle ulaşılabilir."
+    ],
+    "sections": [
+      {
+        "heading": "Neden tek bir 2026 rakamı vermiyoruz",
+        "paragraphs": [
+          "Bir yıl sonrası için gram altın hedefi vermek, hem altının hem kurun bir yıl sonraki seviyesini bilmeyi gerektirir. Bu iki tahminin de isabetini ölçmek gerekir ve bir yıllık vadede ölçüm neredeyse imkânsızdır: elinizde birbirinden bağımsız yalnızca birkaç yıl vardır.",
+          "Bu sitedeki modelin en uzun vadesi 30 gündür ve o vadenin isabeti 529 bağımsız gün üzerinde ölçülmüştür. Bir yıllık vadede aynı ölçümü yapmak için onlarca yıllık veri gerekirdi ve o veri de bugünkü para politikası rejimini yansıtmazdı.",
+          "Yayımlanmayan bir isabet oranıyla verilen hedef, denetlenemeyen bir görüştür. Onun yerine varsayımları görünür kılıyoruz."
+        ]
+      },
+      {
+        "heading": "Senaryo tablosu nasıl kurulur",
+        "paragraphs": [
+          "Tablo basit bir aritmetik üzerine oturur: gram fiyatı, ons fiyatı ile kurun çarpımının 31,1035'e bölümüdür. Satırlara ons seviyelerini, sütunlara kur seviyelerini yazarsınız; her hücre o bileşimin gram karşılığıdır.",
+          "Bu tablonun hiçbir hücresi tahmin değildir. Hepsi \"eğer öyle olursa, sonuç budur\" cümlesidir. Tahmin, hangi hücrenin gerçekleşeceğine dair kanaattir ve o kanaat sizindir."
+        ],
+        "table": {
+          "caption": "Ons ve kur bileşimlerine göre saf gram altın karşılığı (TL)",
+          "columns": [
+            "Ons / Kur",
+            "45 TL",
+            "50 TL",
+            "55 TL",
+            "60 TL"
+          ],
+          "rows": [
+            [
+              "3.800 $",
+              "5.498",
+              "6.109",
+              "6.720",
+              "7.331"
+            ],
+            [
+              "4.200 $",
+              "6.077",
+              "6.752",
+              "7.427",
+              "8.102"
+            ],
+            [
+              "4.600 $",
+              "6.655",
+              "7.395",
+              "8.134",
+              "8.874"
+            ],
+            [
+              "5.000 $",
+              "7.234",
+              "8.038",
+              "8.842",
+              "9.645"
+            ]
+          ]
+        }
+      },
+      {
+        "heading": "Tabloyu okumanın doğru yolu",
+        "paragraphs": [
+          "Tablodaki en öğretici şey hücrelerin kendisi değil, satır ve sütun boyunca ne kadar hızlı değiştikleridir. Ons sabitken kurun beş lira artması gram fiyatını yüzde onun üzerinde değiştirir. Aynı şekilde kur sabitken onsun dört yüz dolar artması da benzer büyüklükte bir etki yapar.",
+          "Bu, gram hedefinin kur varsayımına ne kadar duyarlı olduğunu gösterir. Bir yerde \"gram altın yıl sonunda şu olur\" cümlesini gördüğünüzde, o cümlenin arkasındaki kur varsayımını sorun; genellikle rakamın yarısından fazlasını o varsayım taşır.",
+          "Köşegen boyunca ilerlemek de öğreticidir: aynı gram sonucuna hem \"altın çok yükseldi, kur durdu\" hem de \"altın düştü, kur fırladı\" senaryolarıyla ulaşabilirsiniz. Sonuç aynı, anlam bambaşkadır."
+        ]
+      },
+      {
+        "heading": "Ölçülebilir olan kısım: 30 gün",
+        "paragraphs": [
+          "Yıllık hedef veremesek de kısa vadede ölçülmüş bir çıktımız var. Model 7, 14 ve 30 günlük ons getirisini tahmin eder ve isabeti hiç görmediği günler üzerinde ölçülür.",
+          "Bu tablo, yukarıdaki senaryo tablosundan farklı olarak bir iddiadır ve denetlenebilir. Model her yeniden eğitildiğinde sayılar güncellenir."
+        ],
+        "table": {
+          "caption": "Ölçülmüş vadeler ve isabetleri",
+          "columns": [
+            "Vade",
+            "Yönü bilme",
+            "Belirsizlik bandı",
+            "Ölçülen gün"
+          ],
+          "rows": [
+            [
+              "7 gün",
+              "%60,3",
+              "± %3,6",
+              "537"
+            ],
+            [
+              "14 gün",
+              "%61,7",
+              "± %4,9",
+              "535"
+            ],
+            [
+              "30 gün",
+              "%72,6",
+              "± %6,9",
+              "529"
+            ]
+          ]
+        }
+      },
+      {
+        "heading": "Uzun vade için yapılabilecekler",
+        "paragraphs": [
+          "Bir yıllık hedef yerine yapılabilecek şeyler var. Birincisi, senaryo aralığıyla çalışmak: en kötü ve en iyi hücreyi belirleyip kararınızın ikisinde de ayakta kalıp kalmadığına bakmak.",
+          "İkincisi, kararı vadeye değil koşula bağlamak. \"Yıl sonunda şu olursa\" yerine \"ons şu seviyeye gelirse şunu yaparım\" demek, ölçülemeyen bir tahmini beklemekten daha sağlamdır.",
+          "Üçüncüsü, alımı zamana yaymak. Tek bir tarihe bahse girmek yerine düzenli aralıklarla almak, hangi hücrenin gerçekleşeceğini bilme ihtiyacını büyük ölçüde ortadan kaldırır."
+        ],
+        "list": {
+          "items": [
+            "En kötü ve en iyi senaryoyu belirleyip kararınızı ikisine karşı sınayın.",
+            "Hedefi tarihe değil fiyat seviyesine bağlayın.",
+            "Alımı zamana yayarak tek bir tahmine bağımlılığı azaltın.",
+            "Kur varsayımınızı yazılı tutun ve değiştiğinde tabloyu yeniden okuyun."
+          ]
+        }
+      },
+      {
+        "heading": "Başka yerde gördüğünüz hedefi sınamak",
+        "paragraphs": [
+          "Bir gram hedefiyle karşılaştığınızda onu tabloya oturtun: bu rakama ulaşmak için ons ve kur nerede olmalı? Genellikle ima edilen kur varsayımı, hedefi verenin hiç söylemediği ve savunmadığı bir sayıdır.",
+          "İkinci sınama, hedefi verenin geçmiş isabetini sormaktır. Önceki yılların hedefleri ne oldu, tutmadıysa hangi bileşen yanıldı? Bu soruya cevap veren kaynak azdır ve cevap verenler ciddiye alınmayı hak eder."
+        ]
+      },
+      {
+        "heading": "Bu sayfanın söylemediği şey",
+        "paragraphs": [
+          "Bu sayfa 2026 için gram altının nerede olacağını söylemiyor ve söyleyecek bir dayanağı da yok. Söylediği şey, herhangi bir gram hedefinin hangi iki varsayımdan üretildiği ve o varsayımların sonucu ne kadar değiştirdiği.",
+          "Ölçülmüş kısım kısa vadeli ons tahminidir ve karnesi yukarıda açıkça duruyor. Geri kalan her şey senaryodur; kimin senaryosu olduğunu bilerek okumak, rakamın kendisinden daha değerlidir."
+        ]
+      }
+    ],
+    "faq": [
+      {
+        "q": "2026 için gram altın hedefi neden verilmiyor?",
+        "a": "Bir yıllık vadede tahminin isabetini ölçecek yeterli bağımsız gözlem yoktur. Ölçülemeyen bir hedef, denetlenemeyen bir görüştür; onun yerine varsayımları görünür kılan senaryo tablosu veriliyor."
+      },
+      {
+        "q": "Senaryo tablosu ile tahmin arasındaki fark nedir?",
+        "a": "Tablo aritmetiktir: her hücre \"ons şu, kur şu olursa gram budur\" der ve doğrulanabilir. Tahmin, hangi hücrenin gerçekleşeceğine dair kanaattir ve tablo o kanaati içermez."
+      },
+      {
+        "q": "Tabloda hangi bileşen sonucu daha çok değiştiriyor?",
+        "a": "İkisi de oransal olarak eşit etki eder; gram fiyatı her ikisiyle de doğru orantılıdır. Pratikte hangisinin daha çok oynadığı, o dönemde hangisinin daha oynak olduğuna bağlıdır."
+      },
+      {
+        "q": "Aynı gram rakamına farklı yollardan ulaşılabilir mi?",
+        "a": "Evet ve bu tablonun en önemli mesajıdır. \"Altın yükseldi, kur durdu\" ile \"altın düştü, kur fırladı\" aynı gram sonucunu verebilir; sonuç aynı olsa da anlamları zıttır."
+      },
+      {
+        "q": "Modelin 30 günlük tahmini yıllık hedef için kullanılabilir mi?",
+        "a": "Kullanılmamalıdır. 30 günlük getiriyi on iki kez üst üste koymak, ölçülmemiş bir varsayımdır ve hata payı her adımda birikir."
+      },
+      {
+        "q": "Uzun vadede ne yapmalı?",
+        "a": "Kararı tarihe değil fiyat seviyesine bağlamak ve alımı zamana yaymak, tek bir yıllık tahmine bağımlılığı azaltır. Bu, tahmin gerektirmeyen bir stratejidir."
+      },
+      {
+        "q": "Başka bir sitede gördüğüm hedefi nasıl sınarım?",
+        "a": "Hedefi tabloya oturtup ima edilen kur varsayımını çıkarın. O varsayım genellikle yazılmamıştır ve rakamın büyük kısmını o taşır."
+      },
+      {
+        "q": "Tablodaki sayılar hangi altına ait?",
+        "a": "Saf altının gram karşılığıdır. 22 ayar ürünlerde bu değeri milyem oranıyla, ziynet ürünlerinde ayrıca işçilik payıyla düzeltmeniz gerekir."
+      }
+    ]
+  },
+  {
+    "id": "dolar-yukselirken-gram-altin",
+    "keyword": "dolar yükselince altın ne olur",
+    "title": "Dolar Yükselirken Gram Altın Ne Yapar?",
+    "seoTitle": "Dolar Yükselince Gram Altın",
+    "updated": "2026-09-01",
+    "category": "Gram Altın ve Kur",
+    "panel": "altin-tl-getirisi",
+    "summary": "Dolar yükselince altın düşer denir ama Türkiye'de tam tersi olur. Dolar endeksi ile dolar/TL kurunun altına zıt etkisini örnekle açıklıyoruz.",
+    "intro": "\"Dolar yükselince altın düşer\" cümlesi doğrudur ama Türkiye'deki okuyucu için yanıltıcıdır. Çünkü iki farklı dolardan söz ediyoruz: dünya para birimleri karşısındaki dolar ve lira karşısındaki dolar. Birincisi ons altını aşağı çeker, ikincisi gram altını yukarı iter. Aynı gün ikisi birden olabilir ve sonuç kafa karıştırıcı görünür. Bu yazı iki mekanizmayı ayırıyor.",
+    "points": [
+      "Dolar endeksinin yükselmesi ons altını baskılar; bu uluslararası bir etkidir.",
+      "Dolar/TL kurunun yükselmesi gram altını doğrudan yukarı taşır.",
+      "İki etki zıt yönlüdür ve aynı anda çalışabilir.",
+      "Türkiye'de gram altının düşmesi için kurun da durması gerekir.",
+      "Model dolar endeksini girdi olarak kullanır, kuru kullanmaz.",
+      "\"Altın düştü\" haberi genellikle ons altını kasteder, gram altını değil."
+    ],
+    "sections": [
+      {
+        "heading": "İki farklı dolar, iki farklı etki",
+        "paragraphs": [
+          "Uluslararası piyasada altın dolarla fiyatlanır. Dolar diğer büyük para birimleri karşısında güçlendiğinde, aynı miktar altın için daha az dolar gerekir; ons altın fiyatı düşme eğilimine girer. Bu ilişki dolar endeksi üzerinden ölçülür ve modelin girdilerinden biridir.",
+          "Türkiye'de ise gram altın fiyatının içinde dolar/TL kuru vardır. Kur yükseldiğinde, ons altın hiç değişmese bile gram altın yükselir. Burada altınla ilgili bir şey olmamıştır; liranın değeri düşmüştür.",
+          "Bu iki mekanizmayı karıştırmak, en sık görülen yanlış anlamalardan biridir. \"Dolar arttı ama altın da arttı, bu nasıl oluyor\" sorusunun cevabı burada saklıdır."
+        ],
+        "table": {
+          "caption": "Hangi dolar neyi etkiler",
+          "columns": [
+            "Hareket",
+            "Ons altına etkisi",
+            "Gram altına etkisi",
+            "Mekanizma"
+          ],
+          "rows": [
+            [
+              "Dolar endeksi yükselir",
+              "Aşağı baskı",
+              "Dolaylı, aşağı",
+              "Altın diğer paralara göre pahalılaşır"
+            ],
+            [
+              "Dolar/TL yükselir",
+              "Etkisiz",
+              "Doğrudan yukarı",
+              "TL cinsinden çevrim büyür"
+            ],
+            [
+              "İkisi birlikte yükselir",
+              "Aşağı",
+              "Belirsiz",
+              "İki etki birbirini götürebilir"
+            ]
+          ]
+        }
+      },
+      {
+        "heading": "Aynı gün iki zıt haber",
+        "paragraphs": [
+          "Uluslararası ajanslar \"altın geriledi\" yazarken yurt içi ekranlarda gram altının rekor kırdığını görmek mümkündür. İkisi de doğrudur. Ons düşmüş, ama kur onu telafi edecek kadar yükselmiştir.",
+          "Bu durumun pratikte anlamı şudur: aynı gün, dolar tutan biri altında zarar ederken lira tutan biri kâr etmiş görünür. Kazancın kaynağı altın değil, liranın değer kaybıdır.",
+          "Haber başlıklarını okurken hangi seriden bahsedildiğini ayırt etmek bu yüzden önemlidir. Dolar cinsinden bir rakam görüyorsanız ons, lira cinsinden görüyorsanız gram konuşuluyordur."
+        ]
+      },
+      {
+        "heading": "Gram altının düşmesi için ne gerekir",
+        "paragraphs": [
+          "Gram altının gerilemesi için ya ons altının düşmesi ve kurun yerinde durması, ya da kurun gerilemesi gerekir. Kur uzun süre yatay kalmadığı dönemlerde gram altında kalıcı düşüş görmek zordur; ons düşüşleri kur tarafından yumuşatılır.",
+          "Bu asimetri, Türkiye'de altının neden \"hep yükseliyor\" gibi hissedildiğini açıklar. Altın uluslararası piyasada uzun süre yatay ya da aşağı gitse bile, kur yukarı gittiği sürece gram fiyatı artmaya devam eder.",
+          "Buradan çıkan sonuç önemlidir: gram altındaki artışın bir kısmı altının değerlenmesi değil, paranın değer kaybının ölçüsüdür."
+        ]
+      },
+      {
+        "heading": "Model bu ilişkinin neresinde",
+        "paragraphs": [
+          "Modelin girdileri arasında dolar endeksi vardır; yani uluslararası dolar gücünün ons altına etkisi ölçülen ve tahmine giren bir bilgidir. Dolar/TL kuru ise girdilerde yoktur ve modelin çıktısında da yer almaz.",
+          "Bu ayrım bilinçlidir. Model uluslararası altın fiyatını açıklamaya çalışır; yurt içi kur dinamiği tamamen farklı bir problemdir ve karıştırıldığında her ikisinin de ölçümü bozulur.",
+          "Panelin parametre katkısı bölümü, dolar endeksinin o günkü tahmine ne kadar etki ettiğini dolar cinsinden gösterir. Kur ise yalnızca TL çevriminde kullanılır."
+        ],
+        "list": {
+          "items": [
+            "Girdide olan: dolar endeksi ve 5 günlük değişimi.",
+            "Girdide olmayan: dolar/TL kuru.",
+            "Çıktıda olan: ons altının beklenen getirisi.",
+            "TL çevriminde kullanılan: bugünkü canlı kur, tahmin değil."
+          ]
+        }
+      },
+      {
+        "heading": "Karar verirken ne işe yarar",
+        "paragraphs": [
+          "Altını kur riskine karşı koruma olarak tutuyorsanız, kur kaynaklı yükseliş tam olarak beklediğiniz şeydir ve ons tarafındaki zayıflık sizi rahatsız etmemelidir.",
+          "Altını uluslararası bir varlık olarak, değer artışı için tutuyorsanız ons tarafına bakmanız gerekir. Gram fiyatındaki artışa sevinmek, koruma amacınız yoksa yanıltıcı bir memnuniyet olabilir.",
+          "İki amacı aynı anda taşımak da mümkündür, ama hangi kısmın hangi amaca hizmet ettiğini ayırmadan performans değerlendirmesi yapılamaz."
+        ]
+      },
+      {
+        "heading": "Sık sorulan durum: ikisi birden yükseldiğinde",
+        "paragraphs": [
+          "Dolar endeksi ve dolar/TL aynı anda yükseldiğinde gram altının yönü baştan belli değildir. Ons üzerindeki aşağı baskı ile kurdan gelen yukarı itiş yarışır ve hangisinin baskın olduğu o günkü büyüklüklere bağlıdır.",
+          "Böyle günlerde gram altının yatay kalması bir durgunluk işareti değil, iki güçlü hareketin birbirini götürmesidir. Ayrıştırma yapmadan bu durum görünmez."
+        ]
+      },
+      {
+        "heading": "Özetle ne izlemeli",
+        "paragraphs": [
+          "Altının kendi hikâyesini izlemek istiyorsanız ons altını ve dolar endeksini takip edin. TL cinsinden sonucunuzu izlemek istiyorsanız gram altını takip edin, ama getiriyi değerlendirirken içindeki kur payını ayırın.",
+          "İkisini aynı ekranda görmek en sağlıklısıdır: biri size altının ne yaptığını, diğeri cebinizde ne olduğunu söyler ve ikisi sık sık farklı şeyler anlatır."
+        ]
+      }
+    ],
+    "faq": [
+      {
+        "q": "Dolar yükselince altın düşer mi?",
+        "a": "Dolar endeksi yükselince ons altın baskılanır. Ama dolar/TL yükselince gram altın artar. Hangi doları kastettiğinize göre cevap değişir."
+      },
+      {
+        "q": "Dolar da altın da aynı gün nasıl artabiliyor?",
+        "a": "Dolar/TL yükselirken ons altın yatay veya hafif aşağı olabilir. Kurdan gelen çarpan etkisi ons zayıflığını aşarsa gram altın yükselir."
+      },
+      {
+        "q": "Gram altının düşmesi için ne olması gerekir?",
+        "a": "Ya ons altının düşüp kurun yerinde durması ya da kurun gerilemesi gerekir. Kur yukarı gittiği sürece ons düşüşleri gram tarafında büyük ölçüde yumuşar."
+      },
+      {
+        "q": "Model dolar/TL kurunu kullanıyor mu?",
+        "a": "Girdi olarak kullanmaz. Modelin girdilerinde dolar endeksi vardır; dolar/TL yalnızca tahmini TL'ye çevirirken bugünkü değeriyle kullanılır."
+      },
+      {
+        "q": "Dolar endeksi ile dolar/TL arasında ilişki yok mu?",
+        "a": "Dolaylı bir ilişki olabilir ama ikisi farklı şeyleri ölçer. Dolar endeksi doların dünya paraları karşısındaki gücünü, dolar/TL ise liranın dolara karşı değerini gösterir."
+      },
+      {
+        "q": "Haberde 'altın düştü' yazıyorsa hangisi kastediliyor?",
+        "a": "Uluslararası kaynaklarda neredeyse her zaman ons altın kastedilir. Yurt içi ekranlardaki gram fiyatı aynı gün artmış olabilir."
+      },
+      {
+        "q": "Kur kaynaklı artış kötü bir şey mi?",
+        "a": "Amacınıza bağlı. Kur riskine karşı korunuyorsanız koruma çalışmıştır. Altının kendi değer artışını arıyorsanız beklediğiniz şey bu değildir."
+      },
+      {
+        "q": "İki etkinin hangisinin baskın olduğunu nasıl görürüm?",
+        "a": "Ons ve kurun aynı dönemdeki yüzde değişimlerini ayrı ayrı hesaplayın. Büyük olan hareketi taşımıştır; ikisi zıt yönlüyse fark kadarı gram fiyatına yansır."
+      }
+    ]
+  },
+  {
+    "id": "22-ayar-bilezik-hesaplama",
+    "keyword": "22 ayar bilezik hesaplama",
+    "title": "22 Ayar Bilezik Fiyatı Nasıl Hesaplanır?",
+    "seoTitle": "22 Ayar Bilezik Hesaplama",
+    "updated": "2026-09-01",
+    "category": "Hesaplama ve İşçilik",
+    "panel": "ziynet-altin-fiyatlari",
+    "summary": "22 ayar bileziğin fiyatı iki parçadan oluşur: içindeki saf altın ve işçilik. İkisini canlı ons fiyatından ayıran hesap ve karşılaştırma yöntemi.",
+    "intro": "22 ayar bilezik alırken ödediğiniz rakamın tamamı altın değildir. Fiyatın bir kısmı bileziğin içindeki saf altının piyasa değeri, kalanı ise işçilik ve satıcı payıdır. Bu ikisini ayırmak, aynı bileziği iki kuyumcuda karşılaştırmanın tek dürüst yoludur. Bu yazıda hesabı adım adım kuruyor ve canlı verinin işçilik payını nasıl ortaya çıkardığını gösteriyoruz.",
+    "points": [
+      "22 ayar altının saflığı binde 916'dır; 1 gram bilezikte 0,916 gram saf altın vardır.",
+      "Ham altın değeri = ons fiyatı × kur ÷ 31,1035 × saf gram.",
+      "İşçilik payı = ödediğiniz fiyat eksi ham altın değeri.",
+      "Panelde ölçülen işçilik payı ziynet ürünlerinde yüzde 1 ile 2 arasında.",
+      "İşçiliği yüzde olarak ifade etmek, kuyumcu karşılaştırmasını mümkün kılar.",
+      "Bilezik satarken işçiliğin büyük kısmını geri alamazsınız."
+    ],
+    "sections": [
+      {
+        "heading": "Bileziğin içinde ne kadar altın var",
+        "paragraphs": [
+          "22 ayar, 24 birimlik saflık ölçeğinde 22 birim altın demektir. Ondalık karşılığı binde 916'dır. Yani 20 gramlık bir 22 ayar bilezikte yaklaşık 18,3 gram saf altın bulunur; kalan kısım dayanıklılık için eklenen alaşımdır.",
+          "Bu ayrım hesabın tamamını belirler. Bileziğin gram ağırlığı üzerinden yapılan hesap fiyatı olduğundan yüksek gösterir; doğru hesap saf altın miktarı üzerinden yapılır.",
+          "Ziynet ürünlerinde de aynı milyem geçerlidir. Çeyrek altın 1,75 gram gelir ama içinde 1,603 gram saf altın vardır."
+        ],
+        "table": {
+          "caption": "Ürünlerin gram ağırlığı ve saf altın içeriği",
+          "columns": [
+            "Ürün",
+            "Toplam gram",
+            "Milyem",
+            "Saf altın (gram)"
+          ],
+          "rows": [
+            [
+              "Gram altın",
+              "1,000",
+              "0,995",
+              "0,995"
+            ],
+            [
+              "22 ayar gram",
+              "1,000",
+              "0,916",
+              "0,916"
+            ],
+            [
+              "Çeyrek (yeni)",
+              "1,750",
+              "0,916",
+              "1,603"
+            ],
+            [
+              "Yarım (yeni)",
+              "3,500",
+              "0,916",
+              "3,206"
+            ],
+            [
+              "Tam (yeni)",
+              "7,000",
+              "0,916",
+              "6,412"
+            ],
+            [
+              "Yeni Ata",
+              "7,216",
+              "0,916",
+              "6,610"
+            ]
+          ]
+        }
+      },
+      {
+        "heading": "Adım adım hesap",
+        "paragraphs": [
+          "Hesap üç adımdır ve her adımda kullandığınız sayının nereden geldiğini bilmeniz gerekir. Ons fiyatı ve kur canlı verilerdir; bileziğin gramı ve milyemi ise üründe sabittir.",
+          "Sonuçta elde ettiğiniz rakam, bileziğin içindeki altının o andaki piyasa değeridir. Kuyumcunun istediği fiyat bunun üzerinde olacaktır; aradaki fark işçilik ve satıcı payıdır."
+        ],
+        "list": {
+          "ordered": true,
+          "items": [
+            "Saf gramı bulun: bilezik gramı × 0,916.",
+            "Saf altının gram fiyatını bulun: ons fiyatı × kur ÷ 31,1035.",
+            "İkisini çarpın; sonuç bileziğin ham altın değeridir.",
+            "Kuyumcu fiyatından bu değeri çıkarın; kalan işçilik payıdır."
+          ]
+        }
+      },
+      {
+        "heading": "İşçiliği yüzdeye çevirmek",
+        "paragraphs": [
+          "İşçiliği lira olarak bilmek tek başına yeterli değildir, çünkü ağır bileziklerde tutar doğal olarak büyük çıkar. Karşılaştırma yapabilmek için işçiliği ham altın değerine oranlamak gerekir.",
+          "Bu oran, farklı gramajdaki bilezikleri ve farklı kuyumcuları aynı ölçekte kıyaslamanızı sağlar. On gramlık bir bilezikte yüzde üç işçilik ile yirmi gramlıkta yüzde üç işçilik aynı pahalılıktadır, tutar iki katı olsa bile.",
+          "Panel bu oranı canlı veriden hesaplayarak gösterir. Ölçülen değerler gram altında yüzde 0,1 civarında kalırken ziynet ürünlerinde yüzde 1 ile 2 arasına çıkar; işlenmiş takılarda oran daha da yükselir."
+        ]
+      },
+      {
+        "heading": "Neden bilezik gram altından pahalı",
+        "paragraphs": [
+          "Bilezik bir üründür; dökümü, işlenmesi, damgası ve vitrinde durması maliyetlidir. Gram altın ise standart bir külçedir ve işlem maliyeti çok daha düşüktür. Bu yüzden aynı miktar saf altın için bilezikte daha fazla ödersiniz.",
+          "Fark tasarımın karmaşıklığıyla büyür. Düz burma bir bilezikte işçilik payı görece düşükken, taşlı ya da ince işlenmiş modellerde belirgin biçimde artar.",
+          "Buradaki asıl soru işçiliğin var olması değil, ne kadar olduğudur. Ölçmeden ödemek, pazarlık yapabileceğiniz tek kalemi görmezden gelmek demektir."
+        ]
+      },
+      {
+        "heading": "Satarken ne oluyor",
+        "paragraphs": [
+          "Bileziği sattığınızda kuyumcu size çoğunlukla içindeki saf altının değerini öder; işçiliğin büyük kısmını geri alamazsınız. Bu, bileziğin kötü bir ürün olduğu anlamına gelmez ama alırken ödediğiniz işçiliğin bir maliyet olduğunu kabul etmek gerekir.",
+          "Bu yüzden bileziği takı olarak mı yoksa birikim olarak mı aldığınız önemlidir. Birikim amacı ağır basıyorsa, aynı parayla daha fazla saf altın veren ürünler daha verimlidir."
+        ]
+      },
+      {
+        "heading": "İki kuyumcuyu doğru karşılaştırmak",
+        "paragraphs": [
+          "İki vitrin fiyatını doğrudan karşılaştırmak yanıltıcıdır çünkü bilezikler farklı gramda olabilir. Karşılaştırmayı işçilik oranı üzerinden yapmak gerekir: her ikisi için ham altın değerini hesaplayıp fiyattan çıkarın, sonra orana çevirin.",
+          "Aynı anda bakmak da önemlidir. Altın fiyatı gün içinde hareket ettiği için, sabah aldığınız teklifle öğleden sonraki teklifi karşılaştırmak farkın bir kısmını piyasadan getirir."
+        ],
+        "list": {
+          "items": [
+            "İki teklifi de aynı gün ve mümkünse aynı saatte alın.",
+            "Her biri için saf gram üzerinden ham değeri hesaplayın.",
+            "Farkı ham değere oranlayıp yüzdeye çevirin.",
+            "Pazarlığı toplam fiyat üzerinden değil işçilik payı üzerinden yapın."
+          ]
+        }
+      },
+      {
+        "heading": "Hesabı bozan noktalar",
+        "paragraphs": [
+          "En sık hata, gram ağırlığını saf altın gibi kullanmaktır; bu, bileziğin altın içeriğini yüzde dokuz kadar fazla gösterir. İkinci hata, alış fiyatıyla satış fiyatını karıştırmaktır: kuyumcunun size sattığı fiyat ile sizden aldığı fiyat farklıdır.",
+          "Üçüncüsü, eski ve yeni ziynet ürünlerinin gramajlarını karıştırmaktır. Eski tarihli çeyrek altınlar daha ağırdır ve saf altın içerikleri de farklıdır."
+        ]
+      }
+    ],
+    "faq": [
+      {
+        "q": "22 ayar bilezikte kaç gram saf altın var?",
+        "a": "Bileziğin gram ağırlığının 0,916 katı kadar. 20 gramlık bir bilezikte yaklaşık 18,3 gram saf altın bulunur, kalanı alaşımdır."
+      },
+      {
+        "q": "Bileziğin ham altın değerini nasıl bulurum?",
+        "a": "Saf gramı bulun, sonra ons fiyatını kurla çarpıp 31,1035'e bölerek saf gram fiyatını hesaplayın. İkisini çarpınca bileziğin içindeki altının piyasa değeri çıkar."
+      },
+      {
+        "q": "İşçilik payı ne kadar olursa normaldir?",
+        "a": "Panelde ölçülen değerler ziynet ürünlerinde yüzde 1 ile 2 arasında kalır. İşlenmiş bileziklerde oran daha yüksektir; asıl mesele oranı bilerek pazarlık edebilmektir."
+      },
+      {
+        "q": "İşçiliği neden yüzde olarak hesaplamalıyım?",
+        "a": "Lira tutarı bileziğin ağırlığıyla büyür ve farklı gramajları karşılaştırmanızı engeller. Oran, on gramlık ile yirmi gramlık bileziği aynı ölçekte kıyaslamanızı sağlar."
+      },
+      {
+        "q": "Bileziği satarken işçiliği geri alabilir miyim?",
+        "a": "Genellikle alamazsınız. Satışta size çoğunlukla içindeki saf altının karşılığı ödenir; işçilik alım anında üstlenilen bir maliyettir."
+      },
+      {
+        "q": "Neden aynı gramda iki bilezik farklı fiyatlanıyor?",
+        "a": "Tasarımın karmaşıklığı, kuyumcunun marjı ve teklifin alındığı saat farkı yaratır. Karşılaştırmayı işçilik oranı üzerinden ve aynı anda yapmak gerekir."
+      },
+      {
+        "q": "Bilezik mi gram altın mı daha çok saf altın verir?",
+        "a": "Aynı para için gram altın daha fazla saf altın verir, çünkü hem milyemi yüksektir hem de işçilik payı çok düşüktür. Takı amacı yoksa fark belirgindir."
+      },
+      {
+        "q": "Eski çeyrek ile yeni çeyreğin hesabı aynı mı?",
+        "a": "Hayır. Eski tarihli ziynet ürünleri daha ağırdır ve içerdikleri saf altın miktarı farklıdır; hesapta ürünün kendi gramajını kullanmak gerekir."
+      }
+    ]
+  },
+  {
+    "id": "altin-iscilik-payi",
+    "keyword": "altın işçilik payı ne kadar olmalı",
+    "title": "Altında İşçilik Payı Ne Kadar Olmalı?",
+    "seoTitle": "Altında İşçilik Payı",
+    "updated": "2026-09-01",
+    "category": "Hesaplama ve İşçilik",
+    "panel": "ziynet-altin-fiyatlari",
+    "summary": "İşçilik payı ürüne göre değişir ve canlı veriyle ölçülebilir. Gram altında yüzde 0,1, ziynette yüzde 1-2: sayıların nereden geldiği ve nasıl pazarlık edileceği.",
+    "intro": "İşçilik payı, altın alırken ödediğiniz ama altın olmayan kısımdır. Çoğu alıcı bu kalemi ya hiç hesaplamaz ya da kuyumcunun söylediği rakamı olduğu gibi kabul eder. Oysa işçilik, canlı ons fiyatı ve kur biliniyorsa doğrudan ölçülebilir bir sayıdır. Bu yazıda işçiliğin nasıl ölçüldüğünü, ürüne göre neden değiştiğini ve hangi seviyenin makul sayılabileceğini anlatıyoruz.",
+    "points": [
+      "İşçilik payı, satış fiyatı ile ürünün ham altın değeri arasındaki farktır.",
+      "Ölçüm için üç şey yeterli: canlı ons fiyatı, kur ve ürünün saf gramı.",
+      "Panelde ölçülen pay gram altında yüzde 0,1 civarında.",
+      "Ziynet ürünlerinde aynı pay yüzde 1 ile 2 arasına çıkıyor.",
+      "İşçilik ile alış-satış makası farklı kalemlerdir, ikisi ayrı ayrı ödenir.",
+      "Pazarlık edilebilir tek kalem işçiliktir; altının kendisi piyasa fiyatıdır."
+    ],
+    "sections": [
+      {
+        "heading": "İşçilik payı tam olarak nedir",
+        "paragraphs": [
+          "Bir altın ürününün fiyatı iki parçadan oluşur. Birincisi içindeki saf altının o andaki piyasa değeridir ve bu değer kuyumcudan kuyumcuya değişmez; uluslararası fiyat ile kur belirler. İkincisi ise ürünü o hale getiren ve size ulaştıran her şeyin bedelidir: döküm, işleme, damga, vitrin, sermaye maliyeti ve kâr.",
+          "İkinci kalem işçilik payı olarak adlandırılır. Adı işçiliktir ama içinde satıcının marjı da vardır; bu yüzden aynı üründe farklı kuyumcularda farklı çıkar.",
+          "Ölçülebilir olması buradan gelir: birinci kalem herkes için aynı olduğuna göre, fiyat farkının tamamı ikinci kalemdedir."
+        ]
+      },
+      {
+        "heading": "Nasıl ölçülür",
+        "paragraphs": [
+          "Ürünün saf altın içeriğini bulup o andaki gram fiyatıyla çarparsanız ham altın değerini elde edersiniz. Satış fiyatından bu değeri çıkardığınızda kalan tutar işçilik payıdır. Oranı bulmak için bu farkı ham değere bölersiniz.",
+          "Hesabın doğru çıkması için üç şeyin aynı ana ait olması gerekir: ons fiyatı, kur ve kuyumcunun teklifi. Sabahki ons fiyatıyla öğleden sonraki teklifi karşılaştırmak, piyasa hareketini işçilik sanmanıza yol açar."
+        ],
+        "table": {
+          "caption": "Ölçülen işçilik payının ürüne göre değişimi",
+          "columns": [
+            "Ürün tipi",
+            "Ölçülen pay",
+            "Neden bu seviyede"
+          ],
+          "rows": [
+            [
+              "Gram altın",
+              "≈ %0,1",
+              "Standart külçe, işleme maliyeti çok düşük"
+            ],
+            [
+              "Ziynet (çeyrek, yarım, tam)",
+              "%1 – %2",
+              "Basım, damga ve dağıtım maliyeti"
+            ],
+            [
+              "İşlenmiş bilezik ve takı",
+              "Daha yüksek",
+              "Tasarım, el işçiliği, fire ve vitrin maliyeti"
+            ]
+          ]
+        }
+      },
+      {
+        "heading": "Neden ürüne göre değişiyor",
+        "paragraphs": [
+          "Gram altın standarttır: aynı ağırlıkta, aynı saflıkta, seri üretilir ve kolayca el değiştirir. Bu yüzden üzerine eklenen maliyet minimumdur.",
+          "Ziynet ürünleri basılmış ve damgalanmıştır; ayrıca perakende ağında dağıtılırlar. Bu ek adımlar payı birkaç katına çıkarır ama yine de sınırlı tutar.",
+          "İşlenmiş takılarda ise tasarım devreye girer. Kalıp, el işçiliği, üretim sırasındaki fire ve ürünün vitrinde bekleme süresi maliyeti belirgin biçimde artırır. Burada ödediğiniz şeyin bir kısmı artık altın değil, tasarımdır."
+        ]
+      },
+      {
+        "heading": "İşçilik ile makas aynı şey değil",
+        "paragraphs": [
+          "İşçilik, ürünü aldığınızda ham altın değerinin üstüne ödediğiniz farktır. Makas ise aynı anda geçerli olan alış ve satış fiyatları arasındaki farktır. İkisi ayrı kalemlerdir ve alım satım döngüsünde ikisini de ödersiniz.",
+          "Pratikte bu şu demektir: bir ürünü alıp hemen geri satsanız bile, hem işçiliği hem makası kaybedersiniz. Kısa vadeli alım satımı pahalı yapan şey budur.",
+          "Bu iki kalemi ayırmak, nerede tasarruf edebileceğinizi gösterir. Makası ürün seçimiyle ve zamanlamayla, işçiliği ise pazarlıkla ve ürün tipini değiştirerek küçültürsünüz."
+        ]
+      },
+      {
+        "heading": "Hangi seviye makul",
+        "paragraphs": [
+          "Tek bir doğru rakam yok; makul olan, ürün tipine göre ölçülen aralığın içinde kalmaktır. Gram altında yüzde bir seviyesinde bir pay yüksektir, çünkü ölçülen değerler çok daha düşüktür. Ziynette yüzde iki civarı olağandır.",
+          "İşlenmiş takıda üst sınır belirlemek zordur çünkü tasarım öznel bir değerdir. Ama alıcı olarak en azından ham altın değerini bilmeniz gerekir; tasarım için ne kadar ödediğinizi ancak o zaman bilinçli olarak kabul edersiniz.",
+          "Ödediğiniz payın altının kaç günlük hareketine denk geldiğini düşünmek de faydalıdır. Yüzde iki işçilik, altının ortalama birkaç günlük hareketine denk gelir; kısa vadede bunu kapatmak zordur."
+        ]
+      },
+      {
+        "heading": "Pazarlıkta ne söylemeli",
+        "paragraphs": [
+          "Toplam fiyat üzerinden pazarlık etmek zayıf bir konumdur çünkü satıcı fiyatın altın kısmını gerekçe gösterebilir. Doğru yaklaşım, hesabı ayırıp doğrudan işçilik payını konuşmaktır.",
+          "\"Bu bileziğin içinde şu kadar saf altın var, bugünkü değeri şu; siz şu kadar istiyorsunuz, aradaki fark şu oranda\" cümlesi konuşmayı ölçülebilir bir zemine taşır. Pazarlığın yapılabileceği tek kalem zaten odur."
+        ],
+        "list": {
+          "items": [
+            "Ham altın değerini önceden hesaplayın.",
+            "Farkı oran olarak ifade edin, lira olarak değil.",
+            "Aynı gün başka bir teklifle karşılaştırın.",
+            "Ürün tipini değiştirmenin payı ne kadar düşürdüğüne bakın."
+          ]
+        }
+      },
+      {
+        "heading": "Panel bunu nasıl gösteriyor",
+        "paragraphs": [
+          "Ziynet bölümü her ürün için ham altın değerini canlı ons ve kur üzerinden hesaplar, ardından piyasadaki satış fiyatıyla arasındaki farkı işçilik ve satıcı payı olarak yazar. Bu, statik bir örnek hesap değil o anki gerçek farktır.",
+          "Kaynağın günlük yüzde ve kapanış alanları güvenilir olmadığı için kart yalnızca her üründe her zaman doğru olan üç şeye dayanır: alış, satış ve ürünün saf altın içeriği. Ölçülen işçilik payı bu üçünden çıkar."
+        ]
+      }
+    ],
+    "faq": [
+      {
+        "q": "Altında işçilik payı nasıl hesaplanır?",
+        "a": "Ürünün saf altın miktarını o andaki gram fiyatıyla çarpıp ham değeri bulun. Satış fiyatından bu değeri çıkarın; kalan işçilik payıdır, ham değere bölünce oranı çıkar."
+      },
+      {
+        "q": "Gram altında işçilik payı ne kadar?",
+        "a": "Panelde ölçülen değer yüzde 0,1 civarındadır. Gram altın standart bir ürün olduğu için üzerine eklenen maliyet çok düşüktür."
+      },
+      {
+        "q": "Ziynet altınında işçilik neden daha yüksek?",
+        "a": "Basım, damga ve perakende dağıtım gibi ek adımlar vardır. Ölçülen pay yüzde 1 ile 2 arasındadır; yine de işlenmiş takılardan düşüktür."
+      },
+      {
+        "q": "İşçilik payı ile makas arasındaki fark ne?",
+        "a": "İşçilik, ham altın değerinin üstüne alırken ödediğiniz farktır. Makas ise aynı anda geçerli alış ve satış fiyatları arasındaki farktır. Bir alım satım döngüsünde ikisini de ödersiniz."
+      },
+      {
+        "q": "İşçilik pazarlık edilebilir mi?",
+        "a": "Evet, pazarlık edilebilecek tek kalem odur. Altının kendi değeri piyasa fiyatıdır ve satıcıya bağlı değildir."
+      },
+      {
+        "q": "Yüksek işçilik ödemek her zaman kötü mü?",
+        "a": "Takı olarak kullanacaksanız tasarım için ödeme yapmak makuldür. Amaç birikimse aynı parayla daha fazla saf altın veren ürünler daha verimlidir."
+      },
+      {
+        "q": "İşçilik payını kaç günde çıkarırım?",
+        "a": "Ödediğiniz oranı altının günlük ortalama hareketiyle karşılaştırın. Yüzde iki civarındaki bir pay, birkaç günlük tipik hareketle aynı büyüklüktedir; kısa vadede kapanması zordur."
+      },
+      {
+        "q": "Kuyumcu işçiliği söylemezse ne yapmalı?",
+        "a": "Ham altın değerini kendiniz hesaplayıp satış fiyatından çıkarın. Söylenmese de fark ölçülebilir; işçilik payı o farktır."
+      }
+    ]
+  },
+  {
+    "id": "ziynet-bozdurma-kaybi",
+    "keyword": "ziynet altın bozdurunca ne kadar kaybedilir",
+    "title": "Ziynet Altını Bozdururken Ne Kadar Kaybedersiniz?",
+    "seoTitle": "Ziynet Altın Bozdurma Kaybı",
+    "updated": "2026-09-01",
+    "category": "Hesaplama ve İşçilik",
+    "panel": "ziynet-altin-fiyatlari",
+    "summary": "Bozdurma kaybı iki kalemden oluşur: geri alamadığınız işçilik ve alış-satış makası. İkisini ayıran hesap ve kaybı küçültmenin ölçülebilir yolları.",
+    "intro": "Altını bozdururken elinize geçen para, aynı ürüne o gün ödeyeceğiniz paradan her zaman düşüktür. Bu fark bir haksızlık değil, iki ayrı maliyetin toplamıdır ve önceden hesaplanabilir. Kaybın ne kadarının işçilikten, ne kadarının alış-satış farkından geldiğini bilmek, hangi üründe ne kadar kaybedeceğinizi baştan görmenizi sağlar.",
+    "points": [
+      "Bozdurma kaybı iki kalemdir: geri alınamayan işçilik ve alış-satış makası.",
+      "İşçilik alım anında ödenir, satışta çoğunlukla geri gelmez.",
+      "Makas her iki yönde de geçerlidir ve ürün tipine göre değişir.",
+      "Gram altında toplam kayıp ziynete göre belirgin biçimde düşüktür.",
+      "Kayıp, altının kaç günlük hareketine denk geldiğiyle ölçülmelidir.",
+      "Aynı gün alıp satmak, kaybın tamamını hiçbir kazanç olmadan üstlenmektir."
+    ],
+    "sections": [
+      {
+        "heading": "Kaybın iki kalemi",
+        "paragraphs": [
+          "Bir ziynet altınını satın alırken içindeki saf altının piyasa değerinin üzerine işçilik ve satıcı payı ödersiniz. Sattığınızda ise size çoğunlukla içindeki altının karşılığı ödenir; işçiliğin büyük kısmı geri gelmez. Bu birinci kalemdir.",
+          "İkinci kalem alış-satış makasıdır. Aynı anda bile alış fiyatı satış fiyatından düşüktür ve bu fark her iki yönde işlem yaparken karşınıza çıkar.",
+          "Toplam kayıp bu ikisinin toplamıdır. İkisini ayırmak önemlidir çünkü birini ürün seçimiyle, diğerini zamanlama ve pazarlıkla azaltırsınız."
+        ],
+        "table": {
+          "caption": "Bozdurma kaybını oluşturan kalemler",
+          "columns": [
+            "Kalem",
+            "Ne zaman ödenir",
+            "Geri alınabilir mi",
+            "Nasıl küçültülür"
+          ],
+          "rows": [
+            [
+              "İşçilik payı",
+              "Alırken",
+              "Genellikle hayır",
+              "Daha standart ürün seçmek"
+            ],
+            [
+              "Alış-satış makası",
+              "Her iki yönde",
+              "Hayır",
+              "Likit ürün, sakin piyasa saati"
+            ],
+            [
+              "Ürün kusuru kesintisi",
+              "Satarken",
+              "Hayır",
+              "Ambalaj ve damgayı korumak"
+            ]
+          ]
+        }
+      },
+      {
+        "heading": "Ürüne göre ne kadar kaybediyorsunuz",
+        "paragraphs": [
+          "Ölçülen değerler ürün tipiyle doğrudan bağlantılıdır. Gram altında işçilik payı yüzde 0,1 civarındadır ve makas dardır; toplam kayıp küçük kalır. Ziynet ürünlerinde işçilik payı yüzde 1 ile 2 arasına çıkar ve makas da genişler.",
+          "İşlenmiş takılarda tablo tamamen değişir. Tasarım için ödenen bedel satışta neredeyse hiç karşılık bulmaz; bu ürünler birikim aracı olarak değerlendirilirken bu gerçeğin baştan kabul edilmesi gerekir.",
+          "Buradan çıkan pratik sonuç şudur: birikim amacıyla altın tutuyorsanız, ürün seçimi getirinizin önemli bir kısmını baştan belirler."
+        ]
+      },
+      {
+        "heading": "Kaybı gün cinsinden düşünmek",
+        "paragraphs": [
+          "Yüzde olarak ifade edilen bir kayıp soyut kalabilir. Onu somutlaştırmanın iyi bir yolu, altının tipik günlük hareketiyle karşılaştırmaktır.",
+          "Modelin ölçtüğü belirsizlik bandı 7 günlük vadede yaklaşık artı eksi yüzde 3,6'dır. Yüzde iki civarındaki bir bozdurma kaybı, bu ölçekte birkaç günlük tipik dalgalanmaya denk gelir. Yani altını bir hafta tutup satmak, kaybı kapatmak için piyasanın lehinize hareket etmesini gerektirir.",
+          "Uzun vadede aynı kayıp önemsizleşir; otuz günlük bantla karşılaştırıldığında oran belirgin biçimde küçülür. Bozdurma kaybı, kısa vadeli işlemi cezalandıran ama uzun vadeli birikimi az etkileyen bir maliyettir."
+        ]
+      },
+      {
+        "heading": "Bozdurmadan önce yapılacak hesap",
+        "paragraphs": [
+          "Satmadan önce elinizdeki ürünün ham altın değerini hesaplayın. Size teklif edilen rakamı bu değerle karşılaştırın; aradaki fark, satarken üstlendiğiniz kesintidir.",
+          "Bu hesap, teklifin makul olup olmadığını anlamanın tek yoludur. Teklif ham değerin belirgin biçimde altındaysa başka bir yere sormaya değer."
+        ],
+        "list": {
+          "ordered": true,
+          "items": [
+            "Ürünün saf gramını bulun: gram × milyem.",
+            "O andaki saf gram fiyatını hesaplayın: ons × kur ÷ 31,1035.",
+            "İkisini çarpıp ham altın değerini bulun.",
+            "Teklifi bu değerle karşılaştırıp kesinti oranını çıkarın."
+          ]
+        }
+      },
+      {
+        "heading": "Kaybı küçültmenin yolları",
+        "paragraphs": [
+          "En etkili yol, alım anında verilen karardır. Standart ve likit ürünler hem daha düşük işçilikle alınır hem de daha dar makasla satılır. Birikim amacı taşıyan alımlarda bu tercih uzun vadede birikir.",
+          "İkinci yol, satış anını piyasanın sakin olduğu saatlere denk getirmektir. Makas oynak dönemlerde genişler; aceleyle yapılan satış daha pahalıya gelir.",
+          "Üçüncüsü, ürünü aldığı haliyle korumaktır. Ambalajı ve damgası bozulmuş ürünlerde ek kesinti uygulanabilir."
+        ],
+        "list": {
+          "items": [
+            "Birikim için standart ürün, takı için tasarım tercih edin.",
+            "Satışı sakin piyasa saatlerine bırakın.",
+            "Ürünün damga ve ambalajını koruyun.",
+            "Tek yerden teklif almayın; aynı gün ikinci bir fiyat sorun."
+          ]
+        }
+      },
+      {
+        "heading": "Bozdurmayı ertelemenin ölçülebilir değeri",
+        "paragraphs": [
+          "Bozdurma kaybı sabit bir tutardır ve elde tutma süresiyle değişmez. Buna karşılık altının fiyat hareketi süreyle birlikte büyür. Bu asimetri, kaybın göreli ağırlığının zamanla azalması demektir.",
+          "Modelin ölçtüğü belirsizlik bandı 7 günlük vadede yaklaşık artı eksi yüzde 3,6 iken 30 günlük vadede yüzde 6,9'a çıkar. Yüzde iki civarındaki bir bozdurma kaybı, kısa vadede bandın önemli bir kısmını yerken uzun vadede oransal olarak küçülür.",
+          "Bu, satışı ertelemenin her zaman doğru olduğu anlamına gelmez; nakde ihtiyacınız varsa hesap zaten farklıdır. Söylediği şey daha dar: kısa aralıklarla alıp satmak, bu maliyet yapısında en pahalı davranıştır."
+        ],
+        "list": {
+          "items": [
+            "Kayıp sabittir; fiyat hareketi süreyle büyür.",
+            "Kısa vadede kayıp, tipik dalgalanmanın büyük kısmını yer.",
+            "Nakit ihtiyacı varsa bu hesap geçerli değildir.",
+            "Sık alım satım, maliyeti her döngüde yeniden ödetir."
+          ]
+        }
+      },
+      {
+        "heading": "Sık karşılaşılan yanlış beklenti",
+        "paragraphs": [
+          "En yaygın hayal kırıklığı, ürünü aldığı fiyattan satabileceğini düşünmektir. Altın fiyatı hiç değişmese bile bu mümkün değildir; iki kalem maliyet arada durur.",
+          "İkinci yanlış beklenti, kaybın kuyumcuya özgü olduğunu sanmaktır. Makas ve işçilik piyasanın yapısal parçalarıdır; kuyumcu değiştirerek küçültülebilir ama sıfırlanamaz."
+        ]
+      }
+    ],
+    "faq": [
+      {
+        "q": "Ziynet altını bozdururken ne kadar kaybederim?",
+        "a": "Kayıp iki kalemin toplamıdır: alırken ödenip geri alınamayan işçilik ve alış-satış makası. Ziynet ürünlerinde ölçülen işçilik payı yüzde 1 ile 2 arasındadır, makas buna eklenir."
+      },
+      {
+        "q": "İşçiliğin tamamı mı kayboluyor?",
+        "a": "Büyük kısmı. Satışta size çoğunlukla içindeki saf altının karşılığı ödenir; ürünün işlenmiş olması satış fiyatına genellikle yansımaz."
+      },
+      {
+        "q": "Gram altında kayıp neden daha düşük?",
+        "a": "Gram altın standart bir üründür; işçilik payı yüzde 0,1 civarında kalır ve makası dardır. İki kalem de ziynete göre küçüktür."
+      },
+      {
+        "q": "Aynı gün alıp satsam ne kadar kaybederim?",
+        "a": "İki kalemin tamamını, hiçbir fiyat hareketi kazancı olmadan üstlenirsiniz. Kısa vadeli alım satımı pahalı yapan şey budur."
+      },
+      {
+        "q": "Kaybı ne zaman kapatırım?",
+        "a": "Altının lehinize kayıp oranı kadar hareket etmesi gerekir. Yüzde iki civarındaki bir kayıp, 7 günlük ölçülen bandın yaklaşık yarısına denk gelir; uzun vadede oran önemsizleşir."
+      },
+      {
+        "q": "Teklifin adil olup olmadığını nasıl anlarım?",
+        "a": "Ürünün ham altın değerini hesaplayıp teklifle karşılaştırın. Kesinti oranı belirgin biçimde yüksekse aynı gün başka bir yere sormaya değer."
+      },
+      {
+        "q": "Ambalajın bozulması fiyatı etkiler mi?",
+        "a": "Etkileyebilir. Damgası veya ambalajı bozulmuş ziynet ürünlerinde ek kesinti uygulanması mümkündür; ürünü aldığı halde saklamak kaybı azaltır."
+      },
+      {
+        "q": "Bozdurma kaybı kuyumcuya göre değişir mi?",
+        "a": "Değişir ama sıfırlanmaz. Makas ve işçilik piyasanın yapısal maliyetleridir; farklı yerlerden teklif almak kaybı küçültür, ortadan kaldırmaz."
+      }
+    ]
+  },
+  {
+    "id": "bilezik-mi-gram-altin-mi",
+    "keyword": "bilezik mi gram altın mı almalı",
+    "title": "Bilezik mi Gram Altın mı Almalı?",
+    "seoTitle": "Bilezik mi Gram Altın mı",
+    "updated": "2026-09-01",
+    "category": "Hesaplama ve İşçilik",
+    "panel": "altin-tl-getirisi",
+    "summary": "Aynı parayla bilezik ve gram altın farklı miktarda saf altın verir. Farkın nereden geldiği, ne zaman bileziğin mantıklı olduğu ve karar tablosu.",
+    "intro": "Aynı parayı bileziğe ve gram altına yatırdığınızda elinize geçen saf altın miktarı farklıdır. Fark iki yerden gelir: bileziğin milyemi daha düşüktür ve işçilik payı belirgin biçimde yüksektir. Bu, bileziğin kötü bir tercih olduğu anlamına gelmez; amacınıza bağlı olarak doğru tercih değişir. Bu yazı farkı sayılarla koyuyor ve kararı hangi soruya bağlamanız gerektiğini anlatıyor.",
+    "points": [
+      "Gram altının milyemi 0,995, 22 ayar bileziğinki 0,916'dır.",
+      "Aynı parayla gram altın daha fazla saf altın verir.",
+      "İşçilik payı gram altında yüzde 0,1, ziynette yüzde 1-2 ölçüldü.",
+      "Bilezik takı değeri taşır; bu değer satışta karşılık bulmaz.",
+      "Birikim amacı ağır basıyorsa standart ürün daha verimlidir.",
+      "Karar, altını ne için tuttuğunuza bağlıdır; tek doğru cevap yoktur."
+    ],
+    "sections": [
+      {
+        "heading": "Aynı para, farklı saf altın",
+        "paragraphs": [
+          "İki ürün arasındaki ilk fark saflıktır. Gram altın binde 995 saflıktadır; 22 ayar bilezik binde 916. Yani her gram bilezikte, gram altına göre yaklaşık yüzde sekiz daha az saf altın bulunur.",
+          "İkinci fark işçiliktir. Panelde ölçülen değerlere göre gram altında işçilik ve satıcı payı yüzde 0,1 civarında kalırken ziynet ürünlerinde yüzde 1 ile 2 arasına çıkar; işlenmiş bileziklerde daha da yükselir.",
+          "Bu iki fark üst üste bindiğinde, aynı bütçeyle alınan saf altın miktarındaki ayrım küçümsenecek gibi değildir."
+        ],
+        "table": {
+          "caption": "Ürün başına saflık ve ölçülen maliyet payı",
+          "columns": [
+            "Ürün",
+            "Milyem",
+            "Ölçülen işçilik payı",
+            "Birikim verimliliği"
+          ],
+          "rows": [
+            [
+              "Gram altın",
+              "0,995",
+              "≈ %0,1",
+              "En yüksek"
+            ],
+            [
+              "22 ayar gram",
+              "0,916",
+              "Değişken",
+              "Orta"
+            ],
+            [
+              "Ziynet (çeyrek, tam)",
+              "0,916",
+              "%1 – %2",
+              "Orta"
+            ],
+            [
+              "İşlenmiş bilezik",
+              "0,916",
+              "Daha yüksek",
+              "En düşük"
+            ]
+          ]
+        }
+      },
+      {
+        "heading": "Bileziğin taşıdığı ek değer",
+        "paragraphs": [
+          "Bileziğin fazladan maliyeti karşılıksız değildir. Takılabilir olması, hediye edilebilmesi ve kültürel bir anlam taşıması gerçek değerlerdir. Düğün ve nişan gibi durumlarda bileziğin yerini gram altın tutmaz.",
+          "Ancak bu değer duygusal ve kullanımsaldır; satış anında fiyata yansımaz. Kuyumcu bileziği geri alırken çoğunlukla içindeki saf altının karşılığını öder.",
+          "Karar verirken sorulacak soru şu: bu ürünü takacak mısınız, hediye mi edeceksiniz, yoksa kasada mı duracak? Üçüncü durumda ödediğiniz ek maliyetin karşılığı yoktur."
+        ]
+      },
+      {
+        "heading": "Birikim amacıyla bakış",
+        "paragraphs": [
+          "Amaç birikimse ölçüt tektir: aynı parayla ne kadar saf altın alıyorsunuz ve sattığınızda ne kadarını geri alıyorsunuz. Bu ölçüte göre standart ürünler açık farkla öndedir.",
+          "Fark tek seferlik alımlarda küçük görünebilir ama düzenli alım yapan biri için birikir. Her alımda ödenen fazladan pay, yıllar içinde ciddi bir miktara ulaşır.",
+          "Bunun tersi de doğrudur: takı olarak kullanılacak bir üründe düşük işçilik aramak, beğenmediğiniz bir ürünü almanıza yol açabilir. Amaç neyse ölçüt de o olmalıdır."
+        ]
+      },
+      {
+        "heading": "Likidite ve bölünebilirlik",
+        "paragraphs": [
+          "Ziynet ürünlerinin bir avantajı bölünebilirliktir. İhtiyaç doğduğunda tek bir çeyrek satmak, büyük bir bileziği bozdurmaktan kolaydır. Bu, acil nakit ihtiyacı ihtimali olan biri için gerçek bir fayda sağlar.",
+          "Gram altın da bölünebilir ama farklı gramajlarda alım yapmak gerekir. Tek bir büyük parça almak yerine küçük parçalara yaymak, ileride kısmi satış imkânı verir.",
+          "İşlenmiş bilezikte bölünebilirlik yoktur; ürün bir bütündür ve kısmi satış mümkün değildir."
+        ],
+        "list": {
+          "items": [
+            "Acil nakit ihtimali varsa: küçük ve standart parçalara yayın.",
+            "Uzun vadeli birikimse: en düşük maliyet payını arayın.",
+            "Takı amacı varsa: maliyet payını bilerek kabul edin.",
+            "Hediye amacı varsa: ürünün anlamı maliyetten önce gelir."
+          ]
+        }
+      },
+      {
+        "heading": "Karar tablosu",
+        "paragraphs": [
+          "Aşağıdaki tablo, amacınıza göre hangi tercihin öne çıktığını özetliyor. Tek bir doğru cevap yok; her satırda ölçüt değiştiği için sonuç da değişiyor."
+        ],
+        "table": {
+          "caption": "Amaca göre ürün tercihi",
+          "columns": [
+            "Amacınız",
+            "Öne çıkan tercih",
+            "Neden"
+          ],
+          "rows": [
+            [
+              "Uzun vadeli birikim",
+              "Gram altın",
+              "En yüksek saf altın, en düşük maliyet payı"
+            ],
+            [
+              "Kısmi satış ihtimali",
+              "Ziynet ürünleri",
+              "Bölünebilir, ayrı ayrı satılabilir"
+            ],
+            [
+              "Takı olarak kullanım",
+              "Bilezik",
+              "Kullanım değeri maliyeti karşılar"
+            ],
+            [
+              "Hediye",
+              "Ziynet veya bilezik",
+              "Kültürel karşılığı olan ürün"
+            ]
+          ]
+        }
+      },
+      {
+        "heading": "İki ürünü doğru karşılaştırmak",
+        "paragraphs": [
+          "Karşılaştırmayı gram ağırlığı üzerinden yapmak yanıltıcıdır çünkü milyemler farklıdır. Doğru karşılaştırma, aynı bütçeyle alınan saf altın miktarı üzerinden yapılır.",
+          "Bunun için her iki ürün için de ham altın değerini hesaplayıp bütçenizi bu değere bölün. Ortaya çıkan saf gram miktarları doğrudan karşılaştırılabilir; aradaki fark ödediğiniz ek maliyetin karşılığıdır."
+        ]
+      },
+      {
+        "heading": "Sonuç: soru ürün değil amaç",
+        "paragraphs": [
+          "\"Hangisi daha iyi\" sorusunun cevabı yok; \"hangisi sizin amacınıza uygun\" sorusunun cevabı var. Birikim için ölçüt saf altın miktarıdır ve standart ürünler kazanır. Kullanım ve hediye için ölçüt tamamen farklıdır.",
+          "Yapılmaması gereken tek şey, takı amaçlı bir alımı birikim gibi değerlendirmek ya da tersini yapmaktır. Maliyet payını bilerek ödemek, bilmeden ödemekten farklıdır."
+        ]
+      }
+    ],
+    "faq": [
+      {
+        "q": "Aynı parayla bilezik mi gram altın mı daha çok altın verir?",
+        "a": "Gram altın verir. Hem milyemi yüksektir (0,995'e karşı 0,916) hem de işçilik payı çok daha düşüktür; iki fark üst üste biner."
+      },
+      {
+        "q": "22 ayar bilezikte neden daha az saf altın var?",
+        "a": "22 ayar binde 916 saflıktadır; kalan kısım dayanıklılık için eklenen alaşımdır. Gram altın ise binde 995 saflıktadır."
+      },
+      {
+        "q": "Bilezik almak hiç mantıklı değil mi?",
+        "a": "Takı olarak kullanacaksanız veya hediye edecekseniz mantıklıdır. Kullanım ve kültürel değer gerçektir; sadece satış fiyatına yansımaz."
+      },
+      {
+        "q": "Bilezik satarken işçiliği geri alır mıyım?",
+        "a": "Genellikle almazsınız. Satışta size çoğunlukla içindeki saf altının karşılığı ödenir; tasarım ve işçilik alım anında üstlenilen maliyettir."
+      },
+      {
+        "q": "Acil nakit ihtiyacım olursa hangisi daha kullanışlı?",
+        "a": "Ziynet ürünleri bölünebilir olduğu için kısmi satışa uygundur. Tek parça büyük bir bileziği bozdurmak yerine tek bir çeyrek satmak daha kolaydır."
+      },
+      {
+        "q": "İki ürünü nasıl doğru karşılaştırırım?",
+        "a": "Gram ağırlığı üzerinden değil, aynı bütçeyle alınan saf altın miktarı üzerinden. Her ürünün ham altın değerini hesaplayıp bütçenizi ona bölün."
+      },
+      {
+        "q": "Düzenli alım yapıyorsam fark önemli mi?",
+        "a": "Evet. Her alımda ödenen fazladan maliyet payı birikir; tek seferde küçük görünen fark yıllar içinde belirgin hale gelir."
+      },
+      {
+        "q": "22 ayar gram altın ara bir çözüm mü?",
+        "a": "Saflık açısından ziynetle aynıdır ama standart bir üründür. Takı amacı yoksa binde 995 saflıktaki gram altın birikim için daha verimlidir."
+      }
+    ]
   }
 ]

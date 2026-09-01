@@ -422,11 +422,11 @@ arayüzde ayrı bir not olarak yazılır.
 
 ## SEO
 
-- 30 rehber makalesi (`data/seo-articles.json`), 11 panel özelliği (`data/panel-features.json`),
+- 38 rehber makalesi (`data/seo-articles.json`), 11 panel özelliği (`data/panel-features.json`),
   4 kurumsal sayfa (`data/site-pages.json`: hakkımızda, yazar, iletişim, gizlilik)
-- `scripts/generate-seo-pages.mjs` build sonrası: 30 rehber + `/rehber` dizini + 11 panel
+- `scripts/generate-seo-pages.mjs` build sonrası: 38 rehber + `/rehber` dizini + 11 panel
   sayfası + `/panel` dizini + 4 kurumsal sayfa + ön render edilmiş anasayfa +
-  **48 URL'lik sitemap**
+  **56 URL'lik sitemap**
 - **Güven sayfaları (E-E-A-T).** YMYL kategorisinde Google'ın aradığı sinyaller sitede hiç
   yoktu. Dört sayfa `SitePageView` şablonuyla render edilir, ön render edilir ve her ön
   render edilmiş footer'dan (`LEGAL` sabiti) linklenir. Article şemasının `author`'ı artık
@@ -441,8 +441,29 @@ arayüzde ayrı bir not olarak yazılır.
   aynı snippet için birbiriyle yarışıyordu; 8 soru ve 10 bölüm başlığı ayrıştırıldı.
   30 tablo başlığının hepsi benzersiz
 - **Makale şemasında tablo ve liste var** (`SeoTable`, `SeoList` — `content/types.ts`).
-  Sayısal içerik düz paragrafta kayboluyordu. `ArticlePage` ve `generate-seo-pages.mjs`
-  aynı işaretlemeyi basar; tablo `overflow-x:auto` saran divde, mobilde sayfa taşmıyor
+  Sayısal içerik düz paragrafta kayboluyordu. Tablo `.article-table-wrap` içinde ve
+  `overflow-x:auto`; mobilde tablo kendi içinde kayar, sayfa taşmaz (ölçüldü: 375 px
+  ekranda gövde taşması 0, 336 px'lik tablo 293 px'lik saran divde)
+- **Ön render ile React işaretlemesi ayrışmıştı.** `generate-seo-pages.mjs` tabloyu saran
+  div ve sınıflar olmadan basıyordu: ön render edilen tablo hem stilsiz kalıyor hem de
+  yatay taşma koruması taşımıyordu. Google'ın gördüğü HTML bu olduğu için üretici
+  `ArticlePage` ile birebir eşitlendi (`article-table-wrap`, `article-table`, `article-list`)
+
+### 2026-09-01'de eklenen sekiz makale
+
+Anahtar kelime araştırması sonucu iki boşluk kapatıldı; ikisi de yeni kategori:
+
+- **Gram Altın ve Kur** (4 makale) — site ons/USD ekseninde kuruluydu, Türkçe arama talebi
+  gram/TL ekseninde. Makaleler gram hareketini **ons katkısı** ve **kur katkısı** olarak
+  ayırır. Kritik sınır: model yalnız XAU/USD tahmin eder, **USD/TRY tahmini yok**; bu yüzden
+  gram tarafında fiyat hedefi değil senaryo tablosu verilir
+- **Hesaplama ve İşçilik** (4 makale) — bilezik ve ziynet işçilik hesabı. Panelin canlı
+  ölçtüğü değerlere dayanır (gram %0,1, ziynet %1–2) ve `ZIYNET_SPECS` milyem tablosunu
+  kullanır; rakiplerin statik örnek hesaplarından ayrıştığı yer burası
+
+Kalite kapıları makineyle denetlendi: 854–1211 kelime, 7–8 bölüm, 8 SSS, 6 madde, özet
+130–160 karakter, her makalede tablo. Site genelinde **304 SSS sorusu, 267 bölüm başlığı
+ve 41 tablo başlığının tamamı benzersiz** — aynı snippet için yarışan sayfa yok.
 - Meta açıklamaları 130–160 karakter aralığında (bazıları 75 karakterdi)
 - **Her rehber, canlı karşılığı olan panel bölümüne bağlanır.** `seo-articles.json` içindeki
   `panel` alanı hedef slug'ı verir; hem `ArticlePage` hem `generate-seo-pages.mjs` bir CTA

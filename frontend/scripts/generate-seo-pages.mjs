@@ -80,15 +80,18 @@ const panelCta = article => {
         </aside>`;
 };
 
-/* Tablo ve liste blokları bot tarafından da görülmeli: ön render bunları
-   React ile birebir aynı işaretlemeyle basar. */
+/* Tablo ve liste blokları bot tarafından da görülmeli ve işaretleme
+   `ArticlePage` ile **birebir** olmalı. Önceden saran div ve sınıflar
+   basılmıyordu: ön render edilen tablo hem stilsiz kalıyor hem de
+   `.article-table-wrap`'in `overflow-x:auto` koruması olmadığı için geniş
+   tablolarda mobilde sayfayı yatay kaydırıyordu. */
 const sectionHtml = section => `<section><h2>${escapeHtml(section.heading)}</h2>${
   section.paragraphs.map(p => `<p>${escapeHtml(p)}</p>`).join('')}${
-  section.list ? `<${section.list.ordered ? 'ol' : 'ul'}>${section.list.items.map(i => `<li>${escapeHtml(i)}</li>`).join('')}</${section.list.ordered ? 'ol' : 'ul'}>` : ''}${
-  section.table ? `<table><caption>${escapeHtml(section.table.caption)}</caption><thead><tr>${
+  section.list ? `<${section.list.ordered ? 'ol' : 'ul'} class="article-list">${section.list.items.map(i => `<li>${escapeHtml(i)}</li>`).join('')}</${section.list.ordered ? 'ol' : 'ul'}>` : ''}${
+  section.table ? `<div class="article-table-wrap"><table class="article-table"><caption>${escapeHtml(section.table.caption)}</caption><thead><tr>${
     section.table.columns.map(c => `<th scope="col">${escapeHtml(c)}</th>`).join('')}</tr></thead><tbody>${
     section.table.rows.map(r => `<tr>${r.map((c, i) => i === 0
-      ? `<th scope="row">${escapeHtml(c)}</th>` : `<td>${escapeHtml(c)}</td>`).join('')}</tr>`).join('')}</tbody></table>` : ''}</section>`;
+      ? `<th scope="row">${escapeHtml(c)}</th>` : `<td>${escapeHtml(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>` : ''}</section>`;
 
 const articleBody = (article, related) => `<main class="seo-prerender" data-seo-page="${escapeHtml(article.id)}">
       <nav aria-label="İçerik yolu"><a href="/">Ana Sayfa</a> / <a href="/rehber">Altın Rehberi</a> / ${escapeHtml(article.title)}</nav>
