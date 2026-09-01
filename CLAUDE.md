@@ -489,8 +489,15 @@ verisi (13–29 Ağustos, 16 gün, 44 tıklama, 1.161 gösterim, 132 sorgu) şun
 - Trafiğin **%76'sı mobil**, mobil TO masaüstünün iki katı (%4,21 / %2,48)
 - **Uyarı:** 8 yeni gram/işçilik makalesi bu ölçümden sonra yayımlandı, indekslenmediler.
   Veri onların potansiyelini yanlışlamaz; ölçüm 3–4 hafta sonra tekrarlanmalı
-- Çözümleyici: oturum scratchpad'inde `gsc_analiz.py` (TR/EN sütun ve sayı biçimlerini
-  tanır; GSC dışa aktarımı `Pozisyon` başlığını kullanıyor, `Ortalama konum` değil)
+- Çözümleyici repoda: `tools/gsc_analiz.py`. GSC dışa aktarımını (ZIP ya da CSV) okuyup
+  sorguları yukarıdaki temalara göre gruplar, fırsat ve eşleşmeyen sorguları listeler.
+  Bağımlılığı yok; `python3 tools/gsc_analiz.py --self-test` ile 15 sınaması var
+- **İki tuzak sınamayla sabitlendi:** GSC Türkçe dışa aktarımı konum sütununu `Pozisyon`
+  adıyla verir (`Ortalama konum` değil) ve yerel ayara göre sayı biçimi değişir —
+  `1.240` binlik ayraçtır, `8,4` ondalıktır. İlk sürüm `1.240`'ı 1,24 okuyordu ve
+  1.240 gösterimlik bir sorgu **1 gösterim** görünüyordu
+- Zamanlanmış hatırlatıcı: `~/.claude/scheduled-tasks/onsaltinanaliz-gsc-olcum/`,
+  28 Eylül 2026'da bir kez çalışır ve ölçümü yukarıdaki temelle karşılaştırır
 - Meta açıklamaları 130–160 karakter aralığında (bazıları 75 karakterdi)
 - **Her rehber, canlı karşılığı olan panel bölümüne bağlanır.** `seo-articles.json` içindeki
   `panel` alanı hedef slug'ı verir; hem `ArticlePage` hem `generate-seo-pages.mjs` bir CTA
