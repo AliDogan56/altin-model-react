@@ -1,0 +1,48 @@
+/* ---- Trend grafiği kartı --------------------------------------------------
+   Kabuk, başlık, araç düğmeleri ve özet kartları mevcut grafik kartıyla aynı
+   sınıfları kullanır (`chart-block`, `chart-head`, `segmented`, `chart-wrap`,
+   `market-snapshot`); burada yalnız bu karta özgü olanlar tanımlıdır. */
+
+.trend-wrap { height:360px; }
+
+/* Genel yön çizgisi: seriden ayrışsın diye kesikli ve kalın. Renk yönü kodlar;
+   yatayda iddia edilmez, nötr çizgi kullanılır. */
+.trend-line { stroke-width:2.4; stroke-dasharray:9 6; stroke-linecap:round; fill:none; }
+.trend-line.up { stroke:var(--teal); }
+.trend-line.down { stroke:var(--red); }
+.trend-line.flat { stroke:var(--muted); }
+
+.trend-endpoint { font-size:11px; font-weight:800; fill:var(--text-soft); }
+
+.trend-key { background:var(--muted); }
+.trend-key.up { background:var(--teal); }
+.trend-key.down { background:var(--red); }
+
+.snapshot-card.trend-card.up { border-left:3px solid var(--teal); }
+.snapshot-card.trend-card.down { border-left:3px solid var(--red); }
+.snapshot-card.trend-card.flat { border-left:3px solid var(--line-strong); }
+
+.trend-placeholder {
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  min-height:220px; color:var(--muted); font-size:13.5px;
+}
+
+.trend-note {
+  margin:12px 0 0; color:var(--muted); font-size:12.5px; line-height:1.6;
+  max-width:80ch;
+}
+
+@media (max-width:650px) {
+  .trend-wrap { height:290px; }
+  /* Aralık düğmeleri beş tane; dar ekranda tek satıra sığmaz, kaydırılır. */
+  .trend-block .segmented { flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; }
+  .trend-block .segmented::-webkit-scrollbar { display:none; }
+}
+
+/* Regresyon kanalı: dışta 2σ, içte 1σ. Yönle renklendirilmez — kanal bir iddia
+   değil, trendin etrafındaki tipik sapmadır; nötr kalması bilinçli. */
+.trend-band { stroke:none; }
+.trend-band.k2 { fill:rgb(var(--zone-future-rgb) / .08); }
+.trend-band.k1 { fill:rgb(var(--zone-future-rgb) / .10); }
+
+.trend-key.band { background:rgb(var(--zone-future-rgb) / .35); }

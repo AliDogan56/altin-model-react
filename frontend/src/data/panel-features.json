@@ -88,6 +88,98 @@
     "intro": "Grafiğin sol tarafı gerçekleşen fiyatı, sağ tarafı modelin beklentisini gösterir; aradaki dikey çizgi bugündür. Beklentinin çevresindeki soluk alan %70 olasılık aralığıdır: fiyatın on kez tekrarlanan bir durumda yaklaşık yedisinde bu şeridin içinde kalması beklenir. Yeşil ve kırmızı şeritler destek ve direnç bölgeleridir. Destek, fiyatın birkaç kez inip her seferinde geri döndüğü seviyedir — aşağı yönde ilk zemin. Direnç ise fiyatın birkaç kez çıkıp geri düştüğü seviyedir — yukarı yönde ilk engel. Bunlar geçmiş fiyat hareketinden çıkarılır, garanti değildir; kırılmaları da olağandır. Grafiği sürükleyerek kaydırabilir, tekerlek ya da iki parmakla yakınlaştırabilir, bir güne gelerek o günün değerlerini görebilirsiniz."
   },
   {
+    "slug": "altin-trend-grafigi",
+    "anchor": "feature-trend",
+    "collapsible": false,
+    "title": "Ons Altın Trend Grafiği",
+    "seoTitle": "Ons Altın Trend Grafiği ve Regresyon Kanalı",
+    "summary": "Günlük, haftalık, aylık, 3 ve 6 aylık ons altın seyri; her aralığın genel yönü regresyonla hesaplanır ve trend etrafındaki kanal gösterilir.",
+    "intro": "Bu bölüm fiyatın seçilen zaman aralığındaki seyrini ve o aralığın genel yönünü gösterir. Trend çizgisi noktaları birleştirmez; logaritmik fiyat üzerinde en küçük kareler regresyonuyla hesaplanır, böylece eğim \"dönem başına yüzde kaç\" olarak okunur. Çizginin etrafındaki kanal, fiyatın trendden tipik sapmasıdır ve uyum oranını görünür kılar.",
+    "sections": [
+      {
+        "heading": "Beş zaman aralığı, tek veri kaynağı",
+        "paragraphs": [
+          "Aralık seçimi yeni bir veri çekmez. Panelin zaten kullandığı günlük OHLC serisi seçilen döneme toplanır: haftalık kova pazartesiden başlar, çeyrek ve yarıyıl takvim sınırlarından bölünür. Her kovanın yükseği o dönemin en yükseği, düşüğü en düşüğü, kapanışı ise dönemin son işlem gününün kapanışıdır.",
+          "Günlük görünüm mum olarak çizilir; diğerleri çizgidir. Bunun sebebi okunabilirlik: altmış aylık bir seride mum gövdeleri birkaç piksele düşer ve fitiller anlamını yitirir.",
+          "Üst aralıklarda nokta sayısı doğal olarak azdır. Beş yıllık veriyle 6 aylık kovada on bir nokta oluşur; kart kaç nokta kullanıldığını her zaman yazar."
+        ],
+        "table": {
+          "caption": "Aralıklar ve gösterilen nokta sayısı",
+          "columns": [
+            "Aralık",
+            "Görünüm",
+            "Nokta",
+            "Eğimin birimi"
+          ],
+          "rows": [
+            [
+              "Günlük",
+              "Mum",
+              "90",
+              "gün başına"
+            ],
+            [
+              "Haftalık",
+              "Çizgi",
+              "104",
+              "hafta başına"
+            ],
+            [
+              "Aylık",
+              "Çizgi",
+              "60",
+              "ay başına"
+            ],
+            [
+              "3 Aylık",
+              "Çizgi",
+              "21",
+              "çeyrek başına"
+            ],
+            [
+              "6 Aylık",
+              "Çizgi",
+              "11",
+              "yarıyıl başına"
+            ]
+          ]
+        }
+      },
+      {
+        "heading": "Trend neden logaritmik hesaplanıyor",
+        "paragraphs": [
+          "Fiyatın kendisi üzerinde regresyon yapmak uzun serilerde yanıltır: sabit yüzde büyüme fiyat ekseninde eğri bir yol çizer, düz bir doğru ona uymaz ve serinin sonu başından fazla ağırlık kazanır.",
+          "Logaritmik fiyat üzerinde ise sabit yüzde büyüme düz bir doğrudur. Bunun iki pratik sonucu var: eğim doğrudan \"dönem başına yüzde kaç\" olarak okunur ve serinin başı ile sonu eşit ağırlık taşır.",
+          "Aynı sebeple kanal da oransaldır. Yüzde sekizlik bir sapma yüksek fiyatta daha çok dolar ettiği için bant fiyat ekseninde yukarı doğru genişler; bu bir çizim tercihi değil, ölçünün doğal sonucudur."
+        ]
+      },
+      {
+        "heading": "Kanal ne söyler, ne söylemez",
+        "paragraphs": [
+          "Kanal, artıkların standart sapmasından çizilir: iç bant trendin bir sigma, dış bant iki sigma uzağıdır. Dar bir kanal seyrin trendi yakından izlediğini, geniş bir kanal dağınık olduğunu gösterir. Kartın \"uyum\" sayısı da aynı şeyi rakamla söyler.",
+          "Kanalın söylemediği şey daha önemli: dışına çıkmak bir dönüş sinyali değildir. Bu sitede denendi ve ölçüldü — 250 günlük regresyona göre fiyat trendin bir sigma altındayken sonraki otuz günün ortalama getirisi yüzde 1,81, koşulsuz ortalama ise yüzde 3,12 çıktı. Yani sapma lehte değil aleyhte göründü.",
+          "Üstelik elde üst üste binmeyen yalnız otuz üç adet otuz günlük pencere var; bu farklar o örneklemde gürültüdür. Kanal bu yüzden betimleyici bir araç olarak sunulur, sinyal olarak değil."
+        ],
+        "list": {
+          "items": [
+            "Dar kanal: seyir trendi yakından izliyor.",
+            "Geniş kanal: dağınık seyir, genel yön zayıf.",
+            "Kanal dışına çıkmak: ölçülmüş bir dönüş sinyali değil.",
+            "Uyum oranı düşükse yönü tek başına kullanmayın."
+          ]
+        }
+      },
+      {
+        "heading": "Trend grafiği ile tahmin grafiğinin farkı",
+        "paragraphs": [
+          "Panelde iki grafik kartı var ve farklı sorulara cevap veriyorlar. Tahmin grafiği modelin ileriye dönük beklentisini ve belirsizlik bandını gösterir; isabeti ölçülür ve yayımlanır.",
+          "Trend grafiği ise tamamen geçmişe bakar. Hiçbir ileriye dönük iddiası yoktur, o yüzden bir isabet karnesi de yoktur. İkisini karıştırmamak gerekir: trendin yukarı olması modelin yukarı dediği anlamına gelmez, tersi de doğrudur.",
+          "Bugün örneğin doksan günlük trend aşağı, aylık trend yukarı olabilir. Bu bir çelişki değil, farklı zaman ölçeklerinin farklı şeyler söylemesidir."
+        ]
+      }
+    ]
+  },
+  {
     "slug": "ziynet-altin-fiyatlari",
     "anchor": "feature-ziynet",
     "collapsible": false,

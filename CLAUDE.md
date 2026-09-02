@@ -420,13 +420,67 @@ arayüzde ayrı bir not olarak yazılır.
 - Yanıt `services/api/momentum.ts` → `parseMomentum` ile doğrulanır; bozuk şema `null`
   döner ve bölüm hiç görünmez. Kullanılmayan seviye alanları bozuk gelse bölüm yine ayakta
 
+## Trend grafiği kartı
+
+`frontend/src/features/trend/` — tahmin grafiğinin yanına ikinci bir kart. Sorusu farklı:
+tahmin grafiği modelin **beklentisini**, bu kart geçmişin **genel yönünü** gösterir.
+
+- Yeni uç yok: panelin zaten çektiği günlük OHLC serisi seçilen aralığa toplanır
+  (`domain/chart/aggregate.ts`). Kova anahtarları takvimle uyumlu — hafta pazartesiye
+  çekilir, çeyrek ve yarıyıl takvim sınırlarından
+- Aralıklar `features/trend/ranges.ts` içinde: **Günlük** (90 mum, varsayılan) ·
+  Haftalık (104) · Aylık (60) · 3 Aylık (24) · 6 Aylık (12). Günlük mum, diğerleri çizgi
+- Trend çizgisi noktaları birleştirmez: **log fiyat üzerinde en küçük kareler**
+  (`domain/chart/trend.ts`). Log uzayında sabit yüzde büyüme düz bir doğrudur, o yüzden
+  eğim "dönem başına yüzde kaç" olarak okunur ve serinin başı ile sonu eşit ağırlık taşır
+- Kart beş sayı verir: yön, eğim (dönem başına), **gerçekleşen** değişim, kanaldaki
+  konum ve uyum (r²)
+- **Regresyon kanalı**: artıkların ±1σ ve ±2σ bandı. Sigma log uzayında hesaplandığı
+  için bant fiyat ekseninde **çarpımsal** açılır — %8'lik sapma yüksek fiyatta daha çok
+  dolar eder ve bant öyle görünmelidir. Kanal yönle renklendirilmez; bir iddia değil,
+  trend etrafındaki tipik sapmadır ve r²'yi görünür kılar
+- **Kanalın dışına çıkmak dönüş sinyali sayılmaz.** Denendi ve ölçüldü: 250 günlük
+  regresyona göre fiyat trendin 1σ altındayken sonraki 30 günün ortalama getirisi
+  +%1,81, koşulsuz ortalama ise +%3,12 — yani sapma *aleyhte* çıktı. Üstelik elde
+  üst üste binmeyen yalnız **33 adet** 30 günlük pencere var; bu farklar o örneklemde
+  gürültüdür. Kanal bu yüzden yalnız betimleyici olarak sunulur, sinyal olarak değil
+- Tasarım dili paylaşılan sınıflardan gelir (`chart-block`, `chart-head`, `segmented`,
+  `chart-wrap`, `market-snapshot`); ölçüldü: kabuk, başlık, özet kartı, eksen yazısı,
+  ızgara ve pasif düğme hesaplanan değerleri mevcut kartla birebir aynı
+
+### Ölçümle düzeltilen iki şey
+
+1. **Yön eşiği adım başına eğime bakıyordu.** Kova uzunluğu değişince anlamı kayıyordu:
+   günlük mumda %0,1/gün yılda %28 (çok kaba), 6 aylık kovada hiçbir şey (çok ince).
+   Ölçüldü: 90 günde **−%6,37** olan gerçek seri "Yatay" görünüyordu. Karar artık
+   **dönem boyu toplam değişimden** verilir (eşik %1), her kovada aynı anlamı taşır
+2. **Kartta trend çizgisinin uçları yazıyordu.** 60 aylık seride ham değişim %148,14 iken
+   trend uçları %202,91 — okuyucu bunu fiyat değişimi sanardı. Kart artık **gerçekleşen**
+   değişimi gösterir; trendin kendi uçları grafikte zaten çizili
+
+Sabit seride kayan nokta yüzünden `syy` sıfır yerine ~1e-31 çıkıyor ve r² **1 yerine 0**
+oluyordu; log uzayında 1e-10'un altındaki yayılım düz kabul edilerek düzeltildi
+(`trend.test.ts` bunu doğrular). Toplam 42 test.
+
+### SEO tarafı
+
+Kartın panel karşılığı `altin-trend-grafigi` ve **içerik taşıdığı için** sitemap'e girer
+(kural: `sections` yoksa `noindex`). Ön render'da 783 özgün kelime, render sonrası
+`PanelIntro` aynı metni gösterir — ikisi tutarlı. `ons-altin-yil-sonu-tahmini` rehberi
+buraya bağlandı: o makale uzun vadeli tahminin neden verilmediğini anlatıyor, bu kart
+ise uzun vadenin fiilen ne yaptığını gösteriyor.
+
+Panel sayfasında `h1` (panel başlığı) ile kartın `h2`'si aynı metni taşır ama aralarında
+~4.100 piksel var; okuyucu ikisini birlikte görmez, ikincisi canlı aracın etiketi olarak
+çalışır.
+
 ## SEO
 
-- 37 rehber makalesi (`data/seo-articles.json`), 11 panel özelliği (`data/panel-features.json`),
+- 37 rehber makalesi (`data/seo-articles.json`), 12 panel özelliği (`data/panel-features.json`),
   4 kurumsal sayfa (`data/site-pages.json`: hakkımızda, yazar, iletişim, gizlilik)
-- `scripts/generate-seo-pages.mjs` build sonrası: 37 rehber + `/rehber` dizini + 4 dizine açık panel
+- `scripts/generate-seo-pages.mjs` build sonrası: 37 rehber + `/rehber` dizini + 5 dizine açık panel
   sayfası + `/panel` dizini + 4 kurumsal sayfa + ön render edilmiş anasayfa +
-  **48 URL'lik sitemap**
+  **49 URL'lik sitemap**
 - **Güven sayfaları (E-E-A-T).** YMYL kategorisinde Google'ın aradığı sinyaller sitede hiç
   yoktu. Dört sayfa `SitePageView` şablonuyla render edilir, ön render edilir ve her ön
   render edilmiş footer'dan (`LEGAL` sabiti) linklenir. Article şemasının `author`'ı artık
@@ -557,8 +611,9 @@ gösterir. Taşımıyorsa sayfa `noindex,follow` alır ve `scripts/site-routes.m
 onu sitemap'e koymaz. Yani **dizine girmenin koşulu içerik taşımaktır**; ayrı bir
 bayrak yok, unutulamaz.
 
-- İçerik yazılan dört panel ölçümün kazanan dediği kümeden: `altin-pivot-seviyeleri`,
-  `altin-momentum-gucu`, `ons-altin-tahmini`, `altin-teknik-gostergeler`
+- İçerik yazılan paneller ölçümün kazanan dediği kümeden: `altin-pivot-seviyeleri`,
+  `altin-momentum-gucu`, `ons-altin-tahmini`, `altin-teknik-gostergeler` ve
+  `altin-trend-grafigi`
 - Ön render'daki özgün kelime **121 → 594-786**; sitemap 57 → **50 URL**, panel 12 → 4
 - `routes.test.ts` değişti: sitemap artık uygulama rotalarının **alt kümesi**.
   Ters yön hâlâ hata (sitemap'te olup rotada olmayan yol 404 verir) ve ayrı bir test

@@ -20,6 +20,7 @@ import IndicatorsSection from '../features/indicators/IndicatorsSection';
 import LoanSection from '../features/loan/LoanSection';
 import PivotSection from '../features/pivots/PivotSection';
 import ScorecardSection from '../features/scorecard/ScorecardSection';
+import TrendSection from '../features/trend/TrendSection';
 import ZiynetSection from '../features/ziynet/ZiynetSection';
 import ZoneSection from '../features/zones/ZoneSection';
 import { ZIYNET } from '../services/realtime/harem';
@@ -55,6 +56,9 @@ function DashboardPage({ focus }: { focus?: string }) {
                 <div className="loading-row"><Spinner size="lg" label="Canlı kotasyona bağlanılıyor…"/></div>
               </section>}
           <ErrorBoundary title="Grafik yüklenemedi"><ChartSection/></ErrorBoundary>
+          {/* İkinci grafik kartı: aynı tasarım dili, farklı soru. Tahmin grafiği
+              modelin beklentisini, bu kart geçmişin genel yönünü gösterir. */}
+          <ErrorBoundary title="Trend grafiği yüklenemedi"><TrendSection/></ErrorBoundary>
           <div className="section-label"><span>Ayrıntılar</span><small>Başlığa dokunarak açın</small></div>
           {/* Momentum piyasa servisinden gelir; model servisine bağlı olmadığı için
               `detailsBusy` ile kapatılmaz. */}
