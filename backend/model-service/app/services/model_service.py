@@ -6,6 +6,9 @@ import numpy as np
 from ..config import ROOT, settings
 from .xau_dataset_service import FEATURES, HORIZONS
 
+# Yükleme sırası: MODEL_DIR/active.json -> (varsa) imaja gömülü yedek.
+# Yedek build sırasında artık üretilmiyor, o yüzden normalde yoktur; `reload`
+# var olmayan adayı sessizce atlar ve model bulunamazsa `predict` 503 verir.
 BUNDLED_MODEL = ROOT / "data" / "xauusd_model.joblib"
 
 # Ağırlığı bu eşiğin altında kalan ufukta ağın katkısı neredeyse tamamen kısılmıştır;

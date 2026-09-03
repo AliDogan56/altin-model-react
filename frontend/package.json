@@ -9,14 +9,15 @@
     "dev:localhost": "vite --mode localhost",
     "dev:development": "vite --mode development",
     "dev:production": "vite --mode production",
-    "build": "vite build && node scripts/generate-seo-pages.mjs",
-    "build:localhost": "vite build --mode localhost && node scripts/generate-seo-pages.mjs",
-    "build:development": "vite build --mode development && node scripts/generate-seo-pages.mjs",
-    "build:production": "vite build --mode production && node scripts/generate-seo-pages.mjs",
+    "build": "node scripts/build-article-index.mjs && vite build && node scripts/generate-seo-pages.mjs",
+    "build:localhost": "node scripts/build-article-index.mjs && vite build --mode localhost && node scripts/generate-seo-pages.mjs",
+    "build:development": "node scripts/build-article-index.mjs && vite build --mode development && node scripts/generate-seo-pages.mjs",
+    "build:production": "node scripts/build-article-index.mjs && vite build --mode production && node scripts/generate-seo-pages.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "articles:index": "node scripts/build-article-index.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",

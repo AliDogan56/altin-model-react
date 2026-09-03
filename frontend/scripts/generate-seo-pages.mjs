@@ -146,6 +146,14 @@ for (const [index, article] of articles.entries()) {
     .replace(/<title>[^<]*<\/title>/i, `<title>${escapeHtml(title)}</title>`)
     .replace('<div id="root"></div>', `<div id="root">${articleBody(article, related)}</div>`)
     .replace('</head>', `    <meta property="article:section" content="Ons Altın Rehberi" />\n    <meta property="article:modified_time" content="${article.updated}" />\n    ${jsonLd({ '@context': 'https://schema.org', '@graph': graph })}\n  </head>`);
+  /* Makale gövdesi ana pakette değil; sayfaya gömülür ki hidrasyon onu
+     **eşzamanlı** okusun. Olmasaydı React hidrasyonda ön render edilen metni
+     atıp veri gelene kadar yükleniyor gösterirdi — organik inişte içeriğin
+     bir an kaybolması demek. Ek istek yok: aynı yanıtın içinde geliyor ve
+     gzip'le ~3 KB tutuyor. */
+  html = html.replace('</body>',
+    `  <script type="application/json" id="makale-verisi">${
+      JSON.stringify(article).replace(/</g, '\\u003c')}</script>\n  </body>`);
   html = replaceAttribute(html, 'link\\s+rel="canonical"', 'href', url);
   html = setMeta(html, 'description', article.summary);
   html = setMeta(html, 'keywords', `${article.keyword}, ons altın, altın analizi, altın fiyatları`);

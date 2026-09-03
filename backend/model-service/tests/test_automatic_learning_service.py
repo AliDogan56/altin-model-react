@@ -51,3 +51,39 @@ def test_job_reports_dataset_rows_when_not_training(monkeypatch):
     result = service._refresh_and_train()
     assert result == {"training_rows": 1001, "trained": False}
     assert service.last_result == result
+
+
+def test_model_yokken_ilk_tur_egitimi_tetikler(monkeypatch):
+    """Soğuk açılış: build sırasında artık model gömülmüyor.
+
+    İmaj her kurulduğunda eğitim yapılması, servis edilen modeli deploy
+    takvimine bağlıyordu — 2026-09-03'te bir frontend dağıtımı 7 günlük ufku
+    sessizce kapattı. Eğitim yalnız bu işe bırakıldı; o yüzden **model yokken**
+    ilk turun eğitimi tetiklemesi artık bir sözleşme.
+    """
+    service = module.AutomaticLearningService()
+    monkeypatch.setattr(module, "write_csv", lambda path: 1197)
+    monkeypatch.setattr(module.model_service, "active", None)      # soğuk açılış
+    monkeypatch.setattr(module, "settings", SimpleNamespace(
+        auto_train=True, retrain_every_new_rows=5, retrain_minimum_rows=300))
+    egitildi = []
+    monkeypatch.setattr(module, "train_model", lambda **_: egitildi.append(True) or {"trained": True})
+    monkeypatch.setattr(module.model_service, "reload", lambda: None)
+
+    service._refresh_and_train()
+    assert egitildi == [True]
+
+
+def test_auto_train_kapaliysa_model_yokken_bile_egitmez(monkeypatch):
+    """Kapalıysa kapalıdır: soğuk açılış bunu ezmemeli."""
+    service = module.AutomaticLearningService()
+    monkeypatch.setattr(module, "write_csv", lambda path: 1197)
+    monkeypatch.setattr(module.model_service, "active", None)
+    monkeypatch.setattr(module, "settings", SimpleNamespace(
+        auto_train=False, retrain_every_new_rows=5, retrain_minimum_rows=300))
+    egitildi = []
+    monkeypatch.setattr(module, "train_model", lambda **_: egitildi.append(True))
+
+    sonuc = service._refresh_and_train()
+    assert egitildi == []
+    assert sonuc["trained"] is False

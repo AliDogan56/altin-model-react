@@ -8,6 +8,16 @@ export type SeoFaq = { q: string; a: string };
 export type SeoTable = { caption: string; columns: string[]; rows: string[][] };
 export type SeoList = { ordered?: boolean; items: string[] };
 
+/**
+ * Makalenin gövdesiz hâli. Anasayfa, rehber dizini ve footer yalnız bunu
+ * gösterir; gövdeyi ana pakete sokmamak için indeks bu şekilde ayrıldı
+ * (`scripts/build-article-index.mjs`).
+ */
+export type ArticleSummary = {
+  id: string; keyword: string; title: string; seoTitle?: string;
+  summary: string; category: string; updated: string; panel: string;
+};
+
 export type SeoArticle = {
   id: string; keyword: string; title: string; seoTitle?: string; updated: string;
   summary: string; intro: string; category: string;

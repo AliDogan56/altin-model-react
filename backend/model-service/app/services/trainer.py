@@ -13,7 +13,9 @@ from ..config import ROOT, settings
 from .xau_dataset_service import FEATURES, HORIZONS
 
 DATASET_PATH = ROOT / "data" / "xauusd_training_5y.csv"
-# İmaja gömülen yedek: MODEL_DIR volume'u boşsa servis buradan açılır.
+# İsteğe bağlı yedek. Build sırasında **artık üretilmiyor** (imaj her kurulduğunda
+# modeli değiştiriyordu); dosya normalde yoktur. Yol korunuyor ki elle bir artefakt
+# gömmek gerekirse yükleme sırası çalışsın.
 BUNDLED_ARTIFACT_PATH = ROOT / "data" / "xauusd_model.joblib"
 
 

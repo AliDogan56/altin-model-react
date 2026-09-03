@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { GUIDES_BY_CATEGORY } from '../content/articles';
-import type { SeoArticle } from '../content/types';
+import type { ArticleSummary } from '../content/types';
 import { PANEL_FEATURES } from '../content/panel';
 import { NAV_SECTIONS, fold } from '../content/site';
 import ThemeToggle from './ThemeToggle';
@@ -53,12 +53,12 @@ function SiteNav({current}:{current?:string}) {
     const needle=fold(query.trim());
     if(!needle) return GUIDES_BY_CATEGORY;
     return GUIDES_BY_CATEGORY
-      .map(([category,items])=>[category,items.filter(article=>fold(`${article.title} ${article.keyword}`).includes(needle))] as [string,SeoArticle[]])
+      .map(([category,items])=>[category,items.filter(article=>fold(`${article.title} ${article.keyword}`).includes(needle))] as [string,ArticleSummary[]])
       .filter(([,items])=>items.length>0);
   },[query]);
   const hitCount=groups.reduce((total,[,items])=>total+items.length,0);
 
-  const guideLink=(article:SeoArticle)=>
+  const guideLink=(article:ArticleSummary)=>
     <Link key={article.id} to={`/rehber/${article.id}`} onClick={close}
        aria-current={current===article.id?'page':undefined}
        className={current===article.id?'active':undefined}>{article.title}</Link>;

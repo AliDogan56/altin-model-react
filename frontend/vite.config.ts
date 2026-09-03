@@ -57,7 +57,7 @@ export default defineConfig(({mode})=>{
   return {
     plugins: [react(), liveDataApi()],
     // Yalnız domain katmanı test edilir: saf fonksiyonlar, React ve DOM gerektirmez.
-    test: { environment: 'node', include: ['src/domain/**/*.test.ts', 'src/lib/**/*.test.ts', 'src/app/**/*.test.ts', 'src/services/**/*.test.ts'] },
+    test: { environment: 'node', include: ['src/domain/**/*.test.ts', 'src/lib/**/*.test.ts', 'src/app/**/*.test.ts', 'src/services/**/*.test.ts', 'src/content/**/*.test.ts'] },
     server: { host: '0.0.0.0', port: 5173, strictPort: true, proxy: {'/backend':{target:env.VITE_BACKEND_PROXY||'http://127.0.0.1:8000',changeOrigin:true,rewrite:path=>path.replace(/^\/backend/,'')}} },
     preview: { host: '0.0.0.0', port: 4173, strictPort: true }
   };

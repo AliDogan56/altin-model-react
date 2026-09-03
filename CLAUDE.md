@@ -86,6 +86,18 @@ Artık ikisinde de yedek var: `query1.finance.yahoo.com/.../GC=F?range=5y&interv
   güncel/eğitim oynaklık oranıyla (0,75–2,0 arası kırpılı) ölçeklenir
 - Otomatik job veri setini saatlik tazeler; en az `RETRAIN_EVERY_NEW_ROWS` (varsayılan 5)
   yeni satır oluşunca yeniden eğitir ve `RETRAIN_MINIMUM_ROWS`'u (300) uygular
+- **Build sırasında eğitim yapılmaz.** Dockerfile önceden imaja bir model gömüyordu;
+  sonucu şuydu: imaj her kurulduğunda model yeniden eğitiliyor ve hangi ufukların açık
+  olduğu değişebiliyordu — yani modeli eğitim takvimi değil **deploy takvimi**
+  belirliyordu. 2026-09-03'te bir frontend dağıtımı 7 günlük ufku sessizce kapattı
+  (ağırlık 0,92 → 0,00). Eğitim artık yalnız `automatic_learning_service`'te
+- **Soğuk açılış:** model yokken `previous_rows = 0` olduğu için eşik kendiliğinden
+  aşılır ve iş ilk turunda (başlangıçtan 2 sn sonra) eğitir. İzole konteynerde ölçüldü:
+  **6. saniyede** model hazır ve `/models` içine `active.json` + artefakt yazılmış;
+  yeniden başlatmada aynı sürüm volume'dan okundu, yeniden eğitilmedi. O ~6 saniyelik
+  boşlukta `/v1/predict` **503** döner ve arayüz nötr yedeğe düşer
+- Yan fayda: artefakt kalıcılığı da bu değişiklikle fiilen çalışır hâle geldi; önceden
+  `/models` boş kalıyor ve servis her açılışta imaja gömülü modele düşüyordu
 - **Artefakt `MODEL_DIR` volume'una** yazılır, yanına `active.json` işaretçisi konur ve
   en yeni `KEEP_ARTIFACTS` (5) tanesi saklanır. İmaja gömülen `data/xauusd_model.joblib`
   yalnız volume boşken kullanılan yedektir
@@ -482,6 +494,40 @@ ise uzun vadenin fiilen ne yaptığını gösteriyor.
 Panel sayfasında `h1` (panel başlığı) ile kartın `h2`'si aynı metni taşır ama aralarında
 ~4.100 piksel var; okuyucu ikisini birlikte görmez, ikincisi canlı aracın etiketi olarak
 çalışır.
+
+## Makale verisi ana pakette değil
+
+`seo-articles.json` 313,6 KB ham / 84,4 KB gzip ve tamamı giriş paketine giriyordu —
+anasayfaya gelen herkes 37 makalenin **tam metnini** indiriyordu. Oysa anasayfa, rehber
+dizini, footer ve gezinme yalnız başlık ve özet gösteriyor.
+
+- `scripts/build-article-index.mjs` gövdesiz bir indeks üretir (**15,8 KB ham / 4,5 KB
+  gzip**) → `src/data/articles-index.json`. Dosya **depoya işlenir** ki `vite dev` ön adım
+  gerektirmesin; `build` betikleri onu her seferinde yeniden üretir
+- `content/articles.ts` yalnız indeksi statik içe aktarır. Gövde iki yoldan gelir:
+  **(1) organik iniş** — ön render edilen sayfa gövdeyi `<script type="application/json"
+  id="makale-verisi">` olarak taşır ve `useState` başlangıç değeri olarak **eşzamanlı**
+  okunur; **(2) uygulama içi gezinme** — tam veri bir kez tembel yüklenir
+- Ölçülen sonuç: giriş paketi **219 → 140,3 KB gzip (−%36)**; makale gövdeleri ayrı
+  `seo-articles-*.js` chunk'ına taşındı
+
+**Gömme neden şart:** React hidrasyonda ön render edilen metni atar. Veri gelene kadar
+yükleniyor gösterilseydi organik inişte içerik bir an kaybolurdu — sayfanın tek işi
+okunmak olduğu için bu kabul edilemezdi. Ölçüldü: 6 saniye boyunca 250 ms aralıkla
+örneklendi, bölüm sayısı **10'da sabit kaldı**, yükleniyor durumu hiç görünmedi ve
+makale chunk'ı **hiç istenmedi**. Gömülü veri sayfaya 3,3 KB gzip ekliyor, ek istek yok.
+
+`</script>` enjeksiyonuna karşı `<` karakteri `\u003c` olarak kaçırılır.
+
+**Ayrışma riski ve testi:** indeks üretilmiş ama işlenmiş bir dosya; kaynak değişip
+yeniden üretilmezse ikisi ayrışır. `content/articles.test.ts` bunu yakalar: aynı kimlikler
+aynı sırada, özet alanları birebir, indekste gövde alanı yok, indeks kaynağın onda
+birinden küçük. Bu testlerin koşması için `vite.config.ts` içindeki vitest `include`
+listesine `src/content/**` eklendi.
+
+**Yolda görülen:** panelde bazı iç bağlantılar react-router `<Link>` değil düz `<a href>`
+(`ZiynetSection` gibi). Bunlar tam sayfa yeniden yüklemesi yapıyor; çalışıyor ama SPA
+gezinmesinden yavaş.
 
 ## SEO
 
