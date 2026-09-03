@@ -785,6 +785,22 @@ bayrak yok, unutulamaz.
   `add_header` tanımlanırsa üst bloktan gelenleri **ezer**; bu yüzden her kademe kendi
   başlığını eksiksiz yazar. `^~ /assets/` regex kuralından önce değerlendirildiği için
   oradaki `.svg` dosyaları bir haftalık kurala düşmez
+- **Güvenlik başlıkları konteyner nginx'inde** (`frontend/nginx-security.conf`, 2026-09-04):
+  CSP, `X-Frame-Options: DENY`, `Permissions-Policy`. Dosya `add_header` tanımlayan
+  **her** blokta `include` edilir — nginx'te bir location kendi `add_header`'ını
+  yazınca üst bloktakiler ezilir; doğrulama gerçek dist ile altı yol türünde
+  (HTML, makale, /assets, görsel, /health, API) başlığın tam bir kez çıktığını ölçtü.
+  CSP: `script-src 'self'` + `index.html`'deki satır içi tema betiğinin sha256
+  hash'i; `style-src 'unsafe-inline'` (React nitelik stilleri); `connect-src`
+  Harem soketi; `frame-ancestors 'none'`. **Betik değişirse hash değişmeli**:
+  `src/app/csp.test.ts` hash'i betikten yeniden hesaplayıp CSP'de arar, soket
+  adresini `services/config.ts`'ten okuyup `connect-src`'de arar. HSTS, nosniff ve
+  referrer-policy host nginx'te kalır; burada tekrarlanırsa başlık iki kez gider
+- **api-gateway zaman aşımı yol bazlı** (`router_service.timeout_for`): varsayılan
+  **90 sn** (`UPSTREAM_TIMEOUT_SECONDS`), `/v1/training*` için **300 sn**
+  (`UPSTREAM_SLOW_*`), bağlantı kurma 5 sn. Eskiden her istek 300 sn'ydi; takılan
+  üst servis gateway işçisini beş dakika tutuyordu. 90, market-service'in
+  birincil + yedek fiyat kaynağını (30 + 30 sn) kapsar
 - Serving yolu değişiklikleri **iki kademe doğrulanır**: sunucuda compose ağına bağlı
   geçici konteynerde `nginx -t`, ardından çalışan `web`'in gerçek dist içeriği
   kopyalanıp ayrı bir konteynere bağlanarak istek atılır. Canlıya hiç dokunulmaz

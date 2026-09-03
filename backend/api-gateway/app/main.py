@@ -22,7 +22,10 @@ def create_app() -> FastAPI:
     @app.on_event("startup")
     async def startup() -> None:
         initialize()
-        app.state.client = httpx.AsyncClient(timeout=300, follow_redirects=False)
+        # Varsayılan süre kısa; yol bazlı süre istek anında verilir (timeout_for).
+        # Bağlantı kurma 5 sn: servis ağda yoksa dakikalarca beklenmez.
+        app.state.client = httpx.AsyncClient(
+            timeout=httpx.Timeout(settings.upstream_timeout, connect=5.0), follow_redirects=False)
 
     @app.on_event("shutdown")
     async def shutdown() -> None:
@@ -55,7 +58,9 @@ def create_app() -> FastAPI:
         headers["X-Trace-Id"] = request.state.trace_id
         headers["X-Forwarded-Host"] = request.headers.get("host", "")
         try:
-            upstream = await app.state.client.request(request.method, url, headers=headers, content=await request.body())
+            upstream = await app.state.client.request(
+                request.method, url, headers=headers, content=await request.body(),
+                timeout=httpx.Timeout(router_service.timeout_for(upstream_path), connect=5.0))
         except httpx.HTTPError as error:
             log_request(request.method, request_path, target.name, 503, (time.monotonic() - started_at) * 1000)
             raise UpstreamUnavailableException(target.name, f"{target.name} kullanılamıyor: {error}") from error

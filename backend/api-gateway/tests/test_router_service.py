@@ -16,3 +16,14 @@ def test_route_requires_service_name():
     except KeyError:
         return
     raise AssertionError("Servis adı olmayan rota reddedilmeliydi")
+
+
+def test_zaman_asimi_yol_bazli():
+    """Eğitim yolu uzun, diğer her şey kısa süre alır; önek eşleşmesi tam bölümle yapılır."""
+    from app.config import settings
+    assert router_service.timeout_for("/v1/training/run") == settings.slow_timeout
+    assert router_service.timeout_for("/v1/training") == settings.slow_timeout
+    assert router_service.timeout_for("/v1/trainingx") == settings.upstream_timeout
+    assert router_service.timeout_for("/v1/predict") == settings.upstream_timeout
+    assert settings.upstream_timeout < settings.slow_timeout
+    assert settings.upstream_timeout <= 120

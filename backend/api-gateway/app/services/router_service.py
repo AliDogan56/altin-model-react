@@ -14,6 +14,12 @@ class RouterService:
         stripped = path[len(f"/{route.name}"):]
         return stripped or "/"
 
+    @staticmethod
+    def timeout_for(upstream_path: str) -> float:
+        """Üst servis okuma süresi: yavaş olduğu bilinen yollar (eğitim) uzun, kalanı kısa."""
+        slow = any(upstream_path == p or upstream_path.startswith(f"{p}/") for p in settings.slow_prefixes)
+        return settings.slow_timeout if slow else settings.upstream_timeout
+
     def describe(self) -> list[dict]:
         return [{"service": route.name, "gateway_prefix": f"/{route.name}",
                  "base_url": route.base_url, "upstream_prefixes": route.prefixes} for route in settings.routes]
