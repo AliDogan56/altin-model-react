@@ -757,6 +757,21 @@ bayrak yok, unutulamaz.
   yerken B aynı anda 200 aldı. Canlı: 80 istek 20 paralel → 27 tanesi 429
 - **Ardışık curl ile sınır tetiklenmez**: TLS üzerinden istek başına ~0,2 sn, yani
   ~5 istek/sn. Canlıda sınamak için paralel gönder (`xargs -P 20`)
+- **Punto tabanı 12 px** (2026-09-04). Mobilde ~1.000 metin düğümünün ~350'si 9–11,5 px
+  arasındaydı (eyebrow 9, olasılık bandı 11). SCSS'te 12'nin altındaki 122 `font-size`
+  kuralı 12'ye çekildi; grafik SVG metinleri (eksen, seviye etiketi, CANLI) kapsam dışı,
+  onlar piksel alanıyla sınırlı. `_base.scss` içinde `small{font-size:12px}` tabanı var:
+  tarayıcı varsayılanı `smaller` ile 10 px'e düşüyordu. Ölçüldü: 375 px'de 12 px altı
+  **0**, taşma 0, kırpılan metin 0
+- **Çıplak `header` seçicisi tuzağı:** `_legacy-responsive.scss` mobilde `header
+  { flex-direction:column }` diyordu ve bu, ziynet kart başlığı gibi **her** `header`
+  öğesine sızıyordu (başlık ortalanmış sütuna dönüyordu). Kural `.app > header` ile
+  sınırlandı. `_base.scss`'teki `header{display:flex…}` de çıplak; kart başlıkları kendi
+  düzenini yazdığı için şimdilik zararsız, yeni bir `header` eklerken hatırla
+- **Marka görselleri `alt=""` taşır ve bu doğru:** üst menü ve altbilgideki logo
+  hemen yanında "Ons Altın Analiz" metniyle duruyor, bağlantının kendisi adlandırılmış.
+  Alt metin eklemek ekran okuyucuya adı iki kez okuturdu; "alt'sız görsel" sayımı boş
+  alt'ı eksik saymıştı
 - **Dokunma hedefleri WCAG 2.2 SC 2.5.8 (AA, 24×24) uyumlu.** 375 px'de 123 kontrolün
   **18'i** 24 px'in altındaydı; neredeyse tamamı footer bağlantıları (11 px punto,
   17 px yükseklik) ve "Yasal uyarının tamamı" düğmesi (113×18). Punto korundu,

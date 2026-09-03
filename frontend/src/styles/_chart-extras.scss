@@ -5,7 +5,7 @@
   .chart-tools .tool-group { flex:1 1 100%; justify-content:space-between; }
   /* Katman anahtarları yatay kaydırılan çip şeridi */
   .chart-canvas { height:clamp(400px,68vh,560px); }
-  .chart-legend { gap:9px; font-size:9.5px; }
+  .chart-legend { gap:9px; font-size:12px; }
   .market-snapshot { grid-template-columns:repeat(2,minmax(0,1fr)); }
   .snapshot-card strong { font-size:15px; }
 }
@@ -13,7 +13,7 @@
 /* Efsane hem açıklama hem katman anahtarı */
 .chart-legend button { display:flex; align-items:center; gap:5px; min-height:34px; padding:0 11px;
   border:1px solid var(--line); border-radius:999px; background:var(--surface-2); color:var(--text-soft);
-  font:inherit; font-size:10px; cursor:pointer; }
+  font:inherit; font-size:12px; cursor:pointer; }
 .chart-legend button:hover { border-color:var(--gold-line); color:var(--text-strong); }
 .chart-legend button.off { opacity:.45; }
 .chart-legend button:disabled,.chart-legend .legend-unavailable { opacity:.35; cursor:not-allowed; }
@@ -27,7 +27,7 @@
   .chart-tools .tool-group > span { flex:0 0 80px; }
   .chart-tools .tool-group .segmented { flex:1 1 auto; min-width:0; }
   .chart-legend { gap:7px; }
-  .chart-legend button { min-height:38px; font-size:11px; padding:0 12px; }
+  .chart-legend button { min-height:38px; font-size:12px; padding:0 12px; }
 }
 
 /* styles.scss'teki .band{fill:rgb(var(--gold-fill-rgb) / .13)} üzerine: bant altın çizginin etrafında
@@ -36,11 +36,11 @@
 
 /* Destek / direnç seviyeleri — yalnız geçmiş bölgesinde, ince ve ikincil */
 .sr line { stroke-width:1; stroke-dasharray:5 5; opacity:.55; }
-.sr text { font-size:11px; font-weight:700; opacity:.9; }
+.sr text { font-size:12px; font-weight:700; opacity:.9; }
 .sr.res line { stroke:var(--red); } .sr.res text { fill:var(--red); }
 .sr.sup line { stroke:var(--teal); } .sr.sup text { fill:var(--teal); }
 .sr-key { background:linear-gradient(90deg,var(--teal-fill) 50%,var(--red-fill) 50%); }
-.gram-grid em { color:var(--muted); font-size:10px; font-style:normal; }
+.gram-grid em { color:var(--muted); font-size:12px; font-style:normal; }
 
 /* ---- Pivot seviyeleri ---- */
 
@@ -60,5 +60,5 @@
   line-height:1; cursor:pointer; }
 .day-stepper button:hover { background:var(--surface-3); color:var(--text-strong); }
 .day-stepper button:focus-visible { outline:2px solid var(--gold); outline-offset:2px; }
-.day-stepper .day-stepper-close { font-size:11px; font-weight:700; color:var(--muted);
+.day-stepper .day-stepper-close { font-size:12px; font-weight:700; color:var(--muted);
   min-width:auto; padding:0 11px; }

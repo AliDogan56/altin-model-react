@@ -26,7 +26,7 @@
   .mobile-head button { width:44px; height:44px; border:1px solid var(--line); border-radius:10px; background:var(--surface-3); color:var(--text); font-size:16px; cursor:pointer; }
   .mobile-scroll { flex:1; overflow-y:auto; padding:6px 11px calc(18px + env(safe-area-inset-bottom)); overscroll-behavior:contain; }
   .mobile-scroll section { display:flex; flex-direction:column; }
-  .mobile-scroll h3 { margin:14px 0 4px; color:var(--gold); font-size:10.5px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; }
+  .mobile-scroll h3 { margin:14px 0 4px; color:var(--gold); font-size:12px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; }
   .mobile-scroll a { min-height:46px; display:flex; align-items:center; padding:6px 9px; border-radius:9px; color:var(--text-soft); font-size:13.5px; line-height:1.35; }
   .mobile-scroll a.active { color:var(--gold); background:var(--surface-3); }
   .mobile-sections { margin-bottom:6px; padding-bottom:8px; border-bottom:1px solid var(--line); }
@@ -34,8 +34,8 @@
   #panel { scroll-margin-top:76px; }
   .app > header { margin:0 -8px 10px; padding:12px; background:rgb(var(--surface-rgb) / .96); border-bottom:1px solid var(--line); }
   header h1 { font-size:23px; margin:5px 0; }
-  header p { font-size:11px; line-height:1.35; }
-  .eyebrow { font-size:9px; }
+  header p { font-size:12px; line-height:1.35; }
+  .eyebrow { font-size:12px; }
   .header-market { width:100%; display:grid; grid-template-columns:1fr; }
   .status { display:flex; align-items:center; justify-content:space-between; text-align:left; background:var(--surface-2); border:1px solid var(--line); padding:8px 10px; border-radius:12px; }
   .status span { display:none; }
@@ -53,7 +53,7 @@
   .loan-head h2,.block h2 { font-size:16px; }
   .loan-head .segmented { width:100%; margin-top:12px; }
   .loan-head .segmented button { flex:1; }
-  .segmented button { min-height:42px; padding:8px 11px; font-size:11px; }
+  .segmented button { min-height:42px; padding:8px 11px; font-size:12px; }
   .loan-inputs { grid-template-columns:1fr 1fr; gap:8px; }
   .loan-inputs label,.loan-inputs > div { padding:10px; }
   .loan-inputs input { min-height:44px; font-size:16px; }
@@ -62,7 +62,7 @@
   .loan-result > strong { font-size:25px; }
   .loan-scenarios { grid-template-columns:1fr; }
   .chart-head { display:block; padding:0 7px; }
-  .chart-head p { font-size:10px; }
+  .chart-head p { font-size:12px; }
   .chart-tools { display:grid; grid-template-columns:1fr; justify-content:stretch; margin-top:12px; gap:8px; }
   /* Yerleşim `_chart-extras.scss` içindeki daha özgül kuralda; burada yalnız
      genişlik veriliyor (grid tanımı oradaki flex tarafından eziliyordu). */
@@ -97,7 +97,7 @@
   .seo-articles { grid-template-columns:1fr; gap:10px; }
   .seo-article { padding:17px 14px; border-radius:14px; }
   .seo-article > header { margin:0; padding:0; grid-template-columns:38px 1fr; gap:10px; background:none; border:0; }
-  .seo-article > header > span { width:36px; height:36px; border-radius:10px; font-size:10px; }
+  .seo-article > header > span { width:36px; height:36px; border-radius:10px; font-size:12px; }
   .seo-article h2 { font-size:21px; }
   .seo-article header p { font-size:12px; line-height:1.5; }
   .article-body { grid-template-columns:1fr; gap:10px; margin:16px 0 0; }

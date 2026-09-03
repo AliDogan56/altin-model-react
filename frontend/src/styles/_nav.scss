@@ -13,10 +13,10 @@
 .guide-search { display:flex; align-items:center; gap:9px; margin-bottom:10px; }
 .guide-search input { flex:1; min-height:38px; padding:0 12px; border:1px solid var(--line); border-radius:9px; background:var(--surface-2); color:var(--text); font:inherit; font-size:12.5px; }
 .guide-search input:focus { outline:none; border-color:var(--gold-line); }
-.guide-search small { color:var(--muted); font-size:10.5px; white-space:nowrap; }
+.guide-search small { color:var(--muted); font-size:12px; white-space:nowrap; }
 .guide-groups { max-height:min(58vh,460px); overflow:auto; display:grid; grid-template-columns:1fr 1fr; gap:4px 14px; }
 .guide-groups section { display:flex; flex-direction:column; }
-.guide-groups h3 { margin:8px 0 3px; padding:0 8px; color:var(--gold); font-size:10px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; }
+.guide-groups h3 { margin:8px 0 3px; padding:0 8px; color:var(--gold); font-size:12px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; }
 .guide-groups a { padding:8px 9px; border-radius:8px; color:var(--text-soft); font-size:12px; line-height:1.35; }
 .guide-groups a:hover { color:var(--text-strong); background:var(--surface-3); }
 .guide-groups a.active { color:var(--gold); background:var(--surface-3); }

@@ -13,7 +13,7 @@ header p{color:var(--muted);font-size:14px;margin:0}
 .error-actions button { min-height:38px; padding:0 14px; border:1px solid var(--line); border-radius:9px;
   background:var(--surface-2); color:var(--text); font:inherit; font-size:12px; cursor:pointer; }
 .error-actions button.primary { border-color:var(--gold-line); background:var(--accent-surface); color:var(--on-accent); }
-.error-fallback details { margin-top:12px; color:var(--muted); font-size:11px; }
+.error-fallback details { margin-top:12px; color:var(--muted); font-size:12px; }
 .error-fallback pre { margin:6px 0 0; white-space:pre-wrap; word-break:break-word; }
 
-.bulletin-asof { margin-top:10px; color:var(--muted); font-size:10.5px; line-height:1.55; }
+.bulletin-asof { margin-top:10px; color:var(--muted); font-size:12px; line-height:1.55; }

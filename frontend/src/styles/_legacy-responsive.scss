@@ -1,7 +1,9 @@
 /* styles.scss ile gelen eski kırılma noktaları. */
 @media (max-width:650px) {
   .app { padding:13px; }
-  header { align-items:flex-start; flex-direction:column; }
+  /* Yalnız panel başlığı: çıplak `header` seçicisi kart başlıklarına (.quote header)
+     sızıyor ve onları mobilde ortalanmış sütuna çeviriyordu. */
+  .app > header { align-items:flex-start; flex-direction:column; }
   .status { text-align:left; }
   .cards, .bulletins { grid-template-columns:1fr; }
 }

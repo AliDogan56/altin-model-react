@@ -1,11 +1,11 @@
 /* Yasal uyarı ve modal. */
 .inline-legal { margin:0; padding:10px 13px; border:1px solid var(--gold-line-soft); border-radius:10px;
-  background:rgb(var(--gold-bg-rgb) / .33); color:var(--muted); font-size:11px; line-height:1.6; }
+  background:rgb(var(--gold-bg-rgb) / .33); color:var(--muted); font-size:12px; line-height:1.6; }
 .inline-legal a { color:var(--gold); }
 /* Ön render edilen sayfalardaki uyarı bloğu (JS yüklenmeden görünen sürüm) */
 .legal-note { margin-top:22px; padding-top:16px; border-top:1px solid var(--line); }
 .legal-note h2 { margin:0 0 9px; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--gold); }
-.legal-note p { margin:0 0 8px; color:var(--muted); font-size:11px; line-height:1.7; }
+.legal-note p { margin:0 0 8px; color:var(--muted); font-size:12px; line-height:1.7; }
 
 /* ---- Yasal uyarı modalı ---- */
 .nav-legal { min-height:40px; padding:0 13px; border:1px solid var(--gold-line-soft); border-radius:9px;
