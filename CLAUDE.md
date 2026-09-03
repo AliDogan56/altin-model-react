@@ -673,6 +673,16 @@ bayrak yok, unutulamaz.
   yeniden kurulunca kaybolurdu. Konteyner yapılandırması ise sürümleniyor.
   Host zaten sıkıştırılmış yanıtı olduğu gibi geçirir; nginx `Content-Encoding`
   taşıyan bir yanıtı yeniden sıkıştırmaz. Ölçülen kazanç **839,5 KB → 241,0 KB (%71)**
+- **Önbellek politikası üç kademeli** (aynı dosyada): varsayılan `no-cache` (HTML,
+  sitemap, robots ve API — her zaman doğrula), `/assets/` için
+  `max-age=31536000, immutable` (dosya adı içerik hash'i taşır, içerik değişirse ad da
+  değişir), hash'siz görseller için bir hafta. **Tuzak:** nginx'te bir location'da
+  `add_header` tanımlanırsa üst bloktan gelenleri **ezer**; bu yüzden her kademe kendi
+  başlığını eksiksiz yazar. `^~ /assets/` regex kuralından önce değerlendirildiği için
+  oradaki `.svg` dosyaları bir haftalık kurala düşmez
+- Serving yolu değişiklikleri **iki kademe doğrulanır**: sunucuda compose ağına bağlı
+  geçici konteynerde `nginx -t`, ardından çalışan `web`'in gerçek dist içeriği
+  kopyalanıp ayrı bir konteynere bağlanarak istek atılır. Canlıya hiç dokunulmaz
 - Model imajı proje kökünden build edilir (CSV'yi kopyalayabilmek için)
 - Sunucu ve deploy adımları: [[altin-model-deployment]] (hafıza)
 
