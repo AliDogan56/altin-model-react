@@ -148,6 +148,15 @@ content/    tek kaynak: makaleler, panel özellikleri, parametre grupları, site
   zoom düğmeleri, dört efsane anahtarı, günlük tahmin tablosu (karne bölümü bunu
   çok daha geniş örneklemle yapıyor). Modelin geçmiş beklentisi tek bir anahtarla,
   varsayılan kapalı
+- **Yazı tipi bilinçli sistem yığını; web font yüklenmez.** Önceden `Inter` bildiriliyor
+  ama hiçbir yerde yüklenmiyordu (ölçüldü: `document.fonts.size = 0`). Sonuç, Inter'in
+  kurulu olduğu makinede bir yüz, Android ve Windows'ta başka bir yüzdü — marka yazı tipi
+  kullanıcıların çoğuna hiç ulaşmıyordu (trafiğin %76'sı mobil, çoğu Android). Sistem
+  yığını seçildi çünkü sitenin birinci sorunu yük ve Inter marka karakteri katmayan bir
+  varsayılan; maliyeti ödeyip özgünlük kazanılmıyordu. Karakter istenirse doğru yer gövde
+  değil, **başlıklar için ayrı bir display yüz**. Sıra platformun kendi arayüz yüzünü
+  önceler ve hepsi Türkçe diyakritikleri karşılar. Doğrulandı: sıfır font ağ isteği,
+  375 ve 780 px'te HTML kırpılması 0, gövde taşması 0
 - **İki tema var, varsayılan aydınlık.** Palet `styles/_tokens.scss` içinde **56 token**
   olarak tanımlı; aydınlık palet `:root`'ta, koyu palet `:root[data-theme="dark"]`'ta ve
   ikisi birebir aynı anahtarları taşır. Sistem tercihine göre otomatik geçiş **yok** —

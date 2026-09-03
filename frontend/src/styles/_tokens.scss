@@ -10,7 +10,28 @@
  */
 
 :root {
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+  /*
+   * Yazı tipi: **bilinçli sistem yığını**, web font yüklenmez.
+   *
+   * Önceden `Inter` bildiriliyordu ama hiçbir yerde yüklenmiyordu (ölçüldü:
+   * `document.fonts.size = 0`). Sonuç, Inter'in kurulu olduğu makinelerde bir
+   * yüz, Android ve Windows'ta bambaşka bir yüz — yani arayüz platformdan
+   * platforma değişiyordu ve marka yazı tipi kullanıcıların çoğuna hiç
+   * ulaşmıyordu. Trafiğin %76'sı mobil ve büyük kısmı Android.
+   *
+   * İki dürüst yol vardı: Inter'i gerçekten yüklemek ya da sistem yığınını
+   * benimsemek. İkincisi seçildi çünkü (1) sitenin birinci sorunu yük, font
+   * indirmek render'ı bloklayan bir istek daha ekler; (2) Inter marka karakteri
+   * katmayan bir varsayılan, yani maliyeti ödeyip özgünlük kazanmıyorduk.
+   * Marka karakteri istenirse doğru yer gövde değil, **başlıklar için ayrı bir
+   * display yüz** olur.
+   *
+   * Sıra platformun kendi arayüz yüzünü önceler: Apple (-apple-system),
+   * Android/Chrome (Roboto), Windows (Segoe UI Variable → Segoe UI). Hepsi
+   * Türkçe diyakritikleri (ı İ ğ ş ç ö ü) tam karşılar.
+   */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Variable Text",
+    "Segoe UI", Roboto, ui-sans-serif, system-ui, "Helvetica Neue", Arial, sans-serif;
   color-scheme: light;
 
   /* Yüzeyler */
