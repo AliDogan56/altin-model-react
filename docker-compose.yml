@@ -1,7 +1,26 @@
+# Ortak log ve kaynak politikası. Ölçüm (2026-09-04, canlı sunucu: 2 CPU, 3,8 GB):
+#   web 3,5 MB · api-gateway 43 MB · market-service 51 MB · model-service 103 MB,
+#   model-service eğitim anında tepe 121 MB (yerelde ölçüldü). Bellek sınırları
+#   tepenin en az 4 katı: sınır aşılırsa konteyner OOM ile öldürülür ve yeniden
+#   başlar, bu yüzden dar sınır güvenlik değil kesinti üretir. CPU sınırları
+#   tavandır; toplamın 2 çekirdeği aşması sorun değil, aynı anda dolmazlar.
+# Log: json-file sınırsızdı (api-gateway birkaç günde 2,6 MB); her konteyner
+#   en çok 3 x 10 MB tutar, eskisi silinir.
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
   api-gateway:
     build: ./backend/api-gateway
     restart: unless-stopped
+    logging: *logging
+    deploy:
+      resources:
+        limits: { memory: 256M, cpus: "1.0", pids: 256 }
+        reservations: { memory: 64M }
     environment:
       APP_ENV: production
       MODEL_SERVICE_URL: http://model-service:8002
@@ -25,6 +44,11 @@ services:
   market-service:
     build: ./backend/market-service
     restart: unless-stopped
+    logging: *logging
+    deploy:
+      resources:
+        limits: { memory: 256M, cpus: "1.0", pids: 256 }
+        reservations: { memory: 64M }
     environment:
       APP_ENV: production
       DATABASE_PATH: /data/gold_platform_production.sqlite3
@@ -43,6 +67,11 @@ services:
       context: .
       dockerfile: backend/model-service/Dockerfile
     restart: unless-stopped
+    logging: *logging
+    deploy:
+      resources:
+        limits: { memory: 512M, cpus: "1.5", pids: 256 }
+        reservations: { memory: 128M }
     environment:
       APP_ENV: production
       MODEL_DIR: /models
@@ -60,6 +89,11 @@ services:
   web:
     build: ./frontend
     restart: unless-stopped
+    logging: *logging
+    deploy:
+      resources:
+        limits: { memory: 64M, cpus: "0.5", pids: 256 }
+        reservations: { memory: 16M }
     ports:
       - "127.0.0.1:8080:80"
     networks: [gold-network]

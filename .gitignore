@@ -15,3 +15,6 @@ __pycache__/
 frontend/dist-local/
 .DS_Store
 .venv-model/
+
+# Yerel eğitim artefaktları (MODEL_DIR); canlıda volume, repoda değil
+backend/model-service/models/

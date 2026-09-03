@@ -758,6 +758,14 @@ bayrak yok, unutulamaz.
   geçici konteynerde `nginx -t`, ardından çalışan `web`'in gerçek dist içeriği
   kopyalanıp ayrı bir konteynere bağlanarak istek atılır. Canlıya hiç dokunulmaz
 - Model imajı proje kökünden build edilir (CSV'yi kopyalayabilmek için)
+- **Log rotasyonu ve kaynak sınırları compose'da** (2026-09-04). Loglar `json-file`
+  sınırsızdı (api-gateway birkaç günde 2,6 MB); artık her konteyner 3 × 10 MB tutar.
+  Bellek sınırları ölçülen tepenin en az 4 katı: gateway/market 256M, model 512M
+  (eğitim tepesi 121 MB), web 64M; CPU tavanları 1 / 1 / 1,5 / 0,5, süreç 256.
+  Dar sınır güvenlik değil kesinti üretir (OOM → yeniden başlatma). **Tuzak:**
+  `pids_limit` ile `deploy.resources.limits` aynı anda yazılamaz, compose ikisini
+  aynı alana çözümler; süreç sınırı `limits.pids` olarak verilir. Doğrulama
+  sunucuda `docker compose -f <geçici> --project-directory /opt/... config` ile
 - Sunucu ve deploy adımları: [[altin-model-deployment]] (hafıza)
 
 ## Test
