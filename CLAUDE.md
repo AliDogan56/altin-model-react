@@ -529,6 +529,37 @@ listesine `src/content/**` eklendi.
 (`ZiynetSection` gibi). Bunlar tam sayfa yeniden yüklemesi yapıyor; çalışıyor ama SPA
 gezinmesinden yavaş.
 
+## Rota bazlı kod bölme (2026-09-04)
+
+Makale verisini ayırdıktan sonra giriş paketi hâlâ 145 KB gzip'ti ve rehber
+sayfasına organik gelen okuyucu panelin tamamını (grafik, socket.io, 12 bölüm)
+indiriyordu. Sayfa türleri artık `app/App.tsx` içinde `React.lazy` ile ayrı parça:
+`pages/DashboardRoute.tsx` (sağlayıcı + panel, socket.io burada), `ArticlePage`,
+`GuideHubPage`, `PanelHubPage`, `SitePageView`.
+
+| sayfa | önce | sonra |
+|---|---|---|
+| rehber makalesi | 145 KB | **~99 KB** (giriş 96 + makale 1,3 + footer 1,1) |
+| panel / anasayfa | 145 KB | 144 KB (giriş 96 + panel 48) |
+
+Giriş paketindeki 96 KB React 19 + react-router + ortak kabuk (SiteNav, LegalModal,
+makale indeksi); panele ait hiçbir şey kalmadı (imza dizeleriyle doğrulandı).
+
+- **Organik inişte metin kaybolmaz.** Ön render `#root` içinde ve React render'ı
+  onu siler; parça gelene kadar `Suspense` yedeği olarak **ön render edilmiş HTML'in
+  kendisi** gösterilir (`app/prerender.ts`, modül render'dan önce yakalar). Yalnız
+  iniş yolunda ve tek sefer: uygulama içi gezinmede başka sayfanın metni yedek
+  olarak görünmesin diye sınır çözülünce `prerenderConsumed` çağrılır.
+  Ölçüldü: 4 sn boyunca 250 ms'de bir örneklendi, kelime sayısı 1380–1399, h1 sabit,
+  spinner hiç görünmedi
+- **Ek gidiş-dönüş yok.** `vite.config.ts` manifest üretir; `generate-seo-pages.mjs`
+  her ön render edilmiş sayfaya kendi rota parçasının `modulepreload` bağlantısını
+  basar (giriş paketinin zaten yüklediği ortak parçalar atlanır). Manifestte parça
+  yoksa build **hata verir**, sessizce preload'suz kalmaz
+- Doğrulandı: makale sayfası yalnız `index + ArticlePage + SiteFooter` istiyor,
+  panel parçası hiç inmiyor; anasayfa `DashboardRoute` alıyor, makale parçasını
+  almıyor; uygulama içi gezinme ve geri tuşu çalışıyor, konsol hatası yok
+
 ## SEO
 
 - 37 rehber makalesi (`data/seo-articles.json`), 12 panel özelliği (`data/panel-features.json`),

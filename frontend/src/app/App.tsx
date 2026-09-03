@@ -1,31 +1,45 @@
-import { useEffect, useState } from 'react';
-import { Route, Routes, useParams } from 'react-router-dom';
+import { lazy, Suspense, useEffect, useState } from 'react';
+import { Route, Routes, useLocation, useParams } from 'react-router-dom';
 import ErrorBoundary from '../components/ErrorBoundary';
 import LegalModal from '../components/LegalModal';
 import ScrollToTop from './ScrollToTop';
+import { prerenderConsumed, prerenderFor } from './prerender';
 import { articleFromPage, loadArticle } from '../content/articles';
 import { featureBySlug } from '../content/panel';
 import { SITE_PAGES } from '../content/pages';
-import { DashboardProvider } from '../features/dashboard/DashboardContext';
 import Spinner from '../components/Spinner';
 import SiteNav from '../components/SiteNav';
 import type { SeoArticle } from '../content/types';
-import ArticlePage from '../pages/ArticlePage';
-import DashboardPage from '../pages/DashboardPage';
-import GuideHubPage from '../pages/GuideHubPage';
-import PanelHubPage from '../pages/PanelHubPage';
-import SitePageView from '../pages/SitePageView';
 
-/** Panel durumu yalnız panel sayfalarında kurulur; rehber sayfaları soket açmaz. */
-const Dashboard = ({ focus }: { focus?: string }) => (
-  <ErrorBoundary title="Panel yüklenemedi">
-    <DashboardProvider><DashboardPage focus={focus}/></DashboardProvider>
-  </ErrorBoundary>
-);
+/**
+ * Rota bazlı kod bölme. Her sayfa türü kendi parçasında: rehber okuyucusu
+ * panelin grafik ve socket.io kodunu, panel kullanıcısı makale sayfasını
+ * indirmez. Ön render edilen sayfalar ilgili parçayı `modulepreload` ile
+ * baştan ister (scripts/generate-seo-pages.mjs), yani ek gidiş-dönüş yok.
+ */
+const DashboardRoute = lazy(() => import('../pages/DashboardRoute'));
+const ArticlePage = lazy(() => import('../pages/ArticlePage'));
+const GuideHubPage = lazy(() => import('../pages/GuideHubPage'));
+const PanelHubPage = lazy(() => import('../pages/PanelHubPage'));
+const SitePageView = lazy(() => import('../pages/SitePageView'));
+
+const LoadingPage = ({ label }: { label: string }) =>
+  <main className="app article-page"><div className="article-loading"><Spinner size="lg" label={label}/></div></main>;
+
+/** Parça gelene kadar: organik inişte ön render edilmiş metnin kendisi, aksi hâlde spinner. */
+const RouteFallback = () => {
+  const { pathname } = useLocation();
+  const html = prerenderFor(pathname);
+  if (html) return <div dangerouslySetInnerHTML={{ __html: html }}/>;
+  return <LoadingPage label="Sayfa yükleniyor…"/>;
+};
+
+/** Suspense sınırı çözüldüğünde render olur: ön render yedeği bir daha kullanılmaz. */
+const PrerenderDone = () => { useEffect(prerenderConsumed, []); return null; };
 
 const PanelFeatureRoute = () => {
   const { slug } = useParams();
-  return <Dashboard focus={featureBySlug(slug!) ? slug : undefined}/>;
+  return <DashboardRoute focus={featureBySlug(slug!) ? slug : undefined}/>;
 };
 
 /**
@@ -33,8 +47,7 @@ const PanelFeatureRoute = () => {
  * iki yoldan gelir:
  *
  *   1. **Organik iniş** — ön render edilen sayfa gövdeyi gömülü taşır ve
- *      `useState` başlangıç değeri olarak **eşzamanlı** okunur. Hidrasyonda
- *      içeriğin bir an kaybolması böyle önlenir; asıl SEO yolu budur.
+ *      `useState` başlangıç değeri olarak **eşzamanlı** okunur.
  *   2. **Uygulama içi gezinme** — tam veri bir kez tembel yüklenir.
  *
  * Bilinmeyen rehber kimliği panele düşer: eski bağlantılar 404 yerine içerik görsün.
@@ -57,10 +70,8 @@ const GuideRoute = () => {
   }, [id, article]);
 
   if (article && article.id === id) return <ArticlePage article={article}/>;
-  if (missing) return <Dashboard/>;
-  return <main className="app article-page"><SiteNav current={id}/>
-    <div className="article-loading"><Spinner size="lg" label="Rehber yükleniyor…"/></div>
-  </main>;
+  if (missing) return <DashboardRoute/>;
+  return <><SiteNav current={id}/><LoadingPage label="Rehber yükleniyor…"/></>;
 };
 
 function App() {
@@ -68,15 +79,18 @@ function App() {
     <>
       <ScrollToTop/>
       <ErrorBoundary>
-      <Routes>
-        {SITE_PAGES.map(page =>
-          <Route key={page.slug} path={`/${page.slug}`} element={<SitePageView page={page}/>}/>)}
-        <Route path="/rehber" element={<GuideHubPage/>}/>
-        <Route path="/rehber/:id" element={<GuideRoute/>}/>
-        <Route path="/panel" element={<PanelHubPage/>}/>
-        <Route path="/panel/:slug" element={<PanelFeatureRoute/>}/>
-        <Route path="*" element={<Dashboard/>}/>
-      </Routes>
+      <Suspense fallback={<RouteFallback/>}>
+        <Routes>
+          {SITE_PAGES.map(page =>
+            <Route key={page.slug} path={`/${page.slug}`} element={<SitePageView page={page}/>}/>)}
+          <Route path="/rehber" element={<GuideHubPage/>}/>
+          <Route path="/rehber/:id" element={<GuideRoute/>}/>
+          <Route path="/panel" element={<PanelHubPage/>}/>
+          <Route path="/panel/:slug" element={<PanelFeatureRoute/>}/>
+          <Route path="*" element={<DashboardRoute/>}/>
+        </Routes>
+        <PrerenderDone/>
+      </Suspense>
       </ErrorBoundary>
       <LegalModal/>
     </>

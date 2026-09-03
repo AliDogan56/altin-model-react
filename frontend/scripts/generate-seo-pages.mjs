@@ -22,6 +22,28 @@ const LEGAL = `<section class="legal-note"><h2>Yasal uyarı ve sorumluluk reddi<
         <p>Fiyat tahminleri geçmiş verilerden türetilmiş istatistiksel kestirimlerdir; kesinlik, isabet ya da kâr garantisi taşımaz. Veriler üçüncü taraf kaynaklardan alınır ve doğruluğu garanti edilmez; gösterge niteliğindedir.</p>
         <p>Bu platform hiçbir finansal ürün için alım-satım teklifi ya da çağrısı değildir. İçeriğe dayanarak alınan kararlardan ve doğabilecek doğrudan veya dolaylı zararlardan site sahibi sorumlu tutulamaz. Yatırım kararlarınızın sorumluluğu size aittir.</p>
         <nav aria-label="Site bilgileri"><a href="/hakkimizda">Hakkımızda</a> · <a href="/yazar">Yazar ve metodoloji</a> · <a href="/iletisim">İletişim</a> · <a href="/gizlilik">Gizlilik</a></nav></section>`;
+/* Rota parçaları tembel yüklenir (app/App.tsx). Ön render edilen sayfa kendi
+   parçasını baştan istesin diye manifestten parça ve bağımlılıkları çözülür;
+   giriş paketinin zaten yüklediği ortak parçalar atlanır. Ölçüm: preload'suz
+   makale sayfası parçayı ana paket **çözüldükten sonra** istiyordu, bir
+   gidiş-dönüş daha. */
+const manifest = JSON.parse(await readFile(join(root, 'dist/.vite/manifest.json'), 'utf8'));
+const chunkClosure = key => {
+  const seen = new Set();
+  const walk = k => { const e = manifest[k]; if (!e || seen.has(k)) return; seen.add(k); (e.imports ?? []).forEach(walk); };
+  walk(key);
+  return seen;
+};
+const entryChunks = chunkClosure(Object.keys(manifest).find(k => manifest[k].isEntry));
+const withPreload = (html, source) => {
+  if (!manifest[source]) throw new Error(`Manifestte rota parçası yok: ${source}`);
+  const links = [...chunkClosure(source)].filter(k => !entryChunks.has(k))
+    .map(k => `<link rel="modulepreload" crossorigin href="/${manifest[k].file}" />`);
+  return html.replace('</head>', `    ${links.join('\n    ')}\n  </head>`);
+};
+const ROUTE = { panel: 'src/pages/DashboardRoute.tsx', article: 'src/pages/ArticlePage.tsx',
+  guideHub: 'src/pages/GuideHubPage.tsx', panelHub: 'src/pages/PanelHubPage.tsx', site: 'src/pages/SitePageView.tsx' };
+
 const categories = [...new Set(articles.map(article => article.category))];
 const byCategory = category => articles.filter(article => article.category === category);
 
@@ -166,7 +188,7 @@ for (const [index, article] of articles.entries()) {
 
   const output = join(root, 'dist/rehber', article.id, 'index.html');
   await mkdir(dirname(output), { recursive: true });
-  await writeFile(output, html);
+  await writeFile(output, withPreload(html, ROUTE.article));
 }
 
 /* ---- /panel/<slug> özellik sayfaları ----
@@ -211,7 +233,7 @@ for (const [index, feature] of features.entries()) {
   html = setMeta(html, 'twitter:title', title);
   html = setMeta(html, 'twitter:description', feature.summary);
   await mkdir(join(root, 'dist/panel', feature.slug), { recursive: true });
-  await writeFile(join(root, 'dist/panel', feature.slug, 'index.html'), html);
+  await writeFile(join(root, 'dist/panel', feature.slug, 'index.html'), withPreload(html, ROUTE.panel));
 }
 
 /* ---- /panel dizin sayfası ----
@@ -238,7 +260,7 @@ panelHubHtml = setMeta(panelHubHtml, 'description', `Canlı ons altın panelinin
 panelHubHtml = setMeta(panelHubHtml, 'og:title', 'Panel Bölümleri | Ons Altın Analiz', true);
 panelHubHtml = setMeta(panelHubHtml, 'og:url', `${siteUrl}/panel`, true);
 await mkdir(join(root, 'dist/panel'), { recursive: true });
-await writeFile(join(root, 'dist/panel/index.html'), panelHubHtml);
+await writeFile(join(root, 'dist/panel/index.html'), withPreload(panelHubHtml, ROUTE.panelHub));
 
 /* ---- /rehber dizin sayfası ----
    Navbar'daki 31 kalemlik açılır liste yerine gerçek bir hedef sayfa; breadcrumb de buraya işaret eder. */
@@ -269,7 +291,7 @@ hubHtml = setMeta(hubHtml, 'description', `Ons altın, gram altın ve ziynet alt
 hubHtml = setMeta(hubHtml, 'og:title', 'Ons Altın Rehberi | Ons Altın Analiz', true);
 hubHtml = setMeta(hubHtml, 'og:url', `${siteUrl}/rehber`, true);
 await mkdir(join(root, 'dist/rehber'), { recursive: true });
-await writeFile(join(root, 'dist/rehber/index.html'), hubHtml);
+await writeFile(join(root, 'dist/rehber/index.html'), withPreload(hubHtml, ROUTE.guideHub));
 
 
 /* ---- Anasayfa ön render ----
@@ -336,7 +358,7 @@ for (const page of sitePages) {
   })}\n  </head>`);
   html = html.replace('<div id="root"></div>', `<div id="root">${sitePageBody(page)}</div>`);
   await mkdir(join(root, 'dist', page.slug), { recursive: true });
-  await writeFile(join(root, 'dist', page.slug, 'index.html'), html);
+  await writeFile(join(root, 'dist', page.slug, 'index.html'), withPreload(html, ROUTE.site));
 }
 
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
@@ -345,6 +367,6 @@ ${(await siteRoutes(today)).map(route => `  <url><loc>${siteUrl}${route.path}</l
 </urlset>
 `;
 
-await writeFile(join(root, 'dist/index.html'), homeHtml);
+await writeFile(join(root, 'dist/index.html'), withPreload(homeHtml, ROUTE.panel));
 await writeFile(join(root, 'dist/sitemap.xml'), sitemap);
 console.log(`${articles.length} rehber + dizin + ${features.length} panel + ${sitePages.length} kurumsal sayfa, ön render edilmiş anasayfa ve sitemap oluşturuldu.`);
