@@ -664,6 +664,15 @@ bayrak yok, unutulamaz.
 
 - `docker-compose.yml`: api-gateway, market-service, model-service, web. Yalnız `web`
   dışarı açık (`127.0.0.1:8080`), TLS host nginx'te (`deploy/nginx/onsaltinanaliz.com.conf`)
+- **Sıkıştırma konteyner nginx'inde** (`frontend/nginx.conf`), host'ta değil. Host'ta
+  `gzip on;` vardı ama `gzip_types` yorumdaydı; nginx varsayılanı yalnız `text/html`
+  olduğu için JS ve CSS **ham gidiyordu** (ölçüldü: JS 759,8 KB, CSS 72,4 KB,
+  ikisi de `Content-Encoding`'siz). Düzeltmenin burada olmasının sebebi: sunucudaki
+  `/etc/nginx/sites-available/onsaltinanaliz.com` **repoya bağlı değil**
+  (`deploy/nginx/` yalnız referans kopya), yani host'ta yapılan düzeltme sunucu
+  yeniden kurulunca kaybolurdu. Konteyner yapılandırması ise sürümleniyor.
+  Host zaten sıkıştırılmış yanıtı olduğu gibi geçirir; nginx `Content-Encoding`
+  taşıyan bir yanıtı yeniden sıkıştırmaz. Ölçülen kazanç **839,5 KB → 241,0 KB (%71)**
 - Model imajı proje kökünden build edilir (CSV'yi kopyalayabilmek için)
 - Sunucu ve deploy adımları: [[altin-model-deployment]] (hafıza)
 
