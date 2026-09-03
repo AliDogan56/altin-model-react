@@ -706,6 +706,25 @@ bayrak yok, unutulamaz.
 - `/panel/<slug>` ile gelindiğinde ilgili bölüm açılır, yerleşim durulunca tek yumuşak
   kaydırma yapılır ve kısa süre vurgulanır (`useFeatureFocus`)
 
+## Hız sınırı ve dokunma hedefleri (2026-09-03)
+
+- **API hız sınırı konteyner nginx'inde** (`frontend/nginx.conf`), Python bağımlılığı yok.
+  `limit_req_zone` / `limit_conn_zone` dosyanın en üstünde — `conf.d/*.conf` `http`
+  bağlamına dahil edildiği için geçerli (sunucuda `nginx -t` ile doğrulandı). Yalnız
+  `/(market-service|model-service)` proxy bloğuna uygulanır; statik varlıklar sınırsız.
+  Değerler: **10 istek/sn, burst 40 nodelay, 20 eşzamanlı bağlantı**, aşımda **429**.
+  Cömert seçildi: trafiğin %76'sı mobil ve Türkiye'de mobil kullanıcıların çoğu operatör
+  NAT'ı arkasında — tek IP'yi çok kullanıcı paylaşır, dar sınır önce gerçek kullanıcıyı
+  keser. Ölçüldü: 6 istekli sayfa açılışı ve 10 statik istek tamamen geçer; 80 istekli
+  ardışık selin 31'i 429 alır
+- **Dokunma hedefleri WCAG 2.2 SC 2.5.8 (AA, 24×24) uyumlu.** 375 px'de 123 kontrolün
+  **18'i** 24 px'in altındaydı; neredeyse tamamı footer bağlantıları (11 px punto,
+  17 px yükseklik) ve "Yasal uyarının tamamı" düğmesi (113×18). Punto korundu,
+  yükseklik `min-height:24px` + `inline-flex` ile verildi; negatif yatay marj
+  metni sütun hizasında tutar (ölçüldü: metin solu = başlık solu). Satır ritmi
+  değişmedi: masaüstünde `gap` 9→2, mobilde 11→4, ikisinde de eski toplam
+  (26 / 28 px). **Sonuç 18 → 0**, gövde taşması 0
+
 ## Dağıtım
 
 - `docker-compose.yml`: api-gateway, market-service, model-service, web. Yalnız `web`

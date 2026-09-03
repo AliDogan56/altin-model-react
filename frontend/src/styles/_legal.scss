@@ -11,7 +11,10 @@
 .nav-legal { min-height:40px; padding:0 13px; border:1px solid var(--gold-line-soft); border-radius:9px;
   background:var(--gold-bg); color:var(--gold); font:inherit; font-size:12px; font-weight:800; cursor:pointer; }
 .nav-legal:hover { background:var(--gold-bg); }
-.link-btn { padding:0; border:0; background:none; color:var(--gold); font:inherit;
+/* Metin içinde akan bir düğme; dokunma hedefi 18 px kalıyordu. Dikey dolgu
+   satır akışını bozmasın diye yükseklik `min-height` ile verilir. */
+.link-btn { display:inline-flex; align-items:center; min-height:24px;
+  padding:0; border:0; background:none; color:var(--gold); font:inherit;
   font-size:inherit; text-decoration:underline; cursor:pointer; }
 .legal-modal { position:fixed; inset:0; z-index:50; display:flex; align-items:center; justify-content:center; padding:16px; }
 .legal-backdrop { position:absolute; inset:0; background:rgb(var(--bg-rgb) / .8); backdrop-filter:blur(3px); }
