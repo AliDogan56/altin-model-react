@@ -717,6 +717,15 @@ bayrak yok, unutulamaz.
   NAT'ı arkasında — tek IP'yi çok kullanıcı paylaşır, dar sınır önce gerçek kullanıcıyı
   keser. Ölçüldü: 6 istekli sayfa açılışı ve 10 statik istek tamamen geçer; 80 istekli
   ardışık selin 31'i 429 alır
+- **Konteyner gerçek istemci IP'sini `X-Real-IP`'den okur** (`set_real_ip_from
+  172.16.0.0/12` + `real_ip_header X-Real-IP`). İlk dağıtımda ölçüldü: konteyner her
+  isteği docker ağ geçidi `172.18.0.1` olarak görüyordu, yani sınır kişi başına değil
+  **site geneli** uygulanıyordu. Host nginx zaten `X-Real-IP` gönderiyor ve konteynere
+  yalnız o ulaşıyor (`127.0.0.1:8080`); `X-Forwarded-For` değil `X-Real-IP` seçildi
+  çünkü tek değer taşır, zincirle sahtelenemez. Doğrulama: A 80 istekte 33 kez 429
+  yerken B aynı anda 200 aldı. Canlı: 80 istek 20 paralel → 27 tanesi 429
+- **Ardışık curl ile sınır tetiklenmez**: TLS üzerinden istek başına ~0,2 sn, yani
+  ~5 istek/sn. Canlıda sınamak için paralel gönder (`xargs -P 20`)
 - **Dokunma hedefleri WCAG 2.2 SC 2.5.8 (AA, 24×24) uyumlu.** 375 px'de 123 kontrolün
   **18'i** 24 px'in altındaydı; neredeyse tamamı footer bağlantıları (11 px punto,
   17 px yükseklik) ve "Yasal uyarının tamamı" düğmesi (113×18). Punto korundu,
