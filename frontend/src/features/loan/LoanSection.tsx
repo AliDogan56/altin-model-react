@@ -9,13 +9,13 @@ import { useDashboard } from '../dashboard/DashboardContext';
 function LoanSection({ focus }: { focus?: string }) {
   const {
     horizonDays, setHorizonDays, loanAmount, setLoanAmount, loanRate, setLoanRate,
-    futureUsdTry, setFutureUsdTry, loan, costs, forecast, confident, modelStatus,
+    futureUsdTry, setFutureUsdTry, loan, costs, forecast, confident, modelStatus, hasForecast,
   } = useDashboard();
 
   const index = Math.max(0, forecast.horizons.indexOf(loan.days));
   const hasView = confident[index] !== false;
   const busy = useMinVisible(modelStatus === 'loading');
-  const ready = modelStatus === 'live' && hasView && !busy;
+  const ready = hasForecast && modelStatus !== 'fallback' && hasView;
 
   return (
     <Collapsible id="loan" anchor="feature-tl"
@@ -61,6 +61,7 @@ function LoanSection({ focus }: { focus?: string }) {
               ? 'Aktif model sonucu gelmeden altın getirisi ve finansman karşılaştırması gösterilmez.'
               : `Model ${loan.days} günlük vadede yön bildirmiyor; bu vade için karşılaştırma üretilmez.`}</p>
           : <>
+            {modelStatus === 'loading' && <p className="model-update" role="status">Önceki model sonucuyla hesaplanan karşılaştırma gösteriliyor · güncelleniyor…</p>}
             <div className="loan-results">{costs.results.map(s =>
               <article className={`loan-result ${s.tone}`} key={s.label}>
                 <span>{s.label} · Ons {pct(s.onsReturn)} · TL {pct(s.tlReturn)}</span>

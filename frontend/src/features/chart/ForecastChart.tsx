@@ -6,7 +6,7 @@ import { BAND_COVERAGE, buildDailyPath } from '../../domain/model/predict';
 import type { Forecast } from '../../domain/model/types';
 import type { Candle } from '../../domain/indicators';
 import type { LadderItem } from '../../domain/pivots';
-import { longDate, money, shortDate } from '../../lib/format';
+import { longDate, money, shortDate, signedPct2 } from '../../lib/format';
 import { useChartGestures } from './useChartGestures';
 import { useElementSize } from './useElementSize';
 
@@ -34,7 +34,7 @@ type ChartProps = {
   /** Pivot kartıyla **aynı** seviyeler; iki bölüm farklı sayı göstermesin. */
   levels: LadderItem[];
   levelPeriod: string;
-  spot: { price: number };
+  spot: { price: number; live?: boolean };
   describedById?: string;
 };
 
@@ -63,6 +63,12 @@ function ForecastChart({
   const [pinned, setPinned] = useState(false);
   const [zoom, setZoom] = useState(1);
   const [panDays, setPanDays] = useState(0);
+  const [layers, setLayers] = useState({ history: true, live: true, model: true, band: true, levels: false });
+  const toggleLayer = (layer: keyof typeof layers) => {
+    setLayers(current => ({ ...current, [layer]: !current[layer] }));
+    setHover(null);
+    setPinned(false);
+  };
 
   /* Mumlar kapanış serisinden önce kurulur: ipucu kartı gün içi aralığı
      buradan okur ve `hist` ile aynı x indekslerini paylaşırlar. */
@@ -100,16 +106,16 @@ function ForecastChart({
   const visibleStart = center - visibleSpan / 2, visibleEnd = center + visibleSpan / 2;
 
   const core = [
-    ...hist.map(d => d.v), ...(available ? future.map(d => d.v) : []), spot.price,
+    ...hist.map(d => d.v), ...(available && (layers.model || layers.band) ? future.map(d => d.v) : []), spot.price,
     ...(originPath ? originPath.map(d => d.v) : []),
     // Fitiller kapanış serisinin dışına taşar; ölçeğe katılmazsa kırpılırlardı.
-    ...(showCandles ? bars.flatMap(b => [b.high, b.low]) : []),
+    ...(layers.history && showCandles ? bars.flatMap(b => [b.high, b.low]) : []),
   ];
   /* Pivot seviyeleri ve bant "kırpılabilir" kümede: S3/R3 fiyattan %10 uzakta
      olabiliyor, çekirdek kümeye konsa fiyat çizgisini düz bir hat yapardı. */
   const bandValues = [
-    ...(available ? future.flatMap(d => [d.lo, d.hi]) : []),
-    ...levels.map(l => l.value),
+    ...(available && layers.band ? future.flatMap(d => [d.lo, d.hi]) : []),
+    ...(layers.levels ? levels.map(l => l.value) : []),
   ];
   const domain = computeDomain(core, bandValues);
 
@@ -120,7 +126,10 @@ function ForecastChart({
   const bandShape = `${future.map(d => `${x(d.i)},${y(d.hi)}`).join(' ')} `
     + `${[...future].reverse().map(d => `${x(d.i)},${y(d.lo)}`).join(' ')}`;
 
-  const probePoints: Point[] = [...hist, ...(available ? future.slice(1) : [])];
+  const probePoints: Point[] = [
+    ...(layers.history ? hist : []),
+    ...(available && (layers.model || layers.band) ? future.slice(1) : []),
+  ];
   const dateByIndex = useMemo(() => {
     const map = new Map<number, string>();
     hist.forEach(d => map.set(d.i, d.date));
@@ -158,11 +167,13 @@ function ForecastChart({
   };
   const step = (delta: number) => {
     if (!probePoints.length) return;
-    const current = hover ? probePoints.indexOf(hover) : probePoints.findIndex(p => p.i === 0);
+    const current = hover ? probePoints.findIndex(p => p.i === hover.i && p.date === hover.date)
+      : probePoints.findIndex(p => p.i === 0);
     const next = Math.max(0, Math.min(probePoints.length - 1, (current < 0 ? 0 : current) + delta));
     focusPoint(probePoints[next]);
   };
   const onKeyDown = (event: KeyboardEvent<SVGSVGElement>) => {
+    if (!probePoints.length && event.key !== 'Escape') return;
     const keys: Record<string, () => void> = {
       ArrowLeft: () => step(event.shiftKey ? -7 : -1),
       ArrowRight: () => step(event.shiftKey ? 7 : 1),
@@ -190,7 +201,27 @@ function ForecastChart({
 
   const tagW = compact ? 68 : 88;
 
-  return <div className="chart-wrap" ref={wrapRef}>
+  return <div className={`chart-wrap forecast-chart${pinned && hover ? ' has-selection' : ''}`} ref={wrapRef}>
+    <div className="chart-legend chart-layer-controls" role="group" aria-label="Grafik katmanları">
+      {([
+        ['history', 'Fiyat', 'history-key', false],
+        ['live', spot.live ? 'Canlı' : 'Son fiyat', 'now-key', false],
+        ['model', 'Model', 'forecast-key', !available],
+        ['band', `Aralık · %${BAND_COVERAGE}`, 'band-key', !available],
+        ['levels', 'Destek / direnç', 'sr-key', levels.length === 0],
+      ] as const).map(([key, label, icon, disabled]) => <button type="button" key={key}
+        className={layers[key] && !disabled ? 'on' : 'off'} aria-pressed={layers[key] && !disabled} disabled={disabled}
+        title={disabled ? 'Bu katman için veri bekleniyor' : undefined}
+        onClick={() => toggleLayer(key)}>
+        <i className={icon} aria-hidden="true"/><span>{label}</span>
+        <span className="layer-state" aria-hidden="true">{layers[key] && !disabled ? '✓' : '+'}</span>
+      </button>)}
+      {originProjection && <button type="button" className={showOrigin ? 'on' : 'off'}
+        aria-pressed={showOrigin} onClick={onToggleOrigin}>
+        <i className="origin-key" aria-hidden="true"/><span>{originLabel} modeli</span>
+        <span className="layer-state" aria-hidden="true">{showOrigin ? '✓' : '+'}</span>
+      </button>}
+    </div>
     <div className="chart-canvas" ref={boxRef}>
       <svg ref={svgRef} className={`chart ${compact ? 'compact' : ''}`} viewBox={`0 0 ${W} ${H}`}
            role="img" aria-labelledby={`${clipId}-title ${clipId}-desc`} aria-describedby={describedById}
@@ -212,12 +243,12 @@ function ForecastChart({
           })}
 
           <g clipPath={`url(#${clipId})`}>
-            <rect className="future-zone" x={Math.max(m.l, x(0))} y={m.t}
-                  width={Math.max(0, W - m.r - Math.max(m.l, x(0)))} height={plotH}/>
+            {available && (layers.model || layers.band) && <rect className="future-zone" x={Math.max(m.l, x(0))} y={m.t}
+                  width={Math.max(0, W - m.r - Math.max(m.l, x(0)))} height={plotH}/>}
 
             {/* Pivot seviyeleri: pivot kartındakiyle birebir aynı sayılar.
                 S1/R1 belirgin, S3/R3 daha soluk; her biri kendi adıyla etiketli. */}
-            {levels.map(level => {
+            {layers.levels && levels.map(level => {
               if (!inDomain(level.value)) return null;
               const support = level.name.startsWith('S');
               const kind = level.name === 'P' ? 'pivot' : support ? 'sup' : 'res';
@@ -231,11 +262,11 @@ function ForecastChart({
               </g>;
             })}
 
-            {available && <polygon className="band" points={bandShape}/>}
+            {available && layers.band && <polygon className="band" points={bandShape}/>}
             {originPath && <polyline className="origin-forecast" points={line(originPath)}/>}
             {/* Mum görünümü: gövde önceki kapanış → kapanış, fitil gün içi
                 yüksek/düşük. Kaynakta açılış yok; ayrıntı `domain/chart/candles.ts`. */}
-            {showCandles ? (() => {
+            {layers.history && (showCandles ? (() => {
               const w = candleWidth(plotW / (visibleEnd - visibleStart));
               return <g className="candles">{bars.map(b => {
                 if (b.i < visibleStart - 1 || b.i > visibleEnd + 1) return null;
@@ -248,26 +279,27 @@ function ForecastChart({
                     width={w} height={Math.max(1, bottom - top)}/>
                 </g>;
               })}</g>;
-            })() : <polyline className="history" points={line(hist)}/>}
-            {available && <polyline className="forecast" points={line(future)}/>}
+            })() : <polyline className="history" points={line(hist)}/>)}
+            {available && layers.model && <polyline className="forecast" points={line(future)}/>}
             {/* Canlı fiyat çizgisi: grafiği sağdaki fiyat etiketine bağlar.
                 Önceden yalnız 5 piksellik bir nokta vardı ve mum modunda
                 çizgi gizlendiği için anlık fiyat hiç okunmuyordu. */}
+            {layers.live && <g className="live-price-layer">
             <line className="now-line" x1={m.l} y1={y(spot.price)} x2={W - m.r} y2={y(spot.price)}/>
             {/* Destek çizgileri de yeşil; canlı fiyat kendi etiketiyle ayrışsın.
                 Etiket, S/R çizgilerindeki adlandırma düzeniyle aynı yerde durur. */}
-            <text className="now-line-label" x={m.l + 8} y={y(spot.price) + 12}>CANLI</text>
-            <circle className="now-dot-halo" cx={x(0)} cy={y(spot.price)} r="5"/>
+            <text className="now-line-label" x={m.l + 8} y={y(spot.price) + 12}>{spot.live ? 'CANLI' : 'SON FİYAT'}</text>
             <circle className="now-dot-ons" cx={x(0)} cy={y(spot.price)} r="5"/>
+            </g>}
           </g>
 
           <line className="today-divider" x1={x(0)} y1={m.t} x2={x(0)} y2={H - m.b}/>
           <text className="today-caption" x={x(0)} y={m.t - 4} textAnchor="middle">bugün</text>
 
-          <g transform={`translate(${W - m.r + 4} ${Math.min(H - m.b - 24, Math.max(m.t, y(spot.price) - 12))})`}>
-            <rect className="now-card" width={tagW} height="24" rx="7"/>
+          {layers.live && <g transform={`translate(${W - m.r + 4} ${Math.min(H - m.b - 24, Math.max(m.t, y(spot.price) - 12))})`}>
+            <rect className="now-card" width={tagW} height="24" rx="4"/>
             <text className="now-value" x={tagW / 2} y="16" textAnchor="middle">{money(spot.price)}</text>
-          </g>
+          </g>}
 
           {timeTicks.map(i => {
             const date = dateByIndex.get(i);
@@ -279,7 +311,7 @@ function ForecastChart({
 
           {hover && (() => {
             const isForecast = Number.isFinite(hover.lo) && Number.isFinite(hover.hi);
-            const said = isForecast ? undefined : originByDate.get(hover.date);
+            const said = isForecast || !showOrigin ? undefined : originByDate.get(hover.date);
             const errorPct = said ? (said.v - hover.v) / hover.v : null;
             /* Mum modunda gün içi aralık satırı eklenir; altındaki karşılaştırma
                satırları bu kadar aşağı kayar ve kart o kadar uzar. */
@@ -293,7 +325,7 @@ function ForecastChart({
             const boxY = pinned ? m.t + 6 : Math.min(H - m.b - boxH - 6, Math.max(10, y(hover.v) - boxH / 2));
             return <g className="crosshair">
               <line x1={x(hover.i)} y1={m.t} x2={x(hover.i)} y2={H - m.b}/>
-              {isForecast && <>
+              {isForecast && layers.band && <>
                 <line className="band-range" x1={x(hover.i)} y1={y(hover.hi!)} x2={x(hover.i)} y2={y(hover.lo!)}/>
                 <circle className="band-max-dot" cx={x(hover.i)} cy={y(hover.hi!)} r="4"/>
                 <circle className="band-min-dot" cx={x(hover.i)} cy={y(hover.lo!)} r="4"/>
@@ -308,11 +340,11 @@ function ForecastChart({
                 <rect width={boxW} height={boxH} rx="8"/>
                 <text x="11" y="19">{longDate(hover.date)}</text>
                 {isForecast ? <>
-                  <text x="11" y="40" className="tip-min">En düşük ihtimal</text>
+                  <text x="11" y="40" className="tip-min">Alt bant</text>
                   <text x={boxW - 11} y="40" textAnchor="end" className="tip-value tip-min">{money(hover.lo!)}</text>
                   <text x="11" y="61" className="tip-price">Beklenen</text>
                   <text x={boxW - 11} y="61" textAnchor="end" className="tip-value tip-price">{money(hover.v)}</text>
-                  <text x="11" y="82" className="tip-max">En yüksek ihtimal</text>
+                  <text x="11" y="82" className="tip-max">Üst bant</text>
                   <text x={boxW - 11} y="82" textAnchor="end" className="tip-value tip-max">{money(hover.hi!)}</text>
                 </> : <>
                   <text x="11" y="40" className="tip-real">Gerçekleşen</text>
@@ -339,17 +371,18 @@ function ForecastChart({
       </svg>
     </div>
 
-    <div className="chart-legend">
-      <span><i className="history-key"/>Gerçekleşen fiyat</span>
-      <span><i className="now-key"/>Canlı ons fiyatı</span>
-      <span className={available ? undefined : 'legend-unavailable'}>
-        <i className="forecast-key"/>{available ? 'Model beklentisi' : 'Model bekleniyor'}</span>
-      {available && <span><i className="band-key"/>%{BAND_COVERAGE} olasılık aralığı</span>}
-      <span><i className="sr-key"/>{levelPeriod} pivot seviyeleri (S1–S3 / R1–R3)</span>
-      {originProjection && <button type="button" className={showOrigin ? 'on' : 'off'}
-          aria-pressed={showOrigin} onClick={onToggleOrigin}>
-        <i className="origin-key"/>{originLabel} beklentisini göster</button>}
-    </div>
+    {pinned && hover && compact && <div className="chart-probe">
+      <div className="chart-probe-title"><span>{longDate(hover.date)}</span>
+        <b>{Number.isFinite(hover.lo) ? 'Model beklentisi' : 'Gerçekleşen kapanış'}</b></div>
+      <strong>{money(hover.v)}</strong>
+      {Number.isFinite(hover.lo) && <p>%{BAND_COVERAGE} aralık: {money(hover.lo!)} – {money(hover.hi!)}</p>}
+      {showCandles && Number.isFinite(hover.dayLow) && <p>
+        Gün içi: {money(hover.dayLow!)} – {money(hover.dayHigh!)}</p>}
+      {showOrigin && !Number.isFinite(hover.lo) && originByDate.has(hover.date) && <>
+        <p>{originLabel} model beklentisi: {money(originByDate.get(hover.date)!.v)}</p>
+        <p>Sapma: {signedPct2((originByDate.get(hover.date)!.v - hover.v) / hover.v)}</p>
+      </>}
+    </div>}
 
     {/* Gün gün gezinme: parmakla sürüklemek kabaca yaklaştırır, bu düğmeler
         tam güne oturtur. Klavye okları da aynı `step`'i kullanır. */}

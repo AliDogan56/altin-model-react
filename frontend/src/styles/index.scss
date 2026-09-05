@@ -34,3 +34,9 @@
 @use '_collapsible';
 @use '_prerender';
 @use '_spinner';
+/* Shared product system, followed by feature-specific data components. */
+@use '_terminal';
+@use '_terminal-tables';
+@use '_terminal-analysis';
+@use '_terminal-charts';
+@use '_terminal-editorial';

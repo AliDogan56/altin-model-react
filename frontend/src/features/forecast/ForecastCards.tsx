@@ -1,35 +1,33 @@
-import { useMinVisible } from '../../app/useMinVisible';
-import Spinner from '../../components/Spinner';
-import { HORIZON_LABELS as LABELS } from '../../content/site';
-import { openLegal } from '../../content/site';
+import SegmentedControl from '../../components/ui/SegmentedControl';
+import InfoTooltip from '../../components/ui/InfoTooltip';
 import { BAND_COVERAGE } from '../../domain/model/predict';
 import { money, pct } from '../../lib/format';
 import { useDashboard } from '../dashboard/DashboardContext';
 
+/** One shared model surface; selecting a horizon updates every analysis below. */
 function ForecastCards() {
-  const { values, forecast, horizonDays, setHorizonDays, modelStatus, confident, weights } = useDashboard();
-  /* Tampon: veri hızlı gelince spinner tek karede kaybolup dolumu
-     göstermiyordu; kart en az bir dolum boyunca yükleniyor kalır. */
-  const busy = useMinVisible(modelStatus === 'loading');
-  const available = modelStatus === 'live' && !busy;
-  return (
-    <>
-    <div className="cards" id="feature-tahmin">{forecast.horizons.map((h,j)=>({h,j})).map(({h,j})=>{
-      /* Ağırlığı eşiğin altındaki ufukta ağın katkısı neredeyse tamamen kısılmıştır;
-         sıfıra yakın çıktı "tahmin" gibi değil "görüş yok" olarak sunulur. */
-      const sure = available && confident[j] !== false;
-      return <button type="button" className={`panel card forecast-card ${horizonDays===h?'selected':''} ${available&&!sure?'no-view':''}`} key={h}
-        aria-pressed={horizonDays===h} onClick={()=>setHorizonDays(h)}>
-        <span>{LABELS[h]}</span>
-        <strong>{!available?'—':sure?money(values.price*(1+forecast.mean[j])):'Görüş yok'}</strong>
-        <b className={sure?(forecast.mean[j]>=0?'positive':'negative'):undefined}>
-          {!available?'Tahmin bekleniyor':sure?`${forecast.mean[j]>=0?'▲':'▼'} ${pct(forecast.mean[j])}`:`ağırlık ${(weights[j]??0).toFixed(2)}`}</b>
-        <small>{!available?'Aktif model sonucu olmadan fiyat gösterilmez.'
-          :sure?<>%{BAND_COVERAGE} olasılık bandı<br/>{money(values.price*(1+forecast.mean[j]-forecast.err[j]))} – {money(values.price*(1+forecast.mean[j]+forecast.err[j]))}</>
-          :'Model bu vadede sıfır getiri kuralını anlamlı biçimde yenemiyor; yön bildirmiyor.'}</small>
-        <em>{busy?<Spinner size="sm" label="Model güncelleniyor…" inline/>:modelStatus==='fallback'?'Model servisi çevrimdışı':horizonDays===h?'Grafikte gösteriliyor':'Grafikte göster'}</em></button>;})}</div>
-            <p className="inline-legal">Gösterilen tahminler istatistiksel kestirimdir; yatırım danışmanlığı kapsamında değildir ve kâr garantisi sunmaz. <button type="button" className="link-btn" onClick={openLegal}>Yasal uyarının tamamı</button></p></>
-  );
+  const { values, forecast, horizonDays, setHorizonDays, modelStatus, confident, hasForecast, scorecard } = useDashboard();
+  const index = Math.max(0, forecast.horizons.indexOf(horizonDays));
+  const available = hasForecast && modelStatus !== 'fallback';
+  const sure = available && confident[index] !== false;
+  const mean = forecast.mean[index];
+  const metrics = scorecard?.rows.find(row => row.horizon === horizonDays);
+  const direction = !available ? 'Veri bekleniyor' : !sure ? 'Görüş yok' : mean > 0 ? 'Yukarı yönlü' : mean < 0 ? 'Aşağı yönlü' : 'Yatay';
+  return <section className="forecast-summary" id="feature-tahmin" aria-labelledby="forecast-title" aria-busy={modelStatus === 'loading'}>
+    <div className="forecast-summary-head">
+      <div><span className="section-kicker">Model görünümü</span><h2 id="forecast-title">Önümüzdeki {horizonDays} gün</h2></div>
+      <SegmentedControl label="Tahmin vadesi" value={horizonDays} onChange={setHorizonDays}
+        options={forecast.horizons.map(value => ({ value, label: `${value} gün` }))}/>
+    </div>
+    <div className="forecast-summary-values">
+      <div className="forecast-direction"><span>Modelin yönü</span><strong className={sure ? mean >= 0 ? 'positive' : 'negative' : ''}>
+        {sure && <span aria-hidden="true">{mean >= 0 ? '↗' : '↘'} </span>}{direction}</strong><small>{sure ? `${pct(mean)} beklenen değişim` : available ? 'Bu vadede yeterli model desteği yok' : modelStatus === 'fallback' ? 'Model servisine ulaşılamıyor' : 'Model sonucu hazırlanıyor'}</small></div>
+      <div><span>Model beklentisi</span><strong className="forecast-target">{sure ? money(values.price * (1 + mean)) : '—'}</strong><small>{horizonDays} takvim günü sonrası</small></div>
+      <div><span>Olasılık bandı <InfoTooltip label="Olasılık bandı">%{BAND_COVERAGE} nominal olasılık bandıdır; yönün doğru çıkma olasılığı veya kişisel güven skoru değildir. Gerçekleşen fiyat bu aralığın dışında kalabilir.</InfoTooltip></span><strong className="forecast-band">{sure ? `${money(values.price * (1 + mean - forecast.err[index]))} – ${money(values.price * (1 + mean + forecast.err[index]))}` : '—'}</strong><small>%{BAND_COVERAGE} nominal kapsam</small></div>
+      <div><span>Geçmiş yön isabeti <InfoTooltip label="Geçmiş yön isabeti">Eğitim dışında kalan günlerde ölçülen yön doğruluğu. Bugünkü tahminin güven yüzdesi değildir.</InfoTooltip></span><strong>{metrics ? `%${(metrics.direction * 100).toFixed(1)}` : '—'}</strong><small>{metrics ? `${metrics.oofRows} test günü · ${horizonDays} günlük model` : 'Model karnesi bekleniyor'}</small></div>
+    </div>
+    {modelStatus === 'loading' && <p className="model-update" role="status">{hasForecast ? 'Son model sonucu gösteriliyor · güncelleniyor…' : 'Model hesaplanıyor…'}</p>}
+  </section>;
 }
 
 export default ForecastCards;

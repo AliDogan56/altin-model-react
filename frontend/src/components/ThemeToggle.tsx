@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { applyTheme, readStoredTheme, storeTheme, type Theme } from '../lib/theme';
+import { applyTheme, isTheme, readStoredTheme, storeTheme, type Theme } from '../lib/theme';
 
 /**
  * Aydınlık/koyu tema anahtarı. Damga zaten index.html'deki satır içi betik
@@ -10,15 +10,22 @@ function ThemeToggle({ compact = false }: { compact?: boolean }) {
   const [theme, setTheme] = useState<Theme>(() =>
     typeof document === 'undefined' ? 'light' : readStoredTheme());
 
-  // Satır içi betik başarısız olduysa (ör. depolama kapalı) damgayı burada tamamla.
-  useEffect(() => { applyTheme(theme); }, [theme]);
+  // Mobil menü ve masaüstü düğmesi aynı tema damgasını izler.
+  useEffect(() => {
+    const root = document.documentElement;
+    const sync = () => { if (isTheme(root.dataset.theme)) setTheme(root.dataset.theme); };
+    if (!isTheme(root.dataset.theme)) applyTheme(readStoredTheme());
+    sync();
+    const observer = new MutationObserver(sync);
+    observer.observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+    return () => observer.disconnect();
+  }, []);
 
   const toggle = useCallback(() => {
-    setTheme(current => {
-      const next: Theme = current === 'dark' ? 'light' : 'dark';
-      storeTheme(next);
-      return next;
-    });
+    const next: Theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+    storeTheme(next);
+    applyTheme(next);
+    setTheme(next);
   }, []);
 
   const dark = theme === 'dark';

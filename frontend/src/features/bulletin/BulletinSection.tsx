@@ -1,32 +1,29 @@
-import { useMinVisible } from '../../app/useMinVisible';
-import Spinner from '../../components/Spinner';
 import Collapsible from '../../components/Collapsible';
-import { PANEL_FEATURES, featureBy } from '../../content/panel';
-import { pct, shortDate } from '../../lib/format';
+import DataTimestamp from '../../components/ui/DataTimestamp';
+import { PANEL_FEATURES } from '../../content/panel';
+import { pct } from '../../lib/format';
 import { useDashboard } from '../dashboard/DashboardContext';
 
 function BulletinSection({ focus }: { focus?: string }) {
-  const { news, features, featuresDate } = useDashboard();
-  const busy = useMinVisible(news.length === 0);
-  return (
-    <Collapsible id="bulletin" anchor="feature-bulten" openByDefault={focus===PANEL_FEATURES.find(f=>f.anchor==="feature-bulten")?.slug} title={featureBy("feature-bulten").title} hint={featureBy("feature-bulten").summary} summary={news.length?`${news.length} haber`:null}>
-    <section className="panel block">
-    <h2>Altın etki bülteni</h2>
-    <div className="bulletins">
-    <div>
-    <h3>Parametre özeti</h3>
-    <p><b>Reel faiz:</b> 5 günlük {features.real_yield_change_5d>=0?'+':''}{features.real_yield_change_5d.toFixed(2)} puan.</p>
-    <p><b>Dolar:</b> 5 günlük {pct(features.dollar_return_5d)}.</p>
-    <p><b>VIX:</b> 5 günlük {features.vix_change_5d>=0?'+':''}{features.vix_change_5d.toFixed(2)}.</p>
-    <p className="bulletin-asof">{featuresDate?`${shortDate(featuresDate,true)} tarihli veri setine göre.`:''} Makro serilerin
-      yayın gecikmesi 1–6 gündür; sıfır değişim, seride yeni gözlem olmadığı anlamına da gelebilir.</p></div>
-    <div>
-    <h3>Canlı haberler</h3>
-    {busy
-      ? <div className="loading-row"><Spinner size="md" label="Başlıklar çekiliyor…"/></div>
-      : news.slice(0,5).map((n)=><a key={n.url||n.title} href={n.url} target="_blank" rel="noreferrer">{n.title}<small>{n.source}</small></a>)}</div></div></section>
-    </Collapsible>
-  );
+  const { news, live, featuresDate, status } = useDashboard();
+  const drivers = [
+    { label: 'Reel faiz', value: live.real_yield_change_5d, format: (v: number) => `${v >= 0 ? '+' : ''}${v.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} puan`, unit: '10 yıllık · 5 günlük değişim' },
+    { label: 'Dolar endeksi', value: live.dollar_return_5d, format: pct, unit: 'Geniş dolar · 5 günlük getiri' },
+    { label: 'VIX', value: live.vix_change_5d, format: (v: number) => `${v >= 0 ? '+' : ''}${v.toLocaleString('tr-TR', { maximumFractionDigits: 2 })}`, unit: '5 günlük değişim' },
+  ];
+  return <Collapsible id="bulletin" anchor="feature-bulten" openByDefault={focus === PANEL_FEATURES.find(f => f.anchor === 'feature-bulten')?.slug}
+    title="Makro etkenler ve haber akışı" hint="Model girdilerini, güncel ekonomi gündemiyle birlikte okuyun." summary={news.length ? `${news.length} haber` : undefined}>
+    <section className="macro-news">
+      <div className="macro-drivers">
+        {drivers.map(driver => <div key={driver.label}><span>{driver.label}</span><strong>{driver.value != null ? driver.format(driver.value) : '—'}</strong><small>{driver.unit}</small></div>)}
+      </div>
+      <div className="macro-context"><DataTimestamp time={featuresDate} staleAfterMs={7 * 86400000}/><p>Makro seriler yayın takvimine göre gecikmeli gelir. Sıfır değişim, yeni gözlem yayımlanmamış olmasından da kaynaklanabilir.</p></div>
+      <div className="news-list" aria-busy={!!status.busy}>
+        {news.length ? news.map(item => <a key={item.url || item.title} href={item.url} target="_blank" rel="noreferrer"><span className="news-source">{item.source || 'Ekonomi gündemi'}</span><strong>{item.title}</strong><span aria-hidden="true">↗</span></a>)
+          : <p className="data-empty">{status.busy ? 'Haberler yükleniyor…' : 'Haber kaynağına şu anda ulaşılamıyor. Piyasa verileri diğer bölümlerde kullanılabilir.'}</p>}
+      </div>
+      <p className="analysis-footnote">Başlıklar otomatik haber akışından gelir; model tarafından doğrulanmış bir pozitif/negatif etki skoru içermez.</p>
+    </section>
+  </Collapsible>;
 }
-
 export default BulletinSection;

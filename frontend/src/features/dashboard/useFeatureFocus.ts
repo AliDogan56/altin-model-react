@@ -2,7 +2,8 @@ import { useEffect } from 'react';
 import type { PanelFeature } from '../../content/types';
 import { SITE_NAME } from '../../content/site';
 
-const NAVBAR_OFFSET = 84;
+// Sticky navigation (60px) + workspace tabs (52px) + breathing room.
+const NAVBAR_OFFSET = 132;
 const SETTLE_TICKS = 2;      // aynı yükseklik iki kez ölçülürse yerleşim durdu
 const MAX_TRIES = 24;
 const TICK_MS = 180;
@@ -36,6 +37,7 @@ export const useFeatureFocus = (feature: PanelFeature | null) => {
       let expected = -1;                       // en son bizim bıraktığımız konum
       (smooth ? [700, 1600, 3000] : [0, 900, 2200]).forEach(delay => {
         corrections.push(window.setTimeout(() => {
+          if (!node.getClientRects().length) return;
           // kullanıcı bu arada kendisi kaydırdıysa yerini geri alma
           if (expected >= 0 && Math.abs(window.scrollY - expected) > 40) return;
           const remaining = node.getBoundingClientRect().top - NAVBAR_OFFSET;
@@ -48,7 +50,7 @@ export const useFeatureFocus = (feature: PanelFeature | null) => {
     const step = () => {
       const node = document.getElementById(feature.anchor);
       const height = document.body.scrollHeight;
-      if (node && !started) {
+      if (node && node.getClientRects().length && !started) {
         settled = height === previousHeight ? settled + 1 : 0;
         previousHeight = height;
         if (settled >= SETTLE_TICKS || tries >= 16) {

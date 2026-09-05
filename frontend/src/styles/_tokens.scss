@@ -1,178 +1,55 @@
-/* Renk ve tipografi belirteçleri; tüm modüller bunları kullanır.
- *
- * Varsayılan tema AYDINLIK: `:root` aydınlık paleti taşır, koyu palet yalnız
- * `data-theme="dark"` damgalandığında devreye girer. Sistem tercihine göre
- * otomatik geçiş bilinçli olarak yok — ürün kararı varsayılanın aydınlık olması.
- *
- * Alfa ile kullanılan renkler ayrıca `-rgb` üçlüsü olarak tanımlıdır; kullanım
- * yerinde `rgb(var(--x-rgb) / .67)` yazılır. Böylece yarı saydam katmanlar
- * özgün alfalarını korur ve iki temada da doğru zemine karışır.
- */
-
+/* Ons Altın Analiz — shared light/dark color, spacing and typography tokens. */
 :root {
-  /*
-   * Yazı tipi: **bilinçli sistem yığını**, web font yüklenmez.
-   *
-   * Önceden `Inter` bildiriliyordu ama hiçbir yerde yüklenmiyordu (ölçüldü:
-   * `document.fonts.size = 0`). Sonuç, Inter'in kurulu olduğu makinelerde bir
-   * yüz, Android ve Windows'ta bambaşka bir yüz — yani arayüz platformdan
-   * platforma değişiyordu ve marka yazı tipi kullanıcıların çoğuna hiç
-   * ulaşmıyordu. Trafiğin %76'sı mobil ve büyük kısmı Android.
-   *
-   * İki dürüst yol vardı: Inter'i gerçekten yüklemek ya da sistem yığınını
-   * benimsemek. İkincisi seçildi çünkü (1) sitenin birinci sorunu yük, font
-   * indirmek render'ı bloklayan bir istek daha ekler; (2) Inter marka karakteri
-   * katmayan bir varsayılan, yani maliyeti ödeyip özgünlük kazanmıyorduk.
-   * Marka karakteri istenirse doğru yer gövde değil, **başlıklar için ayrı bir
-   * display yüz** olur.
-   *
-   * Sıra platformun kendi arayüz yüzünü önceler: Apple (-apple-system),
-   * Android/Chrome (Roboto), Windows (Segoe UI Variable → Segoe UI). Hepsi
-   * Türkçe diyakritikleri (ı İ ğ ş ç ö ü) tam karşılar.
-   */
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Variable Text",
-    "Segoe UI", Roboto, ui-sans-serif, system-ui, "Helvetica Neue", Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Variable Text", "Segoe UI", Roboto, ui-sans-serif, system-ui, "Helvetica Neue", Arial, sans-serif;
   color-scheme: light;
-
-  /* Yüzeyler */
-  --bg: #eef2f7;              --bg-rgb: 238 242 247;
-  --surface: #ffffff;         --surface-rgb: 255 255 255;
-  --surface-2: #f4f8fc;       --surface-2-rgb: 244 248 252;
-  --surface-3: #e7eef6;       --surface-3-rgb: 231 238 246;
-  --accent-surface: #1c3d63;
-
-  /* Kenarlıklar */
-  --line-soft: #eef3f8;
-  --line: #d9e3ee;
-  --line-strong: #bccdde;
-  --line-vivid: #90a6bd;
-
-  /* Metin */
-  --text-strong: #0a1626;
-  --text: #17293e;
-  --text-soft: #33475f;
-  --muted: #566d87;
-  --text-dim: #556a80;
-
-  /* Altın — metin tonu koyu, dolgu tonu doygun */
-  --gold: #7d5f0f;
-  --gold-fill: #d8a930;       --gold-fill-rgb: 216 169 48;
-  --gold-strong: #b8860b;
-  --gold-tint: #6b520f;
-  --gold-line: #d9c188;
-  --gold-line-soft: #e8dcb8;
-  --gold-line-strong: #b8935a;
-  --gold-bg: #fbf5e4;         --gold-bg-rgb: 251 245 228;
-  --gold-bg-strong: #f2e6c4;  --gold-bg-strong-rgb: 242 230 196;
-  --on-gold: #241b03;
-
-  /* Teal (olumlu) */
-  --teal: #0c6b53;
-  --teal-fill: #16a37f;       --teal-fill-rgb: 22 163 127;
-  --teal-line: #7fcfb8;
-  --teal-bg: #e4f5ef;
-
-  /* Kırmızı (olumsuz) */
-  --red: #c22d3c;
-  --red-fill: #d9444f;        --red-fill-rgb: 217 68 79;
-  --red-line: #eeb2b8;
-  --red-bg: #fdecee;
-
-  /* Mavi */
-  --blue: #1a5f9f;
-  --blue-fill: #3f86cc;      --blue-fill-rgb: 63 134 204;
-  --blue-line: #a8c8e6;
-  --blue-bright: #1a5c9c;
-
-  /* Grafik katmanları */
-  --crosshair-line: #45607c;
-  --zone-future-rgb: 90 125 165;
-  --tick-dot: #1f6fb8;        --tick-dot-rgb: 31 111 184;
-
-  /* Üzerine yazı düşen dolu yüzeyler */
-  --on-accent: #ffffff;
-  --brand-linkedin: #0a66c2;
-
-  /* Yükleme göstergesi: sikkenin altın tonları ikonun kendi gradyanından gelir
-     ve iki temada aynıdır; değişen yalnız boş sikkenin zemini. */
-  --spinner-deep: #8f6516;
-  --spinner-mid: #d6a83e;
-  --spinner-light: #ffe08a;
-  --spinner-well: #dbe4ef;
-
-  /* Gölge */
-  --shadow-rgb: 27 46 71;
-  --shadow-a1: .06;   /* hafif */
-  --shadow-a2: .10;   /* orta */
-  --shadow-a3: .16;   /* güçlü */
+  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px;
+  --space-6:24px; --space-8:32px; --space-12:48px; --space-16:64px;
+  --radius-sm:4px; --radius-md:6px; --radius-lg:8px;
+  --page-width:1440px; --motion-fast:150ms;
+  --bg:#f5f4f0; --bg-rgb:245 244 240;
+  --surface:#fdfdfb; --surface-rgb:253 253 251;
+  --surface-2:#f4f3ef; --surface-2-rgb:244 243 239;
+  --surface-3:#eae9e3; --surface-3-rgb:234 233 227;
+  --accent-surface:#292e2d;
+  --line-soft:#eeede8; --line:#dedfd8; --line-strong:#bcbfb5; --line-vivid:#8e9388;
+  --text-strong:#202522; --text:#2d332e; --text-soft:#4e554d; --muted:#676e64; --text-dim:#687064;
+  --gold:#7d6028; --gold-fill:#a58a52; --gold-fill-rgb:165 138 82;
+  --gold-strong:#8c6e32; --gold-tint:#735622;
+  --gold-line:#c6b78f; --gold-line-soft:#e1d9c6; --gold-line-strong:#a08b58;
+  --gold-bg:#f4efe2; --gold-bg-rgb:244 239 226; --gold-bg-strong:#e6dcc4; --gold-bg-strong-rgb:230 220 196;
+  --on-gold:#242219;
+  --teal:#32684f; --teal-fill:#4a8066; --teal-fill-rgb:74 128 102; --teal-line:#aac3b3; --teal-bg:#edf3ed;
+  --red:#a24440; --red-fill:#b56159; --red-fill-rgb:181 97 89; --red-line:#d4b1aa; --red-bg:#f8eeeb;
+  --blue:#4b6578; --blue-fill:#536f81; --blue-fill-rgb:83 111 129; --blue-line:#b1c0c8; --blue-bright:#3d6075;
+  --crosshair-line:#687367; --zone-future-rgb:146 137 112; --tick-dot:#4b6578; --tick-dot-rgb:75 101 120;
+  --on-accent:#ffffff; --brand-linkedin:#0a66c2;
+  --spinner-deep:#75603c; --spinner-mid:#a58a52; --spinner-light:#d2bc8d; --spinner-well:#e7e5dc;
+  --shadow-rgb:35 38 31; --shadow-a1:.02; --shadow-a2:.08; --shadow-a3:.14;
 }
-
 :root[data-theme="dark"] {
-  color-scheme: dark;
-
-  --bg: #07111f;              --bg-rgb: 7 17 31;
-  --surface: #071321;         --surface-rgb: 7 19 33;
-  --surface-2: #0d1d30;       --surface-2-rgb: 13 29 48;
-  --surface-3: #16283c;       --surface-3-rgb: 22 40 60;
-  --accent-surface: #24415e;
-
-  --line-soft: #0b1a2b;
-  --line: #1b3249;
-  --line-strong: #3a5470;
-  --line-vivid: #5f7d99;
-
-  --text-strong: #ffffff;
-  --text: #cfdcea;
-  --text-soft: #b9cadd;
-  --muted: #9fb2c8;
-  --text-dim: #6f8399;
-
-  --gold: #f3c969;
-  --gold-fill: #f3c969;       --gold-fill-rgb: 243 201 105;
-  --gold-strong: #e8be55;
-  --gold-tint: #fff4c8;
-  --gold-line: #8e773d;
-  --gold-line-soft: #4a3d1c;
-  --gold-line-strong: #c9a961;
-  --gold-bg: #1a170a;         --gold-bg-rgb: 26 23 10;
-  --gold-bg-strong: #5a471d;  --gold-bg-strong-rgb: 90 71 29;
-  --on-gold: #1c1605;
-
-  --teal: #4dd4ac;
-  --teal-fill: #70d7bd;       --teal-fill-rgb: 46 204 144;
-  --teal-line: #397b68;
-  --teal-bg: #0d2a26;
-
-  --red: #ff7d87;
-  --red-fill: #ff6b7a;        --red-fill-rgb: 255 107 122;
-  --red-line: #6b3540;
-  --red-bg: #3a1c20;
-
-  --blue: #6bb8ff;
-  --blue-fill: #7aa2d8;      --blue-fill-rgb: 122 162 216;
-  --blue-line: #3779a7;
-  --blue-bright: #9fd8ff;
-
-  --crosshair-line: #cfdeed;
-  --zone-future-rgb: 127 157 189;
-  --tick-dot: #ffffff;        --tick-dot-rgb: 255 255 255;
-
-  --on-accent: #ffffff;
-  --brand-linkedin: #0a66c2;
-
-  --spinner-well: #0a1727;
-
-  --shadow-rgb: 2 7 18;
-  --shadow-a1: .45;
-  --shadow-a2: .72;
-  --shadow-a3: .90;
+  color-scheme:dark;
+  --bg:#191c1b; --bg-rgb:25 28 27;
+  --surface:#212523; --surface-rgb:33 37 35;
+  --surface-2:#272c29; --surface-2-rgb:39 44 41;
+  --surface-3:#323834; --surface-3-rgb:50 56 52;
+  --accent-surface:#c3ad7d;
+  --line-soft:#292e2b; --line:#363d37; --line-strong:#535d51; --line-vivid:#788272;
+  --text-strong:#f1f1e9; --text:#dde0d6; --text-soft:#c1c8ba; --muted:#a3ad9a; --text-dim:#a0ab97;
+  --gold:#cfb579; --gold-fill:#c2a469; --gold-fill-rgb:194 164 105;
+  --gold-strong:#cfb579; --gold-tint:#ead6aa;
+  --gold-line:#76684a; --gold-line-soft:#474333; --gold-line-strong:#a18b58;
+  --gold-bg:#302e24; --gold-bg-rgb:48 46 36; --gold-bg-strong:#443f2d; --gold-bg-strong-rgb:68 63 45;
+  --on-gold:#25231a;
+  --teal:#93bba0; --teal-fill:#80ac93; --teal-fill-rgb:128 172 147; --teal-line:#4d6b56; --teal-bg:#24362b;
+  --red:#dda19a; --red-fill:#cb8c84; --red-fill-rgb:203 140 132; --red-line:#74524b; --red-bg:#3b2c29;
+  --blue:#a3bbca; --blue-fill:#a3bbca; --blue-fill-rgb:163 187 202; --blue-line:#5c727a; --blue-bright:#aec4d0;
+  --crosshair-line:#a9b19e; --zone-future-rgb:171 161 129; --tick-dot:#e5e9de; --tick-dot-rgb:229 233 222;
+  --on-accent:#23251e; --brand-linkedin:#0a66c2;
+  --spinner-deep:#75603c; --spinner-mid:#a58a52; --spinner-light:#d2bc8d; --spinner-well:#32372d;
+  --shadow-rgb:0 0 0; --shadow-a1:.06; --shadow-a2:.18; --shadow-a3:.3;
 }
-
-body { background: var(--bg); color: var(--text); }
-
-/* Tema değişirken geçişler kapatılır; açıkken hesaplanan renk eski değerinde
-   donuyor (Chrome, özel değişkene bağlı `transition:color`). */
+body { background:var(--bg); color:var(--text); }
 .theme-switching, .theme-switching *, .theme-switching *::before, .theme-switching *::after {
-  transition: none !important;
-  animation-duration: 0s !important;
+  transition:none !important; animation-duration:0s !important;
 }

@@ -1,0 +1,191 @@
+/* Compact analytical surfaces: their values and calculations still come from DashboardContext. */
+:where(.terminal-impact, .terminal-evaluation, .terminal-momentum, .terminal-zones, .momentum-summary) {
+  min-width: 0;
+  font-variant-numeric: tabular-nums;
+
+  .analysis-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .analysis-heading h2 { margin: 4px 0 0; font-size: 17px; line-height: 1.3; }
+  .analysis-kicker { color: var(--muted); font-size: 10px; font-weight: 650; letter-spacing: .08em; text-transform: uppercase; }
+  .analysis-tag { color: var(--muted); font-size: 11px; padding: 4px 8px; border: 1px solid var(--line); border-radius: 4px; }
+  .analysis-intro { margin: 0 0 20px; max-width: 90ch; font-size: 13px; line-height: 1.65; color: var(--text-soft); }
+  .analysis-intro b { color: var(--text); }
+  .analysis-note { margin: 16px 0 0; padding: 12px 0 0; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; line-height: 1.65; }
+  .analysis-note b { color: var(--text); }
+  .analysis-note .positive { color: var(--teal); }
+  .analysis-note .negative { color: var(--red); }
+  .analysis-empty { padding: 16px; margin: 12px 0; border: 1px dashed var(--line-strong); border-radius: 4px; color: var(--muted); line-height: 1.6; font-size: 13px; }
+  .analysis-more { min-height: 44px; margin: 8px 0 0; padding: 8px 12px; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); color: var(--text); font: inherit; font-size: 12px; cursor: pointer; }
+  .analysis-more:hover { background: var(--surface-2); }
+  .analysis-method { margin-top: 12px; font-size: 12px; color: var(--muted); }
+  .analysis-method summary { display: flex; align-items: center; gap: 8px; min-height: 44px; color: var(--text-soft); font-weight: 600; cursor: pointer; }
+  .analysis-method summary::after { content: '+'; margin-left: auto; font-size: 16px; }
+  .analysis-method[open] summary::after { content: '−'; }
+  .analysis-method p { max-width: 92ch; margin: 8px 0; line-height: 1.7; }
+  .analysis-method ul { padding-left: 20px; line-height: 1.75; }
+  .analysis-method li + li { margin-top: 8px; }
+  .analysis-method b { color: var(--text); }
+  button:focus-visible, summary:focus-visible, input:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+}
+
+.terminal-impact, .terminal-evaluation, .terminal-momentum, .terminal-zones { background: var(--surface); }
+.analysis-section :where(.terminal-impact, .terminal-evaluation, .terminal-momentum, .terminal-zones) .analysis-heading { display: none; }
+
+.terminal-impact {
+  .contribution-context { display: grid; gap: 12px; margin: 0 0 24px; }
+  .contribution-context > div { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  .contribution-context dt { font-size: 12px; color: var(--muted); }
+  .contribution-context dd { margin: 0; font-size: 15px; font-weight: 650; text-align: right; }
+  .contribution-context dd small { color: var(--muted); font-size: 11px; font-weight: 400; }
+  .contribution-axis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding-bottom: 8px; font-size: 10px; letter-spacing: .05em; color: var(--muted); }
+  .contribution-axis span:last-child { text-align: right; }
+  .contribution-list { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--line); }
+  .contribution-row { padding: 12px 0 0; border-bottom: 1px solid var(--line); }
+  .contribution-label { display: flex; justify-content: space-between; gap: 16px; align-items: baseline; font-size: 12px; }
+  .contribution-label span { font-weight: 550; }
+  .contribution-label b { flex: 0 0 auto; font-size: 13px; }
+  .contribution-row.up .contribution-label b { color: var(--teal); }
+  .contribution-row.down .contribution-label b { color: var(--red); }
+  .contribution-track { display: grid; grid-template-columns: 1fr 1fr; height: 8px; margin-top: 8px; background: var(--surface-2); }
+  .contribution-half { position: relative; min-width: 0; }
+  .contribution-half i { display: block; height: 100%; min-width: 1px; }
+  .contribution-half.negative { display: flex; justify-content: flex-end; border-right: 1px solid var(--line-strong); }
+  .contribution-half.negative i { background: var(--red-fill); border-radius: 2px 0 0 2px; }
+  .contribution-half.positive i { background: var(--teal-fill); border-radius: 0 2px 2px 0; }
+  .contribution-description summary { min-height: 44px; display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 11px; cursor: pointer; }
+  .contribution-description summary::before { content: '+'; font-size: 14px; }
+  .contribution-description[open] summary::before { content: '−'; }
+  .contribution-description p { margin: 0 0 12px; max-width: 86ch; color: var(--muted); font-size: 12px; line-height: 1.6; }
+  .contribution-description .high, .contribution-description .extreme { color: var(--gold); }
+}
+
+.terminal-evaluation {
+  .evaluation-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .evaluation-caption { text-align: left; color: var(--muted); padding-bottom: 12px; font-size: 11px; }
+  .evaluation-table thead { display: none; }
+  .evaluation-table tbody { display: block; }
+  .evaluation-table tbody tr { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 12px; padding: 16px 0; border-top: 1px solid var(--line); }
+  .evaluation-table tbody tr:last-child { border-bottom: 1px solid var(--line); }
+  .evaluation-table tbody th { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 12px; text-align: left; }
+  .evaluation-table td b { display: block; font-weight: 600; }
+  .evaluation-table td small { color: var(--muted); font-size: 11px; font-weight: 400; }
+  .evaluation-mobile-label { display: block; margin-bottom: 4px; color: var(--muted); font-size: 11px; }
+  .evaluation-status { display: inline-flex; padding: 3px 6px; border: 1px solid var(--line); border-radius: 4px; color: var(--muted); font-size: 10px; font-weight: 500; }
+  .evaluation-status.active { color: var(--text-soft); }
+  .evaluation-table .positive { color: var(--teal); }
+  .evaluation-table .negative { color: var(--red); }
+  .evaluation-version { display: flex; flex-wrap: wrap; gap: 4px 8px; margin: 16px 0 0; color: var(--muted); font-size: 11px; }
+  .evaluation-version code { color: var(--text-soft); overflow-wrap: anywhere; }
+  .evaluation-column-label { display: inline-flex; align-items: center; justify-content: flex-end; gap: 4px; white-space: nowrap; }
+}
+
+.momentum-strength {
+  --momentum-color: var(--text-soft);
+  min-width: 0;
+  &.up { --momentum-color: var(--teal); }
+  &.down { --momentum-color: var(--red); }
+  .momentum-strength-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+  .momentum-strength-heading > span { color: var(--muted); font-size: 12px; }
+  .momentum-strength-heading strong { color: var(--text-strong); font-size: 25px; font-weight: 650; letter-spacing: -.03em; }
+  .momentum-strength-heading small { color: var(--muted); font-size: 12px; font-weight: 400; letter-spacing: 0; }
+  .momentum-strength-track { height: 6px; margin: 0 5px; border-radius: 2px; background: var(--surface-3); }
+  .momentum-strength-fill { position: relative; display: block; height: 100%; border-radius: 2px; background: var(--momentum-color); }
+  .momentum-strength-fill::after { content: ''; position: absolute; top: 50%; right: 0; transform: translate(50%, -50%); width: 10px; height: 10px; border: 2px solid var(--surface); border-radius: 50%; background: var(--momentum-color); outline: 1px solid var(--momentum-color); }
+  .momentum-strength-scale { display: flex; justify-content: space-between; margin-top: 12px; color: var(--muted); font-size: 10px; }
+}
+
+.momentum-summary {
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  .momentum-summary-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+  .momentum-summary-heading h2 { margin: 0; font-size: 14px; }
+  .momentum-summary-heading button { min-height: 44px; padding: 4px 0 4px 8px; border: 0; background: none; color: var(--muted); font: inherit; font-size: 11px; cursor: pointer; }
+  .momentum-summary-direction { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-top: 20px; font-size: 12px; }
+  .momentum-summary-direction b.up { color: var(--teal); }
+  .momentum-summary-direction b.down { color: var(--red); }
+  .momentum-summary-direction span { color: var(--muted); }
+  .momentum-summary-note { margin: 8px 0 0; color: var(--muted); font-size: 10px; line-height: 1.5; }
+  > .data-timestamp { margin-top: 12px; }
+}
+
+.terminal-momentum {
+  .momentum-source { margin: -8px 0 16px; }
+  .momentum-overview { padding: 16px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .momentum-readings { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 24px 0 0; }
+  .momentum-readings dt { color: var(--muted); font-size: 11px; }
+  .momentum-readings dd { margin: 6px 0; font-weight: 650; font-size: 15px; }
+  .momentum-readings dd.up { color: var(--teal); }
+  .momentum-readings dd.down { color: var(--red); }
+  .momentum-readings small { color: var(--muted); font-size: 11px; line-height: 1.5; }
+  .momentum-levels { display: grid; gap: 0; margin-top: 8px; }
+  .momentum-level { padding: 16px 0; border-bottom: 1px solid var(--line); }
+  .momentum-level > span { display: block; color: var(--muted); font-size: 11px; }
+  .momentum-level em { color: var(--gold); font-style: normal; }
+  .momentum-level strong { display: block; margin: 8px 0 4px; font-size: 21px; font-weight: 600; letter-spacing: -.025em; }
+  .momentum-level small { color: var(--muted); font-size: 11px; line-height: 1.6; }
+  .momentum-break { margin-top: 16px; padding: 12px; border: 1px solid var(--line); border-radius: 4px; background: var(--surface-2); }
+  .momentum-break-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; font-size: 12px; }
+  .momentum-break-heading b { padding: 3px 6px; border: 1px solid var(--line-strong); border-radius: 4px; font-size: 10px; letter-spacing: .04em; }
+  .momentum-break.strong .momentum-break-heading b { color: var(--gold); border-color: var(--gold-line); }
+  .momentum-break p { margin: 12px 0 8px; color: var(--text-soft); font-size: 12px; line-height: 1.7; }
+  .momentum-break small { color: var(--muted); font-size: 11px; }
+  .momentum-meta { color: var(--muted); }
+}
+
+.terminal-zones {
+  .scenario-layout { display: grid; gap: 24px; }
+  .scenario-levels { margin: 0; }
+  .scenario-levels > div { display: grid; gap: 8px; padding: 16px 0; border-top: 1px solid var(--line); }
+  .scenario-levels dt { font-size: 12px; font-weight: 550; }
+  .scenario-levels dt small { display: block; margin-top: 4px; color: var(--muted); font-size: 11px; font-weight: 400; }
+  .scenario-levels dd { margin: 0; font-weight: 600; font-size: 16px; }
+  .scenario-levels .risk-zone dd { color: var(--red); }
+  .scenario-calculator { border: 1px solid var(--line); border-radius: 4px; padding: 16px; background: var(--surface-2); }
+  .scenario-calculator h3 { margin: 0 0 16px; font-size: 13px; font-weight: 600; }
+  .scenario-inputs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .scenario-inputs label { min-width: 0; font-size: 11px; color: var(--muted); }
+  .scenario-inputs input { display: block; width: 100%; min-width: 0; min-height: 44px; margin-top: 8px; padding: 10px; background: var(--surface); border: 1px solid var(--line-strong); border-radius: 4px; color: var(--text); font: inherit; font-size: 16px; font-variant-numeric: tabular-nums; }
+  .scenario-result { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); }
+  .scenario-result > span { display: block; color: var(--muted); font-size: 11px; }
+  .scenario-result b { display: block; margin: 8px 0; font-size: 20px; font-weight: 600; }
+  .scenario-result small { color: var(--muted); font-size: 11px; font-weight: 400; }
+}
+
+@media (min-width: 600px) {
+  .terminal-impact .contribution-context { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+  .terminal-impact .contribution-context > div { display: block; }
+  .terminal-impact .contribution-context dd { margin-top: 6px; text-align: left; }
+  .terminal-momentum .momentum-overview { display: grid; grid-template-columns: minmax(180px, .9fr) minmax(0, 1.2fr); gap: 32px; align-items: center; }
+  .terminal-momentum .momentum-readings { margin: 0; }
+  .terminal-momentum .momentum-levels { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+  .terminal-zones .scenario-levels > div { grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 16px; }
+}
+
+@media (min-width: 760px) {
+  .terminal-evaluation {
+    .evaluation-table thead { position: static; width: auto; height: auto; overflow: visible; clip-path: none; display: table-header-group; }
+    .evaluation-table tbody { display: table-row-group; }
+    .evaluation-table tbody tr { display: table-row; }
+    .evaluation-table tbody th { display: table-cell; }
+    .evaluation-table th, .evaluation-table td { padding: 12px; text-align: right; }
+    .evaluation-table th:first-child { padding-left: 0; text-align: left; }
+    .evaluation-table td:last-child, .evaluation-table th:last-child { padding-right: 0; }
+    .evaluation-table thead th { color: var(--muted); font-size: 11px; font-weight: 500; }
+    .evaluation-table tbody th b { display: block; }
+    .evaluation-status { margin-top: 6px; }
+    .evaluation-mobile-label, .evaluation-mobile-method { display: none; }
+  }
+}
+
+@media (min-width: 1080px) {
+  .terminal-zones .scenario-layout { grid-template-columns: minmax(0, 1.2fr) minmax(280px, .8fr); gap: 32px; align-items: start; }
+}

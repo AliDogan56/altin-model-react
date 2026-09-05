@@ -12,6 +12,10 @@ function SiteNav({current}:{current?:string}) {
   const [query,setQuery]=useState('');
   const navRef=useRef<HTMLElement>(null);
   const sheetRef=useRef<HTMLDivElement>(null);
+  const mobileTriggerRef=useRef<HTMLButtonElement>(null);
+  const mobileCloseRef=useRef<HTMLButtonElement>(null);
+  const panelTriggerRef=useRef<HTMLButtonElement>(null);
+  const guideTriggerRef=useRef<HTMLButtonElement>(null);
   const searchRef=useRef<HTMLInputElement>(null);
   const close=useCallback(()=>{setMenu(null);setQuery('');},[]);
 
@@ -22,7 +26,25 @@ function SiteNav({current}:{current?:string}) {
     const onPointer=(event:PointerEvent)=>{const target=event.target as Node;
       if(navRef.current?.contains(target)||sheetRef.current?.contains(target))return;
       close();};
-    const onKey=(event:KeyboardEvent)=>{if(event.key==='Escape')close();};
+    const onKey=(event:KeyboardEvent)=>{
+      if(event.key==='Escape') {
+        event.preventDefault();
+        close();
+        (menu==='panel'?panelTriggerRef.current:menu==='guides'?guideTriggerRef.current:mobileTriggerRef.current)?.focus();
+        return;
+      }
+      if(menu!=='mobile'||event.key!=='Tab')return;
+      const dialog=sheetRef.current?.querySelector<HTMLElement>('[role="dialog"]');
+      const focusable=Array.from(dialog?.querySelectorAll<HTMLElement>('a[href],button:not([disabled]),input:not([disabled]),[tabindex="0"]')??[])
+        .filter(element=>element.getClientRects().length>0);
+      const first=focusable[0],last=focusable[focusable.length-1];
+      if(!first) { event.preventDefault(); dialog?.focus(); return; }
+      if(event.shiftKey&&(document.activeElement===first||!dialog?.contains(document.activeElement))) {
+        event.preventDefault(); last.focus();
+      } else if(!event.shiftKey&&(document.activeElement===last||!dialog?.contains(document.activeElement))) {
+        event.preventDefault(); first.focus();
+      }
+    };
     document.addEventListener('pointerdown',onPointer);
     document.addEventListener('keydown',onKey);
     return()=>{document.removeEventListener('pointerdown',onPointer);document.removeEventListener('keydown',onKey);};
@@ -36,12 +58,19 @@ function SiteNav({current}:{current?:string}) {
     const previous={position:style.position,top:style.top,left:style.left,right:style.right,overflow:style.overflow};
     Object.assign(style,{position:'fixed',top:`-${offset}px`,left:'0',right:'0',overflow:'hidden'});
     document.body.classList.add('nav-locked');
+    const trigger=mobileTriggerRef.current;
+    mobileCloseRef.current?.focus({preventScroll:true});
+    const desktop=window.matchMedia('(min-width:760px)');
+    const onResize=()=>{if(desktop.matches)close();};
+    desktop.addEventListener('change',onResize);
     return()=>{
+      desktop.removeEventListener('change',onResize);
       Object.assign(style,previous);
       document.body.classList.remove('nav-locked');
       window.scrollTo(0,offset);
+      if(trigger?.isConnected)trigger.focus({preventScroll:true});
     };
-  },[menu]);
+  },[menu,close]);
   useEffect(()=>{
     if(menu!=='guides') return;
     searchRef.current?.focus();
@@ -70,10 +99,10 @@ function SiteNav({current}:{current?:string}) {
     <div className="desktop-links">
       {NAV_SECTIONS.map(([href,label])=><Link key={href} to={href}>{label}</Link>)}
       <div className="guide-menu">
-        <button type="button" aria-expanded={menu==='panel'} aria-haspopup="true" aria-controls="panel-menu"
+        <button ref={panelTriggerRef} type="button" aria-expanded={menu==='panel'} aria-haspopup="true" aria-controls="panel-menu"
                 className={menu==='panel'?'open':undefined}
                 onClick={()=>setMenu(value=>value==='panel'?null:'panel')}>
-          Panel <span aria-hidden="true">⌄</span>
+          Analizler <span aria-hidden="true">⌄</span>
         </button>
         {menu==='panel'&&<div className="guide-panel narrow" id="panel-menu">
           <div className="guide-groups single">
@@ -85,7 +114,7 @@ function SiteNav({current}:{current?:string}) {
         </div>}
       </div>
       <div className="guide-menu">
-        <button type="button" aria-expanded={menu==='guides'} aria-haspopup="true" aria-controls="guide-panel"
+        <button ref={guideTriggerRef} type="button" aria-expanded={menu==='guides'} aria-haspopup="true" aria-controls="guide-panel"
                 className={menu==='guides'||current?'open':undefined}
                 onClick={()=>setMenu(value=>value==='guides'?null:'guides')}>
           Altın Rehberi <span aria-hidden="true">⌄</span>
@@ -106,29 +135,28 @@ function SiteNav({current}:{current?:string}) {
       <ThemeToggle/>
     </div>
 
-    <button type="button" className="mobile-toggle" aria-expanded={menu==='mobile'} aria-controls="mobile-panel"
+    <button ref={mobileTriggerRef} type="button" className="mobile-toggle" aria-expanded={menu==='mobile'} aria-controls="mobile-panel" aria-haspopup="dialog"
             aria-label={menu==='mobile'?'Menüyü kapat':'Menüyü aç'}
             onClick={()=>setMenu(value=>value==='mobile'?null:'mobile')}>
       <span/><span/><span/>
     </button>
     {menu==='mobile'&&createPortal(
-      /* Portal şart: .site-nav üzerindeki backdrop-filter, position:fixed alt öğeler için
-         içeren blok yaratıyor ve panel navbar'ın içine hapsolup 1 piksele çöküyordu. */
+      /* Menünün katman ve odak yönetimi sayfa içeriğinden bağımsızdır. */
       <div className="mobile-sheet" ref={sheetRef}>
         <div className="mobile-backdrop" onClick={close} aria-hidden="true"/>
-        <div className="mobile-panel" id="mobile-panel" role="dialog" aria-modal="true" aria-label="Menü">
+        <div className="mobile-panel" id="mobile-panel" role="dialog" aria-modal="true" aria-label="Menü" tabIndex={-1}>
           <div className="mobile-head">
             <input type="search" value={query} placeholder="Rehberlerde ara…" aria-label="Rehberlerde ara"
                    onChange={event=>setQuery(event.target.value)}/>
             <ThemeToggle compact/>
-            <button type="button" onClick={close} aria-label="Menüyü kapat">✕</button>
+            <button ref={mobileCloseRef} type="button" onClick={close} aria-label="Menüyü kapat">✕</button>
           </div>
           <div className="mobile-scroll">
             {!query&&<section className="mobile-sections">{NAV_SECTIONS.map(([href,label])=>
               <Link key={href} to={href} onClick={close}>{label}</Link>)}
               <Link to="/rehber" onClick={close}>Tüm rehberler</Link>
         </section>}
-        {!query&&<section className="mobile-sections"><h3>Panel bölümleri</h3>
+        {!query&&<section className="mobile-sections"><h3>Analizler</h3>
           {PANEL_FEATURES.map(feature=><Link key={feature.slug} to={`/panel/${feature.slug}`} onClick={close}>{feature.title}</Link>)}
             </section>}
             {groups.map(([category,items])=><section key={category}><h3>{category}</h3>{items.map(guideLink)}</section>)}

@@ -23,6 +23,8 @@ export type ForecastModel = {
   forecast: Forecast;
   version?: string;
   modelStatus: 'loading' | 'live' | 'fallback';
+  /** Keep the last successful result visible while a refresh is in flight. */
+  hasForecast: boolean;
   /** Ufuk başına ağırlık; 0'a yakınsa model o vadede görüş bildirmiyor. */
   weights: number[];
   confident: boolean[];
@@ -37,6 +39,7 @@ export type ForecastModel = {
 export const useForecastModel = (live: FeatureMap, lastClose: number | null, spotPrice: number): ForecastModel => {
   const [values, setValues] = useState<ParameterValues>(fieldDefaults);
   const [apiForecast, setApiForecast] = useState<ApiForecast | null>(null);
+  const [apiFeatures, setApiFeatures] = useState<FeatureMap | null>(null);
   const [modelStatus, setModelStatus] = useState<'loading' | 'live' | 'fallback'>('loading');
   const [refreshKey, setRefreshKey] = useState(0);
   const requestId = useRef(0);
@@ -65,24 +68,24 @@ export const useForecastModel = (live: FeatureMap, lastClose: number | null, spo
 
   useEffect(() => {
     const id = ++requestId.current;
-    setApiForecast(null);
     setModelStatus('loading');
     const timer = setTimeout(() => {
-      requestForecast(latest.current.price, latest.current.features)
-        .then(result => { if (id === requestId.current) { setApiForecast(result); setModelStatus('live'); } })
-        .catch(() => { if (id === requestId.current) setModelStatus('fallback'); });
+      const input = latest.current;
+      requestForecast(input.price, input.features)
+        .then(result => { if (id === requestId.current) { setApiFeatures(input.features); setApiForecast(result); setModelStatus('live'); } })
+        .catch(() => { if (id === requestId.current) { setApiForecast(null); setModelStatus('fallback'); } });
     }, PREDICT_DEBOUNCE_MS);
     return () => clearTimeout(timer);
   }, [signature, refreshKey]);
 
   const forecast = useMemo<Forecast>(
-    () => (apiForecast ? { ...apiForecast, features, price: +values.price } : fallback),
-    [apiForecast, fallback, features, values.price]);
+    () => (apiForecast ? { ...apiForecast, features: apiFeatures ?? features, price: +values.price } : fallback),
+    [apiForecast, apiFeatures, fallback, features, values.price]);
 
   const refreshForecast = useCallback(() => setRefreshKey(key => key + 1), []);
   return useMemo(() => ({
     values, setField, refreshForecast,
-    features, forecast, version: apiForecast?.version, modelStatus,
+    features: forecast.features, forecast, version: apiForecast?.version, modelStatus, hasForecast: apiForecast !== null,
     weights: apiForecast?.weights ?? forecast.horizons.map(() => 0),
     confident: apiForecast?.confident ?? forecast.horizons.map(() => false),
     clipped: apiForecast?.clipped ?? [],

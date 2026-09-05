@@ -1,36 +1,39 @@
-import { useMinVisible } from '../../app/useMinVisible';
-import Spinner from '../../components/Spinner';
-import TickSparkline from '../../components/TickSparkline';
-import { money2, tryRate } from '../../lib/format';
+import DataTimestamp from '../../components/ui/DataTimestamp';
+import { money2, pct, tryRate, tryMoney, shortDate } from '../../lib/format';
 import { useDashboard } from './DashboardContext';
 
-/**
- * `demoted`: panel sayfasında h1'i panelin kendi başlığı taşır, bu başlık h2'ye
- * iner. Sayfada tek h1 kalsın ve 11 panel URL'i aynı h1'i paylaşmasın diye.
- */
 function PanelHeader({ demoted = false }: { demoted?: boolean }) {
-  const { harem, usdTry, haremTicks, status, refresh, refreshForecast, version, modelStatus } = useDashboard();
-  /* Akış çoğu zaman bir saniyeden hızlı kuruluyor; tamponsuz spinner tek
-     karede kaybolup dolumu göstermiyordu. */
-  const onsBusy = useMinVisible(!harem.live);
-  const fxBusy = useMinVisible(!usdTry.live);
-  const fetching = useMinVisible(!!status.busy);
-  return (
-    <header id="panel">
-    <div id="icerik"><span className="eyebrow">Özgün Altın Tahmin Modeli</span>{demoted
-      ? <h2>Canlı Ons Altın Tahmin ve Senaryo Analiz Paneli</h2>
-      : <h1>Canlı Ons Altın Tahmin ve Senaryo Analiz Paneli</h1>}<p>Tahmin, eğitim ve hata ölçümü doğrudan XAU/USD günlük verisiyle yapılır.</p></div>
-    <div className="header-market">
-    <div className="live-price ons-price"><span>{onsBusy?<Spinner size="xs"/>:<i className="ok"/>}ONS / XAUUSD</span><strong>{harem.satis&&!onsBusy?money2(harem.satis):<Spinner size="sm" label="Bağlanıyor…" inline/>}</strong>
-    <div className="bid-ask"><b>Alış {harem.alis?money2(harem.alis):'—'}</b><b>Satış {harem.satis&&!onsBusy?money2(harem.satis):'—'}</b></div><TickSparkline ticks={haremTicks}/>
-    <small>{!onsBusy&&harem.time?`Son fiyat ${harem.time.toLocaleTimeString('tr-TR')}`
-      :<Spinner size="xs" label={harem.time?'Akış yeniden kuruluyor…':'Canlı ons akışına bağlanılıyor…'} inline/>}</small></div>
-    <div className="live-price fx-price"><span>{fxBusy?<Spinner size="xs"/>:<i className="ok"/>}USD / TL</span><strong>{usdTry.satis&&!fxBusy?`₺${tryRate(usdTry.satis)}`:<Spinner size="sm" label="Bağlanıyor…" inline/>}</strong>
-    <div className="bid-ask"><b>Alış {usdTry.alis?`₺${tryRate(usdTry.alis)}`:'—'}</b><b>Satış {usdTry.satis&&!fxBusy?`₺${tryRate(usdTry.satis)}`:'—'}</b></div>
-    <small>{!fxBusy&&usdTry.time?`Son kur ${usdTry.time.toLocaleTimeString('tr-TR')}`
-      :<Spinner size="xs" label={usdTry.time?'Akış yeniden kuruluyor…':'Canlı kura bağlanılıyor…'} inline/>}</small></div>
-    <div className="status"><b>{version || (modelStatus==='fallback'?'Model servisi çevrimdışı':'XAU/USD modeli')}</b><span>7 · 14 · 30 günlük</span><button type="button" onClick={()=>{ void refresh(); refreshForecast(); }}>{fetching?<Spinner size="sm" inline/>:<i className={status.type}/>}{status.text}</button></div></div></header>
-  );
+  const { harem, usdTry, ziynet, spot, history, live, featuresDate, status, refresh, refreshForecast } = useDashboard();
+  const price = harem.satis ?? (spot.live ? spot.price : null);
+  // Daily close-to-close movement; kept separate from the live quote.
+  const latest = history.at(-1), previous = history.at(-2);
+  const change = spot.live && latest && previous ? latest[1] / previous[1] - 1 : null;
+  const changeUsd = latest && previous ? latest[1] - previous[1] : null;
+  const Heading = demoted ? 'h2' : 'h1';
+  return <section id="panel" className="market-overview" aria-labelledby="market-title">
+    <div className="market-price" id="icerik" tabIndex={-1}>
+      <div className="market-title-line"><Heading id="market-title">Ons altın</Heading><span className="instrument-code">XAU / USD</span></div>
+      <div className="market-price-line"><strong>{price ? money2(price) : <span className="value-placeholder">—</span>}</strong><span className="price-unit">USD / ons</span></div>
+      <div className="market-daily">
+        {change != null && changeUsd != null
+          ? <><b className={change >= 0 ? 'positive' : 'negative'}>{change >= 0 ? '↑ +' : '↓ −'}{money2(Math.abs(changeUsd))} <span>({pct(change)})</span></b><span>{shortDate(latest![0])} · günlük kapanış hareketi</span></>
+          : <span>Günlük hareket verisi bekleniyor</span>}
+      </div>
+    </div>
+    <dl className="market-ticker" aria-label="Piyasa ve makro özeti">
+      <div><dt>USD / TRY</dt><dd>{usdTry.satis ? `₺${tryRate(usdTry.satis)}` : '—'}</dd><small>Canlı döviz kuru</small></div>
+      <div><dt>Gram altın</dt><dd>{ziynet.ALTIN ? tryMoney(ziynet.ALTIN.satis) : '—'}</dd><small>995 · satış fiyatı</small></div>
+      <div><dt>Dolar endeksi</dt><dd>{live.dollar_return_5d != null ? pct(live.dollar_return_5d) : '—'}</dd><small>Geniş dolar · 5 gün</small></div>
+      <div><dt>Reel faiz</dt><dd>{live.real_yield_change_5d != null ? `${live.real_yield_change_5d >= 0 ? '+' : ''}${live.real_yield_change_5d.toFixed(2)} puan` : '—'}</dd><small>10 yıllık · 5 gün</small></div>
+    </dl>
+    <div className="market-data-line">
+      <DataTimestamp time={harem.time ?? spot.time} live={harem.live} updating={status.busy}/>
+      <span className="market-macro-date">Makro veri: {featuresDate ? shortDate(featuresDate, true) : 'bekleniyor'}</span>
+      <button className="quiet-button" type="button" disabled={status.busy} onClick={() => { void refresh(); refreshForecast(); }}>
+        <span aria-hidden="true">↻</span> {status.busy ? 'Güncelleniyor' : 'Yenile'}
+      </button>
+    </div>
+  </section>;
 }
 
 export default PanelHeader;

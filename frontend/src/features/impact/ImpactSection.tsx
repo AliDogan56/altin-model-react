@@ -18,20 +18,28 @@ const usd = (value: number) => `${value >= 0 ? '+' : '−'}${money(Math.abs(valu
 
 function Row({ item }: { item: Impact }) {
   return (
-    <li className={`push ${item.value >= 0 ? 'up' : 'down'}`}>
-      <div className="push-head">
-        <span className="push-name">{item.label}</span>
-        <b className="push-usd">{usd(item.usd)}</b>
+    <li className={`contribution-row ${item.value >= 0 ? 'up' : 'down'}`}>
+      <div className="contribution-label">
+        <span>{item.label}</span>
+        <b>{usd(item.usd)}</b>
       </div>
-      <div className="push-bar"><i style={{ width: `${Math.max(4, item.share * 100)}%` }}/></div>
-      <p className="push-why">{item.hint}{' '}
-        <span className={`push-level ${item.unusualness}`}>Şu an {UNUSUAL_TEXT[item.unusualness]}.</span></p>
+      <div className="contribution-track" aria-hidden="true">
+        <span className="contribution-half negative">{item.value < 0 &&
+          <i style={{ width: `${item.share * 100}%` }}/>}</span>
+        <span className="contribution-half positive">{item.value >= 0 &&
+          <i style={{ width: `${item.share * 100}%` }}/>}</span>
+      </div>
+      <details className="contribution-description">
+        <summary>Göstergeyi yorumla</summary>
+        <p>{item.hint}{' '}
+          <span className={item.unusualness}>Şu an {UNUSUAL_TEXT[item.unusualness]}.</span></p>
+      </details>
     </li>
   );
 }
 
 function ImpactSection({ focus }: { focus?: string }) {
-  const { impacts, confident, forecast, horizonDays, neutralized } = useDashboard();
+  const { impacts, confident, forecast, horizonDays, neutralized, modelStatus } = useDashboard();
   const [all, setAll] = useState(false);
   const feature = featureBy('feature-katki');
 
@@ -41,63 +49,66 @@ function ImpactSection({ focus }: { focus?: string }) {
   const down = all ? impacts.down : impacts.down.slice(0, TOP);
   const hidden = impacts.up.length + impacts.down.length - up.length - down.length;
   const target = impacts.price * (1 + impacts.here);
+  const rows = [...up, ...down].sort((a, b) => Math.abs(b.usd) - Math.abs(a.usd));
 
   return (
     <Collapsible id="impact" anchor="feature-katki"
       openByDefault={focus === PANEL_FEATURES.find(f => f.anchor === 'feature-katki')?.slug}
-      title={feature.title} hint={feature.summary}
+      title="Modeli ne etkiliyor?" hint={feature.summary}
       summary={impacts.live && hasView ? impacts.up[0]?.label ?? null : null}>
-      <section className="panel block impact-block" aria-labelledby="impact-title">
-        <h2 id="impact-title">Model bu tahmini neden verdi?</h2>
+      <section className="panel block terminal-impact" aria-labelledby="impact-title">
+        <div className="analysis-heading"><div>
+          <span className="analysis-kicker">Model açıklanabilirliği</span>
+          <h2 id="impact-title">Modeli ne etkiliyor?</h2>
+        </div><span className="analysis-tag">{impacts.horizon} günlük görünüm</span></div>
+        {modelStatus === 'loading' && impacts.live && <p className="model-update" role="status">Önceki model sonucu ve girdileri gösteriliyor · güncelleniyor…</p>}
 
         {!impacts.live
-          ? <p className="impact-empty">Model servisine ulaşılamıyor; hangi göstergenin
+          ? <p className="analysis-empty">Model servisine ulaşılamıyor; hangi göstergenin
               tahmini nasıl etkilediği gösterilemiyor.</p>
           : !hasView
-            ? <p className="impact-empty">Model {horizonDays} günlük vadede yön bildirmiyor,
+            ? <p className="analysis-empty">Model {horizonDays} günlük vadede yön bildirmiyor,
                 bu yüzden ayrıştıracak bir tahmin de yok. Yön bildirdiği bir vadeyi seçin.</p>
             : <>
-              <p className="impact-lede">
-                Bugün ons altın <b>{money(impacts.price)}</b>. Model {impacts.horizon} gün sonrası
-                için <b>{money(target)}</b> bekliyor — yani <b>{usd(impacts.hereUsd)}</b>.
-                Bu beklentiyi oluşturan göstergeler aşağıda: bazıları fiyatı yukarı itiyor,
-                bazıları aşağı çekiyor. Yanlarındaki tutar, <b>o gösterge tek başına</b> beklentiyi
-                kaç dolar oynattığını söyler.
+              <p className="analysis-intro">
+                Her çubuk, bir girdinin bugünkü değerinin model çıktısındaki dolar etkisini gösterir.
+                Bu, modelin girdiye duyarlılığıdır; piyasa için bir sebep-sonuç ilişkisi değildir.
               </p>
+              <dl className="contribution-context">
+                <div><dt>Referans fiyat</dt><dd>{money(impacts.price)}</dd></div>
+                <div><dt>Model beklentisi</dt><dd>{money(target)}</dd></div>
+                <div><dt>Beklenen değişim</dt><dd>{usd(impacts.hereUsd)} <small>{pct(impacts.here)}</small></dd></div>
+              </dl>
 
               {/* Donmuş girdi tahmine katılmadı; bunu saklamak, kartta neden
                   görünmediğini açıklamamak olurdu. */}
-              {neutralized.length > 0 && <p className="impact-note">
+              {neutralized.length > 0 && <p className="analysis-note">
                 <b>Hesaba katılmayan gösterge:</b>{' '}
                 {neutralized.map(name => IMPACT_LABELS[name]?.label ?? name).join(', ')}.
                 Uzun süredir hiç değişmediği için tahmin edilen dönem hakkında güncel bilgi
                 taşımıyor; model bu göstergeye dayanmadan hesaplıyor.
               </p>}
 
-              <div className="push-columns">
-                <div className="push-group up">
-                  <h3>Yukarı itenler <b>{usd(impacts.upUsd)}</b></h3>
-                  <ul>{up.map(item => <Row key={item.key} item={item}/>)}</ul>
-                </div>
-                <div className="push-group down">
-                  <h3>Aşağı çekenler <b>{usd(impacts.downUsd)}</b></h3>
-                  <ul>{down.map(item => <Row key={item.key} item={item}/>)}</ul>
-                </div>
+              <div className="contribution-axis" aria-hidden="true">
+                <span>← Negatif etki</span><span>Pozitif etki →</span>
               </div>
+              <ul className="contribution-list" aria-label="Model girdilerinin tahmine etkisi">
+                {rows.map(item => <Row key={item.key} item={item}/>)}
+              </ul>
+              {!rows.length && <p className="analysis-empty">Görünür eşik olan 1 doların üzerinde bir girdi etkisi bulunmuyor.</p>}
 
-              {hidden > 0 && <button type="button" className="push-more" onClick={() => setAll(true)}>
+              {hidden > 0 && <button type="button" className="analysis-more" onClick={() => setAll(true)}>
                 Etkisi daha küçük {hidden} göstergeyi de göster</button>}
-              {all && <button type="button" className="push-more" onClick={() => setAll(false)}>
+              {all && <button type="button" className="analysis-more" onClick={() => setAll(false)}>
                 Yalnız en güçlüleri göster</button>}
 
-              <p className="impact-net">
-                Yukarı itenler <b className="positive">{usd(impacts.upUsd)}</b>, aşağı çekenler{' '}
-                <b className="negative">{usd(impacts.downUsd)}</b> — ikisi birbirini büyük ölçüde
-                götürüyor ve geriye <b>{usd(impacts.netUsd)}</b> kalıyor. Modelin
-                {' '}{impacts.horizon} günlük beklentisi bu: <b>{pct(impacts.here)}</b>.
+              <p className="analysis-note">
+                Pozitif katkılar <b className="positive">{usd(impacts.upUsd)}</b>, negatif katkılar{' '}
+                <b className="negative">{usd(impacts.downUsd)}</b>. Katkıların toplamı <b>{usd(impacts.netUsd)}</b>.
+                Model doğrusal olmadığından bu toplam, modelin <b>{usd(impacts.hereUsd)}</b> beklentisiyle birebir eşleşmeyebilir.
               </p>
 
-              <details className="impact-how">
+              <details className="analysis-method">
                 <summary>Bu sayılar nasıl bulunuyor?</summary>
                 <p>Her gösterge için şu soru sorulur: “Bu gösterge bugünkü değerinde değil de
                   kendi uzun dönem ortalamasında olsaydı, model kaç dolar farklı bir sayı

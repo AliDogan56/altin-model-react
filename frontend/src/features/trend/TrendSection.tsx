@@ -1,22 +1,25 @@
 import { useMemo, useState } from 'react';
-import Spinner from '../../components/Spinner';
 import { useMinVisible } from '../../app/useMinVisible';
+import SegmentedControl from '../../components/ui/SegmentedControl';
 import { aggregate } from '../../domain/chart/aggregate';
 import { trendLine } from '../../domain/chart/trend';
 import { pct2 } from '../../lib/format';
-
-/* Site genelinde ondalık ayracı virgül; `toFixed` nokta veriyordu. */
-const sigma2 = (v: number) =>
-  new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v);
-import { featureBy } from '../../content/panel';
 import { useDashboard } from '../dashboard/DashboardContext';
 import TrendChart from './TrendChart';
 import { DEFAULT_RANGE, RANGES, rangeById, type RangeId } from './ranges';
 
+/* Site genelinde ondalık ayracı virgül; `toFixed` nokta veriyordu. */
+const sigma2 = (v: number) =>
+  new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v);
+
 const YON: Record<string, { label: string; tone: string }> = {
-  up: { label: 'Yükseliş', tone: 'up' },
-  down: { label: 'Düşüş', tone: 'down' },
-  flat: { label: 'Yatay', tone: 'flat' },
+  up: { label: '↑ Yükseliş eğilimi', tone: 'up' },
+  down: { label: '↓ Düşüş eğilimi', tone: 'down' },
+  flat: { label: '→ Yatay', tone: 'flat' },
+};
+
+const RANGE_SHORT: Record<RangeId, string> = {
+  gunluk: '1G', haftalik: '1H', aylik: '1A', ceyreklik: '3A', yarim: '6A',
 };
 
 /** Fiyatın kanaldaki yerini sade dile çevirir. */
@@ -55,79 +58,75 @@ function TrendSection() {
   const yon = trend ? YON[trend.direction] : null;
 
   return (
-    <section id="feature-trend" className="panel block chart-block trend-block">
+    <section id="feature-trend" className="panel block chart-block trend-block terminal-trend">
       <div className="chart-head">
         <div>
-          <h2>{featureBy('feature-trend').title}</h2>
-          <p>Seçilen aralıkta fiyatın seyri ve dönemin <b>genel yönü</b>. Trend çizgisi
-            noktaları birleştirmez; log fiyat üzerinde regresyonla hesaplanır, yani
-            eğim “dönem başına yüzde kaç” olarak okunur.</p>
+          <h2>Trend ve fiyat kanalı</h2>
+          <p>Geçmiş fiyatların genel yönü ve trend etrafındaki dağılımı.</p>
         </div>
         <div className="chart-tools">
-          <div className="tool-group"><span>Zaman aralığı</span>
-            <div className="segmented">{RANGES.map(r =>
-              <button type="button" key={r.id} className={rangeId === r.id ? 'active' : ''}
-                aria-pressed={rangeId === r.id} onClick={() => setRangeId(r.id)}>{r.label}</button>)}
-            </div>
+          <div className="tool-group"><span>Veri periyodu</span>
+            <SegmentedControl label="Trend verilerinin toplama periyodu" value={rangeId}
+              options={RANGES.map(r => ({ value: r.id, label: <>
+                <span aria-hidden="true">{RANGE_SHORT[r.id]}</span>
+                <span className="sr-live">{r.label}</span></> }))}
+              onChange={setRangeId}/>
           </div>
         </div>
       </div>
 
       {busy || rows.length < 2
-        ? <div className="trend-placeholder">
-            {busy ? <Spinner size="lg" label="Fiyat serisi yükleniyor…"/>
+        ? <div className="trend-placeholder" role="status">
+            {busy ? <><div className="trend-skeleton" aria-hidden="true"/><span>Fiyat serisi yükleniyor…</span></>
               : <span>Bu aralık için yeterli veri yok.</span>}
           </div>
         : <>
-            <TrendChart rows={rows} trend={trend} spec={spec}/>
-
-            <div className="market-snapshot trend-snapshot">
-              <article className={`snapshot-card trend-card ${yon?.tone ?? 'flat'}`}>
-                <span>Dönemin yönü</span>
-                <strong>{yon?.label ?? '—'}</strong>
-                <small>{spec.label.toLowerCase()} seride son {rows.length} nokta</small>
-              </article>
-              <article className="snapshot-card">
-                <span>Trend eğimi</span>
-                <strong>{trend ? pct2(trend.slopePct) : '—'}</strong>
-                <small>{spec.unit} başına, regresyon eğimi</small>
-              </article>
-              <article className="snapshot-card">
-                <span>Gerçekleşen değişim</span>
-                <strong>{gerceklesen === null ? '—' : pct2(gerceklesen)}</strong>
-                <small>dönem başı ve sonu kapanışı arasındaki fark</small>
-              </article>
-              <article className="snapshot-card">
-                <span>Kanalda konum</span>
-                <strong>{trend
-                  ? `${trend.lastZ >= 0 ? '+' : ''}${sigma2(trend.lastZ)}σ` : '—'}</strong>
-                <small>{trend ? kanalMetni(trend.lastZ) : '—'}</small>
-              </article>
-              <article className="snapshot-card">
-                <span>Uyum</span>
-                <strong>{trend ? `%${Math.round(trend.r2 * 100)}` : '—'}</strong>
-                <small>{trend
-                  ? `${uyumMetni(trend.r2)} · kanal ±${pct2(trend.sigma).replace('%', '')}%`
-                  : '—'}</small>
-              </article>
+            <div className="trend-context">
+              <strong className={yon?.tone ?? 'flat'}>{yon?.label ?? 'Yön hesaplanamadı'}</strong>
+              <span>{spec.label} kapanışlar · {rows.length} gözlem</span>
             </div>
 
+            <TrendChart rows={rows} trend={trend} spec={spec}/>
+
+            <dl className="trend-metrics">
+              <div><dt>Gerçekleşen değişim</dt><dd>{gerceklesen === null ? '—' : pct2(gerceklesen)}
+                <small>ilk ve son kapanış arası</small></dd></div>
+              <div><dt>Trend eğimi</dt><dd>{trend ? pct2(trend.slopePct) : '—'}
+                <small>{spec.unit} başına regresyon eğimi</small></dd></div>
+              <div><dt>Kanalda konum</dt><dd>{trend
+                ? `${trend.lastZ >= 0 ? '+' : ''}${sigma2(trend.lastZ)}σ` : '—'}
+                <small>{trend ? kanalMetni(trend.lastZ) : '—'}</small></dd></div>
+              <div><dt>Trend uyumu · R²</dt><dd>{trend ? `%${Math.round(trend.r2 * 100)}` : '—'}
+                <small>{trend ? uyumMetni(trend.r2) : '—'}</small></dd></div>
+              <div><dt>Kanaldaki sapma · σ</dt><dd>{trend ? pct2(trend.sigma) : '—'}
+                <small>log fiyat artıklarının sapması</small></dd></div>
+            </dl>
+
             <div className="chart-legend">
-              <span><i className={spec.candles ? 'history-key' : 'history-key'}/>
-                {spec.candles ? 'Günlük mumlar (gövde: önceki kapanış → kapanış)' : 'Dönem kapanışları'}</span>
+              <span><i className="history-key"/>{spec.candles ? 'Günlük mumlar' : 'Dönem kapanışları'}</span>
               <span><i className={`trend-key ${trend?.direction ?? 'flat'}`}/>Genel yön (regresyon)</span>
               {trend && trend.sigma > 0 &&
                 <span><i className="trend-key band"/>Kanal: trend ±1σ ve ±2σ</span>}
             </div>
 
-            <p className="trend-note">
-              Trend çizgisi geçmişin özetidir, geleceğin tahmini değildir. Kanal,
-              fiyatın trend etrafındaki <b>tipik sapmasını</b> gösterir: dar kanal
-              seyrin trendi yakından izlediği, geniş kanal dağınık olduğu anlamına
-              gelir. Kanalın dışına çıkmak bir dönüş sinyali değildir — bu sitede
-              böyle bir sinyalin işe yaradığı <b>ölçülemedi</b>. Modelin ölçülmüş
-              tahmini yukarıdaki grafik kartında.
-            </p>
+            <details className="chart-help">
+              <summary>Periyot ve trend hesabı hakkında</summary>
+              <div className="chart-help-content">
+                <p>1G / 1H / 1A / 3A / 6A, her veri noktasının toplama periyodudur;
+                  grafiğin toplam süresi değildir. Seçili {spec.label.toLowerCase()} seride
+                  son {rows.length} kapanış gösteriliyor. Eğim, log fiyat regresyonundan
+                  hesaplanan {spec.unit} başına değişimdir.</p>
+                {spec.candles && <p>Mum gövdesi önceki kapanıştan günlük kapanışa uzanır;
+                  fitil günün en yüksek ve en düşük fiyatını gösterir. Kaynak açılış fiyatı vermez.</p>}
+                <p>Trend çizgisi geçmişin özetidir, geleceğin tahmini değildir. Kanal,
+                  fiyatın trend etrafındaki <b>tipik sapmasını</b> gösterir: dar kanal
+                  seyrin trendi yakından izlediği, geniş kanal dağınık olduğu anlamına
+                  gelir. Kanalın dışına çıkmak bir dönüş sinyali değildir — bu sitede
+                  böyle bir sinyalin işe yaradığı <b>ölçülemedi</b>. Modelin ölçülmüş
+                  tahmini model görünümünde yer alır.
+                </p>
+              </div>
+            </details>
           </>}
     </section>
   );

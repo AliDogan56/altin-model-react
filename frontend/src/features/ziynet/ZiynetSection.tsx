@@ -8,34 +8,36 @@ const ORDER = ZIYNET.map(([code]) => code);
 
 const grams = (value: number) => `${value.toFixed(3).replace(/\.?0+$/, '').replace('.', ',')} gr`;
 
-function Tile({ row }: { row: ZiynetRow }) {
+function DailyChange({ change }: { change: ZiynetRow['change'] }) {
+  if (change == null) return <span className="market-table-muted" title="Kaynakta karşılaştırılabilir önceki kapanış bulunmuyor">—</span>;
+  return <span className={`market-table-change ${change >= 0 ? 'is-positive' : 'is-negative'}`}>
+    <span aria-hidden="true">{change >= 0 ? '↑' : '↓'}</span> {pct(Math.abs(change))}
+  </span>;
+}
+
+function Premium({ premium }: { premium: ZiynetRow['premium'] }) {
+  if (premium == null) return <span className="market-table-muted">—</span>;
+  return <span className={`market-table-premium ${premium >= 0 ? 'is-premium' : 'is-positive'}`}>
+    {premium >= 0 ? '+' : '−'}{pct2(Math.abs(premium))}
+  </span>;
+}
+
+function ProductDetails({ row }: { row: ZiynetRow }) {
   return (
-    <article className="quote" key={row.code}>
-      <header>
-        <span className="quote-name">{row.label}</span>
-        <em className="quote-content">{grams(row.pureGrams)} saf altın</em>
-      </header>
-
-      <strong key={row.satis} className={`quote-price tick-${row.dir || 'flat'}`}>{tryMoney(row.satis)}</strong>
-      <div className="quote-line">
-        <span>Alış <b>{tryMoney(row.alis)}</b></span>
-        <span>Makas <b>{tryMoney(row.satis - row.alis)}</b> ({pct2(row.spreadPct)})</span>
-      </div>
-
-      {row.rawValue != null && row.premium != null && <div className="quote-breakdown">
-        <div><span>Ham altın değeri</span><b>{tryMoney(row.rawValue)}</b></div>
-        <div><span>İşçilik + satıcı payı</span>
-          <b className={row.premium >= 0 ? 'warn' : 'positive'}>
-            {row.premium >= 0 ? '+' : '−'}{pct2(Math.abs(row.premium))}</b></div>
-        <div className="premium-bar">
-          <i style={{ width: `${Math.min(100, Math.max(1, Math.abs(row.premium) * 100 / 0.06 * 100))}%` }}/>
-        </div>
-      </div>}
-
-      {row.change != null && <p className="quote-change">
-        Önceki kapanışa göre <b className={row.change >= 0 ? 'positive' : 'negative'}>
-          {row.change >= 0 ? '▲' : '▼'} {pct(Math.abs(row.change))}</b></p>}
-    </article>
+    <details className="market-product">
+      <summary>
+        <span className="market-product-name"><strong>{row.label}</strong><small>{grams(row.pureGrams)} saf altın</small></span>
+        <span className="market-product-price"><strong className={`market-table-price tick-${row.dir || 'flat'}`}>{tryMoney(row.satis)}</strong><DailyChange change={row.change}/></span>
+        <span className="market-product-toggle" aria-hidden="true">+</span>
+      </summary>
+      <dl className="market-product-details">
+        <div><dt>Alış</dt><dd>{tryMoney(row.alis)}</dd></div>
+        <div><dt>Satış</dt><dd>{tryMoney(row.satis)}</dd></div>
+        <div><dt>Alış-satış makası</dt><dd>{tryMoney(row.satis - row.alis)} <small>({pct2(row.spreadPct)})</small></dd></div>
+        <div><dt>Saf altın değeri</dt><dd>{row.rawValue == null ? '—' : tryMoney(row.rawValue)}</dd></div>
+        <div><dt>Prim / işçilik</dt><dd><Premium premium={row.premium}/></dd></div>
+      </dl>
+    </details>
   );
 }
 
@@ -48,24 +50,48 @@ function ZiynetSection() {
   const missingChange = rows.filter(row => row.change == null).length;
 
   return (
-    <section id="feature-ziynet" className="panel block gram-block" aria-labelledby="gram-title">
-      <div className="gram-head">
+    <section id="feature-ziynet" className="panel block gram-block market-prices" aria-labelledby="gram-title">
+      <div className="market-table-head">
         <div>
           <h2 id="gram-title">{featureBy('feature-ziynet').title}</h2>
-          <small>Her ürünün fiyatı, içindeki saf altının değeri ve üzerine binen işçilik-marj payı.
-            Fiyatlar canlı piyasa kotasyonudur.</small>
+          <p>Canlı piyasa kotasyonları · Türk lirası</p>
         </div>
-        {gramPrice != null && <div className="gram-basis">
+        {gramPrice != null && <div className="market-table-basis">
           <span>1 gram saf altın</span><b>{tryMoney(gramPrice)}</b>
           <small>canlı ons × USD/TL ÷ 31,1035</small>
         </div>}
       </div>
 
-      <div className="gram-grid">{rows.map(row => <Tile key={row.code} row={row}/>)}</div>
+      <div className="market-table-desktop">
+        <table className="market-table">
+          <caption className="market-table-sr-only">Ziynet altın alış, satış, makas ve saf altın değeri karşılaştırması. Tutarlar Türk lirasıdır.</caption>
+          <thead><tr>
+            <th scope="col">Ürün</th><th scope="col">Alış</th><th scope="col">Satış</th>
+            <th scope="col">Makas</th><th scope="col">Günlük değişim</th>
+            <th scope="col">Saf altın değeri</th><th scope="col">Prim / işçilik</th>
+          </tr></thead>
+          <tbody>{rows.map(row => <tr key={row.code}>
+            <th scope="row"><strong>{row.label}</strong><small>{grams(row.pureGrams)} saf altın</small></th>
+            <td>{tryMoney(row.alis)}</td>
+            <td className={`market-table-price tick-${row.dir || 'flat'}`}>{tryMoney(row.satis)}</td>
+            <td>{tryMoney(row.satis - row.alis)}<small>{pct2(row.spreadPct)}</small></td>
+            <td><DailyChange change={row.change}/></td>
+            <td>{row.rawValue == null ? '—' : tryMoney(row.rawValue)}</td>
+            <td><Premium premium={row.premium}/></td>
+          </tr>)}</tbody>
+        </table>
+      </div>
+      <div className="market-product-list">
+        <div className="market-product-labels"><span>Ürün</span><span>Satış / günlük değişim</span></div>
+        {rows.map(row => <ProductDetails key={row.code} row={row}/>)}
+        {rows.length > 0 && <p className="market-table-help">Alış, makas ve işçilik detayları için ürünü açın.</p>}
+      </div>
+      {rows.length === 0 && <p className="market-table-empty" role="status">Ziynet fiyatları bekleniyor.</p>}
 
-      <p className="gram-note">
+      <p className="market-table-note">
         {gramPrice == null && <b>Kur akışı beklendiği için ham değer ve işçilik payı hesaplanamıyor. </b>}
         {missingChange > 0 && `${missingChange} üründe günlük değişim gösterilmiyor; kaynağın bildirdiği önceki kapanış gün aralığıyla bağdaşmıyor. `}
+        Prim / işçilik, satış fiyatının saf altın değerine göre farkıdır; işçilik ve satıcı payını birlikte içerir.{' '}
         Bu fiyatlar ons ve kurdan nasıl türer:{' '}
         <a href="/rehber/ons-gram-altin-hesaplama">Ons’tan gram altına hesaplama</a> ·{' '}
         <a href="/rehber/ceyrek-altin-kac-gram">Çeyrek altın kaç gram?</a> ·{' '}
