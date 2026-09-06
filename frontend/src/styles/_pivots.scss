@@ -42,7 +42,8 @@
 .price-ladder .price-ladder-row.testing { background:var(--gold-bg); border-left-color:var(--gold); }
 /* Referans satırı: çerçeve etiketi ve veri zamanı 12 px'te; terminal katmanının 10 px'i ezilir. */
 .price-ladder .price-ladder-current > span { font-size:12px; }
-.price-ladder .price-ladder-frame { grid-column:1/-1; display:flex; justify-content:flex-end; }
+.price-ladder .price-ladder-frame { grid-column:1/-1; display:flex; flex-wrap:wrap; justify-content:space-between; gap:2px 10px; }
+.price-ladder .price-ladder-frame > span:first-child { font-size:12px; font-weight:600; }
 .price-ladder .price-ladder-current .data-timestamp,.price-ladder .price-ladder-current .data-timestamp span { font-size:12px; font-weight:400; }
 /* Dönem bilgisi: pivotun hesaplandığı mumun sayıları ve tamamlanma sebebi. */
 .pivot-period { display:grid; grid-template-columns:repeat(auto-fit, minmax(120px, 1fr)); gap:8px 12px; margin:12px 0 0; }
@@ -61,3 +62,17 @@
 /* Fiyat dönemin tüm seviyelerinin dışına çıktığında merdiven yanıltıcı olmasın. */
 .pivot-alert { margin:10px 0 0; padding:9px 11px; border:1px solid var(--gold-line); border-radius:9px;
   background:var(--gold-bg); color:var(--gold); font-size:12px; line-height:1.5; }
+
+/* Masaüstünde ray 288 px iken merdiven 305 px'e taşıyordu: `1fr` = minmax(auto,1fr), yani
+   sütunlar içeriklerinin min-genişliğinin altına inemiyor ve `nowrap` çerçeve metni
+   ("Vadeli altın · 5 dk kapanış") satırı zorla genişletiyordu. Sütunlar minmax(0,…) ile
+   daralabilir, çocuklar min-width:0, çerçeve metni sarılır. Ölçüldü: 34 px taşma → 0. */
+.price-ladder { min-width:0; }
+.price-ladder .price-ladder-columns,
+.price-ladder .price-ladder-row,
+.price-ladder .price-ladder-current { grid-template-columns:minmax(0,1fr) minmax(0,1.2fr) minmax(0,1fr); }
+.price-ladder .price-ladder-row > *,
+.price-ladder .price-ladder-current > *,
+.price-ladder .price-ladder-zone > * { min-width:0; overflow-wrap:anywhere; }
+.price-ladder .price-ladder-current span { white-space:normal; }
+.price-ladder .price-ladder-current .data-timestamp { white-space:normal; flex-wrap:wrap; justify-content:flex-end; }

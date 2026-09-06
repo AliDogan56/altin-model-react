@@ -62,8 +62,9 @@ export default function PriceLadder({ ladder }: { ladder: Ladder | null }) {
      piyasada son seans meşru referanstır, sunucunun `stale`'i her şeyi ezer. */
   const staleAfterMs = sessionStaleAfterMs(sessionMeta);
   const current = <div className="price-ladder-current">
-    <span>● Referans</span><strong>{money(ladder.price)}</strong><span>{FRAME[ladder.frame]}</span>
-    <div className="price-ladder-frame"><DataTimestamp time={reference?.asOf ?? null} staleAfterMs={staleAfterMs}/></div>
+    <span>● Referans</span><strong>{money(ladder.price)}</strong><span>USD</span>
+    {/* Çerçeve metni dar üçüncü sütuna değil tam genişlikteki alt satıra: 288 px rayda üç satıra kırılıyordu. */}
+    <div className="price-ladder-frame"><span>{FRAME[ladder.frame]}</span><DataTimestamp time={reference?.asOf ?? null} staleAfterMs={staleAfterMs}/></div>
   </div>;
   return <div className="price-ladder" role="group" aria-label="Referans fiyata göre sıralı destek ve direnç seviyeleri">
     <div className="price-ladder-columns"><span>Seviye</span><span>Fiyat</span><span>Uzaklık</span></div>
