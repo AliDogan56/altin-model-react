@@ -704,6 +704,15 @@ bülten) · **05 Senaryolar** (TL getirisi, işlem bölgeleri; vade seçici).
   `--motion-fast`; iki tema aynı anahtarları taşır, otomatik sistem geçişi hâlâ yok; terminal dosyalarında sabit hex yok
 - Ölçüldü (canlı, 375 px, 2026-09-06): 89 kontrolün **0'ı** 24 px altında, taşma 0, konsol
   hatası 0, sekmeler ve `?view=` çalışıyor. Punto regresyonu için bilinen sorunlara bak
+- **Mobilde sekmeler alt gezinme çubuğu** (2026-09-07): 640 px altında `.workspace-tabs`
+  `position:fixed; bottom:0` (güvenli alan payı, seçili sekme üst kenar çizgisiyle), `.terminal-app`
+  alt dolgusu 76 px ki altbilgi çubuğun altında kalmasın; 640 px'ten itibaren eski hâli (başlık
+  altında yapışkan). `useFeatureFocus` kaydırma payını çubuğun **ölçülen** konumundan seçer
+  (altta 72, üstte 132 px). Ölçüldü (375 px): çubuk 57 px, kaydırmada sabit, altbilgi görünür
+- **Arayüz metninde üçüncü taraf adı yok** (Harem, Yahoo, xaus, GC=F): canlı kotasyon "Canlı spot",
+  referans çerçevesi "Vadeli altın · 5 dk kapanış / günlük kapanış", hakkımızda sayfasında
+  "uluslararası bir fiyat sağlayıcısı". Kod tanımlayıcıları ve yorumlar (`harem.ts`, `subscribeHarem`)
+  değişmedi; `content.test.ts`'e bu kural için ayrıca test yok
 
 ## Makale verisi ana pakette değil
 

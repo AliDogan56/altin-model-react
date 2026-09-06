@@ -260,7 +260,7 @@ function MomentumSection({ focus }: { focus?: string }) {
           Momentum <b>son seansın</b> 5 dakikalık fiyat hareketinden gelir ve <b>bu seansın
           kendi dalgalanmasına</b> göre ölçeklenir. Sabit bir eşik yoktur: aynı 10 dolarlık
           hareket sakin bir günde güçlü, çalkantılı bir günde zayıf okunur. Seviyeler ve
-          kırılım gücü ise günlük mumlardan, aynı GC=F çerçevesinde hesaplanır.
+          kırılım gücü ise günlük mumlardan, aynı vadeli fiyat çerçevesinde hesaplanır.
         </p>
         {momentum && <SessionStamp time={momentum.asOf} meta={sessionMeta}/>}
 

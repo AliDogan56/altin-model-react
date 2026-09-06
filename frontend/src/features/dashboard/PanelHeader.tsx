@@ -21,7 +21,7 @@ function PanelHeader({ demoted = false }: { demoted?: boolean }) {
   return <section id="panel" className="market-overview" aria-labelledby="market-title">
     <div className="market-price">
       <div className="market-title-line"><Heading id="market-title">Ons altın</Heading><span className="instrument-code">XAU / USD</span></div>
-      <div className="market-price-line"><strong>{price ? money2(price) : <span className="value-placeholder">—</span>}</strong><span className="price-unit">USD / ons · Canlı spot · Harem</span></div>
+      <div className="market-price-line"><strong>{price ? money2(price) : <span className="value-placeholder">—</span>}</strong><span className="price-unit">USD / ons · Canlı spot</span></div>
       <div className="market-daily">
         {dailyChange
           ? <><b className={dailyChange.usd >= 0 ? 'positive' : 'negative'}>{dailyChange.usd >= 0 ? '↑ +' : '↓ −'}{money2(Math.abs(dailyChange.usd))}{dailyChange.pct != null && <span> ({pct(dailyChange.pct)})</span>}</b>

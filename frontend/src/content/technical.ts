@@ -66,7 +66,7 @@ export const NOTE_TEXT: Record<TechnicalNote, string> = {
   NOT_A_PROBABILITY: 'Bu gösterge bir kırılım olasılığı yüzdesi değildir',
   UNTESTED_LEVEL: 'Hedef, hiç test edilmemiş bir pivot çizgisi; bölge gücü bilinmiyor',
   NO_EXPECTED_MOVE: 'Beklenen hareket sıfır; kırılım gücü ölçülemedi',
-  LIVE_QUOTE_NOT_USED: 'Canlı kotasyon hesaba girmez; referans GC=F kapanışıdır',
+  LIVE_QUOTE_NOT_USED: 'Canlı kotasyon hesaba girmez; referans vadeli altın kapanışıdır',
 };
 
 /* --- referans çerçevesi --------------------------------------------------- */
@@ -74,8 +74,8 @@ export const NOTE_TEXT: Record<TechnicalNote, string> = {
 export type ReferenceFrame = 'intraday_close' | 'daily_close';
 
 export const FRAME: Record<ReferenceFrame, string> = {
-  intraday_close: 'GC=F · 5 dk kapanış',
-  daily_close: 'GC=F · günlük kapanış',
+  intraday_close: 'Vadeli altın · 5 dk kapanış',
+  daily_close: 'Vadeli altın · günlük kapanış',
 };
 
 export type ExpectedMoveFrame = 'session_remaining' | 'next_daily_bar';
