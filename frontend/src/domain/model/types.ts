@@ -15,7 +15,6 @@ export type ModelArtifact = {
   /** Eğitim gözlem sayısı; yalnız gösterim. */
   rows?: number;
   history: [string, number][];
-  resistance: { r20: number; r60: number; momentumJumpPct: number };
 };
 
 export type FeatureMap = Record<string, number>;

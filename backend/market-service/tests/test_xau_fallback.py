@@ -4,6 +4,7 @@
 gerçekleşen seri tamamen kayboldu.
 """
 import asyncio
+import json
 from datetime import date, datetime, time, timezone
 
 import httpx
@@ -56,6 +57,16 @@ def test_birincil_dusunce_yedek_kaynak_kullanilir():
     out = asyncio.run(servis([hata, YAHOO]).xau_history())
     assert out["fallback"] is True
     assert out["source"] == "yahoo:GC=F"
+    assert [row["d"] for row in out["points"]] == ["2026-08-31", "2026-09-01"]
+
+
+def test_birincil_200_ile_json_olmayan_govde_donerse_yedek_devreye_girer():
+    """Kaynak 200 ile HTML/boş gövde döndürünce `response.json()` JSONDecodeError
+    (⊂ ValueError) fırlatıyor; eski except tuple'ı bunu yakalamıyor ve uç 400
+    veriyordu — yedek hiç devreye girmiyordu."""
+    bozuk = json.JSONDecodeError("Expecting value", "<html>bakım</html>", 0)
+    out = asyncio.run(servis([bozuk, YAHOO]).xau_history())
+    assert out["fallback"] is True and out["source"] == "yahoo:GC=F"
     assert [row["d"] for row in out["points"]] == ["2026-08-31", "2026-09-01"]
 
 

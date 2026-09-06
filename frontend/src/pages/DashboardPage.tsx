@@ -8,6 +8,7 @@ import SegmentedControl from '../components/ui/SegmentedControl';
 import DataTimestamp from '../components/ui/DataTimestamp';
 import { featureBySlug } from '../content/panel';
 import { openLegal, PAGE_META } from '../content/site';
+import { FRAME, OUTSIDE, PIVOT_METHOD, PIVOT_PERIOD, POSITION_VS_PIVOT, STATUS_TEXT } from '../content/technical';
 import { useDocumentMeta } from '../app/useDocumentMeta';
 import BulletinSection from '../features/bulletin/BulletinSection';
 import ChartSection from '../features/chart/ChartSection';
@@ -24,6 +25,7 @@ import IndicatorsSection from '../features/indicators/IndicatorsSection';
 import LoanSection from '../features/loan/LoanSection';
 import PivotSection from '../features/pivots/PivotSection';
 import PriceLadder from '../features/pivots/PriceLadder';
+import { sessionStaleAfterMs } from '../features/dashboard/useTechnical';
 import ScorecardSection from '../features/scorecard/ScorecardSection';
 import TrendSection from '../features/trend/TrendSection';
 import ZiynetSection from '../features/ziynet/ZiynetSection';
@@ -45,7 +47,7 @@ const viewOf = (value: string | null): View | null => VIEWS.some(([key]) => key 
 const Boundary = ({ children }: { children: ReactNode }) => <ErrorBoundary title="Bu analiz yüklenemedi">{children}</ErrorBoundary>;
 
 function DashboardPage({ focus }: { focus?: string }) {
-  const { scorecard, tech, pivotLadder, modelStatus, hasForecast, featuresDate, pivotPeriod, pivotMethod, horizonDays, setHorizonDays, forecast } = useDashboard();
+  const { scorecard, pivotLadder, modelStatus, hasForecast, featuresDate, pivotPeriod, pivotMethod, horizonDays, setHorizonDays, forecast, reference, sessionMeta } = useDashboard();
   const feature = focus ? featureBySlug(focus) ?? null : null;
   const location = useLocation();
   const [params, setParams] = useSearchParams();
@@ -65,9 +67,14 @@ function DashboardPage({ focus }: { focus?: string }) {
   const panel = (view: View, children: ReactNode) => <div key={view} id={`workspace-${view}`} role="tabpanel" aria-labelledby={`tab-${view}`} hidden={active !== view} tabIndex={0} className="workspace-panel">
     {(visited.has(view) || active === view) && children}
   </div>;
-  const nearDown = pivotLadder?.items.find(item => item.name === pivotLadder.nearestDown);
-  const nearUp = pivotLadder?.items.find(item => item.name === pivotLadder.nearestUp);
-  const pivot = pivotLadder?.items.find(item => item.name === 'P');
+  /* En yakın seviyeler ve pivota göre konum sunucunun kararı (`role`,
+     `positionVsPivot`); burada fiyat karşılaştırması yapılmaz. */
+  const nearDown = pivotLadder?.items.find(item => item.role === 'NEAREST_DOWN');
+  const nearUp = pivotLadder?.items.find(item => item.role === 'NEAREST_UP');
+  const position = pivotLadder?.positionVsPivot ? POSITION_VS_PIVOT[pivotLadder.positionVsPivot] : null;
+  /* Fiyat tüm seviyelerin dışındaysa sunucu `outside` der; "—" yerine sebep yazılır. */
+  const outside = pivotLadder?.outside ? OUTSIDE[pivotLadder.outside] : null;
+  const referenceStatus = reference?.status && reference.status in STATUS_TEXT ? STATUS_TEXT[reference.status as keyof typeof STATUS_TEXT] : null;
   const modelReady = hasForecast && modelStatus !== 'fallback';
 
   return <main className="app terminal-app">
@@ -94,9 +101,15 @@ function DashboardPage({ focus }: { focus?: string }) {
           <aside className="overview-rail" aria-label="Seviyeler ve momentum">
             <section className="rail-section" aria-labelledby="rail-levels-title">
               <div className="rail-heading"><div><span className="section-kicker">Fiyatın konumu</span><h2 id="rail-levels-title">Destek & direnç</h2></div><button className="icon-action" type="button" onClick={() => select('technical')} aria-label="Tüm teknik analizleri aç">↗</button></div>
-              <dl className="nearest-levels"><div><dt>↓ İlk destek</dt><dd>{nearDown ? money(nearDown.value) : '—'}</dd></div><div><dt>↑ İlk direnç</dt><dd>{nearUp ? money(nearUp.value) : '—'}</dd></div></dl>
+              {/* Önce hangi fiyata ve çerçeveye göre ölçüldüğü, sonra seviyeler: mobilde
+                  tek sütunda okuyucu referansı görmeden seviye fiyatı okuyordu. */}
+              <p className="rail-reference">{reference && reference.value != null
+                ? <><span>Referans</span><b>{money(reference.value)}</b><span>{FRAME[reference.frame]}</span></>
+                : <span>{referenceStatus ?? 'Hesap referansı bekleniyor'}</span>}
+                <DataTimestamp time={reference?.asOf ?? reference?.dailyDate ?? null} staleAfterMs={sessionStaleAfterMs(sessionMeta)}/></p>
+              <dl className="nearest-levels"><div><dt>↓ İlk destek</dt><dd>{nearDown ? money(nearDown.value) : outside ? 'yok' : '—'}</dd></div><div><dt>↑ İlk direnç</dt><dd>{nearUp ? money(nearUp.value) : outside ? 'yok' : '—'}</dd></div></dl>
               <Boundary><PriceLadder ladder={pivotLadder}/></Boundary>
-              <p className="rail-note">{pivot && pivotLadder ? `Fiyat pivotun ${pivotLadder.price >= pivot.value ? 'üzerinde' : 'altında'}.` : 'Seviyeler hazırlanıyor.'} {pivotPeriod === 'weekly' ? 'Haftalık' : 'Aylık'} · {pivotMethod === 'fib' ? 'Fibonacci' : 'Klasik'}</p>
+              <p className="rail-note">{outside ? <span className="warn">{outside}. </span> : position ? <span className={position.tone}>Fiyat {position.label.toLocaleLowerCase('tr-TR')}. </span> : null}{PIVOT_PERIOD[pivotPeriod]} · {PIVOT_METHOD[pivotMethod]}</p>
             </section>
             <Boundary><MomentumSummary onOpen={() => select('technical')}/></Boundary>
           </aside>
@@ -107,7 +120,7 @@ function DashboardPage({ focus }: { focus?: string }) {
         <div className="workspace-heading"><div><span className="section-kicker">Piyasanın yapısı</span><h2>Trend, seviyeler ve momentum</h2></div><DataTimestamp time={featuresDate} staleAfterMs={7 * 86400000}/></div>
         <Boundary><TrendSection/></Boundary>
         <div className="analysis-columns"><Boundary><PivotSection focus={focus}/></Boundary><Boundary><MomentumSection focus={focus}/></Boundary></div>
-        {tech ? <Boundary><IndicatorsSection focus={focus}/></Boundary> : <p className="data-empty">Teknik göstergeler için fiyat geçmişi bekleniyor.</p>}
+        <Boundary><IndicatorsSection focus={focus}/></Boundary>
       </div>)}
       {panel('model', <div className="analysis-stack">
         <div className="workspace-heading"><div><span className="section-kicker">Model araştırması</span><h2>Tahminin dayanakları ve performansı</h2></div><SegmentedControl label="Model analizi vadesi" value={horizonDays} onChange={setHorizonDays} options={forecast.horizons.map(value => ({ value, label: `${value} gün` }))}/></div>

@@ -1,9 +1,4 @@
-import { marketApi } from '../config';
-import { fetchJson } from '../http';
-
 export type Direction = 'UP' | 'DOWN' | 'NEUTRAL';
-/** Kırılım gücü etiketi; hesabı `domain/momentum/breakPotential.ts` yapar. */
-export type BreakStrength = 'WEAK' | 'MEDIUM' | 'STRONG';
 export type MomentumTrend = 'STRENGTHENING' | 'WEAKENING' | 'STABLE';
 
 /**
@@ -71,6 +66,3 @@ export const parseMomentum = (raw: unknown): Momentum | null => {
     },
   };
 };
-
-export const fetchMomentum = async (): Promise<Momentum | null> =>
-  parseMomentum(await fetchJson<unknown>(`${marketApi()}/v1/market/xau/momentum`));

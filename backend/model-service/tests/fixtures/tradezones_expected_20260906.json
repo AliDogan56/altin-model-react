@@ -1,0 +1,129 @@
+{
+  "_note": "OLD frontend tradeZones (frontend/src/domain/tradeZones.ts) per requested horizon, arguments exactly as DashboardContext.tsx:24-26 → tradeZones(forecast, values.price, features.gold_atr14_pct, capital, riskPct, horizonDays). forecast = parseForecast(raw predict response) spread + {features, price: basePrice ?? values.price} (useForecastModel.ts:84-86); mean = response.mean[i], err = response.error[i]; near = price*(1+mean); band = price*err; atr = atrPct*price; buy = [near-.72band, near-.38band]; sell = [near+.35band, near+.72band]; stop = buy[0]-max(1.5atr, .18band); entry = mean(buy); units = capital*riskPct/100 / max(1, entry-stop). values.price = last daily close (browser uses Harem spot satis when the socket is live, else lastClose). features are the /v1/features/latest values round-tripped through the parameter form (PCT fields ×100 then ÷100, computeFeatures) so gold_atr14_pct may differ from the raw value by 1 ULP. hasView per ZoneSection.tsx:12 (confident[idx] !== false); the card renders zones only when hasView, so 7d/14d are computed but not shown. capital/riskPct = usePanelSettings defaults. today=2026-09-06.",
+  "inputs": {
+    "price": 4476.6,
+    "forecast_price_basePrice": 4476.6,
+    "atrPct": 0.02034228783324081,
+    "atrPct_raw_from_features_latest": 0.02034228783324081,
+    "capital": 10000,
+    "riskPct": 1,
+    "horizons": [
+      7,
+      14,
+      30
+    ],
+    "mean": [
+      0,
+      0.0020061801412037308,
+      0.017933272069820077
+    ],
+    "err": [
+      0.054797751979901214,
+      0.07487383509283609,
+      0.11207361550444932
+    ],
+    "weights": [
+      0,
+      0.13847190533765252,
+      0.3650584743882146
+    ],
+    "confident": [
+      false,
+      false,
+      true
+    ],
+    "version": "xauusd-mlp-20260903T201722Z",
+    "status": "OK",
+    "originDate": "2026-09-06",
+    "features_date": "2026-09-04",
+    "features": {
+      "gold_return_1d": -0.0033617561279692953,
+      "gold_return_5d": -0.000334963488979656,
+      "gold_return_20d": 0.031308314327182396,
+      "gold_ma_ratio_50d": 0.05582180795864078,
+      "gold_rsi14_centered": 0.07338991512730927,
+      "gold_atr14_pct": 0.02034228783324081,
+      "gold_volatility_20d": 0.2236446562204627,
+      "gold_drawdown_60d": -0.03538183071884149,
+      "real_yield_change_5d": 0,
+      "real_yield_change_20d": 0.009999999999999787,
+      "dollar_return_5d": 0,
+      "dollar_return_20d": -0.0013027447629492261,
+      "breakeven_change_20d": 0.08000000000000007,
+      "yield_curve_10y_2y": 0.4299999999999997,
+      "vix_level": 14.32,
+      "vix_change_5d": -0.10999999999999943,
+      "core_cpi_yoy": 1.9281637198941937,
+      "oil_return_5d": 0.08170746127468377,
+      "oil_return_20d": 0.08917728300988227
+    }
+  },
+  "zones": {
+    "7": {
+      "near": 4476.6,
+      "band": 245.3076165132258,
+      "atr": 91.06428571428582,
+      "buy": [
+        4299.978516110477,
+        4383.3831057249745
+      ],
+      "sell": [
+        4562.45766577963,
+        4653.221483889523
+      ],
+      "stop": 4163.382087539048,
+      "entry": 4341.6808109177255,
+      "horizon": 7,
+      "units": 0.5608565115052253,
+      "hasView": false,
+      "ready": false,
+      "mean": 0,
+      "err": 0.054797751979901214,
+      "weight": 0
+    },
+    "14": {
+      "near": 4485.580866020113,
+      "band": 335.18021017659004,
+      "atr": 91.06428571428582,
+      "buy": [
+        4244.251114692968,
+        4358.212386153009
+      ],
+      "sell": [
+        4602.89393958192,
+        4726.910617347257
+      ],
+      "stop": 4107.654686121539,
+      "entry": 4301.231750422989,
+      "horizon": 14,
+      "units": 0.5165901258026842,
+      "hasView": false,
+      "ready": false,
+      "mean": 0.0020061801412037308,
+      "err": 0.07487383509283609,
+      "weight": 0.13847190533765252
+    },
+    "30": {
+      "near": 4556.880085747756,
+      "band": 501.70874716721784,
+      "atr": 91.06428571428582,
+      "buy": [
+        4195.64978778736,
+        4366.230761824214
+      ],
+      "sell": [
+        4732.478147256283,
+        4918.110383708153
+      ],
+      "stop": 4059.0533592159313,
+      "entry": 4280.940274805787,
+      "horizon": 30,
+      "units": 0.45068002200203505,
+      "hasView": true,
+      "ready": true,
+      "mean": 0.017933272069820077,
+      "err": 0.11207361550444932,
+      "weight": 0.3650584743882146
+    }
+  }
+}

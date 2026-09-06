@@ -204,14 +204,14 @@
     "title": "Ons Altın Teknik Göstergeleri",
     "seoTitle": "Ons Altın Teknik Göstergeleri",
     "summary": "RSI, MACD, Stochastic, ADX, CCI, Williams %R, ATR ve ROC değerleri ile SMA/EMA 5-200 hareketli ortalamalar.",
-    "intro": "Teknik göstergeler günlük kapanış, yüksek ve düşük verilerinden hesaplanır. Panel bilinçli olarak alım-satım kararı üretmez; yalnız göstergenin bulunduğu durumu yazar. Aşırı alım bölgesi yükselişin biteceği anlamına gelmez — güçlü trendlerde bir gösterge haftalarca orada kalabilir. Hareketli ortalama tablosu fiyatın hangi ortalamaların üstünde veya altında olduğunu özetler.",
+    "intro": "Teknik göstergeler günlük kapanış, yüksek ve düşük verilerinden sunucuda, Wilder standardında hesaplanır. Panel alım-satım kararı üretmez; yalnız göstergenin alışılmış eşiklere göre bulunduğu durumu yazar. Aşırı alım bölgesi yükselişin biteceği anlamına gelmez — güçlü trendlerde bir gösterge haftalarca orada kalabilir. Hareketli ortalama tablosu fiyatın hangi ortalamaların üstünde veya altında olduğunu özetler.",
     "sections": [
       {
         "heading": "Hangi göstergeler, neden bunlar",
         "paragraphs": [
-          "Bu bölüm ons altının günlük serisinden hesaplanan teknik göstergeleri tek yerde toplar: fiyatın hareketli ortalamadan sapması, merkezlenmiş RSI, ATR ile ölçülen oynaklık, kısa ve orta vadeli getiriler ve son dönem zirvesinden düşüş.",
-          "Bunlar rastgele seçilmedi: aynı göstergeler modelin girdileri arasında yer alır. Yani burada gördüğünüz sayılar yalnız bilgi amaçlı değil, tahmini fiilen üreten büyüklüklerdir.",
-          "Hepsi aynı günlük kapanış serisinden hesaplanır; grafik, pivot kartı ve model aynı veriyi kullanır."
+          "Bu bölüm ons altının günlük serisinden hesaplanan klasik teknik göstergeleri tek yerde toplar: RSI, Stochastic %K ve %D, Williams %R, CCI, MACD ile sinyal ve histogramı, ADX ile +DI/−DI, ATR ve ROC; altında 5'ten 200 güne SMA/EMA tablosu.",
+          "Hesap sunucuda ve Wilder standardında yapılır: RSI, ATR ve ADX Wilder yumuşatmasıyla, üstel ortalamalar ilk n değerin basit ortalamasıyla tohumlanarak. Bu yüzden sayılar TradingView ya da StockCharts ile tutar; tarayıcıdaki eski hesap standart dışıydı ve düz seride RSI'ı sıfır gösteriyordu.",
+          "Bu göstergeler tahmin modelinin girdisi değildir. Modelin 19 girdisi ayrı bir kümedir ve model servisinde kendi tanımlarıyla hesaplanır; buradaki tablo yalnız fiyatın teknik durumunu betimler. Grafik, pivot kartı ve bu tablo aynı günlük seriyi kullanır."
         ]
       },
       {
@@ -219,20 +219,20 @@
         "paragraphs": [
           "En yaygın hata, tek bir göstergeden mekanik kural çıkarmaktır. RSI yetmişin üstündeyse sat, otuzun altındaysa al gibi kurallar güçlü trendlerde uzun süre yanlış sinyal üretir; gösterge yüksekte kalırken fiyat yükselmeye devam eder.",
           "Doğru kullanım göstergeyi bir bağlam olarak okumaktır: fiyat kendi geçmişine göre nerede duruyor, oynaklık normalin neresinde. Karar bu bağlamla, tek bir eşikle değil.",
-          "Panel bu yüzden gösterge değerlerini eşiklerle renklendirmez; sayıyı ve ne anlama geldiğini yazar."
+          "Panel gösterge durumlarını alışılmış eşiklerle etiketler: RSI 70/30, Stochastic 80/20, Williams %R −20/−80, CCI ±100, ADX 25 üstü güçlü ve 20 altı zayıf trend, ATR ise son 100 günün medyanına göre yüksek ya da düşük oynaklık. Etiket bir bağlamdır, alım-satım kuralı değil."
         ]
       },
       {
         "heading": "Oynaklık neden ayrı bir bilgi",
         "paragraphs": [
-          "ATR ve yirmi günlük oynaklık, fiyatın yönü hakkında hiçbir şey söylemez; ne kadar oynadığını söyler. Bu, aynı yüzdelik hareketin farklı dönemlerde farklı anlama gelmesinin sebebidir.",
-          "Pratik karşılığı şudur: oynaklık yüksekken belirsizlik bandı genişler, aynı tahmin daha az bağlayıcı olur. Panelin tahmin bandı bu oranı hesaba katarak ölçeklenir."
+          "ATR fiyatın yönü hakkında hiçbir şey söylemez; ne kadar oynadığını söyler. Bu, aynı dolar hareketinin farklı dönemlerde farklı anlama gelmesinin sebebidir.",
+          "Pratik karşılığı şudur: oynaklık yüksekken aynı hareket daha az anlam taşır. ATR durumu bu yüzden tek bir sayıya göre değil, son 100 günün ATR medyanına göre verilir; medyanın 1,3 katı yüksek, 0,7 katı düşük oynaklık sayılır."
         ],
         "list": {
           "items": [
-            "Yön göstergeleri: ortalamadan sapma, getiriler, zirveden düşüş.",
-            "Ölçek göstergeleri: ATR, 20 günlük oynaklık.",
-            "İkisini karıştırmayın: ölçek büyüklüğü yönü belirlemez."
+            "Yön göstergeleri: RSI, Stochastic, Williams %R, CCI, MACD, ROC.",
+            "Trend gücü: ADX — yönü değil, trendin varlığını ölçer.",
+            "Ölçek göstergesi: ATR — büyüklük yönü belirlemez."
           ]
         }
       },
@@ -251,15 +251,15 @@
     "collapsible": true,
     "title": "Ons Altın Pivot Seviyeleri: Destek ve Direnç",
     "seoTitle": "Ons Altın Pivot Seviyeleri",
-    "summary": "Haftalık ve aylık dönem için klasik ve Fibonacci pivot noktaları; canlı fiyat kendi yerinde işaretli merdiven düzeni.",
+    "summary": "Günlük, haftalık ve aylık dönem için klasik, Fibonacci ve Camarilla pivotları; varsayılan haftalık klasik, fiyat merdivende kendi yerinde.",
     "intro": "Pivot seviyeleri, önceki dönemin yüksek, düşük ve kapanış değerlerinden standart bir formülle hesaplanır. Grafikteki destek-direnç katmanı fiyatın kendi geçmişinden çıkarılan bölgeleri gösterirken, pivot herkesin aynı şekilde bulduğu deterministik seviyelerdir; ikisinin çakıştığı yerler daha güçlü kabul edilir. Seviyeler fiyata göre sıralanır ve canlı fiyat aralarındaki yerine yerleşir.",
     "sections": [
       {
         "heading": "Seviyeler nereden geliyor",
         "paragraphs": [
-          "Bu bölüm destek ve direnç seviyelerini fiyatın geçmişte döndüğü noktaları gözle seçerek değil, tamamlanmış bir dönemin yüksek, düşük ve kapanış değerlerinden formülle üretir. Dönem haftalık ya da aylık seçilebilir, yöntem klasik ya da Fibonacci olabilir.",
+          "Bu bölüm destek ve direnç seviyelerini fiyatın geçmişte döndüğü noktaları gözle seçerek değil, tamamlanmış bir dönemin yüksek, düşük ve kapanış değerlerinden formülle üretir. Dönem günlük, haftalık ya da aylık seçilebilir; yöntem klasik, Fibonacci ya da Camarilla olabilir. Varsayılan haftalık dönem ve klasik yöntemdir.",
           "Formülün kendisi tartışmasızdır: aynı veriyle herkes aynı sayıyı bulur. Tartışılabilir olan hangi dönemin ve hangi yöntemin kullanılacağıdır, o yüzden ikisi de sizin seçiminize bırakılmıştır ve grafik seçiminizi anında izler.",
-          "Merdivende yedi seviye vardır: üç destek, pivot ve üç direnç. Grafikte her biri kendi adıyla çizilir; S1 ve R1 belirgin, S3 ve R3 soluk gösterilir çünkü fiyattan uzaklaştıkça seviyenin bağlayıcılığı azalır."
+          "Klasik ve Fibonacci merdiveninde yedi seviye vardır: üç destek, pivot ve üç direnç; Camarilla dört destek ve dört direnç verir. Grafikte her biri kendi adıyla çizilir; S1 ve R1 belirgin, uzaktakiler soluk gösterilir çünkü fiyattan uzaklaştıkça seviyenin bağlayıcılığı azalır."
         ],
         "table": {
           "caption": "Pivot merdiveninin okunuşu",

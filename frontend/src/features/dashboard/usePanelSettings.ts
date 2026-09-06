@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import type { PivotMethod, PivotPeriod } from '../../services/api/technical';
 
 /** Yalnızca görünümü etkileyen tercihler; hiçbiri hesaba girmez.
  *  Ekran genişliği burada tutulmuyor: grafik kendi kutusunu ResizeObserver ile
@@ -10,12 +11,14 @@ export const usePanelSettings = () => {
   const [horizonDays, setHorizonDays] = useState(30);
   const [showBand, setShowBand] = useState(true);
   const [showLevels, setShowLevels] = useState(false);
-  const [showOrigin, setShowOrigin] = useState(false);
   const [showSR, setShowSR] = useState(true);
-  const [pivotPeriod, setPivotPeriod] = useState<'weekly' | 'monthly'>('weekly');
-  /* Varsayılan Fibonacci: seviyeler aralığın 0,382 / 0,618 / 1,0 katlarına oturduğu
-     için klasik formüle göre fiyata daha yakın ve daha dengeli dağılır. */
-  const [pivotMethod, setPivotMethod] = useState<'classic' | 'fib'>('fib');
+  /* Pivot dönemi ve yöntemi sunucunun sözlüğüyle aynı adları taşır
+     (`/v1/market/xau/technical?pivot_method=&pivot_period=`); merdiven orada
+     kurulur. Varsayılan haftalık + klasik: teknik paketin varsayılanıyla aynı,
+     böylece ilk yanıt ek istek gerektirmez. Eski 'fib'/'classic'/'weekly'/
+     'monthly' değerleri hiçbir yerde saklanmıyordu, taşınacak kayıt yok. */
+  const [pivotPeriod, setPivotPeriod] = useState<PivotPeriod>('WEEKLY');
+  const [pivotMethod, setPivotMethod] = useState<PivotMethod>('CLASSIC');
   const [capital, setCapital] = useState(10000);
   const [riskPct, setRiskPct] = useState(1);
   const [loanAmount, setLoanAmount] = useState(100000);
@@ -25,11 +28,11 @@ export const usePanelSettings = () => {
   /* Kimliği sabit tutulur: aksi hâlde her canlı tick'te tüm panel yeniden çizilir. */
   return useMemo(() => ({
     rangeDays, setRangeDays, horizonDays, setHorizonDays,
-    showBand, setShowBand, showLevels, setShowLevels, showOrigin, setShowOrigin, showSR, setShowSR,
+    showBand, setShowBand, showLevels, setShowLevels, showSR, setShowSR,
     pivotPeriod, setPivotPeriod, pivotMethod, setPivotMethod,
     capital, setCapital, riskPct, setRiskPct,
     loanAmount, setLoanAmount, loanRate, setLoanRate, futureUsdTry, setFutureUsdTry,
-  }), [rangeDays, horizonDays, showBand, showLevels, showOrigin, showSR,
+  }), [rangeDays, horizonDays, showBand, showLevels, showSR,
        pivotPeriod, pivotMethod, capital, riskPct, loanAmount, loanRate, futureUsdTry]);
 };
 

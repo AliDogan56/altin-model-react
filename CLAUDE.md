@@ -4,7 +4,11 @@ Ons altın (XAU/USD) tahmin ve analiz platformu. React SPA + API Gateway + Marke
 Model Service. Tahmin, eğitim ve hata ölçümü **yalnız XAU/USD günlük serisine** dayanır;
 PAXG/Binance kaynağı ve eski fallback modeli projeden tamamen çıkarılmıştır.
 
-Son tarama: 2026-08-21. Aşağıdaki her sayı o gün ölçüldü.
+Son tam tarama: **2026-09-06**. Her sayı o gün ölçüldü; daha eski tarih taşıyan
+bölümler o günkü ölçümü anlatır. 5 Eylül'de iki büyük değişiklik girdi ve ikisi de
+canlıda: pano **sekmeli çalışma alanına** geçti (`033e9eb`, bkz. "Sekmeli çalışma
+alanı") ve model servisi **aday–şampiyon akışına** geçti (`8443c0f`, bkz. "Aday–şampiyon
+akışı ve denetim"). Bu ikisini bilmeden eski bölümler yanıltır.
 
 ## Akış
 
@@ -25,15 +29,20 @@ ilgili servise iletilir (`api-gateway/app/services/router_service.py`).
 | market | `GET /v1/market/fred?id=` | FRED CSV (curl_cffi ile), 900 sn önbellek, son 800 gün |
 | market | `GET /v1/market/news` | Google News RSS, 10 başlık |
 | market | `GET /v1/market/xau/intraday` | Yahoo 5 günlük 5 dakikalık mumlar, 60 sn önbellek |
-| market | `GET /v1/market/xau/momentum` | gün içi momentum, seviye merdiveni ve kırılım gücü |
-| model | `GET /v1/features/latest` | **tahmin girdilerinin tek kaynağı** — eğitim setiyle birebir |
-| model | `POST /v1/predict` | `{price, features}` → getiri, bant, `feature_effects`, `weights`, `confident`, `clipped_features` |
-| model | `GET /v1/learning/metrics` | aktif model + katman dışı metrikler |
-| model | `POST /v1/training/run` | elle yeniden eğitim |
-| model | `GET /v1/learning/job` | saatlik job durumu |
+| market | `GET /v1/market/xau/technical` | **tüm teknik analiz** (referans, mumlar, göstergeler, 27 pivot seti + başlık merdiveni, bölgeler, günlük momentum, seans, kırılım, trend); `?pivot_method=classic|fibonacci|camarilla&pivot_period=daily|weekly|monthly&include=<blok listesi>`; ETag = önbellek anahtarı; 142 KB ham / 41 KB gzip, `include=pivots,breakout` 2 KB |
+| market | `GET /v1/market/xau/momentum` | **kullanımdan kalkıyor** (`Deprecation: true`): aynı analizin `session` bloğu, eski gövdeyle bayt-uyumlu; 503 mesajları korunur |
+| model | `GET /health` · `GET /ready` | `ready` model yokken **503** `MODEL_UNAVAILABLE` |
+| model | `GET /v1/features/latest` | **tahmin girdilerinin tek kaynağı**; `dataset_hash`, `feature_version`, `provenance`, `validation_status` (canlıda `UNVERIFIED_PROVENANCE`) |
+| model | `POST /v1/predict` | `{price, features, source_date?}` → getiri, bant, `feature_effects`, `weights`, `confident`, `no_view_reasons`, `status`, `intervals`, `model_disagreement`, `ood`, `base_price`, `forecast_kind` (her zaman `client_scenario`) |
+| model | `GET /v1/learning/metrics` | aktif model + metrikler + `evaluation_version` (eski artefaktta `null`) |
+| model | `GET /v1/learning/job` | saatlik job durumu, `new_labels_by_horizon` |
+| model | `POST /v1/training/run` | **admin** (Bearer `MODEL_ADMIN_TOKEN`); aday eğitir, terfi etmez. Token yoksa **503** — canlıda böyle |
+| model | `POST /v1/forecasts/canonical` | admin; doğrulanmış PIT sağlayıcı ister → mevcut veri setiyle **her zaman reddeder** |
+| model | `GET /v1/monitoring` | tahmin defteri özeti; `PREDICTION_LOGGING` kapalıyken `DISABLED` (canlıda böyle) |
 
-Model-service'te SQLite yok; `db.py` ve `gold_repository.py` kaldırıldı. Snapshot/observations
-tabloları ve `/v1/snapshots` ucu artık mevcut değil.
+Model-service'te yalnız **isteğe bağlı** SQLite var: `prediction_ledger.py` tahmin defteri
+(`PREDICTION_LOGGING=true` olmadan hiç oluşmaz). Eski `db.py`, `gold_repository.py`,
+`/v1/snapshots` yok.
 
 ## XAU/USD veri seti
 
@@ -84,8 +93,12 @@ Artık ikisinde de yedek var: `query1.finance.yahoo.com/.../GC=F?range=5y&interv
   sıfır-getiri bazını yenemezse ağırlık sıfırlanır ve o ufuk fiilen "tahmin yok" der
 - Belirsizlik bandı: ağırlıklı katman dışı artığın **80. yüzdeliği**, tahmin anında
   güncel/eğitim oynaklık oranıyla (0,75–2,0 arası kırpılı) ölçeklenir
-- Otomatik job veri setini saatlik tazeler; en az `RETRAIN_EVERY_NEW_ROWS` (varsayılan 5)
-  yeni satır oluşunca yeniden eğitir ve `RETRAIN_MINIMUM_ROWS`'u (300) uygular
+- Otomatik job veri setini saatlik tazeler ve **her ufuk için olgunlaşmış yeni etiket**
+  sayar (referans: aktif modelin ve son adayın `training_end`'i). Beş yıllık kayan
+  pencerede satır sayısı sabit kalırken etiketler ilerler; o yüzden satır artışı değil
+  etiket tarihi sayılır. Ufukların **en azı** `RETRAIN_EVERY_NEW_ROWS` (5) olunca ve veri
+  seti hash'i değişmişse **aday** eğitir; `RETRAIN_MINIMUM_ROWS` (300) uygulanır.
+  Eğitilen aday şampiyonu **değiştirmez** (bkz. aday–şampiyon akışı)
 - **Build sırasında eğitim yapılmaz.** Dockerfile önceden imaja bir model gömüyordu;
   sonucu şuydu: imaj her kurulduğunda model yeniden eğitiliyor ve hangi ufukların açık
   olduğu değişebiliyordu — yani modeli eğitim takvimi değil **deploy takvimi**
@@ -103,30 +116,87 @@ Artık ikisinde de yedek var: `query1.finance.yahoo.com/.../GC=F?range=5y&interv
   yalnız volume boşken kullanılan yedektir
 - Yüklenen artefaktın `features`/`horizons` listesi koddakiyle birebir doğrulanır;
   uymayan artefakt yüklenmez ve `/v1/learning/job` içinde `rejected_artifacts` olarak raporlanır
-- Docker imajı build sırasında sürümlenen CSV'den yedek modeli üretir
+- İmaj build'inde eğitim yok (yukarıda). `data/xauusd_model.joblib` repoda duran eski
+  yedek; loader `MODEL_DIR/active.json` → imaj yedeği sırasıyla bakar
 
-### Aktif modelin karnesi (`xauusd-mlp-20260821T164355Z`)
+### Aktif modelin karnesi (`xauusd-mlp-20260903T201722Z`, canlı, 2026-09-06)
 
-| Ufuk | Etiketli satır | OOF satır | MAE | Yön | Sıfır bazına karşı beceri | Ağırlık |
+| Ufuk | OOF satır | MAE | Yön | MSE beceri | Ağırlık | Görüş |
 |---|---|---|---|---|---|---|
-| 7g | 1192 | 537 | %2,32 | %63,5 | %3,9 | 0,92 |
-| 14g | 1187 | 535 | %3,17 | %62,4 | %1,9 | **0,13** |
-| 30g | 1175 | 529 | %4,22 | %70,1 | %26,3 | 0,64 |
+| 7g | 537 | %2,43 | — | %0,0 | **0,00** | yok |
+| 14g | 535 | %3,16 | %62,1 | %2,1 | 0,14 | yok (<0,2) |
+| 30g | 529 | %4,53 | %70,1 | %17,0 | 0,37 | var |
 
-Bant genişlikleri (error80): %3,5 / %4,9 / %6,8. 14 günlük ufkun ağırlığı çok düşük —
-model orada neredeyse hiçbir şey söylemiyor, bu bilinçli ve doğru davranış.
+Bu, 3 Eylül soğuk açılışında eğitilen **eski akış** artefaktı (`evaluation_version: null`,
+`input_policy` legacy). **7 günlük ufuk kapalı** — aynı verinin yeniden eğitimi ağırlığı
+0,92'den 0,00'a düşürdü; yani 7g becerisi eğitim tohum/kesitine bu kadar duyarlı.
+Arayüz varsayılanı 30 gün olduğu için sayfa açılışında görüş var. Yeni akışta bu model
+**otomatik değişmez** (aşağıda).
+
+## Aday–şampiyon akışı ve denetim (2026-09-05, `8443c0f`)
+
+5 Eylül'de model servisi baştan sona bir denetimden geçti; sonuç `docs/model-audit/`
+(FEATURE_AUDIT.md, OPERATIONS.md — İngilizce) ve `reports/model-audit-20260905/` (9,7 MB,
+repoya işlenmiş; paket 45 MB). Tek cümleyle: **eğitim artık aday üretir, şampiyonu kimse
+otomatik değiştirmez ve terfi için kod yolu yoktur.**
+
+- `train_model(promote=True)` **hata fırlatır**; aday `xauusd-mlp-candidate-…` adıyla
+  `MODEL_DIR`'e yazılır, `active.json` dokunulmaz, `promotion_status: REVIEW_REQUIRED`.
+  Budama şampiyonu asla silmez. Terfi = operatörün `active.json`'ı elle yazması; loader
+  artefaktı doğrular (scaler sonlu/pozitif, ağ boyutu, ağırlıklar sonlu, sürüm)
+- `assert_promotion_ready` doğrulanmış PIT **spot** kaynak ister; mevcut CSV'nin manifesti
+  `availability: unverified`, `macro_vintage: current_revision`, `validated: false` →
+  **terfi kapısı bu veri setiyle kapalı.** Yani şampiyon, veri kaynağı değişmeden hiç
+  yenilenmeyecek. Bu bilinçli: denetim FRED gözlem tarihinin yayın tarihi olmadığını,
+  CPI'da artık-yıl referans ayı hatasını (8 ay-sonu sızıntısı) ve yedek `GC=F`'in spot
+  olmadığını belgeledi
+- **Yeni modüller** (`app/services/`): `data_quality` (fail-closed doğrulama, manifest
+  SHA-256; `feature_vector` 19'lu sırayı eğitim ve servis için tek yerden verir),
+  `preprocessing` (`standard-clip-v1`: yalnız eğitimden ölçek + ±6 kırpma, eğitim ve
+  servis aynı fonksiyonu kullanır — eskiden kırpma yalnız serviste vardı), `temporal_validation`
+  (`nested-purged-v1`: kat = eğitim → ağırlık kalibrasyonu → aralık kalibrasyonu → dış test,
+  hedef olgunlaşmasıyla purge; ≥100 bağımsız test satırı şart), `point_in_time` (çevrimdışı,
+  yayın/vintage damgalı makro kurucu; canlıya bağlı **değil**), `prediction_ledger` (isteğe
+  bağlı append-only SQLite, trigger'larla değişmez), `controllers/admin_auth` (boş token =
+  yönetim uçları 503)
+- **Metrik sözlüğü değişti**: `direction` yalnız ağırlık ≥ 0,2 ve sıfır olmayan
+  getirilerde (`directional_rows`, `active_fraction` yanında), `mae_skill_vs_zero` yeni,
+  `skill_vs_zero` MSE bazlı eski ad, `empirical_coverage` .5/.7/.8/.9 yüzdelikleri için
+  dış-test kapsamı, `active` = ağırlık ≥ 0,2 (eskiden > 0). Eski ve yeni ölçüm
+  **karşılaştırılamaz**; arayüz karnede `skillBasis` (MAE/MSE) ve eski ölçüm notu gösterir
+- **Servis yanıtı**: her `/v1/predict` bir `client_scenario`; `source_date` verilmezse
+  `INSUFFICIENT_DATA`, 7 takvim gününden eskiyse `STALE_DATA` ve tüm ufuklar görüşsüz.
+  Eski artefakt `legacy-clip-and-frozen-neutralization` politikasını korur (donmuş girdi
+  nötrleme hâlâ çalışır); aday artefaktlar `canonical-asof-no-neutralization-v1` ile
+  **nötrleme yapmaz**. İstek boyunca tek artefakt referansı tutulur, reload ufukları
+  karıştıramaz. `ood` z-skorları tanısaldır, ağırlığı değiştirmez
+- Frontend tarafı: `requestForecast` `source_date` gönderir ve özellik tarihi gelmeden
+  istek atmaz; tahmin `base_price`'a (günlük kapanış) bağlanır, canlı spot ayrı gösterilir
+  ("Hesaplama referansı" satırı). Bant etiketi sunucunun `nominal_coverage`'ından gelir
+  ("%80 nominal aralık · canlı kapsam ölçülmedi"); eski %70 ve normal-dağılım çevrimi kalktı
+- Araştırma: `research/evaluation.py` (11 spesifikasyon × 3 ufuk, blok bootstrap, konformal
+  kapsam) ve `scripts/run_model_audit.py` / `summarize_` / `render_` / `verify_model_audit.py`.
+  Özet (`reports/…/summary.csv`): **7g'de hiçbir yöntem persistence'ı geçmiyor** (iç içe
+  MLP beceri 0), 30g'de iç içe MLP yalnız %33 aktif ve orada yön %77,8, MAE becerisi %4,7;
+  `direction_logistic` 30g MAE becerisi %9,5 ile en iyi. Çalıştırma ağ, canlı yazma ve
+  terfi yapmaz
+- Ortam: `MODEL_ADMIN_TOKEN` (boş → yönetim kapalı), `PREDICTION_LOGGING` (false),
+  `PREDICTION_LOG_PATH`. Compose hiçbirini set etmez; canlı böyle çalışıyor
 
 ## Frontend
 
-`frontend/src/` — katmanlı, App.tsx monoliti kaldırıldı. En büyük dosya 383 satır.
+`frontend/src/` — katmanlı, App.tsx monoliti kaldırıldı. En büyük dosya `ForecastChart.tsx` 406 satır; backend'de `momentum_service.py` 535.
 
 ```
 lib/        saf yardımcılar (math, format, meta) — React bilmez
-domain/     saf iş mantığı; model.json'u import etmez, artefakt parametre olarak geçer
+domain/     kalan saf mantık: model/ (tahmin sunumu), chart/scale.ts (render geometrisi), loan/ziynet/quotes
+            (Harem'e bağlı). Teknik analiz (pivot, gösterge, trend, bölge, momentum) BURADA DEĞİL — backend
 services/   ağ katmanı (api/, realtime/, config, http)
 features/   ekran bölümleri + veri kancaları (parametre formu kaldırıldı)
-components/ paylaşılan bileşenler (SiteNav, SiteFooter, Collapsible, LegalModal)
-pages/      DashboardPage, ArticlePage, GuideHubPage, PanelHubPage
+components/ paylaşılan bileşenler (SiteNav, SiteFooter, Collapsible, LegalModal, Spinner)
+components/ui/  DataTimestamp, InfoTooltip (details/summary), SegmentedControl (radiogroup)
+pages/      DashboardRoute (sağlayıcı + panel, tembel), DashboardPage, ArticlePage,
+            GuideHubPage, PanelHubPage, SitePageView
 app/        App (react-router), routes.ts, ScrollToTop, useDocumentMeta
 content/    tek kaynak: makaleler, panel özellikleri, parametre grupları, site metinleri
 ```
@@ -169,8 +239,8 @@ content/    tek kaynak: makaleler, panel özellikleri, parametre grupları, site
   değil, **başlıklar için ayrı bir display yüz**. Sıra platformun kendi arayüz yüzünü
   önceler ve hepsi Türkçe diyakritikleri karşılar. Doğrulandı: sıfır font ağ isteği,
   375 ve 780 px'te HTML kırpılması 0, gövde taşması 0
-- **İki tema var, varsayılan aydınlık.** Palet `styles/_tokens.scss` içinde **56 token**
-  olarak tanımlı; aydınlık palet `:root`'ta, koyu palet `:root[data-theme="dark"]`'ta ve
+- **İki tema var, varsayılan aydınlık.** Palet `styles/_tokens.scss` içinde **74 token**
+  olarak tanımlı (5 Eylül'de yeniden yazıldı, açıklama yorumları silindi); aydınlık palet `:root`'ta, koyu palet `:root[data-theme="dark"]`'ta ve
   ikisi birebir aynı anahtarları taşır. Sistem tercihine göre otomatik geçiş **yok** —
   varsayılanın aydınlık olması ürün kararı. Seçim `localStorage['oaa-theme']`'de saklanır;
   `index.html` içindeki satır içi betik damgayı **ilk boyamadan önce** basar (React'e
@@ -197,21 +267,18 @@ content/    tek kaynak: makaleler, panel özellikleri, parametre grupları, site
   durumu effect içinde güncelleyen kancada sonsuz render döngüsü yaratıyor
   (React #185, "Maximum update depth exceeded"); grafik ilk yüklemede bu yüzden patladı.
   `hold.test.ts` bunu nesne kimliğiyle doğrular
-- **Spinner nerede dönüyor**: panel başlığındaki ONS ve USD/TL kartları (akış canlı
-  değilken durum noktasının yerini alır), yenile düğmesi, tahmin kartları, grafik vade
-  kartı, ziynet bölümü, bülten haberleri, TL getirisi, işlem bölgeleri ve ayrıntı
-  bölümlerinin yer tutucusu. Model servisi çevrimdışıysa ayrıntı yer tutucusu spinner
-  yerine durumu yazar — sonsuza kadar dönen gösterge yanıltıcı olurdu
+- **Spinner nerede dönüyor** (5 Eylül sonrası daraldı): rota yüklenirken sayfa yedeği,
+  rehber yüklemesi ve bölüm içi bekleyişler. Panel başlığı spinner kullanmaz, boş değeri
+  "—" ve `DataTimestamp` durumuyla ("Veri bekleniyor / Canlı / Gecikmeli veri") anlatır
 - **Kontrast ölçülüyor.** Her iki temada tüm görünür metinler WCAG AA'ya göre denetlendi
   (anasayfa 418, rehber 132, kurumsal 59 öge): sıfır hata. Aydınlık temada `--text-dim`,
   `--gold`, `--teal`, `--blue` bu denetim sonucu koyulaştırıldı
 - **`.skip-link` özgüllük hatası düzeltildi**: `.site-nav a` rengi eziyordu, atlama bağlantısı
   altın zemin üzerinde okunmuyordu (koyu temada kontrast 1,13)
-- **Bölüm sırası DOM sırasıdır.** `_panel-shell.scss` içinde App.tsx monolitinden kalma
-  `.content > .chart-block { order:2 }` / `.cards { order:3 }` gibi kurallar vardı; `.content`
-  grid olduğu için bunlar DOM sırasını eziyor, **grafik ve tahmin kartları "Ayrıntılar"ın
-  altına düşüyordu**. Kurallar kaldırıldı — sıra artık yalnız `DashboardPage`'ten gelir.
-  Sıra değişikliği doğrulanırken DOM sırası yetmez, ekrandaki dikey konum ölçülmelidir
+- **Bölüm sırası DOM sırasıdır** (tarihçe: `_panel-shell.scss`'teki `order` kuralları
+  grafiği "Ayrıntılar"ın altına düşürüyordu, kaldırıldı). Sıra değişikliği doğrulanırken
+  DOM sırası yetmez, ekrandaki dikey konum ölçülmelidir — sekmeli düzende ayrıca sekmenin
+  görünür olduğu da ölçülmeli
 - **Parametre formu kaldırıldı.** Sol kenar çubuğu (19 girdinin elle düzenlendiği form) ve
   "Parametreleri göster" düğmesi silindi; girdiler artık `/v1/features/latest`'ten geldiği
   için elle değiştirme anlamını yitirmişti. Yerleşim tek sütun (`.layout{display:block}`),
@@ -249,7 +316,8 @@ content/    tek kaynak: makaleler, panel özellikleri, parametre grupları, site
   ile — CSS'te SVG `r` her tarayıcıda canlandırılamıyor) ve efsanede kendi anahtarı.
   Destek çizgileri de yeşil olduğu için ayrım **kesikli desen + etiket + kalınlık**la
   yapılır; CANLI etiketi çizginin **altına** yazılır, S/R etiketleri üstte durur
-- **Destek/direnç tek kaynaktan gelir.** Grafik ve pivot kartı aynı `buildLadder` çıktısını
+- **Destek/direnç tek kaynaktan gelir** (2026-09-06'dan beri kaynak backend `pivots.headline.ladder`
+  ve `levels.zones`; `buildLadder` FE'den silindi). Grafik ve pivot kartı aynı merdiveni
   kullanır; grafikte yedi seviye de kendi adıyla çizilir (S1–S3, P, R1–R3) ve S1/R1 belirgin,
   S3/R3 soluk gösterilir. Önceden grafik `domain/supportResistance.ts` ile fiyatın fiilen
   döndüğü noktaları kümeliyordu; iki bölüm farklı sayı gösterip kafa karıştırıyordu
@@ -258,7 +326,7 @@ content/    tek kaynak: makaleler, panel özellikleri, parametre grupları, site
   Seviyeler `computeDomain`'in **kırpılabilir** kümesinde: S3/R3 fiyattan %10 uzakta
   olabildiği için çekirdek kümeye konsa fiyat çizgisi düz bir hat olurdu (ölçüm: geçmiş
   çizgisi yüksekliğin %64'ünü kullanıyor)
-- **Pivot dönemi takvimle belirlenir** (`domain/pivots.ts`). `lastCompletePeriod` koşulsuzca
+- **Pivot dönemi takvimle belirlenir** (artık backend `candles.previous_completed_period`; eski `domain/pivots.ts` silindi). `lastCompletePeriod` koşulsuzca
   sondan bir önceki grubu alıyordu: cuma kapanışı gelmiş olsa bile içinde bulunulan hafta
   "devam ediyor" sayılıyor, seviyeler bir hafta bayat kalıyordu. 22 Ağustos cumartesi kart
   10–14 Ağustos haftasını kullanıyor, altın o günden beri %5 yükseldiği için **R3 dahil tüm
@@ -266,10 +334,8 @@ content/    tek kaynak: makaleler, panel özellikleri, parametre grupları, site
   tamamlanmış sayılır; `computePivots(candles, today)` ile test edilebilir
 - **Dikey ölçek** (`domain/chart/scale.ts`): belirsizlik bandı çekirdek serileri ezmesin diye
   pay sınırıyla dahil edilir (çekirdek en az %50), taşan uç kırpılır
-- Panel sırası — **ana görünüm**: tahmin kartları, ziynet, grafik (özet kartlar ve
-  destek-direnç açıklaması grafiğin **altında**); **ayrıntılar**: isabet karnesi, teknik
-  göstergeler, pivot, parametre katkısı, TL getirisi, bülten, işlem bölgeleri
-  (hepsi `Collapsible` içinde)
+- Panel yerleşimi artık **sekmeli çalışma alanı**; bkz. aşağıdaki bölüm. Eski "ana
+  görünüm + Ayrıntılar akordiyonu" düzeni yok
 - **Vade her yerde `horizonDays`'e bağlı.** Tahmin kartları, grafik, parametre katkısı,
   işlem bölgeleri ve TL getirisi aynı ufku gösterir. TL kartı 3/6/9 **ay** sunuyor ve
   30 günlük tahmini `days/30` kadar üstel olarak uzatıyordu (9 ayda bant ±%32); artık
@@ -337,6 +403,116 @@ ve bugün sıra dışı olup olmadığı yazılı. Etiketler `content/parameters
 içinde ve **19 girdinin tamamını** kapsar; eskiden 14'lük bir liste vardı ve en büyük etki
 (60 günlük zirveden düşüş) kartta hiç görünmüyordu. Dolar karşılığı 1$'ın altında kalan
 satırlar listelenmez ama toplamlara dahildir.
+
+## Teknik analiz paketi — tek kaynak backend (2026-09-06)
+
+`backend/market-service/app/services/technical/` — destek/direnç, pivot, gösterge, trend,
+momentum ve kırılım hesaplarının **tamamı** burada, saf Python (numpy yok). Arayüz yalnız
+`GET /v1/market/xau/technical` yanıtını gösterir; frontend'de finansal formül kalmaz
+(istisnalar aşağıda). İlke: her sayı deterministik, look-ahead'siz, oynaklığa (ATR) göre
+normalize, testli ve `config_hash` ile izlenebilir.
+
+```
+candles.py    Candle/IntradayBar · normalize_daily/intraday (ret/klamp/tekrar sayaçları) ·
+              aggregate (hafta Pzt / ay / çeyrek / yarıyıl) · previous_completed_period
+indicators.py Wilder RSI/ATR/ADX, MACD(SMA tohumlu EMA), Stoch, Williams, CCI, ROC, MA tablosu
+pivots.py     CLASSIC/FIBONACCI/CAMARILLA × günlük/haftalık/aylık (27 set) · build_ladder
+swings.py     fraktal salınımlar (CONFIRMED / DEVELOPING)
+levels.py     aday → ATR kümeleme → temas olayları → güç 0-100 → en yakın seçim
+trend.py      trend.ts'in birebir portu (log-OLS, ddof=0 σ, düz seri guard'ı)
+momentum_daily.py  günlük bileşik 0-100 (merkez 50), walk-forward delta/ivme
+session.py    == eski momentum_service.py (git mv, matematik dokunulmadı)
+breakout.py   iki taraflı kırılım gücü, olasılık değil
+reference.py  referans fiyat (gün içi son kapanış, aynı enstrüman)
+assemble.py   analyze() → TechnicalAnalysis · to_dict() → DTO
+config.py     TechnicalConfig (tüm parametreler) · TA_ önekli env · config_hash
+```
+
+**Referans fiyat tek çerçevede.** Günlük seri (xaus, kaynağın kendi beyanıyla
+`price_source: yahoo finance (GC=F)`) ile gün içi 5 dk barlar (Yahoo GC=F) aynı enstrüman;
+referans = gün içi son kapanış, yoksa günlük kapanış (`reference.frame`). **Harem spot hiç
+okunmaz** (`LIVE_QUOTE_NOT_USED`), yalnız başlıkta canlı kotasyondur. Ölçüldü: aynı merdiven
+Harem'de (4431,6) P/S1, kapanışta (4476,6) R1/P veriyordu — çerçeve karıştırmak en yakın
+seviyeyi değiştiriyor.
+
+**Dönem tamamlanması iki kural:** takvim (hafta cumartesiden, ay bitince — ölçülmüş FE
+kuralı) **ve** kapanış mumunun gerçekten gelmiş olması (cuma / ayın son iş günü) ya da
+sonraki dönemden bir mum / 2 gün tolerans. Eksikse bir önceki döneme düşülür ve
+`PERIOD_INCOMPLETE_FALLBACK` + `missing_bar_for` döner. Sebep: 2026-08-31'de kaynak 1 saat
+503 verdi, 300 sn önbellekle cumartesi 4 günlük haftadan pivot üretmek mümkündü.
+
+**Bölgeler (levels.py):** adaylar = salınım (1,0) + pivot (0,8; sabit yapısal küme: haftalık
+klasik 7 + aylık P/S1/R1 + günlük P, görüntülenen setten bağımsız) + 20/60/250 gün uçları
+(0,7) + 100 $ katları (0,2). Kümeleme toleransı `0,5·ATR`, tam-bağlantı tavanı `1,0·ATR`.
+Temas: o günün ATR'siyle `±0,25·ATR_t`, ardışık temaslar tek olay, yeni olay için arada
+`≥1 ATR` uzaklaşma. Sınıf: REJECTION / BREAK / NEUTRAL / PENDING (tepki penceresi as-of'u
+aşıyorsa). Güç = 0,30 temas + 0,20 red + 0,20 tutunma (Laplace) + 0,15 konfluens + 0,10
+yakınlık (90 gün yarı ömür) + 0,05 kaynak, son olay BREAK ise yarıya. **Matematiksel
+garanti:** hiç test edilmemiş bir seviye en çok 28 alır, `min_strength` 30 → en yakın
+destek/direnç en az bir kez test edilmiş olmak zorundadır. Referansın `±0,25·ATR` içindeki
+bölge `testing`'dir ve **asla hedef değildir** (kullanıcı bildirimi kaynaklı ölçülmüş kural).
+
+**Momentum iki blok:** `session` (5 dk, ölçülmüş eski servis, bit-identical fixture testi)
+ve `momentum_daily` (günlük bileşik: hız 10g, sürüklenme 20g, RSI, MACD/ATR, ADX yönlü,
+SMA50 uzaklığı; σ birimli; `score = 50 + 50·tanh(z/2)`; eksik bileşen atılır, ağırlık
+yeniden dağıtılır). Fixture'da 59 · NEUTRAL · WEAK · CONFLICTING (10 günlük hız negatif,
+SMA50'nin 2,7 ATR üstü pozitif). Skor dağılımı sd 20,5 (hedef ≈ 15) — `z_scale` kararı
+doğrulama raporuna bırakıldı, uydurulmadı.
+
+**Kırılım iki taraf, her zaman:** `√(min(1, beklenen hareket / uzaklık) · itme)`, itme =
+0,6·seans + 0,4·günlük (seans yoksa ATR çerçevesi ve (0,1)), zıt yön ×0,25, hedef bölge
+gücüne göre sönüm `1 − 0,5·güç/100`. Taban yok: momentum 0 → 0. Eski davranış bir
+config'tir: `TA_BREAKOUT_WEIGHT_SESSION=1 TA_BREAKOUT_WEIGHT_DAILY=0 TA_BREAKOUT_LEVEL_DAMPING=0`
+eski 0,469'u birebir üretir (test). NEUTRAL'de başlık yok ama iki taraf hesaplanır — BE/FE
+test çelişkisi böyle çözüldü. `note: NOT_A_PROBABILITY`.
+
+**Değişen sayılar (bilinçli):** referans Harem 4431,6 → GC=F 4476,6; varsayılan pivot
+fib → **klasik** (haftalık); RSI/ATR/ADX Cutler/basit → **Wilder** (düz seride RSI 0 →
+50; ADX artık DX'in Wilder ortalaması); kırılım etiketi MEDIUM → MODERATE. **Değişmeyen:**
+seans bloğu (deep-equal), pivot değerleri (taban çizgisiyle 168/168 bitwise, canlı 56/56),
+trend eğim/r²/σ (eski FE ile en kötü fark 3,8e-11), senaryo bölgeleri (model-service
+`scenario_zones`, tarayıcı hesabıyla yarım sent içinde).
+
+**Yolda bulunan tuzaklar:** `aggregate` DAILY dalı sırasız kopya döndürüyordu (pivot 2023
+mumunu "dün" seçti; düzeltildi, test var). Dockerfile `python:3.12-slim` kalır: pinlenmiş
+`pydantic 2.11.7` → `pydantic-core 2.33.2`'nin cp314 tekerleği yok, `2.12.5`'e yükseltmeden
+3.14 imajı kurulmaz; venv 3.14 olduğu için kod 3.12 sözdiziminde tutulur. Trend
+`last_bucket_forming` hafta için pazar bitişini bekler (pivot kuralından sıkı; bilgi alanı).
+
+Fixture'lar `tests/fixtures/` (~200 KB, 2026-09-06 canlı yükleri ve eski FE değerleri);
+testler `tests/test_technical_*.py`. Doğrulama raporu `docs/technical/VALIDATION.md`.
+
+### Frontend tarafı (aynı gün)
+
+- `services/api/technical.ts` → `parseTechnical`: `status` + `reference` zorunlu, her blok **ayrı**
+  ayrıştırılır; bozuk/bilinmeyen enum o bloğu `null` yapar (bir kart gizlenir, sayfa değil).
+  Seans bloğu değişmeden `parseMomentum`'dan geçer. Fixture `services/api/__fixtures__/technical.json`
+  gerçek boru hattından üretildi (`assemble.to_dict`)
+- `features/dashboard/useTechnical.ts`: 10 dk + görünürlük kadansı, pivot parametresi değişince
+  300 ms debounce; `history/candles/lastClose/spot` `technical.daily`'den, `momentum` = seans bloğu.
+  `data/model.json` 4643 tohumu ve `fetchXauHistory`/`fetchMomentum` kalktı; `/xau` ve `/xau/momentum`
+  FE'den **hiç çağrılmaz** (ölçüldü: sayfa açılışında 5 API isteği)
+- **Silinenler:** `domain/pivots.ts`, `domain/momentum/breakPotential.ts`, `domain/indicators/*`,
+  `domain/chart/trend.ts`, `aggregate.ts`, `candles.ts`, `domain/tradeZones.ts` (+ testleri),
+  `components/TickSparkline.tsx`, `model.json.resistance`. Kalan finansal hesap: `domain/loan.ts`,
+  `ziynet.ts`, `quotes.ts` (Harem'e bağlı, kapsam dışı), `domain/model/*` (tahmin sunumu),
+  `ZoneSection` `units` (kullanıcı girdisi hesap makinesi), `chart/geometry.ts` ve `scale.ts` (çizim)
+- **Harem hiçbir hesaba girmez.** Tahmin isteğinin `price`'ı ve katkı kartının doları artık
+  `technical.reference` (backend çerçevesi); önceden her Harem tick'i `values.price`'ı değiştiriyor,
+  tahmin çapası ile bant birbirinden kayıyordu (adversaryal doğrulamada yüksek bulgu). Harem yalnız
+  `PanelHeader` (canlı kotasyon) ve `ZiynetSection`'da
+- **Güç betimleyicidir:** `docs/technical/VALIDATION.md` tarihsel testte STRONG > MODERATE
+  sıralamasının tutmadığını gösterdi (tutma %44 < %51; en düşük tercil plasebonun altında). Arayüz
+  bölge gücünü "N temas · son test <tarih> · çok/orta/az test edildi" olarak yazar (`TEST_INTENSITY`),
+  "Güçlü seviye" demez. Kırılım kartında `NOT_A_PROBABILITY` notu her zaman görünür; günlük momentum
+  "rejim" dilindedir (kuintil isabeti Q5 %72 ama Spearman ρ ≈ 0)
+- İşlem bölgeleri model-service'ten (`/v1/predict.scenario_zones`, tahmin bandının geometrisi);
+  alan yoksa "Senaryo bölgeleri sunucudan bekleniyor". **Dağıtım sırası:** model-service →
+  market-service → web; her ara durum tanımlı (bölüm gizlenir, beyaz kart yok)
+- Ölçüldü (yerel dist + yeni servisler, 375 px): `undefined/NaN` yok, konsol hatası 0, taşma 0,
+  24 px altı kontrol 0, ray sırası referans → seviyeler → merdiven → momentum, Camarilla merdiveni
+  9 satır. 12 px altı punto sayısı terminal katmanının bilinen regresyonu yüzünden arttı
+  (`small`/`dt` kuralları; bkz. bilinen sorunlar) — yeni SCSS'te 12 px altı kural yok
 
 ## Gün içi momentum ve kırılım gücü
 
@@ -415,20 +591,17 @@ arayüzde ayrı bir not olarak yazılır.
 - Bölüm "Ayrıntılar" içinde `Collapsible`; panel özelliği `altin-momentum-gucu`,
   çapa `feature-momentum`. `altin-destek-direnc` rehberi (başlığı zaten "Destek, Direnç
   ve Momentum") buraya bağlanır
-- **Momentum grafiğe çizilmez.** Hedef ve test edilen seviye grafikte mavi çizgi-nokta
-  deseniyle işaretlenmişti; pivot merdiveni zaten çizili olduğu için grafik kalabalıklaştı
-  ve geri alındı. Momentum artık grafiğin **altındaki özet kartlarda**, "Yukarıda ilk
-  direnç"in hemen yanında duruyor (`.snapshot-card.momentum-card`, dizgi 4 → 5 sütun;
-  mobilde 2 sütunda direnç kartıyla aynı satıra düşüyor). Kenarlık yönü kodlar:
-  yukarı yeşil, aşağı kırmızı, yönsüz nötr — mavi kullanılamaz, "Şu anki fiyat" kartı almış
+- **Momentum grafiğe çizilmez** (denendi, kalabalıklaştı, geri alındı). 5 Eylül'den beri
+  özet, Genel bakış sekmesinin sağ rayında `MomentumSummary` (güç ölçeği + yön + trend +
+  `DataTimestamp`, 15 dk sonra "gecikmeli"); tam bölüm Teknik analiz sekmesinde pivot
+  kartının yanında. Yön rengi: yukarı yeşil, aşağı kırmızı, yönsüz nötr
 - **Seviyeler tek kaynaktan: panelin pivot merdiveni.** Hem özet kart hem Ayrıntılar'daki
   momentum bölümü `pivotLadder`'ı ve kartların fiyatını kullanır; momentum servisi yalnız
   **yön, güç, trend ve seansın beklenen hareketini** sağlar. Önce ikisi servisin kendi
   merdivenini gösteriyordu ve aynı ekranda iki farklı "ilk direnç" çıkıyordu
   (ölçüldü: kart $4.398 ↔ momentum hedefi $4.436)
-- **Hedef yönden çıkar**: yukarı yönlüyse *ilk direnç*, aşağı yönlüyse *ilk destek*;
-  `NEUTRAL` iken hedef verilmez — yön belirsizken "şu seviyeyi kırar" demek uydurma olur.
-  Seçim ve hesap `domain/momentum/breakPotential.ts` içinde, iki bileşen de oradan okur
+- **Kırılım iki taraf, her zaman** (2026-09-06): `breakout.up` / `breakout.down` backend'den;
+  `headline` yalnız seans yönü UP/DOWN iken. Eski `domain/momentum/breakPotential.ts` silindi
 - **Hesap oransaldır.** Momentum gün içi vadeliden (Yahoo `GC=F`), kartlar spottan (Harem)
   besleniyor; aradaki ~%1 seviye farkı ancak oranda sadeleşir. Testle sabit: fiyat
   çerçevesi %0,95 ötelenince skor 10 ondalığa kadar değişmiyor. Formül servisinkiyle
@@ -436,8 +609,9 @@ arayüzde ayrı bir not olarak yazılır.
 - Servisin `support`/`resistance`/`touching`/`breakout`/`ladder` alanları API'de duruyor
   ama **arayüz onları kullanmaz**; istemci (`services/api/momentum.ts`) yalnız momentum
   büyüklüklerini çevirir
-- Etiket sözlüğü tek kaynakta: `content/momentum.ts` (`DIRECTION`, `TREND`, `BREAK`,
-  `BREAK_SHORT`); hem momentum bölümü hem özet kart oradan okur
+- Etiket sözlüğü tek kaynakta: `content/momentum.ts` (`DIRECTION`, `TREND`, `BREAK`, `MOMENTUM_DAILY`)
+  + `content/technical.ts` / `indicators.ts` / `trend.ts` (enum → Türkçe metin); bileşenlerde
+  satır içi enum metni yok, `content.test.ts` fixture'daki her enum değerinin sözlükte olduğunu tarar
 - Yanıt `services/api/momentum.ts` → `parseMomentum` ile doğrulanır; bozuk şema `null`
   döner ve bölüm hiç görünmez. Kullanılmayan seviye alanları bozuk gelse bölüm yine ayakta
 
@@ -446,13 +620,13 @@ arayüzde ayrı bir not olarak yazılır.
 `frontend/src/features/trend/` — tahmin grafiğinin yanına ikinci bir kart. Sorusu farklı:
 tahmin grafiği modelin **beklentisini**, bu kart geçmişin **genel yönünü** gösterir.
 
-- Yeni uç yok: panelin zaten çektiği günlük OHLC serisi seçilen aralığa toplanır
-  (`domain/chart/aggregate.ts`). Kova anahtarları takvimle uyumlu — hafta pazartesiye
+- 2026-09-06'dan beri seriler ve regresyon backend'den gelir (`technical.trend.ranges`; `trend.py`
+  birebir port). Toplama kuralı aynı: Kova anahtarları takvimle uyumlu — hafta pazartesiye
   çekilir, çeyrek ve yarıyıl takvim sınırlarından
 - Aralıklar `features/trend/ranges.ts` içinde: **Günlük** (90 mum, varsayılan) ·
   Haftalık (104) · Aylık (60) · 3 Aylık (24) · 6 Aylık (12). Günlük mum, diğerleri çizgi
 - Trend çizgisi noktaları birleştirmez: **log fiyat üzerinde en küçük kareler**
-  (`domain/chart/trend.ts`). Log uzayında sabit yüzde büyüme düz bir doğrudur, o yüzden
+  (backend `technical/trend.py`). Log uzayında sabit yüzde büyüme düz bir doğrudur, o yüzden
   eğim "dönem başına yüzde kaç" olarak okunur ve serinin başı ile sonu eşit ağırlık taşır
 - Kart beş sayı verir: yön, eğim (dönem başına), **gerçekleşen** değişim, kanaldaki
   konum ve uyum (r²)
@@ -494,6 +668,42 @@ ise uzun vadenin fiilen ne yaptığını gösteriyor.
 Panel sayfasında `h1` (panel başlığı) ile kartın `h2`'si aynı metni taşır ama aralarında
 ~4.100 piksel var; okuyucu ikisini birlikte görmez, ikincisi canlı aracın etiketi olarak
 çalışır.
+
+## Sekmeli çalışma alanı ("terminal" yerleşimi, 2026-09-05, `033e9eb`)
+
+`DashboardPage` beş sekmeli bir çalışma alanı: **01 Genel bakış** (tahmin özeti + grafik,
+sağda "ray": ilk destek/direnç, `PriceLadder` merdiveni, `MomentumSummary`; altta
+`OverviewInsights` = en büyük üç katkı) · **02 Teknik analiz** (trend, pivot + momentum yan
+yana, göstergeler) · **03 Model** (katkı, karne; vade seçici) · **04 Piyasalar** (ziynet,
+bülten) · **05 Senaryolar** (TL getirisi, işlem bölgeleri; vade seçici).
+
+- Sekme `?view=` sorgu parametresinde (`setSearchParams`, kaydırma sıfırlanmaz); rol
+  `tablist/tab/tabpanel`, ok tuşları ve Home/End çalışır. Panel içeriği **ziyaret
+  edildiğinde** bağlanır (`visited` kümesi), sonra `hidden` ile saklanır — bir sekmeye
+  dönmek yeniden yüklemez
+- `/panel/:slug` ve `#feature-*` çapaları `ANCHOR_VIEW` ile doğru sekmeye çözülür
+  (`feature-pivot` → technical, `feature-karne` → model…). `useFeatureFocus`'ta
+  `NAVBAR_OFFSET` 84 → **132** (yapışkan menü 60 + sekme çubuğu 52) ve görünmeyen düğüm
+  (`getClientRects().length === 0`) için kaydırma atlanır
+- `Collapsible` bir `AnalysisPresentation` bağlamı okur: çalışma alanında `'section'`
+  değerini alır ve **düz bölüm** olarak render olur (başlık + özet + gövde, akordiyon yok);
+  bağlam dışında eski akordiyon davranışı durur
+- `PanelHeader` artık **piyasa özeti**: `h1` "Ons altın" + `XAU / USD` kodu, büyük fiyat,
+  günlük kapanış hareketi (geçmiş serinin son iki kapanışından), dört göstergeli `dl`
+  (USD/TRY, gram, geniş dolar 5g, reel faiz 5g), `DataTimestamp` ve Yenile. Spinner'lar
+  buradan kalktı; boş değer "—" ile gösterilir. `demoted` ile `h1` → `h2`
+- `PanelIntro` (panel sayfalarının anlatısı) artık çalışma alanının **altında**, `SeoContent`'ten
+  önce basılır; ön render sırası aynı değil (bkz. bilinen sorunlar)
+- `SeoContent` editoryal: 3 öne çıkan rehber (`featuredIds`) + `details` içinde kategori
+  bazlı tam dizin (`GUIDES_BY_CATEGORY`); eski 37 konu hapı listesi yok
+- Stil: `_terminal.scss` + `_terminal-tables/-analysis/-charts/-editorial.scss` (972 satır)
+  `index.scss`'in **en sonunda** `@use` edilir; yani eski modüllerin üstüne yazılan bir
+  **override katmanı**. Mobile-first: 12 `min-width` sorgusu (380/420/560/600/640/760/
+  900/1020/1024/1080) + `prefers-reduced-motion`. `_tokens.scss` yeniden yazıldı: 74 token,
+  yeni `--space-1…16`, `--radius-sm/md/lg`, `--font-mono`, `--page-width: 1440px`,
+  `--motion-fast`; iki tema aynı anahtarları taşır, otomatik sistem geçişi hâlâ yok; terminal dosyalarında sabit hex yok
+- Ölçüldü (canlı, 375 px, 2026-09-06): 89 kontrolün **0'ı** 24 px altında, taşma 0, konsol
+  hatası 0, sekmeler ve `?view=` çalışıyor. Punto regresyonu için bilinen sorunlara bak
 
 ## Makale verisi ana pakette değil
 
@@ -833,15 +1043,36 @@ bayrak yok, unutulamaz.
 ## Test
 
 ```
-frontend: 18 dosya, 145 test (vitest: domain + lib + app/routes + services)
-backend : model-service 46 test, market-service 48 test (pytest)
+frontend: 19 dosya, 191 test (vitest: domain + lib + app + services + content + features)
+backend : market-service 368 (teknik paket 14 dosya) · model-service 148 · api-gateway 7 (pytest)
+tsc --noEmit temiz
 ```
+
+`src/app/csp.test.ts` dosyaları Vite `?raw` içe aktarımıyla okur ve hash'i Web Crypto ile
+alır; `node:fs`/`node:crypto` kullanılamaz çünkü projede Node tipleri yok ve `tsc` kırılır
+(vitest yine geçer — iki denetim farklı şeyi görür).
 
 Vitest bu Node sürümünde `.bin/vitest` sarmalayıcısıyla çalışmıyor:
 `node node_modules/vitest/vitest.mjs run` kullan.
 
 ## Bilinen sorunlar ve temizlik borcu
 
+0. **5 Eylül sonrası ölçülen regresyonlar (2026-09-06, canlı 375 px):**
+   - **Punto tabanı bozuldu.** 4 Eylül'de 12 px altı 0'a indirilmişti; terminal katmanı
+     **96 kural** ile 10–11 px'i geri getirdi. Ölçüm: Genel bakış 131, Teknik 189, Model 109,
+     Piyasalar 166, Senaryolar 79 metin düğümü 12 px altında (`.section-kicker`, `small`,
+     `dt`, `.layer-state`, `.guide-groups h3` 10 px…). Düzeltme yeri `_terminal*.scss`
+   - **Ön render ile render ayrıştı.** `generate-seo-pages.mjs` `homeFallback` hâlâ
+     `h1` "Canlı Ons Altın Tahmin ve Senaryo Analiz Paneli" ve "Panel bölümleri" listesi
+     basıyor; React'in bastığı `h1` **"Ons altın"**. Google ilkini görüyor, kullanıcı
+     ikincisini. Panel sayfalarında `PanelIntro` ön render'da üstte, render'da altta
+   - Şampiyon modelde **7 günlük ufuk kapalı** (ağırlık 0,00) ve yeni akışta model
+     kendiliğinden yenilenmeyecek; 7g'yi geri getirmek operatör kararı ve terfi kapısı
+     mevcut veriyle kapalı
+   - `reports/model-audit-20260905/` (9,7 MB, `results.json` 60 bin satır) git geçmişinde;
+     pack 45 MB. Yeni denetim çıktıları repoya işlenmemeli
+   - `_base.scss`'teki çıplak `header{display:flex…}` hâlâ duruyor (bkz. çıplak `header` tuzağı)
+   - Panel bazı iç bağlantılarda hâlâ düz `<a href>` kullanıyor (tam sayfa yükleme)
 1. **Harem `kapanis` alanı güvenilmez.** Ziynet kartlarındaki günlük yüzde bundan hesaplanıyor
    ve bayat kapanışla yanlış çıkabiliyor; mevcut asimetrik guard bazı ürünleri kaçırıyor.
    Ayrıntı: [[altin-fred-parse-ve-harem-kapanis]]
@@ -888,7 +1119,11 @@ Vitest bu Node sürümünde `.bin/vitest` sarmalayıcısıyla çalışmıyor:
 backend/model-service/.venv/bin/python backend/model-service/scripts/build_xau_dataset.py
 backend/model-service/.venv/bin/python -c "from app.services.trainer import train_model; print(train_model())"
 backend/model-service/.venv/bin/python -m pytest backend/model-service/tests
+backend/market-service/.venv/bin/python -m pytest backend/market-service/tests
+backend/api-gateway/.venv/bin/python -m pytest backend/api-gateway/tests
+# çevrimdışı model denetimi (ağ yok, canlı yazma yok, terfi yok):
+backend/model-service/.venv/bin/python backend/model-service/scripts/run_model_audit.py --output /tmp/audit
 backend/model-service/.venv/bin/python backend/model-service/scripts/export_frontend_fallback.py
-cd frontend && node node_modules/vitest/vitest.mjs run
+cd frontend && node node_modules/vitest/vitest.mjs run && npx tsc --noEmit
 docker compose up -d --build
 ```

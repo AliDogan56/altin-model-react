@@ -14,7 +14,6 @@ const model: ModelArtifact = {
   latest: { a: 0, b: 0, DGS10: 4, DGS2: 3, DFII10: 2 },
   latestPrice: 1000, latestDate: '2026-08-14',
   history: [['2026-08-14', 1000]],
-  resistance: { r20: 1, r60: 1, momentumJumpPct: 0 },
 };
 
 describe('predict', () => {

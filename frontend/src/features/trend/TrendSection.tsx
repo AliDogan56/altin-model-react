@@ -1,61 +1,55 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useMinVisible } from '../../app/useMinVisible';
 import SegmentedControl from '../../components/ui/SegmentedControl';
-import { aggregate } from '../../domain/chart/aggregate';
-import { trendLine } from '../../domain/chart/trend';
+import { FRAME, STATUS_TEXT, type BlockStatus } from '../../content/technical';
+import { CHANNEL_STATE, DIRECTION, FIT_STATE, TIMEFRAME, type TrendDirection } from '../../content/trend';
 import { pct2 } from '../../lib/format';
 import { useDashboard } from '../dashboard/DashboardContext';
 import TrendChart from './TrendChart';
-import { DEFAULT_RANGE, RANGES, rangeById, type RangeId } from './ranges';
+import { DEFAULT_RANGE, RANGES, type RangeId } from './ranges';
 
 /* Site genelinde ondalık ayracı virgül; `toFixed` nokta veriyordu. */
 const sigma2 = (v: number) =>
   new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v);
 
-const YON: Record<string, { label: string; tone: string }> = {
-  up: { label: '↑ Yükseliş eğilimi', tone: 'up' },
-  down: { label: '↓ Düşüş eğilimi', tone: 'down' },
-  flat: { label: '→ Yatay', tone: 'flat' },
-};
-
-const RANGE_SHORT: Record<RangeId, string> = {
-  gunluk: '1G', haftalik: '1H', aylik: '1A', ceyreklik: '3A', yarim: '6A',
-};
-
-/** Fiyatın kanaldaki yerini sade dile çevirir. */
-const kanalMetni = (z: number) =>
-  z > 2 ? 'kanalın belirgin üstünde' : z > 1 ? 'trendin üstünde'
-    : z < -2 ? 'kanalın belirgin altında' : z < -1 ? 'trendin altında'
-      : 'trend çizgisine yakın';
-
-/** Uyum iyiliğini sade dile çevirir; r² tek başına okura bir şey söylemiyor. */
-const uyumMetni = (r2: number) =>
-  r2 >= 0.75 ? 'seyir trendi yakından izliyor'
-    : r2 >= 0.4 ? 'seyir trend etrafında dalgalı'
-      : 'dağınık seyir, genel yön zayıf';
+/** Yön oku yalnız süs; metin ve ton sözlükten (`DIRECTION`) gelir. */
+const ARROW: Record<TrendDirection, string> = { UP: '↑', DOWN: '↓', FLAT: '→' };
 
 /**
- * Trend grafiği kartı. Veri yeni bir uçtan gelmez: panelin zaten çektiği günlük
- * OHLC serisi seçilen aralığa göre toplanır. Aralık değişince seri, ölçek ve
- * trend yeniden hesaplanır.
+ * Sunucu durum anahtarı sözlükte yoksa (ör. `MISSING`, gelecekte eklenen bir
+ * değer) kart boş kalmasın; genel bir "alınamadı" cümlesine düşer.
+ */
+const statusText = (status: string): string =>
+  STATUS_TEXT[status as BlockStatus] ?? 'Trend verisi alınamadı';
+
+/**
+ * Trend grafiği kartı. Hesabın tamamı sunucuda (`/v1/market/xau/technical` →
+ * `trend.ranges[id]`): kovalama, log-OLS eğimi, kanal bantları, gerçekleşen
+ * değişim ve durum etiketleri oradan gelir. Kart yalnız seçili aralığı gösterir;
+ * aralık değişince yeni istek atılmaz, yanıtın başka bir anahtarı okunur.
  */
 function TrendSection() {
-  const { candles } = useDashboard();
+  const { technical, technicalStatus, trend } = useDashboard();
   const [rangeId, setRangeId] = useState<RangeId>(DEFAULT_RANGE);
-  const spec = rangeById(rangeId);
-  const busy = useMinVisible(candles.length === 0);
+  const busy = useMinVisible(technical === null && technicalStatus === 'loading');
 
-  const rows = useMemo(
-    () => aggregate(candles, spec.bucket).slice(-spec.bars),
-    [candles, spec.bucket, spec.bars]);
-  const trend = useMemo(() => trendLine(rows.map(r => r.c)), [rows]);
-  /* Gerçekleşen değişim ile trend çizgisinin uçları farklıdır ve fark büyük
-     olabilir (ölçüldü: 60 aylık seride ham %148, trend uçları %203). Kullanıcı
-     karttaki sayıyı fiyat değişimi sanmasın diye **gerçekleşeni** gösteriyoruz;
-     trendin kendi uçları grafikte zaten çizili. */
-  const gerceklesen = rows.length > 1 && rows[0].c > 0 ? rows[rows.length - 1].c / rows[0].c - 1 : null;
+  const range = trend?.ranges[rangeId] ?? null;
+  const fit = range?.fit ?? null;
+  const rows = range?.rows ?? [];
+  const unit = range ? TIMEFRAME[range.timeframe] : null;
+  const direction = fit ? DIRECTION[fit.direction] : null;
+  const channel = range?.channelState ? CHANNEL_STATE[range.channelState] : null;
+  const fitState = range?.fitState ? FIT_STATE[range.fitState] : null;
 
-  const yon = trend ? YON[trend.direction] : null;
+  /* Boş durum tek yerden karar verilir: yükleniyor → iskelet; teknik paket yok
+     ya da trend bloğu yok → blok durumu; aralık `OK` değil → aralık durumu. */
+  const placeholder = busy ? null
+    : technical === null ? 'Teknik analiz alınamadı'
+      : trend === null ? statusText(technical.status.trend)
+        : range === null ? statusText('MISSING')
+          : range.status !== 'OK' ? statusText(range.status)
+            : rows.length < 2 ? statusText('INSUFFICIENT_DATA')
+              : null;
 
   return (
     <section id="feature-trend" className="panel block chart-block trend-block terminal-trend">
@@ -68,55 +62,67 @@ function TrendSection() {
           <div className="tool-group"><span>Veri periyodu</span>
             <SegmentedControl label="Trend verilerinin toplama periyodu" value={rangeId}
               options={RANGES.map(r => ({ value: r.id, label: <>
-                <span aria-hidden="true">{RANGE_SHORT[r.id]}</span>
+                <span aria-hidden="true">{r.short}</span>
                 <span className="sr-live">{r.label}</span></> }))}
               onChange={setRangeId}/>
           </div>
         </div>
       </div>
 
-      {busy || rows.length < 2
+      {busy || placeholder || !range
         ? <div className="trend-placeholder" role="status">
             {busy ? <><div className="trend-skeleton" aria-hidden="true"/><span>Fiyat serisi yükleniyor…</span></>
-              : <span>Bu aralık için yeterli veri yok.</span>}
+              : <span>{placeholder}</span>}
           </div>
         : <>
             <div className="trend-context">
-              <strong className={yon?.tone ?? 'flat'}>{yon?.label ?? 'Yön hesaplanamadı'}</strong>
-              <span>{spec.label} kapanışlar · {rows.length} gözlem</span>
+              <strong className={direction?.tone ?? 'flat'}>
+                {direction ? `${ARROW[fit!.direction]} ${direction.label} eğilimi` : 'Yön hesaplanamadı'}
+              </strong>
+              {/* Seri günlük kapanışlardan kovalanır; referans çerçevesi bu yüzden
+                  her zaman günlük kapanış — gün içi son fiyat trend serisine girmez. */}
+              <span>{RANGES.find(r => r.id === rangeId)?.label} kapanışlar · {rows.length} gözlem
+                {range.lastBucketForming && ' · son dönem oluşuyor'} · {FRAME.daily_close}</span>
             </div>
 
-            <TrendChart rows={rows} trend={trend} spec={spec}/>
+            <TrendChart rows={rows} fit={fit} candles={range.candles} timeframe={range.timeframe}
+              label={RANGES.find(r => r.id === rangeId)?.label ?? rangeId}/>
 
             <dl className="trend-metrics">
-              <div><dt>Gerçekleşen değişim</dt><dd>{gerceklesen === null ? '—' : pct2(gerceklesen)}
+              {/* Gerçekleşen değişim ile trend çizgisinin uçları farklıdır ve fark
+                  büyük olabilir (ölçüldü: 60 aylık seride ham %148, trend uçları
+                  %203). Kart **gerçekleşeni** gösterir (`realizedPct`); trendin
+                  uçları grafikte zaten çizili. */}
+              <div><dt>Gerçekleşen değişim</dt><dd>{range.realizedPct === null ? '—' : pct2(range.realizedPct)}
                 <small>ilk ve son kapanış arası</small></dd></div>
-              <div><dt>Trend eğimi</dt><dd>{trend ? pct2(trend.slopePct) : '—'}
-                <small>{spec.unit} başına regresyon eğimi</small></dd></div>
-              <div><dt>Kanalda konum</dt><dd>{trend
-                ? `${trend.lastZ >= 0 ? '+' : ''}${sigma2(trend.lastZ)}σ` : '—'}
-                <small>{trend ? kanalMetni(trend.lastZ) : '—'}</small></dd></div>
-              <div><dt>Trend uyumu · R²</dt><dd>{trend ? `%${Math.round(trend.r2 * 100)}` : '—'}
-                <small>{trend ? uyumMetni(trend.r2) : '—'}</small></dd></div>
-              <div><dt>Kanaldaki sapma · σ</dt><dd>{trend ? pct2(trend.sigma) : '—'}
+              <div><dt>Trend eğimi</dt><dd>{fit ? pct2(fit.slopePct) : '—'}
+                <small>{unit} başına regresyon eğimi</small></dd></div>
+              <div><dt>Kanalda konum</dt><dd>{fit
+                ? `${fit.lastZ >= 0 ? '+' : ''}${sigma2(fit.lastZ)}σ` : '—'}
+                <small>{channel?.note ?? '—'}</small></dd></div>
+              <div><dt>Trend uyumu · R²</dt><dd>{fit ? `%${Math.round(fit.r2 * 100)}` : '—'}
+                <small>{fitState?.note ?? '—'}</small></dd></div>
+              <div><dt>Kanaldaki sapma · σ</dt><dd>{fit ? pct2(fit.sigma) : '—'}
                 <small>log fiyat artıklarının sapması</small></dd></div>
             </dl>
 
             <div className="chart-legend">
-              <span><i className="history-key"/>{spec.candles ? 'Günlük mumlar' : 'Dönem kapanışları'}</span>
-              <span><i className={`trend-key ${trend?.direction ?? 'flat'}`}/>Genel yön (regresyon)</span>
-              {trend && trend.sigma > 0 &&
+              <span><i className="history-key"/>{range.candles ? 'Günlük mumlar' : 'Dönem kapanışları'}</span>
+              <span><i className={`trend-key ${direction?.tone ?? 'flat'}`}/>Genel yön (regresyon)</span>
+              {fit && fit.sigma > 0 &&
                 <span><i className="trend-key band"/>Kanal: trend ±1σ ve ±2σ</span>}
+              {range.lastBucketForming &&
+                <span><i className="trend-key forming"/>Oluşan dönem (kapanmadı)</span>}
             </div>
 
             <details className="chart-help">
               <summary>Periyot ve trend hesabı hakkında</summary>
               <div className="chart-help-content">
                 <p>1G / 1H / 1A / 3A / 6A, her veri noktasının toplama periyodudur;
-                  grafiğin toplam süresi değildir. Seçili {spec.label.toLowerCase()} seride
-                  son {rows.length} kapanış gösteriliyor. Eğim, log fiyat regresyonundan
-                  hesaplanan {spec.unit} başına değişimdir.</p>
-                {spec.candles && <p>Mum gövdesi önceki kapanıştan günlük kapanışa uzanır;
+                  grafiğin toplam süresi değildir. Seçili seride son {rows.length} kapanış
+                  gösteriliyor. Eğim, log fiyat regresyonundan hesaplanan {unit} başına
+                  değişimdir; hesap sunucuda yapılır, kart yalnız gösterir.</p>
+                {range.candles && <p>Mum gövdesi önceki kapanıştan günlük kapanışa uzanır;
                   fitil günün en yüksek ve en düşük fiyatını gösterir. Kaynak açılış fiyatı vermez.</p>}
                 <p>Trend çizgisi geçmişin özetidir, geleceğin tahmini değildir. Kanal,
                   fiyatın trend etrafındaki <b>tipik sapmasını</b> gösterir: dar kanal

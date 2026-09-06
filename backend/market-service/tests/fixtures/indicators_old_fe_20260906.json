@@ -1,0 +1,113 @@
+{
+  "_note": "Output of the OLD frontend frontend/src/domain/indicators/index.ts indicators(candles), captured 2026-09-06 from xau_daily_20260906.json (1257 daily candles, last 2026-09-04, candles mapped as useMarketData.ts:63 {date:d,h:+h,l:+l,c:+c}). LEGACY DEFINITIONS: RSI(14) is Cutler (simple mean of last 14 gains/losses, not Wilder); ATR(14) is a simple 14-bar mean of true range (ATR% = atr/lastClose*100, median over rolling history); ADX(14) is the simple 14-bar mean of DX where DX uses Wilder-summed (not averaged) TR/+DM/-DM — the ratio cancels so DI is fine, but ADX itself is a DX mean, not Wilder-smoothed; Stochastic %K(14) with %D = mean of last 3 %K; Williams %R(14); CCI(20) on typical price with mean absolute deviation; MACD(12,26,9) with EMA seeded from first value and signal EMA over the MACD series; ROC(12) = c[last]/c[last-12]-1; averages = SMA/EMA for 5/10/20/50/100/200. Values are the pre-formatted strings the UI shows (toFixed), plus numeric SMA/EMA. today=2026-09-06 (unused here).",
+  "input": "backend/market-service/tests/fixtures/xau_daily_20260906.json",
+  "candles": 1257,
+  "first": {
+    "date": "2021-09-07",
+    "h": 1825.7,
+    "l": 1792.7,
+    "c": 1795.9
+  },
+  "last": {
+    "date": "2026-09-04",
+    "h": 4537.8,
+    "l": 4412,
+    "c": 4476.6
+  },
+  "rows": [
+    {
+      "name": "RSI (14)",
+      "value": "53.7",
+      "text": "Nötr bölge",
+      "tone": "flat",
+      "note": ""
+    },
+    {
+      "name": "Stochastic %K (14)",
+      "value": "48.7",
+      "text": "Nötr bölge",
+      "tone": "flat",
+      "note": "%D 40.3"
+    },
+    {
+      "name": "Williams %R (14)",
+      "value": "-51.3",
+      "text": "Nötr bölge",
+      "tone": "flat",
+      "note": ""
+    },
+    {
+      "name": "CCI (20)",
+      "value": "5",
+      "text": "Nötr bölge",
+      "tone": "flat",
+      "note": ""
+    },
+    {
+      "name": "MACD (12,26,9)",
+      "value": "59.8",
+      "text": "Sinyalin altında",
+      "tone": "down",
+      "note": "Sinyal 80.4"
+    },
+    {
+      "name": "ADX (14)",
+      "value": "21.9",
+      "text": "Trend güçleniyor",
+      "tone": "flat",
+      "note": "+DI 31 · −DI 29"
+    },
+    {
+      "name": "ATR (14)",
+      "value": "%2.03",
+      "text": "Yüksek oynaklık",
+      "tone": "warn",
+      "note": "Medyan %1.15"
+    },
+    {
+      "name": "ROC (12)",
+      "value": "%-0.29",
+      "text": "12 gün önceye göre aşağıda",
+      "tone": "down",
+      "note": ""
+    }
+  ],
+  "averages": [
+    {
+      "n": 5,
+      "sma": 4422.740000000001,
+      "ema": 4458.28905172788,
+      "price": 4476.6
+    },
+    {
+      "n": 10,
+      "sma": 4507.86,
+      "ema": 4466.287690150359,
+      "price": 4476.6
+    },
+    {
+      "n": 20,
+      "sma": 4469.495000000001,
+      "ema": 4430.466238185478,
+      "price": 4476.6
+    },
+    {
+      "n": 50,
+      "sma": 4239.920000000001,
+      "ema": 4352.355692569623,
+      "price": 4476.6
+    },
+    {
+      "n": 100,
+      "sma": 4371.222999999997,
+      "ema": 4372.114598322363,
+      "price": 4476.6
+    },
+    {
+      "n": 200,
+      "sma": 4520.697500000002,
+      "ema": 4312.804708604477,
+      "price": 4476.6
+    }
+  ]
+}

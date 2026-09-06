@@ -27,6 +27,37 @@
 
 /* ---- Canlı ziynet kotasyon kartları ---- */
 
+/* Merdiven satırının bölge betimi ve test pili. Terminal katmanı `> span:last-child`
+   ile uzaklık hücresini hizalıyor; bölge betimi dördüncü çocuk olunca o seçici
+   kaymasın diye uzaklık hücresi burada konumla (üçüncü span) yeniden hedeflenir.
+   Bölge betimi de son çocuk olduğu için aynı 11 px mono kuralına yakalanıyordu;
+   `> .price-ladder-zone` (0,3,0) terminalin (0,2,1) kuralını ezer, 12 px tabanı korunur. */
+.price-ladder .price-ladder-row > span:nth-child(3) { text-align:right; font:12px var(--font-mono); }
+.price-ladder .price-ladder-row > .price-ladder-zone { grid-column:1/-1; display:flex; flex-wrap:wrap; justify-content:space-between; gap:2px 10px;
+  color:var(--muted); font-family:inherit; font-size:12px; line-height:1.4; text-align:left; }
+.price-ladder .price-ladder-zone b { font-weight:600; }
+.price-ladder .price-ladder-zone.strong b { color:var(--text); }
+.price-ladder .price-ladder-pill { padding:1px 7px; border:1px solid var(--gold-line); border-radius:999px;
+  color:var(--gold); font-style:normal; font-size:12px; font-weight:600; white-space:nowrap; }
+.price-ladder .price-ladder-row.testing { background:var(--gold-bg); border-left-color:var(--gold); }
+/* Referans satırı: çerçeve etiketi ve veri zamanı 12 px'te; terminal katmanının 10 px'i ezilir. */
+.price-ladder .price-ladder-current > span { font-size:12px; }
+.price-ladder .price-ladder-frame { grid-column:1/-1; display:flex; justify-content:flex-end; }
+.price-ladder .price-ladder-current .data-timestamp,.price-ladder .price-ladder-current .data-timestamp span { font-size:12px; font-weight:400; }
+/* Dönem bilgisi: pivotun hesaplandığı mumun sayıları ve tamamlanma sebebi. */
+.pivot-period { display:grid; grid-template-columns:repeat(auto-fit, minmax(120px, 1fr)); gap:8px 12px; margin:12px 0 0; }
+.pivot-period > div.wide { grid-column:1/-1; }
+.pivot-period dt { color:var(--muted); font-size:12px; }
+.pivot-period dd { margin:2px 0 0; font-size:13px; font-variant-numeric:tabular-nums; }
+
+/* Genel bakış rayının ilk satırı: seviyelerden önce hangi fiyata ve çerçeveye göre ölçüldüğü. */
+.rail-reference { display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 8px; margin:0 0 12px; color:var(--muted); font-size:12px; }
+.rail-reference b { color:var(--text-strong); font-size:15px; font-variant-numeric:tabular-nums; }
+.rail-reference .data-timestamp { margin-left:auto; }
+/* Seans zaman damgasının yanındaki piyasa durumu. */
+.momentum-market-state { font-size:12px; color:var(--muted); }
+.momentum-market-state.up { color:var(--teal); }
+
 /* Fiyat dönemin tüm seviyelerinin dışına çıktığında merdiven yanıltıcı olmasın. */
 .pivot-alert { margin:10px 0 0; padding:9px 11px; border:1px solid var(--gold-line); border-radius:9px;
   background:var(--gold-bg); color:var(--gold); font-size:12px; line-height:1.5; }

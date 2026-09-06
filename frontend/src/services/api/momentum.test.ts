@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { parseMomentum } from './momentum';
 
 /* Servis destek/direnç ve kırılım hedefi de döner; arayüz onları kullanmadığı
-   için istemci yalnız momentum büyüklüklerini çevirir. Seviyeler panelin
-   pivot merdiveninden gelir (`domain/momentum/breakPotential.ts`). */
+   için istemci yalnız momentum büyüklüklerini çevirir. Seviyeler ve kırılım
+   sunucunun `levels` / `breakout` bloklarından gelir (`services/api/technical.ts`). */
 const gecerli = {
   as_of: '2026-09-01T13:22:20+00:00',
   price: 4415.6, direction: 'DOWN', strength: 77, trend: 'STRENGTHENING',

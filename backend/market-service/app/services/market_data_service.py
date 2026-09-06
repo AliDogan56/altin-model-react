@@ -113,9 +113,12 @@ class MarketDataService:
         Kaynak düştüğünde uç 502 veriyordu ve grafik tamamen boş kalıyordu.
         Yedek aynı gövdeyi döndürdüğü için tüketicilerde değişiklik gerekmiyor.
         """
+        # ValueError da yedeğe düşürür: kaynak 200 ile HTML/boş gövde döndürünce
+        # `response.json()` JSONDecodeError (⊂ ValueError) fırlatıyor, bu tuple
+        # onu yakalamıyor ve uç 400 veriyordu — yedek hiç devreye girmiyordu.
         try:
             return await self._get("xau-history", XAU_PRIMARY_URL, 300)
-        except (httpx.HTTPError, TimeoutError) as error:
+        except (httpx.HTTPError, TimeoutError, ValueError) as error:
             log.warning("Birincil altın kaynağı erişilemedi (%s); yedeğe düşülüyor", error)
             return yahoo_to_points(await self._get("xau-fallback", XAU_FALLBACK_URL, 300))
 
