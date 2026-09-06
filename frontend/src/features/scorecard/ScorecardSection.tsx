@@ -36,16 +36,16 @@ function ScorecardSection({ focus }: { focus?: string }) {
             <thead><tr>
               <th scope="col">Vade</th>
               <th scope="col"><MetricHeader label="MAE" explanation="Ortalama mutlak getiri hatası. Düşük değer daha az hata demektir. Servis bu metriği dolar değil, getiri oranı olarak sağlar."/></th>
-              <th scope="col"><MetricHeader label="Yön isabeti" explanation="Tahmin edilen yönün gerçekleşen getiri yönüyle eşleştiği test gözlemlerinin oranı."/></th>
-              <th scope="col"><MetricHeader label="Baseline'a göre" explanation="Fiyat değişmez (sıfır getiri) referansına göre beceri. Pozitif değer referanstan iyi, negatif değer daha zayıf sonucu belirtir."/></th>
+              <th scope="col"><MetricHeader label="Yön isabeti" explanation="Yayınlanan, sıfır olmayan görüşlerde yön eşleşmesi. Yeni ölçümde görüş yok günleri dışarıda tutulur; yön örneklemi toplam test gününden farklı olabilir."/></th>
+              <th scope="col"><MetricHeader label="Baseline'a göre" explanation="1 − model hatası / fiyat değişmez referans hatası. Yeni ölçüm mutlak hata (MAE), eski ölçüm karesel hata (MSE) kullanır; türü satırda belirtilir. Pozitif daha iyi, negatif daha zayıf sonucu belirtir."/></th>
               <th scope="col"><MetricHeader label="Test örneği" explanation="Modelin ilgili eğitim katında görmediği ve test edilen gözlem sayısı (n)."/></th>
             </tr></thead>
             <tbody>{scorecard.rows.map(row => (
               <tr key={row.horizon}>
                 <th scope="row"><b>{row.horizon} gün</b><span className={`evaluation-status ${row.confident ? 'active' : ''}`}>{row.confident ? 'Görüş üretiyor' : 'Görüş yok'}</span></th>
                 <td><span className="evaluation-mobile-label">MAE</span><b>{pct2(row.mae)}</b></td>
-                <td><span className="evaluation-mobile-label">Yön isabeti</span><b>{pct(row.direction)}</b></td>
-                <td><span className="evaluation-mobile-label">Baseline'a göre</span><b className={row.skill > 0 ? 'positive' : row.skill < 0 ? 'negative' : undefined}>{row.skill >= 0 ? '+' : '−'}{pct(Math.abs(row.skill))}</b></td>
+                <td><span className="evaluation-mobile-label">Yön isabeti</span><b>{row.direction == null ? '—' : pct(row.direction)}</b>{row.activeFraction != null && <small>Görüş oranı %{(row.activeFraction * 100).toFixed(1)} / {row.oofRows} test günü{row.directionalRows != null ? ` · ${row.directionalRows} yön örneği` : ''}</small>}</td>
+                <td><span className="evaluation-mobile-label">Baseline'a göre</span><b className={row.skill > 0 ? 'positive' : row.skill < 0 ? 'negative' : undefined}>{row.skill >= 0 ? '+' : '−'}{pct(Math.abs(row.skill))}</b><small>{row.skillBasis} bazlı</small></td>
                 <td><span className="evaluation-mobile-label">Test örneği</span><b>{row.oofRows.toLocaleString('tr-TR')} <small>gözlem</small></b></td>
               </tr>
             ))}</tbody>
@@ -53,11 +53,12 @@ function ScorecardSection({ focus }: { focus?: string }) {
           <details className="analysis-method evaluation-mobile-method">
             <summary>Metrikler nasıl okunur?</summary>
             <p><b>MAE:</b> ortalama mutlak getiri hatasıdır; düşük olması daha iyidir. Dolar cinsinden değildir.</p>
-            <p><b>Yön isabeti:</b> yükseliş veya düşüş yönünün doğru tahmin edildiği test gözlemlerinin oranıdır.</p>
-            <p><b>Baseline'a göre:</b> fiyatın değişmediğini varsayan referansa kıyasla beceridir. Pozitif değer referanstan daha iyi sonuçtur.</p>
+            <p><b>Yön isabeti:</b> yeni ölçümde yalnız görüş verilen, sıfır olmayan getirilerde hesaplanır; görüş oranı yanında okunmalıdır.</p>
+            <p><b>Baseline'a göre:</b> 1 − model hatası / fiyat değişmez hatası. Satırdaki MAE veya MSE türü aynı olmayan skorlar doğrudan karşılaştırılamaz.</p>
             <p><b>Test örneği:</b> ilgili eğitim katında görülmeden değerlendirilen gözlem sayısıdır.</p>
           </details>
           <p className="analysis-note">“Görüş yok”, ilgili vadede model ağırlığının tahmin yayımlamak için yeterli olmadığı anlamına gelir. Bu ağırlık bir güven yüzdesi değildir.</p>
+          {scorecard.rows.some(row => !row.evaluationVersion) && <p className="analysis-note">Eski OOF ölçümü bulunan vadelerde bağımsız kalibrasyon doğrulanmadı; bu sonuçlar yeni dış-test ölçümüyle eşdeğer değildir.</p>}
           <p className="evaluation-version">Aktif model <code>{scorecard.version || 'bilinmiyor'}</code></p>
         </>}
       </section>

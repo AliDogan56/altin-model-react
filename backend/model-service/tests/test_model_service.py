@@ -37,7 +37,7 @@ def test_reload_rejects_artifact_with_mismatched_schema(tmp_path, monkeypatch):
     assert service.rejected
 
 
-def test_reload_accepts_matching_schema(tmp_path, monkeypatch):
+def test_reload_rejects_matching_names_but_missing_horizon_state(tmp_path, monkeypatch):
     import joblib
     from app.services import model_service as module
     from app.services.xau_dataset_service import FEATURES, HORIZONS
@@ -50,8 +50,9 @@ def test_reload_accepts_matching_schema(tmp_path, monkeypatch):
     monkeypatch.setattr(module, "BUNDLED_MODEL", good)
     monkeypatch.setattr(module, "settings", SimpleNamespace(model_dir=tmp_path / "yok"))
     service.reload()
-    assert service.version == "yeni"
-    assert not service.rejected
+    assert service.version == "x"
+    assert service.active is None
+    assert service.rejected
 
 
 def test_predict_reports_clipped_features(monkeypatch):

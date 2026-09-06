@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "dataset_sha256": "c7a87939ea08cac69112b12576015dabd730d57f475fa1d4b1aca67c7cd3e240",
+  "model_version": "xauusd-mlp-candidate-20260906T032755333823Z",
+  "training_code_hash_matches": true,
+  "evaluator_hash_matches": true,
+  "candidate_schema_valid": true,
+  "candidate_serving_deterministic": true,
+  "latest_training_vs_serving_max_absolute_delta": 0.0,
+  "candidate_all_9_fold_maturity_boundaries_valid": true,
+  "unverified_dataset_promotion_blocked": true,
+  "experiments": 129,
+  "promoted": false,
+  "legacy_compatibility": {
+    "local_legacy_version": "xauusd-mlp-20260821T164355Z",
+    "max_mean_delta": 0.0,
+    "max_error_delta": 0.0,
+    "scope": "local bundled legacy artifact; not a read/write of the production artifact"
+  },
+  "note": "Diagnostics only: no claim of true point-in-time macro or spot provenance. No network, training, or active model writes."
+}

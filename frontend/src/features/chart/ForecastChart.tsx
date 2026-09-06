@@ -2,7 +2,7 @@ import { useId, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import { model } from '../../data/artifact';
 import { buildCandles, candleWidth } from '../../domain/chart/candles';
 import { computeDomain, dropNear, pickTimeTicks } from '../../domain/chart/scale';
-import { BAND_COVERAGE, buildDailyPath } from '../../domain/model/predict';
+import { intervalLabel, buildDailyPath } from '../../domain/model/predict';
 import type { Forecast } from '../../domain/model/types';
 import type { Candle } from '../../domain/indicators';
 import type { LadderItem } from '../../domain/pivots';
@@ -46,6 +46,7 @@ function ForecastChart({
   forecast, originForecast, available, history, candles, candleMode, rangeDays, horizonDays,
   showOrigin, onToggleOrigin, levels, levelPeriod, spot, describedById,
 }: ChartProps) {
+  const bandLabel = intervalLabel(forecast, Math.max(0, forecast.horizons.indexOf(horizonDays)));
   const svgRef = useRef<SVGSVGElement | null>(null);
   /* Ölçüm SVG'de değil saran div'de: ResizeObserver <svg> için tetiklenmiyor. */
   const boxRef = useRef<HTMLDivElement | null>(null);
@@ -87,7 +88,7 @@ function ForecastChart({
   /* Piyasa servisi erişilemezse `candles` boş kalır ama `history` pakete gömülü
      yedekten gelir; mum modunda grafik bomboş görünüyordu. Veri yoksa çizgiye düş. */
   const showCandles = candleMode && bars.length > 0;
-  const future = buildDailyPath(model, forecast, horizonDays, lastHistoryDate)
+  const future = buildDailyPath(model, forecast, horizonDays, forecast.originDate ?? lastHistoryDate)
     .map(d => ({ ...d, i: d.day, kind: d.day === 0 ? 'Bugün' : `${d.day}. gün` }));
 
   const originAt = model.fallback ? undefined : hist.find(d => d.date === model.latestDate);
@@ -191,7 +192,7 @@ function ForecastChart({
   const last = future[future.length - 1];
   const summary = available
     ? `Solda son ${hist.length} günün gerçekleşen ons altın kapanışı, sağda ${horizonDays} günlük `
-      + `model tahmini ve %${BAND_COVERAGE} olasılık aralığı. Güncel fiyat ${money(spot.price)}. `
+      + `model tahmini ve ${bandLabel}. Güncel fiyat ${money(spot.price)}. `
       + `${horizonDays} gün sonrası için beklenti ${money(last.v)}, aralık ${money(last.lo)}–${money(last.hi)}. `
       + `${levelPeriod} pivot seviyeleri: ` + levels.map(l => `${l.name} ${money(l.value)}`).join(', ') + '.'
     : `Son ${hist.length} günün gerçekleşen ons altın kapanışı. Model tahmini bekleniyor.`;
@@ -207,7 +208,7 @@ function ForecastChart({
         ['history', 'Fiyat', 'history-key', false],
         ['live', spot.live ? 'Canlı' : 'Son fiyat', 'now-key', false],
         ['model', 'Model', 'forecast-key', !available],
-        ['band', `Aralık · %${BAND_COVERAGE}`, 'band-key', !available],
+        ['band', bandLabel, 'band-key', !available],
         ['levels', 'Destek / direnç', 'sr-key', levels.length === 0],
       ] as const).map(([key, label, icon, disabled]) => <button type="button" key={key}
         className={layers[key] && !disabled ? 'on' : 'off'} aria-pressed={layers[key] && !disabled} disabled={disabled}
@@ -375,7 +376,7 @@ function ForecastChart({
       <div className="chart-probe-title"><span>{longDate(hover.date)}</span>
         <b>{Number.isFinite(hover.lo) ? 'Model beklentisi' : 'Gerçekleşen kapanış'}</b></div>
       <strong>{money(hover.v)}</strong>
-      {Number.isFinite(hover.lo) && <p>%{BAND_COVERAGE} aralık: {money(hover.lo!)} – {money(hover.hi!)}</p>}
+      {Number.isFinite(hover.lo) && <p>{bandLabel}: {money(hover.lo!)} – {money(hover.hi!)}</p>}
       {showCandles && Number.isFinite(hover.dayLow) && <p>
         Gün içi: {money(hover.dayLow!)} – {money(hover.dayHigh!)}</p>}
       {showOrigin && !Number.isFinite(hover.lo) && originByDate.has(hover.date) && <>

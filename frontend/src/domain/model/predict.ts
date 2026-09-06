@@ -5,6 +5,11 @@ import type { FeatureMap, Forecast, ModelArtifact, PathPoint } from './types';
 /** Bant ölçeği: residual80 %80'lik artık, %70 banda çekmek için daraltılır. */
 export const BAND_SCALE = 0.81;
 export const BAND_COVERAGE = 70;
+/** Coverage is server metadata, not a frontend assumption about residuals. */
+export const intervalLabel = (forecast: Forecast, index: number): string => {
+  const coverage = forecast.intervalCoverage?.[index];
+  return coverage == null ? 'Kapsamı doğrulanmamış aralık' : `%${Math.round(coverage * 100)} nominal aralık`;
+};
 
 export const predict = (model: ModelArtifact, features: FeatureMap, price: number): Forecast => {
   const x = model.features.map((k, i) => clamp((features[k] - model.xMean[i]) / model.xStd[i], -6, 6));

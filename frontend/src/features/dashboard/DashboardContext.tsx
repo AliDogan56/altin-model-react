@@ -14,7 +14,7 @@ import { usePanelSettings } from './usePanelSettings';
 const useDashboardState = () => {
   const market = useMarketData();
   const settings = usePanelSettings();
-  const forecastModel = useForecastModel(market.live, market.lastClose, market.harem.satis ?? market.lastClose ?? market.spot.price);
+  const forecastModel = useForecastModel(market.live, market.lastClose, market.harem.satis ?? market.lastClose ?? market.spot.price, market.featuresDate);
   const { features, forecast, values } = forecastModel;
 
   const impacts = useMemo(
@@ -34,7 +34,7 @@ const useDashboardState = () => {
 
   const historyEnd = market.history.length ? market.history[market.history.length - 1][0] : undefined;
   const dailyForecast = useMemo(
-    () => buildDailyPath(model, forecast, settings.horizonDays, historyEnd),
+    () => buildDailyPath(model, forecast, settings.horizonDays, forecast.originDate ?? historyEnd),
     [forecast, settings.horizonDays, historyEnd]);
 
   /* Tablo, modelin yayınladığı ilk tahmine (model.latestDate) çapalıdır; o günkü girdilerle

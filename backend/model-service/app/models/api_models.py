@@ -1,9 +1,12 @@
-from pydantic import BaseModel, Field
+from datetime import date
+from pydantic import BaseModel, Field, FiniteFloat
 
 
 class PredictIn(BaseModel):
-    price: float = Field(gt=0)
-    features: dict[str, float]
+    price: FiniteFloat = Field(gt=0)
+    features: dict[str, FiniteFloat]
+    # A supplied vector is always a client scenario, never an official forecast.
+    source_date: date | None = None
 
 
 class TrainIn(BaseModel):

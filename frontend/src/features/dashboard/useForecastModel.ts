@@ -36,7 +36,7 @@ export type ForecastModel = {
 
 /** Parametre formu + tahmin. Sunucu modeli ulaşılamazsa tarayıcıdaki
  *  artefaktla hesaplanan tahmine düşer, panel boş kalmaz. */
-export const useForecastModel = (live: FeatureMap, lastClose: number | null, spotPrice: number): ForecastModel => {
+export const useForecastModel = (live: FeatureMap, lastClose: number | null, spotPrice: number, sourceDate?: string | null): ForecastModel => {
   const [values, setValues] = useState<ParameterValues>(fieldDefaults);
   const [apiForecast, setApiForecast] = useState<ApiForecast | null>(null);
   const [apiFeatures, setApiFeatures] = useState<FeatureMap | null>(null);
@@ -69,17 +69,20 @@ export const useForecastModel = (live: FeatureMap, lastClose: number | null, spo
   useEffect(() => {
     const id = ++requestId.current;
     setModelStatus('loading');
+    // Never present the bundled fallback feature vector as current input while
+    // the canonical endpoint has not yet supplied its timestamp.
+    if (!sourceDate) return;
     const timer = setTimeout(() => {
       const input = latest.current;
-      requestForecast(input.price, input.features)
+      requestForecast(input.price, input.features, sourceDate)
         .then(result => { if (id === requestId.current) { setApiFeatures(input.features); setApiForecast(result); setModelStatus('live'); } })
         .catch(() => { if (id === requestId.current) { setApiForecast(null); setModelStatus('fallback'); } });
     }, PREDICT_DEBOUNCE_MS);
     return () => clearTimeout(timer);
-  }, [signature, refreshKey]);
+  }, [signature, refreshKey, sourceDate]);
 
   const forecast = useMemo<Forecast>(
-    () => (apiForecast ? { ...apiForecast, features: apiFeatures ?? features, price: +values.price } : fallback),
+    () => (apiForecast ? { ...apiForecast, features: apiFeatures ?? features, price: apiForecast.basePrice ?? +values.price } : fallback),
     [apiForecast, apiFeatures, fallback, features, values.price]);
 
   const refreshForecast = useCallback(() => setRefreshKey(key => key + 1), []);

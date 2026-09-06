@@ -1,8 +1,9 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 
 from ..models.api_models import TrainIn
 from ..services.learning_service import learning_service
 from ..services.automatic_learning_service import automatic_learning_service
+from .admin_auth import require_admin
 
 router = APIRouter(tags=["learning"])
 
@@ -12,7 +13,7 @@ def learning_metrics() -> dict:
     return learning_service.metrics()
 
 
-@router.post("/training/run")
+@router.post("/training/run", dependencies=[Depends(require_admin)])
 def training(payload: TrainIn) -> dict:
     try:
         return learning_service.train(payload)

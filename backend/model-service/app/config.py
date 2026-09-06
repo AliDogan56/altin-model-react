@@ -15,6 +15,9 @@ class Settings:
     retrain_minimum_rows: int
     retrain_every_new_rows: int
     keep_artifacts: int
+    admin_token: str = ""
+    prediction_logging: bool = False
+    prediction_log_path: Path = ROOT / "models" / "predictions.sqlite3"
 
 
 def get_settings() -> Settings:
@@ -34,7 +37,10 @@ def get_settings() -> Settings:
     return Settings(environment, Path(os.getenv("MODEL_DIR", ROOT / "models")), origins,
                     os.getenv("AUTO_TRAIN", str(auto_default)).lower() == "true",
                     int(os.getenv("COLLECTION_INTERVAL_SECONDS", "3600")), int(os.getenv("RETRAIN_MINIMUM_ROWS", "300")),
-                    int(os.getenv("RETRAIN_EVERY_NEW_ROWS", "5")), int(os.getenv("KEEP_ARTIFACTS", "5")))
+                    int(os.getenv("RETRAIN_EVERY_NEW_ROWS", "5")), int(os.getenv("KEEP_ARTIFACTS", "5")),
+                    os.getenv("MODEL_ADMIN_TOKEN", ""),
+                    os.getenv("PREDICTION_LOGGING", "false").lower() == "true",
+                    Path(os.getenv("PREDICTION_LOG_PATH", str(Path(os.getenv("MODEL_DIR", ROOT / "models")) / "predictions.sqlite3"))))
 
 
 settings = get_settings()

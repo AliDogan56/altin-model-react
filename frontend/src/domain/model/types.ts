@@ -26,6 +26,10 @@ export type Forecast = {
   price: number;
   mean: number[];
   err: number[];
+  intervalCoverage?: (number | null)[];
+  originDate?: string;
+  predictionTimestamp?: string;
+  status?: string;
   /** Sunucu modelinin ufuk -> parametre -> marjinal getiri etkisi. */
   featureEffects?: Record<string, FeatureMap>;
 };

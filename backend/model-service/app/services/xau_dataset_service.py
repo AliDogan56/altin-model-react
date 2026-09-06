@@ -1,4 +1,7 @@
-"""XAU/USD hedefli, geleceğe sızıntısız günlük eğitim veri seti üretimi."""
+"""Legacy daily dataset builder; release/vintage availability is NOT verified.
+
+Use point_in_time.py with verified timestamped inputs for leakage-safe research.
+"""
 
 from __future__ import annotations
 
@@ -6,6 +9,10 @@ import csv
 import io
 import logging
 import math
+import hashlib
+import json
+import os
+import tempfile
 from bisect import bisect_right
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta, timezone
@@ -16,9 +23,9 @@ log = logging.getLogger(__name__)
 XAU_HISTORY_URL = "https://xaus.com/api/v1/history"
 # Yedek kaynak: birincil kaynak 2026-08-31'de 503 vermeye başladı ve saatlik
 # job "HTTP Error 503" ile düştü; veri seti donup kaldı. Yahoo'nun altın vadeli
-# serisi aynı alanları ve aynı uzunlukta geçmişi veriyor. Vadeli fiyat spot'tan
-# ~%0,6 farklı; girdilerin tamamı getiri/oran olduğu için model bundan
-# etkilenmez ve seri tek kaynaktan geldiği için kendi içinde tutarlıdır.
+# serisi alan olarak uyumludur fakat spot XAU/USD değildir. Basis/roll etkileri
+# getiri ve volatilitede de kalabilir; kaynak manifestte futures proxy olarak
+# kaydedilir ve doğrulanmış spot/PIT gerektiren model terfisinde reddedilir.
 XAU_FALLBACK_URL = ("https://query1.finance.yahoo.com/v8/finance/chart/GC=F"
                     "?range=5y&interval=1d")
 FRED_URL = "https://fred.stlouisfed.org/graph/fredgraph.csv"
@@ -44,7 +51,11 @@ class XauBar:
 
 class Series:
     def __init__(self, points: list[tuple[date, float]]) -> None:
-        points.sort()
+        points = sorted(points)
+        if len({day for day, _ in points}) != len(points):
+            raise ValueError("Duplicate macro observation date; vintage metadata required")
+        if any(type(day) is not date or not math.isfinite(value) for day, value in points):
+            raise ValueError("Macro observations require valid dates and finite values")
         self.days = [point[0] for point in points]
         self.values = [point[1] for point in points]
 
@@ -120,11 +131,15 @@ def _macro_features(series: dict[str, Series], day: date) -> dict[str, float] | 
 
 
 def build_rows(bars: list[XauBar], series: dict[str, Series]) -> list[dict[str, float | str]]:
-    """O gün bilinen girdileri her ufkun sonraki ilk işlem günüyle hizalar.
+    """Observation-date legacy girdileri sonraki ilk işlem günüyle hizalar.
+
+    Bu yol yayın/vintage bilgisi içermediğinden PIT güvenliği iddia etmez.
 
     Güncel özellik satırları korunur; henüz gerçekleşmemiş hedefler ufuk bazında
     boş bırakılır ve yalnız ilgili modelin eğitimi sırasında dışarıda tutulur.
     """
+    from .data_quality import validate_bars, validate_dataset_rows
+    validate_bars(bars)
     days = [bar.day for bar in bars]
     rows: list[dict[str, float | str]] = []
     for index, bar in enumerate(bars):
@@ -137,6 +152,8 @@ def build_rows(bars: list[XauBar], series: dict[str, Series]) -> list[dict[str, 
             targets[f"target_return_{horizon}d"] = (
                 "" if target_index >= len(bars) else bars[target_index].close / bar.close - 1)
         rows.append({"date": bar.day.isoformat(), "xauusd_close": bar.close, **gold, **macro, **targets})
+    if rows:
+        validate_dataset_rows(rows)
     return rows
 
 
@@ -160,40 +177,86 @@ def yahoo_bars(payload: dict) -> list[XauBar]:
     return bars
 
 
-def fetch_bars(requests) -> list[XauBar]:
+def fetch_bars_with_provenance(requests) -> tuple[list[XauBar], dict]:
     """Birincil kaynak; erişilemezse yedeğe düşer."""
     try:
         response = requests.get(XAU_HISTORY_URL, impersonate="chrome", timeout=30)
         response.raise_for_status()
         payload = response.json()
-        return [XauBar(date.fromisoformat(row["d"]), float(row["h"]), float(row["l"]), float(row["c"]))
+        bars = [XauBar(date.fromisoformat(row["d"]), float(row["h"]), float(row["l"]), float(row["c"]))
                 for row in payload["points"]]
+        from .data_quality import validate_bars
+        validate_bars(bars)
+        return bars, {"price_source": XAU_HISTORY_URL, "price_instrument": "XAUUSD_spot"}
     except Exception as error:
         log.warning("Birincil altın kaynağı erişilemedi (%s); yedeğe düşülüyor", error)
         fallback = requests.get(XAU_FALLBACK_URL, impersonate="chrome", timeout=30)
         fallback.raise_for_status()
-        return yahoo_bars(fallback.json())
+        bars = yahoo_bars(fallback.json())
+        from .data_quality import validate_bars
+        validate_bars(bars)
+        return bars, {"price_source": XAU_FALLBACK_URL, "price_instrument": "GC=F_futures_proxy"}
 
 
-def fetch_dataset() -> list[dict[str, float | str]]:
+def fetch_bars(requests) -> list[XauBar]:
+    return fetch_bars_with_provenance(requests)[0]
+
+
+def fetch_dataset_with_provenance() -> tuple[list[dict[str, float | str]], dict]:
     from curl_cffi import requests
-    bars = fetch_bars(requests)
+    bars, price_provenance = fetch_bars_with_provenance(requests)
     start = (bars[0].day - timedelta(days=400)).isoformat()
     macro: dict[str, Series] = {}
     for series_id in FRED_IDS:
         fred = requests.get(FRED_URL, params={"id": series_id, "cosd": start}, impersonate="chrome", timeout=30)
         fred.raise_for_status()
         macro[series_id] = parse_fred(fred.text)
-    return build_rows(bars, macro)
+    # Observation dates are NOT release timestamps. This legacy path is kept
+    # for compatibility, but must never be advertised as point-in-time data.
+    provenance = {**price_provenance, "availability": "unverified",
+                  "macro_vintage": "current_revision", "validated": False,
+                  "macro_sources": {name: FRED_URL + "?id=" + name for name in FRED_IDS}}
+    return build_rows(bars, macro), provenance
+
+
+def fetch_dataset() -> list[dict[str, float | str]]:
+    return fetch_dataset_with_provenance()[0]
+
+
+def _atomic_write(path, content: bytes) -> None:
+    """Readers see either complete old bytes or complete new bytes."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(dir=path.parent, prefix=path.name + ".", delete=False) as output:
+            temporary = output.name
+            output.write(content)
+            output.flush()
+            os.fsync(output.fileno())
+        os.replace(temporary, path)
+    finally:
+        if temporary and os.path.exists(temporary):
+            os.unlink(temporary)
 
 
 def write_csv(path) -> int:
-    rows = fetch_dataset()
+    from pathlib import Path
+    from .data_quality import dataset_manifest_path, validate_dataset_rows
+    path = Path(path)
+    rows, provenance = fetch_dataset_with_provenance()
     if not rows:
         raise RuntimeError("XAU/USD eğitim satırı üretilemedi")
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", newline="", encoding="utf-8") as output:
-        writer = csv.DictWriter(output, fieldnames=list(rows[0]), lineterminator="\n")
-        writer.writeheader()
-        writer.writerows(rows)
+    validate_dataset_rows(rows)
+    output = io.StringIO(newline="")
+    writer = csv.DictWriter(output, fieldnames=list(rows[0]), lineterminator="\n")
+    writer.writeheader()
+    writer.writerows(rows)
+    content = output.getvalue().encode("utf-8")
+    manifest = {"schema_version": 1, "feature_version": "legacy-v1", "features": list(FEATURES),
+                "dataset_sha256": hashlib.sha256(content).hexdigest(), "rows": len(rows),
+                "created_at": datetime.now(timezone.utc).isoformat(), "provenance": provenance}
+    _atomic_write(path, content)
+    # If a reader catches the short inter-file transition, hash validation
+    # fails closed. It never accepts a manifest for another dataset snapshot.
+    _atomic_write(dataset_manifest_path(path), json.dumps(manifest, indent=2).encode("utf-8"))
     return len(rows)

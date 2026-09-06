@@ -13,6 +13,12 @@ export type ApiForecast = {
   /** Güncel bilgi taşımadığı için hesaba katılmayan girdiler. */
   neutralized: string[];
   featureEffects?: Record<string, FeatureMap>;
+  intervalCoverage: (number | null)[];
+  originDate?: string;
+  predictionTimestamp?: string;
+  basePrice?: number;
+  status?: string;
+  noViewReasons: string[][];
 };
 
 export type LatestFeatures = { date: string; price: number; features: FeatureMap };
@@ -59,16 +65,25 @@ export const parseForecast = (raw: unknown): ApiForecast | null => {
     horizons, mean, err, weights, confident, clipped, neutralized,
     version: typeof data.version === 'string' ? data.version : undefined,
     featureEffects: (data.feature_effects as Record<string, FeatureMap> | undefined) ?? undefined,
+    intervalCoverage: horizons.map((_, i) => {
+      const value = Array.isArray(data.intervals) ? data.intervals[i]?.nominal_coverage : null;
+      return typeof value === 'number' && Number.isFinite(value) && value > 0 && value < 1 ? value : null;
+    }),
+    originDate: typeof data.origin_date === 'string' ? data.origin_date : undefined,
+    predictionTimestamp: typeof data.prediction_timestamp === 'string' ? data.prediction_timestamp : undefined,
+    basePrice: typeof data.base_price === 'number' && Number.isFinite(data.base_price) && data.base_price > 0 ? data.base_price : undefined,
+    status: typeof data.status === 'string' ? data.status : undefined,
+    noViewReasons: horizons.map((_, i) => strings(Array.isArray(data.no_view_reasons) ? data.no_view_reasons[i] : null)),
   };
 };
 
 /** Servisin `confident` eşiğiyle aynı; yanıt bu alanı taşımazsa buradan türetilir. */
 export const CONFIDENT_WEIGHT = 0.2;
 
-export const requestForecast = async (price: number, features: FeatureMap): Promise<ApiForecast> => {
+export const requestForecast = async (price: number, features: FeatureMap, sourceDate?: string | null): Promise<ApiForecast> => {
   const forecast = parseForecast(await fetchJson<unknown>(
     `${modelApi()}/v1/predict`,
-    { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ price: +price, features }) },
+    { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ price: +price, features, source_date: sourceDate || null }) },
   ));
   if (!forecast) throw new Error('Model servisi beklenen tahmin şemasını döndürmedi');
   return forecast;

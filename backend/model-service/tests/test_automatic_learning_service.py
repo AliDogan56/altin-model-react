@@ -1,89 +1,73 @@
+"""A rolling dataset refresh prepares candidates without replacing the champion."""
+import hashlib
+from datetime import date, timedelta
 from types import SimpleNamespace
+
+import pytest
 from app.services import automatic_learning_service as module
 
 
-def test_refresh_waits_for_twenty_new_completed_rows(monkeypatch):
+@pytest.fixture
+def setup(monkeypatch, tmp_path):
     service = module.AutomaticLearningService()
-    monkeypatch.setattr(module, "write_csv", lambda path: 1019)
-    monkeypatch.setattr(module.model_service, "active", {"dataset_rows": 1000})
+    path = tmp_path / "snapshot.csv"
+    path.write_text("immutable test snapshot")
+    rows = [{"date": (date(2026, 1, 1) + timedelta(days=i)).isoformat(),
+             **{f"target_return_{h}d": ".01" for h in (7, 14, 30)}} for i in range(40)]
+    monkeypatch.setattr(module, "DATASET", path)
+    monkeypatch.setattr(module, "write_csv", lambda _: len(rows))
+    monkeypatch.setattr(module, "_load_dataset", lambda _: (rows, None))
     monkeypatch.setattr(module, "settings", SimpleNamespace(
-        auto_train=True, retrain_every_new_rows=20, retrain_minimum_rows=300))
-    called = []
-    monkeypatch.setattr(module, "train_model", lambda **_: called.append(True))
+        auto_train=True, retrain_every_new_rows=5, retrain_minimum_rows=777, model_dir=tmp_path))
+    active = {"dataset_rows": 40, "training_end": {str(h): rows[-6]["date"] for h in (7, 14, 30)}}
+    monkeypatch.setattr(module.model_service, "active", active)
+    calls, reloads = [], []
+    def train(**kwargs):
+        calls.append(kwargs)
+        return {"version": "candidate", "dataset_hash": hashlib.sha256(path.read_bytes()).hexdigest(),
+                "training_end": {str(h): rows[-1]["date"] for h in (7, 14, 30)}}
+    monkeypatch.setattr(module, "train_model", train)
+    monkeypatch.setattr(module.model_service, "reload", lambda: reloads.append(True))
+    return service, rows, active, calls, reloads
+
+
+def test_rolling_same_row_count_retrains_matured_labels(setup):
+    service, _, _, calls, reloads = setup
     result = service._refresh_and_train()
-    assert result == {"training_rows": 1019, "trained": False}
-    assert not called
+    assert result["trained"] is True
+    assert result["promoted"] is False
+    assert calls[0]["minimum_rows"] == 777
+    assert calls[0]["promote"] is False
+    assert not reloads
 
 
-def test_refresh_retrains_after_twenty_new_completed_rows(monkeypatch):
-    service = module.AutomaticLearningService()
-    monkeypatch.setattr(module, "write_csv", lambda path: 1020)
-    monkeypatch.setattr(module.model_service, "active", {"dataset_rows": 1000})
-    monkeypatch.setattr(module, "settings", SimpleNamespace(
-        auto_train=True, retrain_every_new_rows=20, retrain_minimum_rows=300))
-    monkeypatch.setattr(module, "train_model", lambda **_: {"version": "new"})
-    reloaded = []
-    monkeypatch.setattr(module.model_service, "reload", lambda: reloaded.append(True))
-    assert service._refresh_and_train() == {"version": "new"}
-    assert reloaded
-
-
-def test_job_honours_retrain_minimum_rows(monkeypatch):
-    """D4: RETRAIN_MINIMUM_ROWS otomatik yolda da geçerli olmalı."""
-    service = module.AutomaticLearningService()
-    monkeypatch.setattr(module, "write_csv", lambda path: 1200)
-    monkeypatch.setattr(module.model_service, "active", {"dataset_rows": 1000})
-    monkeypatch.setattr(module, "settings", SimpleNamespace(
-        auto_train=True, retrain_every_new_rows=20, retrain_minimum_rows=777))
-    seen = {}
-    monkeypatch.setattr(module, "train_model", lambda **kwargs: seen.update(kwargs) or {"version": "v"})
-    monkeypatch.setattr(module.model_service, "reload", lambda: None)
+def test_same_snapshot_not_retrained_repeatedly(setup):
+    service, _, _, calls, _ = setup
     service._refresh_and_train()
-    assert seen["minimum_rows"] == 777
+    assert service._refresh_and_train()["trained"] is False
+    assert len(calls) == 1
 
 
-def test_job_reports_dataset_rows_when_not_training(monkeypatch):
-    service = module.AutomaticLearningService()
-    monkeypatch.setattr(module, "write_csv", lambda path: 1001)
-    monkeypatch.setattr(module.model_service, "active", {"dataset_rows": 1000})
-    monkeypatch.setattr(module, "settings", SimpleNamespace(
-        auto_train=True, retrain_every_new_rows=20, retrain_minimum_rows=300))
+def test_waits_for_new_matured_labels_not_unlabelled_rows(setup):
+    service, rows, _, calls, _ = setup
+    for row in rows[-5:]:
+        row["target_return_30d"] = ""
     result = service._refresh_and_train()
-    assert result == {"training_rows": 1001, "trained": False}
-    assert service.last_result == result
+    assert result["trained"] is False
+    assert result["new_labels_by_horizon"]["30"] == 0
+    assert not calls
 
 
-def test_model_yokken_ilk_tur_egitimi_tetikler(monkeypatch):
-    """Soğuk açılış: build sırasında artık model gömülmüyor.
-
-    İmaj her kurulduğunda eğitim yapılması, servis edilen modeli deploy
-    takvimine bağlıyordu — 2026-09-03'te bir frontend dağıtımı 7 günlük ufku
-    sessizce kapattı. Eğitim yalnız bu işe bırakıldı; o yüzden **model yokken**
-    ilk turun eğitimi tetiklemesi artık bir sözleşme.
-    """
-    service = module.AutomaticLearningService()
-    monkeypatch.setattr(module, "write_csv", lambda path: 1197)
-    monkeypatch.setattr(module.model_service, "active", None)      # soğuk açılış
-    monkeypatch.setattr(module, "settings", SimpleNamespace(
-        auto_train=True, retrain_every_new_rows=5, retrain_minimum_rows=300))
-    egitildi = []
-    monkeypatch.setattr(module, "train_model", lambda **_: egitildi.append(True) or {"trained": True})
-    monkeypatch.setattr(module.model_service, "reload", lambda: None)
-
-    service._refresh_and_train()
-    assert egitildi == [True]
-
-
-def test_auto_train_kapaliysa_model_yokken_bile_egitmez(monkeypatch):
-    """Kapalıysa kapalıdır: soğuk açılış bunu ezmemeli."""
-    service = module.AutomaticLearningService()
-    monkeypatch.setattr(module, "write_csv", lambda path: 1197)
+def test_cold_start_creates_candidate_but_never_promotes(setup, monkeypatch):
+    service, _, _, calls, reloads = setup
     monkeypatch.setattr(module.model_service, "active", None)
-    monkeypatch.setattr(module, "settings", SimpleNamespace(
-        auto_train=False, retrain_every_new_rows=5, retrain_minimum_rows=300))
-    egitildi = []
-    monkeypatch.setattr(module, "train_model", lambda **_: egitildi.append(True))
+    assert service._refresh_and_train()["promoted"] is False
+    assert calls and not reloads
 
-    sonuc = service._refresh_and_train()
-    assert egitildi == []
-    assert sonuc["trained"] is False
+
+def test_disabled_auto_training_does_not_train(setup, monkeypatch):
+    service, _, _, calls, _ = setup
+    monkeypatch.setattr(module, "settings", SimpleNamespace(
+        auto_train=False, retrain_every_new_rows=5, retrain_minimum_rows=300, model_dir=module.DATASET.parent))
+    assert service._refresh_and_train()["trained"] is False
+    assert not calls

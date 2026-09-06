@@ -1,0 +1,122 @@
+{
+  "7:ridge_macro:vs_direction_majority": {
+    "mean_mae_difference": -0.00039055770705364006,
+    "ci95": [
+      -0.0013888407158989533,
+      0.0007196883714797857
+    ],
+    "interpretation": "negative favors model; paired moving blocks30, exploratory, not corrected for multiple comparisons"
+  },
+  "7:mlp_raw:vs_direction_majority": {
+    "mean_mae_difference": -9.88227789930253e-05,
+    "ci95": [
+      -0.0013817662634696697,
+      0.0014046204902405264
+    ],
+    "interpretation": "negative favors model; paired moving blocks30, exploratory, not corrected for multiple comparisons"
+  },
+  "7:mlp_nested:vs_direction_majority": {
+    "mean_mae_difference": 0.0005548490248301342,
+    "ci95": [
+      -0.0015089513573605354,
+      0.002828388866623991
+    ],
+    "interpretation": "negative favors model; paired moving blocks30, exploratory, not corrected for multiple comparisons"
+  },
+  "7:direction_logistic:vs_direction_majority": {
+    "mean_mae_difference": -0.00021557160924226285,
+    "ci95": [
+      -0.0018852374563820963,
+      0.001551998656733221
+    ],
+    "interpretation": "negative favors model; paired moving blocks30, exploratory, not corrected for multiple comparisons"
+  },
+  "7:heterogeneous_calibrated:vs_direction_majority": {
+    "mean_mae_difference": 8.351498861577142e-06,
+    "ci95": [
+      -0.0010661645577775137,
+      0.0016335243489786738
+    ],
+    "interpretation": "negative favors model; paired moving blocks30, exploratory, not corrected for multiple comparisons"
+  },
+  "14:ridge_macro:vs_direction_majority": {
+    "mean_mae_difference": 0.00014234813513293345,
+    "ci95": [
+      -0.0013675580592215797,
+      0.0018113936964343125
+    ],
+    "interpretation": "negative favors model; paired moving blocks30, exploratory, not corrected for multiple comparisons"
+  },
+  "14:mlp_raw:vs_direction_majority": {
+    "mean_mae_difference": 0.0011225784544574174,
+    "ci95": [
+      -0.0016068831536558,
+      0.00425595766640435
+    ],
+    "interpretation": "negative favors model; paired moving blocks30, exploratory, not corrected for multiple comparisons"
+  },
+  "14:mlp_nested:vs_direction_majority": {
+    "mean_mae_difference": 0.0007528295386979209,
+    "ci95": [
+      -0.0026845880918471223,
+      0.003909038035269604
+    ],
+    "interpretation": "negative favors model; paired moving blocks30, exploratory, not corrected for multiple comparisons"
+  },
+  "14:direction_logistic:vs_direction_majority": {
+    "mean_mae_difference": 0.0007001531985703536,
+    "ci95": [
+      -0.0030689789989806486,
+      0.004288237594658708
+    ],
+    "interpretation": "negative favors model; paired moving blocks30, exploratory, not corrected for multiple comparisons"
+  },
+  "14:heterogeneous_calibrated:vs_direction_majority": {
+    "mean_mae_difference": 0.00143856040293653,
+    "ci95": [
+      -0.000861129841151394,
+      0.004204682509300745
+    ],
+    "interpretation": "negative favors model; paired moving blocks30, exploratory, not corrected for multiple comparisons"
+  },
+  "30:ridge_macro:vs_direction_majority": {
+    "mean_mae_difference": 0.003015609026585824,
+    "ci95": [
+      0.00030079959586279414,
+      0.007336652445964133
+    ],
+    "interpretation": "negative favors model; paired moving blocks30, exploratory, not corrected for multiple comparisons"
+  },
+  "30:mlp_raw:vs_direction_majority": {
+    "mean_mae_difference": 0.0068757004321911485,
+    "ci95": [
+      -0.005452751239609166,
+      0.018950606563102608
+    ],
+    "interpretation": "negative favors model; paired moving blocks30, exploratory, not corrected for multiple comparisons"
+  },
+  "30:mlp_nested:vs_direction_majority": {
+    "mean_mae_difference": 0.0033630414846879233,
+    "ci95": [
+      -0.0060042578892887544,
+      0.009918137752918936
+    ],
+    "interpretation": "negative favors model; paired moving blocks30, exploratory, not corrected for multiple comparisons"
+  },
+  "30:direction_logistic:vs_direction_majority": {
+    "mean_mae_difference": 0.0009165378371928124,
+    "ci95": [
+      -0.0028699835564800612,
+      0.003666034330135326
+    ],
+    "interpretation": "negative favors model; paired moving blocks30, exploratory, not corrected for multiple comparisons"
+  },
+  "30:heterogeneous_calibrated:vs_direction_majority": {
+    "mean_mae_difference": 0.003816962412825505,
+    "ci95": [
+      -0.0015968973985156778,
+      0.009699191198000149
+    ],
+    "interpretation": "negative favors model; paired moving blocks30, exploratory, not corrected for multiple comparisons"
+  }
+}

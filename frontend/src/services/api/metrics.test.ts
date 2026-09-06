@@ -13,6 +13,28 @@ const payload = {
 };
 
 describe('parseScorecard', () => {
+  it('yeni MAE skill ile eski MSE skill tanımlarını karıştırmaz', () => {
+    const raw = { ...payload, metrics: { '7': { ...payload.metrics['7'], mae_skill_vs_zero: -.01 } } };
+    expect(parseScorecard(raw)!.rows[0].skill).toBe(-.01);
+    expect(parseScorecard(raw)!.rows[0].skillBasis).toBe('MAE');
+    expect(parseScorecard(payload)!.rows[0].skillBasis).toBe('MSE');
+  });
+  it('koşullu yön örneklemini ve yeni değerlendirme sürümünü korur', () => {
+    const raw = { ...payload, metrics: { '7': { ...payload.metrics['7'], active_fraction: .4,
+      directional_rows: 200, evaluation_version: 'nested-purged-v1' } } };
+    const row = parseScorecard(raw)!.rows[0];
+    expect(row.activeFraction).toBe(.4);
+    expect(row.directionalRows).toBe(200);
+    expect(row.evaluationVersion).toBe('nested-purged-v1');
+    expect(parseScorecard(payload)!.rows[0].evaluationVersion).toBeNull();
+    expect(parseScorecard(payload)!.rows[0].activeFraction).toBeNull();
+  });
+  it('ağırlığı sıfır olan görüş-yok ufkunu karneden gizlemez', () => {
+    const raw = { ...payload, metrics: { '7': { ...payload.metrics['7'], direction: null, weight: 0 } } };
+    const row = parseScorecard(raw)!.rows[0];
+    expect(row.direction).toBeNull();
+    expect(row.confident).toBe(false);
+  });
   it('ufuk başına satır üretir ve ağırlığa göre güven işaretler', () => {
     const card = parseScorecard(payload)!;
     expect(card.version).toBe('xauusd-mlp-20260821T164355Z');

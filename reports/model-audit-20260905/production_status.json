@@ -1,0 +1,117 @@
+{
+  "captured_at": "2026-09-05T17:02:02.829477+00:00",
+  "base": "https://onsaltinanaliz.com",
+  "read_only": true,
+  "responses": {
+    "/model-service/health": {
+      "status": 200,
+      "body": {
+        "status": "ok",
+        "environment": "production",
+        "model_version": "xauusd-mlp-20260903T201722Z"
+      }
+    },
+    "/model-service/v1/learning/metrics": {
+      "status": 200,
+      "body": {
+        "environment": "production",
+        "active_model": "xauusd-mlp-20260903T201722Z",
+        "source": "XAU/USD",
+        "horizons": [
+          7,
+          14,
+          30
+        ],
+        "metrics": {
+          "7": {
+            "mae": 0.024325917344828946,
+            "rmse": 0.03156893183157785,
+            "direction": null,
+            "zero_baseline_rmse": 0.03156893183157785,
+            "raw_skill_vs_zero": 0.02097149016387545,
+            "skill_vs_zero": 0.0,
+            "weight": 0.0,
+            "active": false,
+            "within_2pp": 0.5065176908752328,
+            "error80": 0.03612503250600092,
+            "oof_rows": 537,
+            "latest_fit_return": 0.0
+          },
+          "14": {
+            "mae": 0.0316053821388536,
+            "rmse": 0.04161525773106826,
+            "direction": 0.6205607476635514,
+            "zero_baseline_rmse": 0.042068740618882244,
+            "raw_skill_vs_zero": 0.061045412888171335,
+            "skill_vs_zero": 0.021442938683819968,
+            "weight": 0.13847190533765252,
+            "active": true,
+            "within_2pp": 0.4074766355140187,
+            "error80": 0.04932145896866731,
+            "oof_rows": 535,
+            "latest_fit_return": 0.0006304287662551026
+          },
+          "30": {
+            "mae": 0.04529976379026914,
+            "rmse": 0.05810248225661908,
+            "direction": 0.7013232514177694,
+            "zero_baseline_rmse": 0.063783192970264,
+            "raw_skill_vs_zero": 0.0791085442567262,
+            "skill_vs_zero": 0.1701934449278627,
+            "weight": 0.3650584743882146,
+            "active": true,
+            "within_2pp": 0.30623818525519847,
+            "error80": 0.07345867580190601,
+            "oof_rows": 529,
+            "latest_fit_return": 0.01629410169584296
+          }
+        }
+      }
+    },
+    "/model-service/v1/learning/job": {
+      "status": 200,
+      "body": {
+        "enabled": true,
+        "source": "XAU/USD",
+        "interval_seconds": 3600,
+        "last_run": "2026-09-05T16:01:56.109130+00:00",
+        "last_error": null,
+        "last_result": {
+          "training_rows": 1197,
+          "trained": false
+        },
+        "active_model": "xauusd-mlp-20260903T201722Z",
+        "rejected_artifacts": []
+      }
+    },
+    "/model-service/v1/features/latest": {
+      "status": 200,
+      "body": {
+        "date": "2026-09-04",
+        "price": 4429.8,
+        "features": {
+          "gold_return_1d": -0.013780973796112761,
+          "gold_return_5d": -0.01078582434514641,
+          "gold_return_20d": 0.02052664316815278,
+          "gold_ma_ratio_50d": 0.04501456009270144,
+          "gold_rsi14_centered": 0.01415094339622641,
+          "gold_atr14_pct": 0.01952684094090028,
+          "gold_volatility_20d": 0.2294319624036146,
+          "gold_drawdown_60d": -0.04546629891398035,
+          "real_yield_change_5d": 0.0,
+          "real_yield_change_20d": 0.009999999999999787,
+          "dollar_return_5d": 0.0,
+          "dollar_return_20d": -0.0013027447629492261,
+          "breakeven_change_20d": 0.08000000000000007,
+          "yield_curve_10y_2y": 0.4299999999999997,
+          "vix_level": 14.32,
+          "vix_change_5d": -0.10999999999999943,
+          "core_cpi_yoy": 1.9281637198941937,
+          "oil_return_5d": 0.08170746127468376,
+          "oil_return_20d": 0.08917728300988226
+        },
+        "frozen": []
+      }
+    }
+  }
+}

@@ -6,13 +6,15 @@ from .trainer import train_model
 
 class LearningService:
     def metrics(self) -> dict:
-        return {"environment": settings.environment, "active_model": model_service.version,
+        artifact = model_service.active or {}
+        return {"environment": settings.environment, "active_model": artifact.get("version", model_service.version),
                 "source": "XAU/USD", "horizons": model_service.horizons,
-                "metrics": model_service.active.get("metrics", {}) if model_service.active else {}}
+                "evaluation_version": artifact.get("evaluation_version"),
+                "metrics": artifact.get("metrics", {})}
 
     def train(self, payload: TrainIn) -> dict:
-        result = train_model(epochs=payload.epochs, minimum_rows=payload.minimum_rows)
-        model_service.reload()
+        # Candidate evaluation must not silently replace the production model.
+        result = train_model(epochs=payload.epochs, minimum_rows=payload.minimum_rows, promote=False)
         return result
 
 
