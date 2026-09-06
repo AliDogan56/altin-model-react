@@ -85,7 +85,7 @@ h1,h2,h3,p { overflow-wrap:break-word; }
 .forecast-summary-values strong.forecast-band { font-size:15px; }
 .forecast-summary-values small { font-size:10px; color:var(--muted); }
 .model-update { margin:12px 0 0; font-size:11px; color:var(--gold); }
-.model-surface > .chart-block { border:0; border-radius:0 0 var(--radius-lg) var(--radius-lg); background:none; box-shadow:none; min-width:0; }
+.model-surface > .chart-block,.overview-chart > .chart-block { border:0; border-radius:var(--radius-lg); background:none; box-shadow:none; min-width:0; }
 .overview-rail { display:grid; gap:16px; min-width:0; }
 .rail-section { padding:16px; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-lg); }
 .rail-heading { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:12px; }
@@ -191,7 +191,8 @@ h1,h2,h3,p { overflow-wrap:break-word; }
   .forecast-summary-values > div + div { border-left:1px solid var(--line); padding-left:16px; }
   .forecast-summary { padding:20px; }
   .overview-drivers { grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px; }
-  .overview-rail { grid-template-columns:1.2fr 1fr; align-items:start; }
+  .overview-workspace { grid-template-columns:1.2fr 1fr; grid-template-areas:"forecast forecast" "chart chart" "levels momentum"; }
+  .overview-forecast { grid-area:forecast; } .overview-chart { grid-area:chart; } .overview-rail { grid-area:levels; } .overview-momentum { grid-area:momentum; }
   .loan-inputs { grid-template-columns:repeat(2,minmax(0,1fr)); }
   .loan-results,.loan-scenarios { grid-template-columns:repeat(3,minmax(0,1fr)); }
   .pivot-tools { grid-template-columns:1fr 1fr; }
@@ -202,8 +203,19 @@ h1,h2,h3,p { overflow-wrap:break-word; }
   .market-ticker { align-self:center; }
   .market-ticker > div:first-child { border-left:1px solid var(--line); padding-left:16px; }
   .market-data-line { padding-top:4px; }
-  .overview-workspace { grid-template-columns:minmax(0,1fr) 288px; gap:20px; }
-  .overview-rail { grid-template-columns:minmax(0,1fr); gap:16px; }
+  /* Tahmin kartı ile "Fiyatın konumu" aynı satırda başlar, grafik tahminin altında ve
+     seviyeler ikisinin yanında iki satır boyunca; momentum en altta tam genişlik, yatay. */
+  .overview-workspace { grid-template-columns:minmax(0,1fr) 288px; gap:20px; grid-template-areas:"forecast levels" "chart levels" "momentum momentum"; align-items:start; }
+  /* Ray iki satırı kaplar ve kartı alt kenara kadar uzatır: alt çizgisi grafik kartıyla aynı hizada. */
+  .overview-rail { grid-template-columns:minmax(0,1fr); grid-template-rows:1fr; gap:16px; align-self:stretch; }
+  .overview-momentum .momentum-summary { display:grid; grid-template-columns:auto minmax(220px,1.2fr) auto minmax(200px,1fr); grid-template-areas:"head gauge dir daily" "head note stamp daily"; column-gap:24px; row-gap:4px; align-items:center; }
+  .overview-momentum .momentum-summary-heading { grid-area:head; flex-direction:column; align-items:flex-start; gap:2px; margin:0; }
+  .overview-momentum .momentum-strength { grid-area:gauge; margin:0; }
+  .overview-momentum .momentum-summary-direction { grid-area:dir; flex-direction:column; align-items:flex-start; gap:2px; margin:0; }
+  .overview-momentum .momentum-summary-note { grid-area:note; margin:0; }
+  .overview-momentum .momentum-source { grid-area:stamp; }
+  .overview-momentum .momentum-daily { grid-area:daily; margin:0; padding:0 0 0 20px; border-top:0; border-left:1px solid var(--line); }
+  .overview-momentum .analysis-empty { grid-column:2 / -1; }
   .forecast-summary-values { grid-template-columns:1.2fr .85fr 1.15fr 1fr; gap:12px; }
   .forecast-summary-values > div + div { padding-left:12px; }
   .forecast-summary-values strong { font-size:18px; }

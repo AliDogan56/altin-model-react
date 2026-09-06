@@ -94,10 +94,11 @@ function DashboardPage({ focus }: { focus?: string }) {
     <AnalysisPresentation.Provider value="section">
       {panel('overview', <>
         <div className="overview-workspace">
-          <div className="model-surface">
-            <Boundary><ForecastCards/></Boundary>
-            <Boundary><ChartSection/></Boundary>
-          </div>
+          {/* Dört ızgara çocuğu; DOM sırası mobil sırasıdır (tahmin → grafik → seviyeler → momentum).
+              Masaüstünde `grid-template-areas` tahmin + seviyeleri aynı satıra, grafiği tahminin
+              altına, momentumu en alta tam genişlikte yatay koyar (bkz. _terminal.scss 1024). */}
+          <div className="model-surface overview-forecast"><Boundary><ForecastCards/></Boundary></div>
+          <div className="model-surface overview-chart"><Boundary><ChartSection/></Boundary></div>
           <aside className="overview-rail" aria-label="Seviyeler ve momentum">
             <section className="rail-section" aria-labelledby="rail-levels-title">
               <div className="rail-heading"><div><span className="section-kicker">Fiyatın konumu</span><h2 id="rail-levels-title">Destek & direnç</h2></div><button className="icon-action" type="button" onClick={() => select('technical')} aria-label="Tüm teknik analizleri aç">↗</button></div>
@@ -111,8 +112,8 @@ function DashboardPage({ focus }: { focus?: string }) {
               <Boundary><PriceLadder ladder={pivotLadder}/></Boundary>
               <p className="rail-note">{outside ? <span className="warn">{outside}. </span> : position ? <span className={position.tone}>Fiyat {position.label.toLocaleLowerCase('tr-TR')}. </span> : null}{PIVOT_PERIOD[pivotPeriod]} · {PIVOT_METHOD[pivotMethod]}</p>
             </section>
-            <Boundary><MomentumSummary onOpen={() => select('technical')}/></Boundary>
           </aside>
+          <div className="overview-momentum"><Boundary><MomentumSummary onOpen={() => select('technical')}/></Boundary></div>
         </div>
         <Boundary><OverviewInsights onModel={() => select('model')}/></Boundary>
       </>)}
