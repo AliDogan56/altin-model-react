@@ -1,9 +1,16 @@
 import DataTimestamp from '../../components/ui/DataTimestamp';
-import { money2, pct, tryRate, tryMoney, shortDate } from '../../lib/format';
+import { money2, pct, tryRate, shortDate } from '../../lib/format';
 import { useDashboard } from './DashboardContext';
+import { GROUP_LABEL, TICKER_OPTIONS, optionOf, tickerValue, type TickerGroup } from './tickerOptions';
+import { useTickerSlots } from './useTickerSlots';
+
+const GROUPS: TickerGroup[] = ['market', 'macro'];
 
 function PanelHeader({ demoted = false }: { demoted?: boolean }) {
   const { harem, usdTry, ziynet, spot, history, live, featuresDate, status, refresh, refreshForecast } = useDashboard();
+  /* USD/TRY sabit; kalan üç yuva canlı piyasa ürünlerinden ya da makro girdilerden seçilir
+     (`tickerOptions`), seçim tarayıcıda saklanır. */
+  const { slots, setSlot } = useTickerSlots();
   const price = harem.satis ?? (spot.live ? spot.price : null);
   // Daily close-to-close movement; kept separate from the live quote.
   const latest = history.at(-1), previous = history.at(-2);
@@ -22,9 +29,19 @@ function PanelHeader({ demoted = false }: { demoted?: boolean }) {
     </div>
     <dl className="market-ticker" aria-label="Piyasa ve makro özeti">
       <div><dt>USD / TRY</dt><dd>{usdTry.satis ? `₺${tryRate(usdTry.satis)}` : '—'}</dd><small>Canlı döviz kuru</small></div>
-      <div><dt>Gram altın</dt><dd>{ziynet.ALTIN ? tryMoney(ziynet.ALTIN.satis) : '—'}</dd><small>995 · satış fiyatı</small></div>
-      <div><dt>Dolar endeksi</dt><dd>{live.dollar_return_5d != null ? pct(live.dollar_return_5d) : '—'}</dd><small>Geniş dolar · 5 gün</small></div>
-      <div><dt>Reel faiz</dt><dd>{live.real_yield_change_5d != null ? `${live.real_yield_change_5d >= 0 ? '+' : ''}${live.real_yield_change_5d.toFixed(2)} puan` : '—'}</dd><small>10 yıllık · 5 gün</small></div>
+      {slots.map((id, index) => {
+        const option = optionOf(id);
+        return <div key={index}>
+          <dt><label className="ticker-pick">
+            <select aria-label={`${index + 2}. gösterge`} value={id} onChange={event => setSlot(index, event.target.value)}>
+              {GROUPS.map(group => <optgroup key={group} label={GROUP_LABEL[group]}>
+                {TICKER_OPTIONS.filter(o => o.group === group).map(o => <option key={o.id} value={o.id}>{o.label}</option>)}
+              </optgroup>)}
+            </select>
+          </label></dt>
+          <dd>{tickerValue(id, { ziynet, live }) ?? '—'}</dd><small>{option?.note}</small>
+        </div>;
+      })}
     </dl>
     <div className="market-data-line">
       <DataTimestamp time={harem.time ?? spot.time} live={harem.live} updating={status.busy}/>

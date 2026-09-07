@@ -59,17 +59,30 @@ h1,h2,h3,p { overflow-wrap:break-word; }
 .market-ticker dt { font-size:11px; color:var(--muted); }
 .market-ticker dd { margin:3px 0 1px; font-size:17px; font-weight:550; color:var(--text-strong); white-space:nowrap; }
 .market-ticker small { display:block; color:var(--muted); font-size:10px; }
+/* Seçilebilir yuva: `dt` içinde metin gibi duran yerel select, sağında küçük ok. Dokunma hedefi 24 px. */
+.ticker-pick { position:relative; display:inline-flex; align-items:center; max-width:100%; min-height:24px; }
+.ticker-pick select { appearance:none; -webkit-appearance:none; margin:0; padding:0 14px 0 0; border:0; border-radius:var(--radius-sm); background:transparent; font:inherit; font-size:12px; line-height:1.3; color:var(--muted); cursor:pointer; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.ticker-pick::after { content:""; position:absolute; right:3px; top:50%; width:5px; height:5px; border-right:1.5px solid currentColor; border-bottom:1.5px solid currentColor; transform:translateY(-70%) rotate(45deg); color:var(--muted); pointer-events:none; }
+.ticker-pick select:hover { color:var(--text-strong); }
+.ticker-pick select:focus-visible { outline:2px solid var(--gold); outline-offset:2px; }
 .market-data-line { grid-column:1/-1; display:flex; align-items:center; flex-wrap:wrap; gap:4px 12px; min-height:44px; }
 .market-data-line .quiet-button { margin-left:auto; }
 .market-macro-date { display:none; font-size:11px; color:var(--muted); }
 /* Mobilde sekmeler alt gezinme çubuğu: sabit, kaydırınca yerinde kalır, güvenli alanı
-   sayar. 640 px'ten itibaren eski hâline (başlığın altında yapışkan) döner. */
-.workspace-tabs { position:fixed; left:0; right:0; bottom:0; z-index:30; display:flex; width:100%; gap:0; margin:0; padding:0 0 env(safe-area-inset-bottom); border-top:1px solid var(--line); background:var(--surface); box-shadow:0 -6px 20px rgb(var(--shadow-rgb) / var(--shadow-a2)); }
-.workspace-tabs button { flex:1; min-width:0; min-height:56px; padding:8px 2px; border:0; border-top:2px solid transparent; background:transparent; color:var(--muted); font-size:12px; line-height:1.25; cursor:pointer; }
-.workspace-tabs button > span { display:none; }
-.workspace-tabs button[aria-selected=true] { color:var(--gold); border-top-color:var(--gold); font-weight:700; }
-.workspace-tabs button:hover { color:var(--text-strong); background:var(--surface-2); }
-.terminal-app { padding-bottom:calc(76px + env(safe-area-inset-bottom)); }
+   sayar; ikon üstte, kısa ad altta, seçili ikonun arkasında altın hap. Altbilgiyle
+   karışmasın diye zemin `--surface`, belirgin üst çizgi ve gölge. 640 px'ten itibaren
+   eski hâline (başlığın altında yapışkan, ikonsuz) döner. */
+.workspace-tabs { position:fixed; left:0; right:0; bottom:0; z-index:30; display:flex; width:100%; gap:0; margin:0; padding:4px 4px calc(4px + env(safe-area-inset-bottom)); border-top:1px solid var(--line-strong); background:var(--surface); box-shadow:0 -8px 24px rgb(var(--shadow-rgb) / var(--shadow-a3)); }
+.workspace-tabs button { flex:1; min-width:0; min-height:56px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; padding:4px 2px 5px; border:0; border-radius:var(--radius-md); background:transparent; color:var(--muted); font-size:12px; font-weight:600; line-height:1.2; letter-spacing:-.01em; cursor:pointer; }
+.workspace-tabs .tab-icon { display:block; width:22px; height:22px; padding:3px 10px; border-radius:999px; box-sizing:content-box; }
+.workspace-tabs .tab-label { display:block; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+/* Aynı özgüllükte iki kural: gizleyen sonra gelmeli, yoksa `.tab-label` bloğu tam adı geri açıyor (ölçüldü: iki etiket alt alta). */
+.workspace-tabs .tab-number, .workspace-tabs .tab-label.tab-label-full { display:none; }
+.workspace-tabs button[aria-selected=true] { color:var(--gold); font-weight:700; }
+.workspace-tabs button[aria-selected=true] .tab-icon { background:var(--gold-bg-strong); }
+.workspace-tabs button:hover { color:var(--text-strong); }
+.workspace-tabs button:focus-visible { outline:2px solid var(--gold); outline-offset:-2px; }
+.terminal-app { padding-bottom:calc(84px + env(safe-area-inset-bottom)); }
 .workspace-panel { min-width:0; outline-offset:4px; }
 .overview-workspace { display:grid; grid-template-columns:minmax(0,1fr); gap:16px; align-items:start; }
 .model-surface { border:1px solid var(--line); border-radius:var(--radius-lg); background:var(--surface); min-width:0; }
@@ -181,12 +194,16 @@ h1,h2,h3,p { overflow-wrap:break-word; }
   .app { padding-inline:24px; }
   .market-ticker { grid-template-columns:repeat(4,minmax(0,1fr)); }
   .market-ticker > div:first-child { border:0; padding-left:0; }
-  .workspace-tabs { position:sticky; top:60px; bottom:auto; left:auto; right:auto; z-index:15; gap:24px; margin:0 0 20px; padding:0; border-bottom:1px solid var(--line); background:var(--bg); box-shadow:none; }
-  .workspace-tabs button { flex:0 1 auto; min-height:52px; padding:9px 4px; white-space:nowrap; border-top:0; border-bottom:2px solid transparent; }
+  .workspace-tabs { position:sticky; top:60px; bottom:auto; left:auto; right:auto; z-index:15; gap:24px; margin:0 0 20px; padding:0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); background:var(--bg); box-shadow:none; }
+  .workspace-tabs button { flex:0 1 auto; display:inline-block; min-height:52px; padding:9px 4px; border-radius:0; white-space:nowrap; border-top:0; border-bottom:2px solid transparent; font-weight:400; letter-spacing:0; }
   .workspace-tabs button[aria-selected=true] { border-bottom-color:var(--gold); }
+  .workspace-tabs button:hover { background:var(--surface-2); }
+  /* Özgüllük mobil kuralla aynı (0,3,0) olmalı; yoksa tam ad masaüstünde gizli kalıyor (ölçüldü: sekmede yalnız "01"). */
+  .workspace-tabs .tab-icon, .workspace-tabs .tab-label.tab-label-short { display:none; }
+  .workspace-tabs .tab-label.tab-label-full { display:inline; }
   .terminal-app { padding-bottom:max(16px,env(safe-area-inset-bottom)); }
   .terminal-app [id^=feature-] { scroll-margin-top:132px; }
-  .workspace-tabs button > span { display:inline; margin-right:8px; font:10px var(--font-mono); opacity:.65; }
+  .workspace-tabs .tab-number { display:inline; margin-right:8px; font:10px var(--font-mono); opacity:.65; }
   .forecast-summary-values { grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; }
   .forecast-summary-values > div + div { border-left:1px solid var(--line); padding-left:16px; }
   .forecast-summary { padding:20px; }

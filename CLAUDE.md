@@ -757,10 +757,30 @@ bayrak yok, unutulamaz.
   (protokol düşüren 301 sorunu bu yüzden çözüldü)
 - `/panel/<slug>` ile gelindiğinde ilgili bölüm açılır, yerleşim durulunca tek yumuşak
   kaydırma yapılır ve kısa süre vurgulanır (`useFeatureFocus`)
+- **Başlık kartının üç yuvası seçilebilir** (2026-09-07): USD/TRY sabit; kalan üç yuva
+  `features/dashboard/tickerOptions.ts` listesinden seçilir — "Canlı piyasa" grubu Harem ziynet
+  ürünleri (`services/realtime/harem.ZIYNET`, satış fiyatı + milyem notu), "Makro" grubu
+  `/v1/features/latest` girdilerinden altı tanesi (dolar endeksi, reel faiz, VIX, petrol, getiri
+  eğrisi, çekirdek TÜFE). Yuva `dt` içinde yerel `<select>` (24 px dokunma hedefi, 12 px punto,
+  sağda CSS ok); aynı gösterge iki yuvada olamaz, seçilince **yer değiştirir** (`applySlot`).
+  Seçim `localStorage['oaa-ticker-slots']`'ta, bozuk/eksik kayıt varsayılanla tamamlanır
+  (`normalizeSlots`); varsayılan kartın eski sabit hâli. Saf modül test edildi (`tickerOptions.test.ts`,
+  4 test) — bunun için `vite.config.ts` vitest `include` listesine `src/features/**` eklendi.
+  Ölçüldü: 1280 ve 375 px'te taşma 0, mobilde 2×2 ızgara, select 117 px ve kırpılmıyor; seçim
+  yenilemede korunuyor
 - **Mobilde sekmeler alt gezinme çubuğu** (2026-09-07; teknik analiz taşıması geri alındıktan
   sonra yeniden uygulandı): 640 px altında `.workspace-tabs` `position:fixed; bottom:0` (güvenli alan
-  payı, seçili sekme üst kenar çizgisiyle), `.terminal-app` alt dolgusu 76 px ki altbilgi çubuğun
-  altında kalmasın; 640 px'ten itibaren eski hâli (başlık altında yapışkan, `top:60px`).
+  payı), her sekmede üstte ikon (`components/ui/TabIcon.tsx`: pano karoları, mumlar, ağ düğümleri,
+  sikkeler, dallanan yol; satır içi SVG, `currentColor`) ve altta **kısa ad** (`VIEWS` dördüncü
+  sütun: Özet / Teknik / Model / Piyasalar / Senaryolar — 5 sekmeye 73 px düşüyor, "Genel bakış"
+  sığmıyordu); erişilebilir ad `aria-label` ile tam ad. Seçili sekme altın renk + ikon arkasında
+  `--gold-bg-strong` hap; zemin `--surface`, `--line-strong` üst çizgi ve gölge, altbilgiyle
+  karışmasın diye. `.terminal-app` alt dolgusu 84 px. Ölçüldü (375 px): çubuk 65 px, sekme 56 px,
+  hiçbir kısa ad kırpılmıyor, iki temada da okunur. **Tuzak:** `.tab-label` bloğu ile onu gizleyen
+  kural aynı özgüllükteydi ve iki etiket alt alta basıldı; gizleme `.tab-label.tab-label-full`
+  (0,3,0) ile, masaüstündeki geri açma da aynı özgüllükle yazılır, yoksa masaüstünde yalnız
+  numara kalıyor. 640 px'ten itibaren eski hâli (başlık altında yapışkan, `top:60px`, ikonsuz,
+  numara + tam ad).
   `useFeatureFocus` kaydırma payını çubuğun **ölçülen** konumundan seçer (altta 72, üstte 132 px).
   Ölçüldü (375 px): çubuk 57 px, sayfa sonunda da 755–812'de sabit, altbilgi 736'da bitiyor yani
   görünür, `/panel/altin-pivot-seviyeleri` bölümü 72 px'e oturuyor; 1280 px'te `sticky`, `top:60px`,
@@ -862,7 +882,7 @@ bayrak yok, unutulamaz.
 ## Test
 
 ```
-frontend: 18 dosya, 145 test (vitest: domain + lib + app/routes + services)
+frontend: 24 dosya, 190 test (vitest: domain + lib + app/routes + services + content + features)
 backend : model-service 46 test, market-service 48 test (pytest)
 ```
 

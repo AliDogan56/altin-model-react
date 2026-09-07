@@ -6,6 +6,7 @@ import SiteNav from '../components/SiteNav';
 import { AnalysisPresentation } from '../components/Collapsible';
 import SegmentedControl from '../components/ui/SegmentedControl';
 import DataTimestamp from '../components/ui/DataTimestamp';
+import TabIcon from '../components/ui/TabIcon';
 import { featureBySlug } from '../content/panel';
 import { openLegal, PAGE_META } from '../content/site';
 import { useDocumentMeta } from '../app/useDocumentMeta';
@@ -30,9 +31,11 @@ import ZiynetSection from '../features/ziynet/ZiynetSection';
 import ZoneSection from '../features/zones/ZoneSection';
 import { money } from '../lib/format';
 
+/* [anahtar, tam ad, sıra, mobil kısa ad]. Kısa ad alt çubukta 5 sekmeye 75 px düşerken
+   tek satırda sığsın diye; erişilebilir ad her zaman tam ad (`aria-label`). */
 const VIEWS = [
-  ['overview', 'Genel bakış', '01'], ['technical', 'Teknik analiz', '02'],
-  ['model', 'Model', '03'], ['markets', 'Piyasalar', '04'], ['scenarios', 'Senaryolar', '05'],
+  ['overview', 'Genel bakış', '01', 'Özet'], ['technical', 'Teknik analiz', '02', 'Teknik'],
+  ['model', 'Model', '03', 'Model'], ['markets', 'Piyasalar', '04', 'Piyasalar'], ['scenarios', 'Senaryolar', '05', 'Senaryolar'],
 ] as const;
 type View = typeof VIEWS[number][0];
 const ANCHOR_VIEW: Record<string, View> = {
@@ -74,15 +77,16 @@ function DashboardPage({ focus }: { focus?: string }) {
     <SiteNav/>
     <PanelHeader demoted={!!feature?.sections?.length}/>
     <div id="icerik" className="workspace-tabs" role="tablist" aria-label="Analiz alanları" tabIndex={-1} ref={tabs}>
-      {VIEWS.map(([key, label, number], index) => <button type="button" key={key} role="tab" id={`tab-${key}`}
-        aria-controls={`workspace-${key}`} aria-selected={active === key} tabIndex={active === key ? 0 : -1}
+      {VIEWS.map(([key, label, number, short], index) => <button type="button" key={key} role="tab" id={`tab-${key}`}
+        aria-controls={`workspace-${key}`} aria-selected={active === key} tabIndex={active === key ? 0 : -1} aria-label={label}
         onClick={() => select(key)} onKeyDown={event => {
           if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
           event.preventDefault();
           const next = event.key === 'Home' ? 0 : event.key === 'End' ? VIEWS.length - 1
             : (index + (event.key === 'ArrowRight' ? 1 : -1) + VIEWS.length) % VIEWS.length;
           select(VIEWS[next][0]); tabs.current?.querySelectorAll('button')[next]?.focus();
-        }}><span aria-hidden="true">{number}</span>{label}</button>)}
+        }}><TabIcon name={key}/><span className="tab-number" aria-hidden="true">{number}</span>
+        <span className="tab-label tab-label-full" aria-hidden="true">{label}</span><span className="tab-label tab-label-short" aria-hidden="true">{short}</span></button>)}
     </div>
     <AnalysisPresentation.Provider value="section">
       {panel('overview', <>
