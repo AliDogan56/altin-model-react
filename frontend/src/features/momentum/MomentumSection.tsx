@@ -1,6 +1,6 @@
 import Collapsible from '../../components/Collapsible';
 import DataTimestamp from '../../components/ui/DataTimestamp';
-import { BREAK, DIRECTION, TREND } from '../../content/momentum';
+import { BREAK, DIRECTION, TREND, feedNote } from '../../content/momentum';
 import { PANEL_FEATURES, featureBy } from '../../content/panel';
 import { breakPotential, momentumTarget, touchingLevel,
   type PanelLevel } from '../../domain/momentum/breakPotential';
@@ -38,6 +38,7 @@ export function MomentumSummary({ onOpen }: { onOpen?: () => void }) {
       </div>
       <p className="momentum-summary-note">5 dakikalık hareket · seans oynaklığına göre</p>
       <DataTimestamp time={momentum.asOf} staleAfterMs={15 * 60 * 1000}/>
+      {feedNote(momentum.feed) && <small className="momentum-feed-note">{feedNote(momentum.feed)}</small>}
     </>}
   </section>;
 }
@@ -119,7 +120,8 @@ function MomentumSection({ focus }: { focus?: string }) {
           yoktur: aynı 10 dolarlık hareket sakin bir günde güçlü, çalkantılı bir günde
           zayıf okunur.
         </p>
-        <div className="momentum-source"><DataTimestamp time={momentum.asOf} staleAfterMs={15 * 60 * 1000}/></div>
+        <div className="momentum-source"><DataTimestamp time={momentum.asOf} staleAfterMs={15 * 60 * 1000}/>
+          {feedNote(momentum.feed) && <span className="momentum-feed-note">{feedNote(momentum.feed)}</span>}</div>
 
         <div className="momentum-overview">
           <MomentumStrength momentum={momentum}/>

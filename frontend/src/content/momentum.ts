@@ -11,6 +11,16 @@ export const DIRECTION: Record<Direction, { label: string; tone: string; note: s
     note: 'hareket, seansın kendi dalgalanmasından ayırt edilemiyor' },
 };
 
+/** Vadeli akış susup spot izleyen seriye düşülünce yazılan not; `{age}` saat cinsinden sessizlik. */
+export const FEED_FALLBACK_NOTE = 'Vadeli fiyat akışı {age} saattir mum vermiyor; bu okuma spot izleyen bir seriden hesaplandı.';
+export const FEED_STALE_NOTE = 'Vadeli fiyat akışı {age} saattir mum vermiyor ve yedek seri de alınamadı; okuma son mumda kaldı.';
+
+export const feedNote = (feed: { fallback: boolean; primaryAgeMinutes: number | null; stale: boolean } | null): string | null => {
+  if (!feed || (!feed.fallback && !feed.stale)) return null;
+  const age = feed.primaryAgeMinutes == null ? '?' : (feed.primaryAgeMinutes / 60).toFixed(feed.primaryAgeMinutes >= 600 ? 0 : 1).replace('.', ',');
+  return (feed.fallback ? FEED_FALLBACK_NOTE : FEED_STALE_NOTE).replace('{age}', age);
+};
+
 export const TREND: Record<MomentumTrend, string> = {
   STRENGTHENING: 'güçleniyor',
   WEAKENING: 'zayıflıyor',

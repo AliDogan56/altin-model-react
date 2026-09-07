@@ -25,6 +25,33 @@ XAU_FALLBACK_URL = ("https://query1.finance.yahoo.com/v8/finance/chart/GC=F"
 # referansını da kapsar.
 XAU_INTRADAY_URL = ("https://query1.finance.yahoo.com/v8/finance/chart/GC=F"
                     "?range=5d&interval=5m")
+INTRADAY_SOURCE = "yahoo:GC=F"
+# Gün içi yedek: vadeli akış ABD tatillerinde ve hafta sonu mum yayınlamıyor
+# (ölçüldü 2026-09-07: son mum cuma 20:55 UTC, 58 saat boyunca yeni mum yok,
+# oysa piyasa pazar gecesi açılmıştı). Spot izleyen seri 7/24 işlem görür ve
+# spot seviyesindedir; momentum oransal hesaplandığı için seviye farkı sonucu
+# değiştirmez. Kaynak harmanlanmaz: yedeğe düşülünce pencerenin tamamı oradan
+# gelir ve yanıt `fallback`/`fallback_reason` ile bunu söyler.
+XAU_INTRADAY_FALLBACK_URL = ("https://query1.finance.yahoo.com/v8/finance/chart/PAXG-USD"
+                             "?range=5d&interval=5m")
+INTRADAY_FALLBACK_SOURCE = "yahoo:PAXG-USD"
+# Birincil akışın son mumu bundan eskiyse akış "susmuş" sayılır. 5 dakikalık
+# mumda 60 dakika = 12 kayıp mum; normal seansta böyle bir boşluk olmaz.
+INTRADAY_STALE_AFTER = timedelta(minutes=60)
+
+
+def _last_bar_time(bars: list[dict]) -> datetime:
+    return datetime.fromisoformat(bars[-1]["t"])
+
+
+def _intraday_payload(bars: list[dict], source: str, *, now: datetime, fallback: bool,
+                      reason: str | None, primary_last: datetime | None) -> dict:
+    age = None if primary_last is None else int((now - primary_last).total_seconds() // 60)
+    return {"symbol": "XAUUSD", "interval": "5m", "source": source, "bars": bars, "count": len(bars),
+            "fallback": fallback, "fallback_reason": reason,
+            "primary_as_of": primary_last.isoformat() if primary_last is not None else None,
+            "primary_age_minutes": age,
+            "stale": (now - _last_bar_time(bars)) > INTRADAY_STALE_AFTER}
 
 
 def yahoo_to_bars(payload: dict) -> list[dict]:
@@ -122,15 +149,42 @@ class MarketDataService:
             log.warning("Birincil altın kaynağı erişilemedi (%s); yedeğe düşülüyor", error)
             return yahoo_to_points(await self._get("xau-fallback", XAU_FALLBACK_URL, 300))
 
-    async def xau_intraday(self) -> dict:
+    async def xau_intraday(self, *, now: datetime | None = None) -> dict:
         """5 dakikalık gün içi mumlar; momentum hesabının veri kaynağı.
 
         Önbellek 60 sn: mum aralığı 5 dakika olduğu için daha sık çekmek yeni
         bilgi getirmez, kaynağı gereksiz yorar.
+
+        Birincil akış (vadeli) erişilemez ya da son mumu `INTRADAY_STALE_AFTER`'dan
+        eskiyse spot izleyen yedek seriye bakılır ve **yalnız daha taze mum
+        taşıyorsa** o kullanılır. Yedek de yoksa birincil olduğu gibi döner
+        (`stale: true`); ikisi de yoksa birincilin hatası yükselir.
         """
-        bars = yahoo_to_bars(await self._get("xau-intraday", XAU_INTRADAY_URL, 60))
-        return {"symbol": "XAUUSD", "interval": "5m", "source": "yahoo:GC=F",
-                "bars": bars, "count": len(bars)}
+        now = now or datetime.now(timezone.utc)
+        primary_error: Exception | None = None
+        bars: list[dict] | None = None
+        try:
+            bars = yahoo_to_bars(await self._get("xau-intraday", XAU_INTRADAY_URL, 60))
+        except (httpx.HTTPError, TimeoutError, ValueError) as error:
+            primary_error = error
+        primary_last = _last_bar_time(bars) if bars else None
+        if bars is not None and now - primary_last <= INTRADAY_STALE_AFTER:  # type: ignore[operator]
+            return _intraday_payload(bars, INTRADAY_SOURCE, now=now, fallback=False, reason=None, primary_last=primary_last)
+
+        reason = "primary_unavailable" if bars is None else "primary_stale"
+        try:
+            alt = yahoo_to_bars(await self._get("xau-intraday-fallback", XAU_INTRADAY_FALLBACK_URL, 60))
+        except (httpx.HTTPError, TimeoutError, ValueError) as error:
+            if bars is None:
+                log.warning("Gün içi yedek kaynak da alınamadı (%s)", error)
+                raise primary_error  # type: ignore[misc]
+            log.warning("Vadeli gün içi akış %s dk sessiz, yedek kaynak alınamadı (%s); birincil olduğu gibi dönüyor",
+                        int((now - primary_last).total_seconds() // 60), error)  # type: ignore[operator]
+            return _intraday_payload(bars, INTRADAY_SOURCE, now=now, fallback=False, reason=None, primary_last=primary_last)
+        if bars is not None and _last_bar_time(alt) <= primary_last:  # type: ignore[operator]
+            return _intraday_payload(bars, INTRADAY_SOURCE, now=now, fallback=False, reason=None, primary_last=primary_last)
+        log.warning("Gün içi akış yedeğe düştü (%s); son vadeli mum %s", reason, primary_last)
+        return _intraday_payload(alt, INTRADAY_FALLBACK_SOURCE, now=now, fallback=True, reason=reason, primary_last=primary_last)
 
     async def fred_series(self, series_id: str) -> str:
         safe_id = re.sub(r"[^A-Z0-9_]", "", series_id.upper())

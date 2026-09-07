@@ -369,6 +369,27 @@ merdiveni ise **günlük OHLC** serisinden kurulur.
 - **Kırılım gücü** iki şeyin geometrik ortalaması: seviyeye *ulaşmak* (beklenen
   hareket ÷ uzaklık, **1'de doyurulur**) ve onu kırmaya yetecek momentum
 
+### Vadeli akış susunca spot izleyen yedek (2026-09-07)
+
+Ölçüldü: ABD İşçi Bayramı'nda vadeli 5 dk akışın son mumu cuma 20:55 UTC'de kaldı, 58 saat
+boyunca yeni mum gelmedi (piyasa pazar gecesi açılmış, günlük kayıt 4.436–4.481 aralığında
+işlem gösteriyordu); momentum kartı cuma seansında dondu ve "Yönsüz" dedi. Son dört seansın
+5 dakikalık tekrarı algoritmanın çalıştığını gösterdi: 1.004 adımın %41'inde yön var, yönlü
+koşular 30–120 dk, doğrudan yukarı↔aşağı zıplama 1. Yani sorun kaynaktı.
+
+`market_data_service.xau_intraday` artık: birincil (Yahoo GC=F) erişilemez **ya da son mumu
+60 dakikadan eskiyse** spot izleyen yedek seriye (Yahoo PAXG-USD, 7/24) bakar ve yalnız daha
+taze mum taşıyorsa onu kullanır; kaynak harmanlanmaz, pencerenin tamamı tek kaynaktan gelir.
+Yanıt `source`, `fallback`, `fallback_reason` (`primary_stale` / `primary_unavailable`),
+`primary_as_of`, `primary_age_minutes`, `stale` taşır; `/xau/momentum` bunları `feed` bloğu
+olarak ekler (eski gövde değişmedi). Yedek de yoksa birincil `stale: true` ile döner; ikisi de
+yoksa birincilin hatası yükselir. Hafta sonu da aynı kural işler: cuma 21:00 UTC'den bir saat
+sonra kart spot izleyen serinin hafta sonu hareketini okur. Seviye farkı (~%1) sonucu
+değiştirmez, momentum oransaldır. Arayüz `feed.fallback`/`stale` için not yazar
+(`content/momentum.feedNote`: "Vadeli fiyat akışı 58 saattir mum vermiyor; bu okuma spot
+izleyen bir seriden hesaplandı"). Yön kapısı (1σ) değişmedi; alternatifler ölçüldü
+(0,75σ %52, 0,5σ %63 yönlü adım) ama uygulanmadı. Testler `tests/test_intraday_fallback.py` (9).
+
 ### Ölçümle düzeltilen üç tasarım hatası
 
 1. **Gücü t istatistiğine bağlamak.** Bileşenler birlikte sıfıra çöktüğünde t yüksek

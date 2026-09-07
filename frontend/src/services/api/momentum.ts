@@ -26,6 +26,9 @@ export type Momentum = {
     expectedMove: number;
     hasVolume: boolean;
   };
+  /** Hangi akıştan hesaplandığı: vadeli akış bir saatten uzun susunca sunucu spot
+   *  izleyen seriye düşer ve bunu burada söyler. Eski sunucu alanı vermez → `null`. */
+  feed: { fallback: boolean; primaryAsOf: string | null; primaryAgeMinutes: number | null; stale: boolean } | null;
 };
 
 const num = (value: unknown): number | null =>
@@ -52,6 +55,14 @@ export const parseMomentum = (raw: unknown): Momentum | null => {
   const volatility = num(session.volatility_pct);
   if (volatility === null) return null;
 
+  const feedRaw = data.feed && typeof data.feed === 'object' ? data.feed as Record<string, unknown> : null;
+  const feed = feedRaw ? {
+    fallback: feedRaw.fallback === true,
+    primaryAsOf: typeof feedRaw.primary_as_of === 'string' ? feedRaw.primary_as_of : null,
+    primaryAgeMinutes: num(feedRaw.primary_age_minutes),
+    stale: feedRaw.stale === true,
+  } : null;
+
   const components: Record<string, number> = {};
   for (const [key, value] of Object.entries((data.components ?? {}) as Record<string, unknown>)) {
     const parsed = num(value);
@@ -69,6 +80,7 @@ export const parseMomentum = (raw: unknown): Momentum | null => {
       expectedMove: num(session.expected_move) ?? 0,
       hasVolume: session.has_volume === true,
     },
+    feed,
   };
 };
 

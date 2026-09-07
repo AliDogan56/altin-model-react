@@ -62,4 +62,11 @@ describe('parseMomentum', () => {
     expect(out.session.expectedMove).toBe(0);
     expect(out.session.hasVolume).toBe(false);
   });
+
+  it('feed bloğu okunur; eski sunucuda yok → null', () => {
+    expect(parseMomentum(gecerli)!.feed).toBeNull();
+    const out = parseMomentum({ ...gecerli, feed: { source: 'yahoo:PAXG-USD', fallback: true, reason: 'primary_stale',
+      primary_as_of: '2026-09-04T20:55:00+00:00', primary_age_minutes: 3475, stale: false } })!;
+    expect(out.feed).toEqual({ fallback: true, primaryAsOf: '2026-09-04T20:55:00+00:00', primaryAgeMinutes: 3475, stale: false });
+  });
 });

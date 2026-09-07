@@ -44,10 +44,16 @@ async def xau_momentum() -> dict:
     except Exception:
         daily = []
     try:
-        return momentum(payload["bars"], daily=daily)
+        result = momentum(payload["bars"], daily=daily)
     except ValueError as error:
         # Seans yeni başladıysa yeterli mum olmayabilir; bu bir arıza değil.
         raise HTTPException(503, str(error)) from error
+    # Hangi akıştan hesaplandığı: vadeli akış susunca spot izleyen yedeğe düşülür
+    # (market_data_service.xau_intraday) ve arayüz bunu okuyucuya yazar.
+    result["feed"] = {"source": payload.get("source"), "fallback": bool(payload.get("fallback")),
+                      "reason": payload.get("fallback_reason"), "primary_as_of": payload.get("primary_as_of"),
+                      "primary_age_minutes": payload.get("primary_age_minutes"), "stale": bool(payload.get("stale"))}
+    return result
 
 
 @router.get("/fred", response_class=Response)
