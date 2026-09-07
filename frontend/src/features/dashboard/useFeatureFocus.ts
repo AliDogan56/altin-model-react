@@ -3,7 +3,13 @@ import type { PanelFeature } from '../../content/types';
 import { SITE_NAME } from '../../content/site';
 
 // Sticky navigation (60px) + workspace tabs (52px) + breathing room.
-const NAVBAR_OFFSET = 132;
+// Masaüstünde yapışkan menü (60) + sekme çubuğu (52) + pay; mobilde sekmeler ekranın
+// altında olduğu için yalnız menü + pay. Çubuğun yeri ölçülür, kırılma noktası varsayılmaz.
+const navbarOffset = (): number => {
+  const tabs = document.querySelector('.workspace-tabs');
+  const atBottom = !!tabs && tabs.getBoundingClientRect().top > window.innerHeight / 2;
+  return atBottom ? 72 : 132;
+};
 const SETTLE_TICKS = 2;      // aynı yükseklik iki kez ölçülürse yerleşim durdu
 const MAX_TRIES = 24;
 const TICK_MS = 180;
@@ -40,7 +46,7 @@ export const useFeatureFocus = (feature: PanelFeature | null) => {
           if (!node.getClientRects().length) return;
           // kullanıcı bu arada kendisi kaydırdıysa yerini geri alma
           if (expected >= 0 && Math.abs(window.scrollY - expected) > 40) return;
-          const remaining = node.getBoundingClientRect().top - NAVBAR_OFFSET;
+          const remaining = node.getBoundingClientRect().top - navbarOffset();
           if (Math.abs(remaining) > 24) window.scrollBy({ top: remaining, behavior: 'auto' });
           expected = window.scrollY;
         }, delay));
@@ -55,7 +61,7 @@ export const useFeatureFocus = (feature: PanelFeature | null) => {
         previousHeight = height;
         if (settled >= SETTLE_TICKS || tries >= 16) {
           started = true;
-          window.scrollBy({ top: node.getBoundingClientRect().top - NAVBAR_OFFSET, behavior: smooth ? 'smooth' : 'auto' });
+          window.scrollBy({ top: node.getBoundingClientRect().top - navbarOffset(), behavior: smooth ? 'smooth' : 'auto' });
           finish(node);
           return;
         }

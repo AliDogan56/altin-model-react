@@ -736,6 +736,14 @@ bayrak yok, unutulamaz.
   (protokol düşüren 301 sorunu bu yüzden çözüldü)
 - `/panel/<slug>` ile gelindiğinde ilgili bölüm açılır, yerleşim durulunca tek yumuşak
   kaydırma yapılır ve kısa süre vurgulanır (`useFeatureFocus`)
+- **Mobilde sekmeler alt gezinme çubuğu** (2026-09-07; teknik analiz taşıması geri alındıktan
+  sonra yeniden uygulandı): 640 px altında `.workspace-tabs` `position:fixed; bottom:0` (güvenli alan
+  payı, seçili sekme üst kenar çizgisiyle), `.terminal-app` alt dolgusu 76 px ki altbilgi çubuğun
+  altında kalmasın; 640 px'ten itibaren eski hâli (başlık altında yapışkan, `top:60px`).
+  `useFeatureFocus` kaydırma payını çubuğun **ölçülen** konumundan seçer (altta 72, üstte 132 px).
+  Ölçüldü (375 px): çubuk 57 px, sayfa sonunda da 755–812'de sabit, altbilgi 736'da bitiyor yani
+  görünür, `/panel/altin-pivot-seviyeleri` bölümü 72 px'e oturuyor; 1280 px'te `sticky`, `top:60px`,
+  taşma 0
 
 ## Hız sınırı ve dokunma hedefleri (2026-09-03)
 
