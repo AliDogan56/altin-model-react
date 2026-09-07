@@ -62,14 +62,11 @@ h1,h2,h3,p { overflow-wrap:break-word; }
 .market-data-line { grid-column:1/-1; display:flex; align-items:center; flex-wrap:wrap; gap:4px 12px; min-height:44px; }
 .market-data-line .quiet-button { margin-left:auto; }
 .market-macro-date { display:none; font-size:11px; color:var(--muted); }
-/* Mobilde sekmeler alt gezinme çubuğu: sabit, kaydırınca yerinde kalır, güvenli alanı
-   sayar. 640 px'ten itibaren eski hâline (başlığın altında yapışkan) döner. */
-.workspace-tabs { position:fixed; left:0; right:0; bottom:0; z-index:30; display:flex; width:100%; gap:0; margin:0; padding:0 0 env(safe-area-inset-bottom); border-top:1px solid var(--line); background:var(--surface); box-shadow:0 -6px 20px rgb(var(--shadow-rgb) / var(--shadow-a2)); }
-.workspace-tabs button { flex:1; min-width:0; min-height:56px; padding:8px 2px; border:0; border-top:2px solid transparent; background:transparent; color:var(--muted); font-size:12px; line-height:1.25; cursor:pointer; }
+.workspace-tabs { position:sticky; top:60px; z-index:15; display:flex; width:100%; gap:4px; border-top:1px solid var(--line); border-bottom:1px solid var(--line); margin:0 0 20px; background:var(--bg); }
+.workspace-tabs button { flex:1; min-width:0; min-height:52px; padding:9px 3px; border:0; border-bottom:2px solid transparent; background:transparent; color:var(--muted); font-size:11px; line-height:1.25; cursor:pointer; }
 .workspace-tabs button > span { display:none; }
-.workspace-tabs button[aria-selected=true] { color:var(--gold); border-top-color:var(--gold); font-weight:700; }
+.workspace-tabs button[aria-selected=true] { color:var(--gold); border-bottom-color:var(--gold); font-weight:700; }
 .workspace-tabs button:hover { color:var(--text-strong); background:var(--surface-2); }
-.terminal-app { padding-bottom:calc(76px + env(safe-area-inset-bottom)); }
 .workspace-panel { min-width:0; outline-offset:4px; }
 .overview-workspace { display:grid; grid-template-columns:minmax(0,1fr); gap:16px; align-items:start; }
 .model-surface { border:1px solid var(--line); border-radius:var(--radius-lg); background:var(--surface); min-width:0; }
@@ -85,7 +82,7 @@ h1,h2,h3,p { overflow-wrap:break-word; }
 .forecast-summary-values strong.forecast-band { font-size:15px; }
 .forecast-summary-values small { font-size:10px; color:var(--muted); }
 .model-update { margin:12px 0 0; font-size:11px; color:var(--gold); }
-.model-surface > .chart-block,.overview-chart > .chart-block { border:0; border-radius:var(--radius-lg); background:none; box-shadow:none; min-width:0; }
+.model-surface > .chart-block { border:0; border-radius:0 0 var(--radius-lg) var(--radius-lg); background:none; box-shadow:none; min-width:0; }
 .overview-rail { display:grid; gap:16px; min-width:0; }
 .rail-section { padding:16px; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-lg); }
 .rail-heading { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:12px; }
@@ -152,7 +149,7 @@ h1,h2,h3,p { overflow-wrap:break-word; }
 .pivot-head small { max-width:70ch; }
 .pivot-alert { border-radius:var(--radius-sm); }
 .panel-intro { margin-top:32px; }
-.terminal-app [id^=feature-] { scroll-margin-top:72px; } /* mobilde sekme çubuğu altta: yalnız menü yüksekliği */
+.terminal-app [id^=feature-] { scroll-margin-top:132px; }
 .feature-focus { animation:none; outline:1px solid var(--gold-line); outline-offset:4px; }
 .site-nav .skip-link:focus { background:var(--gold-fill); color:var(--on-gold); }
 .loading-row { min-height:64px; }
@@ -181,18 +178,14 @@ h1,h2,h3,p { overflow-wrap:break-word; }
   .app { padding-inline:24px; }
   .market-ticker { grid-template-columns:repeat(4,minmax(0,1fr)); }
   .market-ticker > div:first-child { border:0; padding-left:0; }
-  .workspace-tabs { position:sticky; top:60px; bottom:auto; left:auto; right:auto; z-index:15; gap:24px; margin:0 0 20px; padding:0; border-bottom:1px solid var(--line); background:var(--bg); box-shadow:none; }
-  .workspace-tabs button { flex:0 1 auto; min-height:52px; padding:9px 4px; white-space:nowrap; border-top:0; border-bottom:2px solid transparent; }
-  .workspace-tabs button[aria-selected=true] { border-bottom-color:var(--gold); }
-  .terminal-app { padding-bottom:max(16px,env(safe-area-inset-bottom)); }
-  .terminal-app [id^=feature-] { scroll-margin-top:132px; }
+  .workspace-tabs { gap:24px; }
+  .workspace-tabs button { flex:0 1 auto; padding-inline:4px; white-space:nowrap; }
   .workspace-tabs button > span { display:inline; margin-right:8px; font:10px var(--font-mono); opacity:.65; }
   .forecast-summary-values { grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; }
   .forecast-summary-values > div + div { border-left:1px solid var(--line); padding-left:16px; }
   .forecast-summary { padding:20px; }
   .overview-drivers { grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px; }
-  .overview-workspace { grid-template-columns:1.2fr 1fr; grid-template-areas:"forecast forecast" "chart chart" "levels momentum"; }
-  .overview-forecast { grid-area:forecast; } .overview-chart { grid-area:chart; } .overview-rail { grid-area:levels; } .overview-momentum { grid-area:momentum; }
+  .overview-rail { grid-template-columns:1.2fr 1fr; align-items:start; }
   .loan-inputs { grid-template-columns:repeat(2,minmax(0,1fr)); }
   .loan-results,.loan-scenarios { grid-template-columns:repeat(3,minmax(0,1fr)); }
   .pivot-tools { grid-template-columns:1fr 1fr; }
@@ -203,19 +196,8 @@ h1,h2,h3,p { overflow-wrap:break-word; }
   .market-ticker { align-self:center; }
   .market-ticker > div:first-child { border-left:1px solid var(--line); padding-left:16px; }
   .market-data-line { padding-top:4px; }
-  /* Tahmin kartı ile "Fiyatın konumu" aynı satırda başlar, grafik tahminin altında ve
-     seviyeler ikisinin yanında iki satır boyunca; momentum en altta tam genişlik, yatay. */
-  .overview-workspace { grid-template-columns:minmax(0,1fr) 288px; gap:20px; grid-template-areas:"forecast levels" "chart levels" "momentum momentum"; align-items:start; }
-  /* Ray iki satırı kaplar ve kartı alt kenara kadar uzatır: alt çizgisi grafik kartıyla aynı hizada. */
-  .overview-rail { grid-template-columns:minmax(0,1fr); grid-template-rows:1fr; gap:16px; align-self:stretch; }
-  .overview-momentum .momentum-summary { display:grid; grid-template-columns:auto minmax(220px,1.2fr) auto minmax(200px,1fr); grid-template-areas:"head gauge dir daily" "head note stamp daily"; column-gap:24px; row-gap:4px; align-items:center; }
-  .overview-momentum .momentum-summary-heading { grid-area:head; flex-direction:column; align-items:flex-start; gap:2px; margin:0; }
-  .overview-momentum .momentum-strength { grid-area:gauge; margin:0; }
-  .overview-momentum .momentum-summary-direction { grid-area:dir; flex-direction:column; align-items:flex-start; gap:2px; margin:0; }
-  .overview-momentum .momentum-summary-note { grid-area:note; margin:0; }
-  .overview-momentum .momentum-source { grid-area:stamp; }
-  .overview-momentum .momentum-daily { grid-area:daily; margin:0; padding:0 0 0 20px; border-top:0; border-left:1px solid var(--line); }
-  .overview-momentum .analysis-empty { grid-column:2 / -1; }
+  .overview-workspace { grid-template-columns:minmax(0,1fr) 288px; gap:20px; }
+  .overview-rail { grid-template-columns:minmax(0,1fr); gap:16px; }
   .forecast-summary-values { grid-template-columns:1.2fr .85fr 1.15fr 1fr; gap:12px; }
   .forecast-summary-values > div + div { padding-left:12px; }
   .forecast-summary-values strong { font-size:18px; }

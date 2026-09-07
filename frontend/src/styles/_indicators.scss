@@ -11,9 +11,6 @@
 .tech-state.down { background:var(--red-bg); color:var(--red); }
 .tech-state.warn { background:var(--gold-bg); color:var(--gold); }
 .tech-sub { margin:20px 0 0; font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); }
-/* Günlük momentum satırı: tablonun üstünde tek `.tech-row`; başlık ile tablo arasına nefes. */
-.indicator-momentum { margin:14px 0 8px; }
-.indicator-momentum > .tech-state { white-space:normal; }
 @media (max-width:650px) {
   .tech-grid { grid-template-columns:1fr; }
   .tech-row { grid-template-columns:1fr auto; grid-template-areas:"name value" "state state"; padding:9px 12px; gap:4px 10px; }

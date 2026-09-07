@@ -54,33 +54,6 @@ describe('parseForecast', () => {
     expect(parseForecast({ horizons: [7], mean: [NaN], error: [0.02] })).toBeNull();
   });
 
-  /* İşlem bölgeleri sunucuda hesaplanır; görüşsüz ufuk `null` gelir. */
-  it('işlem bölgelerini ufuk başına okur, görüşsüz ufku null bırakır', () => {
-    const result = parseForecast({ ...valid, scenario_zones: {
-      '7': null, '14': null,
-      '30': { near: 4556.88, band: 501.71, atr: 91.06, buy: [4195.65, 4366.23], sell: [4732.48, 4918.11],
-              stop: 4059.05, entry: 4280.94, risk_per_unit: 221.89, params_version: 'scenario-v1' },
-    } })!;
-    expect(result.scenarioZones).toEqual({
-      '7': null, '14': null,
-      '30': { near: 4556.88, band: 501.71, atr: 91.06, buy: [4195.65, 4366.23], sell: [4732.48, 4918.11],
-              stop: 4059.05, entry: 4280.94, riskPerUnit: 221.89, paramsVersion: 'scenario-v1' },
-    });
-  });
-
-  /* Bozuk bölge haritası tahminin kendisini düşürmemeli; alan yalnız `undefined` kalır. */
-  it('bozuk ya da eksik işlem bölgeleri tahmini reddetmez, alan undefined kalır', () => {
-    expect(parseForecast(valid)!.scenarioZones).toBeUndefined();
-    expect(parseForecast({ ...valid, scenario_zones: 'çöp' })!.scenarioZones).toBeUndefined();
-    const half = { near: 4556.88, band: 501.71, atr: 91.06, buy: [4195.65], sell: [4732.48, 4918.11],
-                   stop: 4059.05, entry: 4280.94, risk_per_unit: 221.89, params_version: 'scenario-v1' };
-    const result = parseForecast({ ...valid, scenario_zones: { '7': null, '30': half } })!;
-    expect(result).not.toBeNull();
-    expect(result.scenarioZones).toBeUndefined();
-    expect(parseForecast({ ...valid, scenario_zones: { '30': { ...half, buy: [1, 2], near: 'x' } } })!.scenarioZones)
-      .toBeUndefined();
-  });
-
   it('sunucunun yüzde 80 nominal bandını daraltmadan ve yüzde 70 diye etiketlemeden taşır', () => {
     const result = parseForecast({ ...valid, base_price: 4500, origin_date: '2026-09-05',
       intervals: [{ nominal_coverage: .8 }, { nominal_coverage: .8 }, { nominal_coverage: .8 }] })!;

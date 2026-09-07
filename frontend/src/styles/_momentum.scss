@@ -73,35 +73,3 @@
   border-left:3px solid var(--blue);
   font-size:13.5px; line-height:1.5; color:var(--text);
 }
-
-/* --- Teknik DTO geçişi (2026-09-06) ------------------------------------------
-   `.momentum-*` sınıflarının asıl stili `_terminal-analysis.scss` katmanında;
-   burada yalnız o katmanın tanımlamadığı yeni parçalar var. Terminal dosyası
-   sonra yüklendiği için çakışan kurallar `.terminal-momentum` ile özgülleştirildi.
-   Punto tabanı 12 px, dokunma hedefi ≥ 24 px (InfoTooltip 44 px). */
-.momentum-subhead { margin: 24px 0 8px; color: var(--text-soft); font-size: 13px; font-weight: 650; }
-.momentum-reference, .momentum-expected { margin: 0 0 8px; color: var(--muted); font-size: 12px; line-height: 1.6; }
-.momentum-reference b, .momentum-expected b { color: var(--text); }
-.momentum-level > small { display: block; }
-.momentum-level-sources { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
-/* Sağ raydaki günlük rejim satırı: seans göstergesinin altında, ayrı çizgiyle. */
-.momentum-daily { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line); }
-.momentum-daily .momentum-summary-direction { margin-top: 12px; }
-.momentum-daily .momentum-summary-direction b.flat { color: var(--text-soft); }
-/* Güç tonu = çubuk rengi; terminal katmanı yalnız up/down tanımlar. */
-.momentum-strength.strong { --momentum-color: var(--gold); }
-.momentum-strength.medium { --momentum-color: var(--blue); }
-.momentum-strength.weak { --momentum-color: var(--muted); }
-/* İki kırılım yanı her zaman yan yana; başlık yanı altın kenarlıkla ayrılır. */
-.momentum-breaks { display: grid; gap: 12px; }
-.terminal-momentum .momentum-break .momentum-strength { margin: 12px 0 4px; }
-.terminal-momentum .momentum-break .momentum-strength-heading { margin-bottom: 10px; }
-.terminal-momentum .momentum-break .momentum-strength-heading strong { font-size: 20px; }
-.terminal-momentum .momentum-break.headline { border-color: var(--gold-line); background: var(--gold-bg); }
-.terminal-momentum .momentum-break.medium .momentum-break-heading b { color: var(--blue); }
-.terminal-momentum .momentum-break-heading em { color: var(--gold); font-style: normal; }
-.terminal-momentum .momentum-break > small { display: block; }
-.terminal-momentum .momentum-break-note { margin-top: 6px; }
-@media (min-width: 600px) {
-  .momentum-breaks { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}

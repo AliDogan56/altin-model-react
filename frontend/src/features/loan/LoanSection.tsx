@@ -3,7 +3,6 @@ import Spinner from '../../components/Spinner';
 import Collapsible from '../../components/Collapsible';
 import { PANEL_FEATURES, featureBy } from '../../content/panel';
 import { HORIZON_LABELS } from '../../content/site';
-import { resolveHorizon } from '../../domain/model/horizon';
 import { pct, tryAmount, tryMoney, tryRate } from '../../lib/format';
 import { useDashboard } from '../dashboard/DashboardContext';
 
@@ -13,7 +12,7 @@ function LoanSection({ focus }: { focus?: string }) {
     futureUsdTry, setFutureUsdTry, loan, costs, forecast, confident, modelStatus, hasForecast,
   } = useDashboard();
 
-  const { index } = resolveHorizon(forecast.horizons, loan.days);
+  const index = Math.max(0, forecast.horizons.indexOf(loan.days));
   const hasView = confident[index] !== false;
   const busy = useMinVisible(modelStatus === 'loading');
   const ready = hasForecast && modelStatus !== 'fallback' && hasView;

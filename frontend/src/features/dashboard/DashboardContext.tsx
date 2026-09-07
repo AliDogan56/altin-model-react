@@ -1,54 +1,45 @@
-import { createContext, useCallback, useContext, useMemo, type ReactNode } from 'react';
+import { createContext, useContext, useMemo, type ReactNode } from 'react';
 import { model } from '../../data/artifact';
 import { IMPACT_LABELS } from '../../content/parameters';
+import { indicators } from '../../domain/indicators';
 import { computeImpacts } from '../../domain/model/impacts';
-import { buildDailyPath } from '../../domain/model/predict';
+import { buildDailyPath, predict } from '../../domain/model/predict';
+import { buildLadder, computePivots } from '../../domain/pivots';
 import { loanCosts, loanProjection } from '../../domain/loan';
-import type { Ladder } from '../../services/api/technical';
+import { tradeZones } from '../../domain/tradeZones';
 import { useForecastModel } from './useForecastModel';
 import { useMarketData } from './useMarketData';
 import { usePanelSettings } from './usePanelSettings';
-import { useTechnical } from './useTechnical';
 
 const useDashboardState = () => {
+  const market = useMarketData();
   const settings = usePanelSettings();
-  /* Teknik paket önce: fiyat serisi, kapanış ve referans fiyat buradan türer. */
-  const { technical, status: technicalStatus, refresh: refreshTechnical } = useTechnical(settings);
-  const market = useMarketData(technical);
-  /* Tahminin fiyat çapası teknik paketin referansı (GC=F, çerçevesiyle); Harem
-     kotasyonu yalnız `PanelHeader`'da canlı fiyattır ve buraya hiç girmez. */
-  const forecastBase = useMemo(() => {
-    const ref = technical?.reference;
-    return ref && ref.value != null ? { value: ref.value, frame: ref.frame } : null;
-  }, [technical?.reference]);
-  const forecastModel = useForecastModel(market.live, forecastBase, market.featuresDate);
-  const { features, forecast } = forecastModel;
+  const forecastModel = useForecastModel(market.live, market.lastClose, market.harem.satis ?? market.lastClose ?? market.spot.price, market.featuresDate);
+  const { features, forecast, values } = forecastModel;
 
-  /* Katkı kartı tahminle aynı fiyata bağlı (`/v1/predict` `base_price`), her
-     tick'te değişen bir fiyata değil; iki "Referans fiyat" ayrışmasın. */
   const impacts = useMemo(
-    () => computeImpacts(model, features, forecast.price, IMPACT_LABELS, forecast, settings.horizonDays),
-    [features, forecast, settings.horizonDays]);
+    () => computeImpacts(model, features, values.price, IMPACT_LABELS, forecast, settings.horizonDays),
+    [features, values.price, forecast, settings.horizonDays]);
 
-  /* Pivot merdiveni sunucudan gelir: fiyatı teknik paketin referansı, marjı
-     ATR'den. Harem kotasyonu merdivene **girmez** (`LIVE_QUOTE_NOT_USED`). */
-  const pivotHeadline = technical?.pivots?.headline ?? null;
-  const pivotLadder: Ladder | null = pivotHeadline?.ladder ?? null;
-  const pivotPeriodId = pivotHeadline?.periodId ?? null;
-  const pivotSets = technical?.pivots?.sets ?? null;
-  const reference = technical?.reference ?? null;
-  const dailyChange = technical?.daily?.change ?? null;
-  const sessionMeta = technical?.sessionMeta ?? null;
-  const levels = technical?.levels ?? null;
-  const momentumDaily = technical?.momentumDaily ?? null;
-  const breakout = technical?.breakout ?? null;
-  const trend = technical?.trend ?? null;
-  const indicatorsBlock = technical?.indicators ?? null;
+  const zones = useMemo(
+    () => tradeZones(forecast, values.price, features.gold_atr14_pct, settings.capital, settings.riskPct, settings.horizonDays),
+    [forecast, values.price, features.gold_atr14_pct, settings.capital, settings.riskPct, settings.horizonDays]);
+
+  const pivots = useMemo(() => computePivots(market.candles), [market.candles]);  // bugün = gerçek takvim günü
+  const pivotLadder = useMemo(
+    () => buildLadder(pivots?.[settings.pivotPeriod] ?? null, settings.pivotMethod, (market.harem.satis ?? market.spot.price ?? 0)),
+    [pivots, settings.pivotPeriod, settings.pivotMethod, market.harem.satis, market.spot.price]);
+
+  const tech = useMemo(() => indicators(market.candles), [market.candles]);
 
   const historyEnd = market.history.length ? market.history[market.history.length - 1][0] : undefined;
   const dailyForecast = useMemo(
     () => buildDailyPath(model, forecast, settings.horizonDays, forecast.originDate ?? historyEnd),
     [forecast, settings.horizonDays, historyEnd]);
+
+  /* Tablo, modelin yayınladığı ilk tahmine (model.latestDate) çapalıdır; o günkü girdilerle
+     hesaplanır. Canlı girdilerle yeniden hesaplamak, geçmişi bugünün bilgisiyle tahmin etmek olurdu. */
+  const originForecast = useMemo(() => predict(model, model.latest, model.latestPrice), []);
 
   const loan = useMemo(() => loanProjection(forecast, settings.horizonDays), [forecast, settings.horizonDays]);
   const costs = useMemo(() => loanCosts({
@@ -56,21 +47,13 @@ const useDashboardState = () => {
     currentFx: market.usdTry.satis ?? 0, futureFx: +settings.futureUsdTry || 0, scenarios: loan.scenarios,
   }), [loan, settings.loanAmount, settings.loanRate, market.usdTry.satis, settings.futureUsdTry]);
 
-  /* "Yenile" iki kaynağı birden tazeler; `...market`'in kendi `refresh`'i ezilir. */
-  const marketRefresh = market.refresh;
-  const refresh = useCallback(async () => { await Promise.all([marketRefresh(), refreshTechnical()]); }, [marketRefresh, refreshTechnical]);
-
   /* Değer her render'da yeniden kurulduğu için her canlı tick tüm paneli
      yeniden çiziyordu (tick başına ~70 DOM mutasyonu ölçüldü). */
   return useMemo(() => ({
-    ...market, ...settings, ...forecastModel, refresh,
-    technical, technicalStatus, reference, dailyChange, sessionMeta,
-    pivotLadder, pivotHeadline, pivotPeriodId, pivotSets, levels, momentumDaily, breakout, trend,
-    indicators: indicatorsBlock,
-    impacts, dailyForecast, loan, costs,
-  }), [market, settings, forecastModel, refresh, technical, technicalStatus, reference, dailyChange, sessionMeta,
-       pivotLadder, pivotHeadline, pivotPeriodId, pivotSets, levels, momentumDaily, breakout, trend, indicatorsBlock,
-       impacts, dailyForecast, loan, costs]);
+    ...market, ...settings, ...forecastModel,
+    impacts, zones, pivots, pivotLadder, tech, dailyForecast, originForecast, loan, costs,
+  }), [market, settings, forecastModel, impacts, zones, pivots, pivotLadder, tech,
+       dailyForecast, originForecast, loan, costs]);
 };
 
 export type DashboardState = ReturnType<typeof useDashboardState>;

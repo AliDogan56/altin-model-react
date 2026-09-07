@@ -11,6 +11,7 @@ const fake = (): ModelArtifact => ({
   models: [{ w1: [[1], [0], [0], [0]], b1: [0], w2: [[1]], b2: [0], w3: [[1, 2]], b3: [0, 0] }],
   residual80: [0.01, 0.02],
   latest: {}, latestPrice: 100, latestDate: '2026-08-14', history: [],
+  resistance: { r20: 0, r60: 0, momentumJumpPct: 0 },
 });
 
 const features = { DGS10: 6, DGS2: 4, DFII10: 2, VIXCLS: 20 };

@@ -2,10 +2,8 @@ import { useState } from 'react';
 import Collapsible from '../../components/Collapsible';
 import { PANEL_FEATURES, featureBy } from '../../content/panel';
 import { IMPACT_LABELS } from '../../content/parameters';
-import { FRAME } from '../../content/technical';
 import type { Impact } from '../../domain/model/impacts';
 import { money, pct } from '../../lib/format';
-import { resolveHorizon } from '../../domain/model/horizon';
 import { useDashboard } from '../dashboard/DashboardContext';
 
 const TOP = 5;
@@ -41,11 +39,11 @@ function Row({ item }: { item: Impact }) {
 }
 
 function ImpactSection({ focus }: { focus?: string }) {
-  const { impacts, confident, forecast, horizonDays, neutralized, modelStatus, baseFrame } = useDashboard();
+  const { impacts, confident, forecast, horizonDays, neutralized, modelStatus } = useDashboard();
   const [all, setAll] = useState(false);
   const feature = featureBy('feature-katki');
 
-  const { index } = resolveHorizon(forecast.horizons, impacts.horizon);
+  const index = Math.max(0, forecast.horizons.indexOf(impacts.horizon));
   const hasView = confident[index] !== false;
   const up = all ? impacts.up : impacts.up.slice(0, TOP);
   const down = all ? impacts.down : impacts.down.slice(0, TOP);
@@ -77,7 +75,7 @@ function ImpactSection({ focus }: { focus?: string }) {
                 Bu, modelin girdiye duyarlılığıdır; piyasa için bir sebep-sonuç ilişkisi değildir.
               </p>
               <dl className="contribution-context">
-                <div><dt>Referans fiyat</dt><dd>{money(impacts.price)}{baseFrame && <small> · {FRAME[baseFrame]}</small>}</dd></div>
+                <div><dt>Referans fiyat</dt><dd>{money(impacts.price)}</dd></div>
                 <div><dt>Model beklentisi</dt><dd>{money(target)}</dd></div>
                 <div><dt>Beklenen değişim</dt><dd>{usd(impacts.hereUsd)} <small>{pct(impacts.here)}</small></dd></div>
               </dl>

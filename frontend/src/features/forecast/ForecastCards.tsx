@@ -1,16 +1,13 @@
 import SegmentedControl from '../../components/ui/SegmentedControl';
 import InfoTooltip from '../../components/ui/InfoTooltip';
-import { FRAME } from '../../content/technical';
-import { resolveHorizon } from '../../domain/model/horizon';
 import { intervalLabel } from '../../domain/model/predict';
 import { money, pct } from '../../lib/format';
 import { useDashboard } from '../dashboard/DashboardContext';
 
 /** One shared model surface; selecting a horizon updates every analysis below. */
 function ForecastCards() {
-  const { forecast, horizonDays, setHorizonDays, modelStatus, confident, hasForecast, scorecard, clipped, baseFrame } = useDashboard();
-  /* Listede olmayan ufukta sessizce ilk ufka düşmek yerine en yakını seçilir. */
-  const { index } = resolveHorizon(forecast.horizons, horizonDays);
+  const { forecast, horizonDays, setHorizonDays, modelStatus, confident, hasForecast, scorecard, clipped } = useDashboard();
+  const index = Math.max(0, forecast.horizons.indexOf(horizonDays));
   const available = hasForecast && modelStatus !== 'fallback';
   const sure = available && confident[index] !== false;
   const mean = forecast.mean[index];
@@ -30,7 +27,7 @@ function ForecastCards() {
       <div><span>Olasılık bandı <InfoTooltip label="Olasılık bandı">{bandLabel}. Nominal kapsam, geçmiş artıkların hedef yüzdeliğidir; bugünkü volatiliteyle ölçeklenmiş bandın gerçekleşen kapsamı henüz doğrulanmamıştır. Yön doğruluğu veya güven skoru değildir.</InfoTooltip></span><strong className="forecast-band">{sure ? `${money(forecast.price * (1 + mean - forecast.err[index]))} – ${money(forecast.price * (1 + mean + forecast.err[index]))}` : '—'}</strong><small>{bandLabel} · canlı kapsam ölçülmedi</small></div>
       <div><span>Geçmiş yön isabeti <InfoTooltip label="Geçmiş yön isabeti">Eğitim dışında kalan günlerde ölçülen yön doğruluğu. Görüş yok günleri yeni ölçümde yön hesabına katılmaz; test günü sayısı yön örneklemiyle aynı olmayabilir. Bugünkü tahminin güven yüzdesi değildir.{metrics && !metrics.evaluationVersion ? ' Eski OOF ölçümü; bağımsız kalibrasyon doğrulanmadı.' : ''}</InfoTooltip></span><strong>{metrics?.direction != null ? `%${(metrics.direction * 100).toFixed(1)}` : '—'}</strong><small>{metrics ? `${metrics.activeFraction != null ? `Görüş oranı %${(metrics.activeFraction * 100).toFixed(1)} · ` : ''}${metrics.oofRows} test günü${metrics.directionalRows != null ? ` · ${metrics.directionalRows} yön örneği` : ''}` : 'Model karnesi bekleniyor'}</small></div>
     </div>
-    {available && <p className="model-update">Hesaplama referansı: {money(forecast.price)}{baseFrame ? ` · ${FRAME[baseFrame]}` : ''}{forecast.predictionTimestamp ? ` · ${new Date(forecast.predictionTimestamp).toLocaleString('tr-TR')}` : ''}. Canlı spot kotasyonundan ayrı bir senaryodur.</p>}
+    {available && <p className="model-update">Hesaplama referansı: {money(forecast.price)}{forecast.predictionTimestamp ? ` · ${new Date(forecast.predictionTimestamp).toLocaleString('tr-TR')}` : ''}. Güncel fiyat akışından ayrı bir senaryodur.</p>}
     {forecast.status === 'STALE_DATA' && <p className="model-update" role="status">Girdilerin kaynak tarihi 7 takvim gününden eski; model görünümü kapatıldı.</p>}
     {clipped.length > 0 && <p className="model-update" role="status">Eğitim dağılımı dışında kalan girdiler: {clipped.join(', ')}. Bu tanısal eşik doğrulanmış bir güven skoru değildir.</p>}
     {modelStatus === 'loading' && <p className="model-update" role="status">{hasForecast ? 'Son model sonucu gösteriliyor · güncelleniyor…' : 'Model hesaplanıyor…'}</p>}

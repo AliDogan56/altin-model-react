@@ -5,7 +5,6 @@ from ..models.api_models import PredictIn
 from .feature_service import frozen_now, latest_features
 from .model_service import model_service
 from .prediction_ledger import PredictionLedger
-from .scenario_service import scenario_zones
 
 
 class PredictionService:
@@ -53,16 +52,6 @@ class PredictionService:
             result["confident"] = [False] * len(result["horizons"])
             result["no_view_reasons"] = [reasons + ["feature_source_date_unknown"]
                                          for reasons in result["no_view_reasons"]]
-        # Bant geometrisi (alım/satış aralığı, geçersizlik seviyesi) sunucunun
-        # çapasıyla üretilir; istemci canlı fiyatla hesaplayınca bandın çapasıyla
-        # bölgelerin çapası ayrışıyordu. Nihai `confident` kullanılır: bayat ya da
-        # tarihsiz girdi görüşü kapatınca bölge de üretilmez. Eklemeli alan;
-        # mevcut anahtarlara dokunmaz.
-        atr_pct = payload.features.get("gold_atr14_pct", float("nan"))
-        result["scenario_zones"] = {
-            str(horizon): scenario_zones(result["base_price"], result["mean"][i], result["error"][i],
-                                         atr_pct, result["confident"][i])
-            for i, horizon in enumerate(result["horizons"])}
         if getattr(settings, "prediction_logging", False):
             try:
                 ids = PredictionLedger(settings.prediction_log_path).append(

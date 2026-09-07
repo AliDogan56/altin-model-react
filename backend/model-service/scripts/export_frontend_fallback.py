@@ -29,6 +29,7 @@ artifact = {
     "models": [network], "residual80": [0.035, 0.05, 0.075],
     "latest": {key: float(rows[-1][key]) for key in features},
     "latestPrice": closes[-1], "latestDate": rows[-1]["date"], "history": history,
+    "resistance": {"r20": max(closes[-20:]), "r60": max(closes[-60:]), "momentumJumpPct": 0.0},
     "metrics": {}, "rows": len(rows), "testRows": 0,
 }
 target.write_text(json.dumps(artifact, separators=(",", ":")), encoding="utf-8")

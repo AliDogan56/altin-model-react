@@ -1,12 +1,9 @@
-import { resolveHorizon } from '../../domain/model/horizon';
 import { useDashboard } from './DashboardContext';
 import { money } from '../../lib/format';
 
 export default function OverviewInsights({ onModel }: { onModel: () => void }) {
   const { impacts, modelStatus, confident, forecast } = useDashboard();
-  /* `Math.max(0, indexOf)` listede olmayan ufukta sessizce ilk ufka düşüyordu;
-     `resolveHorizon` en yakınını seçer ve katkı kartıyla aynı ufku izler. */
-  const hasView = confident[resolveHorizon(forecast.horizons, impacts.horizon).index] !== false;
+  const hasView = confident[Math.max(0, forecast.horizons.indexOf(impacts.horizon))] !== false;
   const drivers = [...impacts.up, ...impacts.down].sort((a, b) => Math.abs(b.usd) - Math.abs(a.usd)).slice(0, 3);
   return <section className="overview-insights" aria-labelledby="overview-insight-title">
     <div className="overview-insight-title"><span className="section-kicker">Görüşün arkasında</span><h2 id="overview-insight-title">Modeli ne etkiliyor?</h2><button type="button" className="text-action" onClick={onModel}>Modeli incele <span aria-hidden="true">↗</span></button></div>

@@ -17,7 +17,7 @@
       {
         "heading": "Veri kaynakları",
         "paragraphs": [
-          "Ons altının günlük yüksek, düşük ve kapanış serisi uluslararası bir fiyat sağlayıcısından alınır ve modelin hem eğitiminde hem tahmininde kullanılan tek fiyat kaynağıdır. Makroekonomik göstergeler ABD Merkez Bankası'nın açık veri servisi FRED'den gelir: 10 ve 2 yıllık tahvil faizi, 10 yıllık enflasyona endeksli faiz, dolar endeksi, WTI petrol, VIX ve çekirdek tüketici enflasyonu.",
+          "Ons altının günlük yüksek, düşük ve kapanış serisi xaus.com üzerinden alınır ve modelin hem eğitiminde hem tahmininde kullanılan tek fiyat kaynağıdır. Makroekonomik göstergeler ABD Merkez Bankası'nın açık veri servisi FRED'den gelir: 10 ve 2 yıllık tahvil faizi, 10 yıllık enflasyona endeksli faiz, dolar endeksi, WTI petrol, VIX ve çekirdek tüketici enflasyonu.",
           "Türk lirası tarafındaki canlı ons, USD/TRY kuru ve ziynet altın kotasyonları doğrudan tarayıcınızdan bir piyasa veri akışına bağlanarak alınır; sunucumuzdan geçmez. Ziynet kartlarındaki ham altın değeri ve işçilik payı, ürünün resmî gram ve milyem değerlerinden hesaplanır — örneğin çeyrek altın 1,75 gram × 916 milyem = 1,603 gram saf altın.",
           "Veriler üçüncü taraf kaynaklardan geldiği için gecikme, eksik gözlem veya hata içerebilir. Makro serilerin yayın gecikmesi 1 ile 6 gün arasında değişir; panel bu tarihi açıkça yazar. Kaynağın bildirdiği bir değer kendi içinde tutarsızsa (örneğin gün aralığıyla bağdaşmayan bir önceki kapanış) o değeri göstermek yerine gizleriz."
         ]

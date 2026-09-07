@@ -19,17 +19,6 @@ export type ApiForecast = {
   basePrice?: number;
   status?: string;
   noViewReasons: string[][];
-  /** Ufuk başına işlem bölgeleri (`"30"` gibi anahtarlar); görüşsüz ufuk `null`.
-   *  Yanıt bu alanı taşımıyor ya da bozuk taşıyorsa `undefined` — tahminin
-   *  kendisi bu yüzden reddedilmez. */
-  scenarioZones?: Record<string, ScenarioZone | null>;
-};
-
-/** Sunucunun hesapladığı işlem bölgesi; tüm fiyatlar dolar, aralıklar [alt, üst]. */
-export type ScenarioZone = {
-  near: number; band: number; atr: number;
-  buy: [number, number]; sell: [number, number];
-  stop: number; entry: number; riskPerUnit: number; paramsVersion: string;
 };
 
 export type LatestFeatures = { date: string; price: number; features: FeatureMap };
@@ -44,31 +33,6 @@ const numbers = (value: unknown, length?: number): number[] | null => {
   if (!Array.isArray(value) || value.length === 0) return null;
   if (length != null && value.length !== length) return null;
   return value.every(item => typeof item === 'number' && Number.isFinite(item)) ? value as number[] : null;
-};
-
-/**
- * `scenario_zones` isteğe bağlıdır: eski artefakt hiç göndermez, yeni artefakt
- * görüşsüz ufuk için `null` gönderir. Tek bir bozuk ufuk bile haritanın tamamını
- * `undefined` yapar — yarısı güvenilir bir bölge haritası hiç olmamasından kötü.
- */
-const parseScenarioZones = (raw: unknown): Record<string, ScenarioZone | null> | undefined => {
-  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return undefined;
-  const fin = (value: unknown): number | null =>
-    typeof value === 'number' && Number.isFinite(value) ? value : null;
-  const out: Record<string, ScenarioZone | null> = {};
-  for (const [key, value] of Object.entries(raw as Record<string, unknown>)) {
-    if (value === null) { out[key] = null; continue; }
-    if (!value || typeof value !== 'object') return undefined;
-    const z = value as Record<string, unknown>;
-    const near = fin(z.near), band = fin(z.band), atr = fin(z.atr), stop = fin(z.stop);
-    const entry = fin(z.entry), riskPerUnit = fin(z.risk_per_unit);
-    const buy = numbers(z.buy, 2), sell = numbers(z.sell, 2);
-    if (near == null || band == null || atr == null || stop == null || entry == null
-      || riskPerUnit == null || !buy || !sell) return undefined;
-    out[key] = { near, band, atr, buy: [buy[0], buy[1]], sell: [sell[0], sell[1]], stop, entry, riskPerUnit,
-      paramsVersion: typeof z.params_version === 'string' ? z.params_version : '' };
-  }
-  return out;
 };
 
 /**
@@ -110,7 +74,6 @@ export const parseForecast = (raw: unknown): ApiForecast | null => {
     basePrice: typeof data.base_price === 'number' && Number.isFinite(data.base_price) && data.base_price > 0 ? data.base_price : undefined,
     status: typeof data.status === 'string' ? data.status : undefined,
     noViewReasons: horizons.map((_, i) => strings(Array.isArray(data.no_view_reasons) ? data.no_view_reasons[i] : null)),
-    scenarioZones: parseScenarioZones(data.scenario_zones),
   };
 };
 
