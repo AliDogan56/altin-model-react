@@ -1,0 +1,79 @@
+# LLM sağlayıcıları ve rol eşlemesi. Anahtarlar burada değil ortamda durur (api_key_env: ortam değişkeninin adı;
+# yerelde backend/commentary-service/.env.secrets, canlıda compose environment). Servis açılışta doğrular.
+# kind = "anthropic" (Anthropic SDK) | "openai_compatible" (chat/completions ucu veren herkes) | "mock" (test)
+
+[llm.providers.gemini]
+kind = "openai_compatible"
+base_url = "https://generativelanguage.googleapis.com/v1beta/openai"
+api_key_env = "GEMINI_API_KEY"
+extra = { reasoning_effort = "low" }
+
+[llm.providers.groq]
+kind = "openai_compatible"
+base_url = "https://api.groq.com/openai/v1"
+api_key_env = "GROQ_API_KEY"
+extra = { reasoning_effort = "low" }
+
+[llm.providers.openai]
+kind = "openai_compatible"
+base_url = "https://api.openai.com/v1"
+api_key_env = "OPENAI_API_KEY"
+
+[llm.providers.openrouter]
+kind = "openai_compatible"
+base_url = "https://openrouter.ai/api/v1"
+api_key_env = "OPENROUTER_API_KEY"
+
+[llm.providers.cerebras]
+kind = "openai_compatible"
+base_url = "https://api.cerebras.ai/v1"
+api_key_env = "CEREBRAS_API_KEY"
+
+[llm.providers.mistral]
+kind = "openai_compatible"
+base_url = "https://api.mistral.ai/v1"
+api_key_env = "MISTRAL_API_KEY"
+
+[llm.providers.ollama]
+kind = "openai_compatible"
+base_url = "http://localhost:11434/v1"
+api_key_env = ""
+
+[llm.providers.anthropic]
+kind = "anthropic"
+api_key_env = "ANTHROPIC_API_KEY"
+
+[llm.providers.mock]
+kind = "mock"
+
+# Roller: teknik ve takvim Groq'ta (hızlı), makro / baş analist / metin yazarı Gemini'de (Türkçe kalitesi);
+# her rolde sıralı yedek zinciri.
+[llm.roles.technical_analyst]
+provider = "groq"
+model = "openai/gpt-oss-120b"
+max_tokens = 1500
+fallbacks = [ { provider = "gemini", model = "gemini-3.6-flash" }, { provider = "gemini", model = "gemini-3.5-flash-lite" } ]
+
+[llm.roles.calendar_news_scout]
+provider = "groq"
+model = "openai/gpt-oss-120b"
+max_tokens = 1200
+fallbacks = [ { provider = "gemini", model = "gemini-3.5-flash-lite" }, { provider = "gemini", model = "gemini-3.6-flash" } ]
+
+[llm.roles.macro_analyst]
+provider = "gemini"
+model = "gemini-3.6-flash"
+max_tokens = 1500
+fallbacks = [ { provider = "gemini", model = "gemini-3.5-flash-lite" }, { provider = "groq", model = "openai/gpt-oss-120b" } ]
+
+[llm.roles.chief_analyst]
+provider = "gemini"
+model = "gemini-3.6-flash"
+max_tokens = 2500
+fallbacks = [ { provider = "gemini", model = "gemini-3.5-flash-lite" }, { provider = "groq", model = "openai/gpt-oss-120b" } ]
+
+[llm.roles.anchor]
+provider = "gemini"
+model = "gemini-3.6-flash"
+max_tokens = 2500
+fallbacks = [ { provider = "gemini", model = "gemini-3.5-flash-lite" }, { provider = "gemini", model = "gemini-3.1-flash-lite" }, { provider = "groq", model = "openai/gpt-oss-120b" } ]

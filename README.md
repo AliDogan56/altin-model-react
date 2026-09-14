@@ -6,6 +6,7 @@ Ana IntelliJ projesinde frontend ve backend ana modülleri; backend altında ü�
 - `backend/api-gateway/`: Dışarıya açık tek API girişi ve servis rota kayıtları
 - `backend/market-service/`: XAU/USD, FRED ve haber verileri
 - `backend/model-service/`: Sinir ağı, SQLite öğrenme verisi, otomatik toplama ve yeniden eğitim job'u
+- `backend/commentary-service/`: Son okuyucu için Türkçe altın yorumu; fiyat eşiğiyle tetiklenen LLM turu (Gemini/Groq ücretsiz katman), API son metni diskten döner
 
 ## Veri disiplini
 
@@ -25,6 +26,9 @@ python3.12 -m venv backend/market-service/.venv
 backend/market-service/.venv/bin/pip install -r backend/market-service/requirements.txt
 python3.12 -m venv backend/model-service/.venv
 backend/model-service/.venv/bin/pip install -r backend/model-service/requirements.txt
+python3.12 -m venv backend/commentary-service/.venv
+backend/commentary-service/.venv/bin/pip install -r backend/commentary-service/requirements.txt
+cp backend/commentary-service/.env.secrets.example backend/commentary-service/.env.secrets   # LLM anahtarlarını doldurun
 chmod +x start-profile.sh start-local.sh
 ./start-profile.sh localhost
 ```
@@ -55,4 +59,4 @@ Development ve production adresleri sunucu kurulduğunda gerçek alan adlarıyla
 
 ## Öğrenme döngüsü
 
-Frontend yalnızca API Gateway'e bağlanır. Gateway URL'lerinde servis adı zorunludur: `/market-service/v1/market/*` Market Service'e, `/model-service/v1/*` Model Service'e yönlenir. Gateway servis adı önekini kaldırıp kalan yolu hedef servise iletir. Mikroservis hataları Gateway'de standart hata gövdesine çevrilir ve `X-Trace-Id` ile loglanır. Model servisi saatlik job ile verileri toplar, vadesi dolan hedefleri kapatır ve yeterli yeni örnek oluştuğunda MLP modelini yeniden eğitir.
+Frontend yalnızca API Gateway'e bağlanır. Gateway URL'lerinde servis adı zorunludur: `/market-service/v1/market/*` Market Service'e, `/model-service/v1/*` Model Service'e, `/commentary-service/v1/commentary/*` Commentary Service'e yönlenir. Gateway servis adı önekini kaldırıp kalan yolu hedef servise iletir. Mikroservis hataları Gateway'de standart hata gövdesine çevrilir ve `X-Trace-Id` ile loglanır. Model servisi saatlik job ile verileri toplar, vadesi dolan hedefleri kapatır ve yeterli yeni örnek oluştuğunda MLP modelini yeniden eğitir.

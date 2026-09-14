@@ -1,0 +1,156 @@
+{
+  "as_of": "2026-09-14",
+  "fiyat": {
+    "spot_lbma_pm": {
+      "son": "2026-09-11",
+      "yas_gun": 3,
+      "satir": 14681,
+      "deger": 4386.25
+    },
+    "vadeli_gcf": {
+      "son_tamamlanan": "2026-09-11",
+      "yas_gun": 3,
+      "satir": 6532,
+      "deger": 4366.2001953125,
+      "bugun_kismi_bar_var": true
+    },
+    "basis_son": 1.004592048873303
+  },
+  "uyarilar": [],
+  "piyasa": {
+    "dxy": {
+      "son": "2026-09-14",
+      "yas_gun": 0,
+      "deger": 99.41899871826172
+    },
+    "vix": {
+      "son": "2026-09-14",
+      "yas_gun": 0,
+      "deger": 16.809999465942383
+    },
+    "wti": {
+      "son": "2026-09-14",
+      "yas_gun": 0,
+      "deger": 101.62000274658203
+    },
+    "us10y_nominal": {
+      "son": "2026-09-14",
+      "yas_gun": 0,
+      "deger": 4.954999923706055
+    }
+  },
+  "makro": {
+    "CPIAUCSL": {
+      "aciklama": "TÜFE manşet (SA)",
+      "son_gozlem": "2026-08-01",
+      "yas_gun": 44,
+      "deger": 334.131,
+      "kaynak": "FRED",
+      "as_of_itibariyla_biliniyor": true
+    },
+    "CPILFESL": {
+      "aciklama": "TÜFE çekirdek (SA)",
+      "son_gozlem": "2026-08-01",
+      "yas_gun": 44,
+      "deger": 337.765,
+      "kaynak": "FRED",
+      "as_of_itibariyla_biliniyor": true
+    },
+    "DCOILWTICO": {
+      "aciklama": "WTI spot",
+      "son_gozlem": "2026-09-09",
+      "yas_gun": 5,
+      "deger": 97.26,
+      "kaynak": "FRED",
+      "as_of_itibariyla_biliniyor": true
+    },
+    "DFII10": {
+      "aciklama": "10y TIPS reel getiri",
+      "son_gozlem": "2026-09-10",
+      "yas_gun": 4,
+      "deger": 2.55,
+      "kaynak": "FRED",
+      "as_of_itibariyla_biliniyor": true
+    },
+    "DGS10": {
+      "aciklama": "10y nominal getiri",
+      "son_gozlem": "2026-09-10",
+      "yas_gun": 4,
+      "deger": 4.95,
+      "kaynak": "FRED",
+      "as_of_itibariyla_biliniyor": true
+    },
+    "DGS2": {
+      "aciklama": "2y nominal getiri",
+      "son_gozlem": "2026-09-10",
+      "yas_gun": 4,
+      "deger": 4.56,
+      "kaynak": "FRED",
+      "as_of_itibariyla_biliniyor": true
+    },
+    "DTWEXBGS": {
+      "aciklama": "Geniş dolar endeksi (H.10, haftalık yayın)",
+      "son_gozlem": "2026-09-04",
+      "yas_gun": 10,
+      "deger": 118.0732,
+      "kaynak": "FRED",
+      "as_of_itibariyla_biliniyor": true
+    },
+    "M2SL": {
+      "aciklama": "M2 para arzı",
+      "son_gozlem": "2026-07-01",
+      "yas_gun": 75,
+      "deger": 23218.0,
+      "kaynak": "FRED",
+      "as_of_itibariyla_biliniyor": true
+    },
+    "PCEPI": {
+      "aciklama": "PCE fiyat endeksi",
+      "son_gozlem": "2026-07-01",
+      "yas_gun": 75,
+      "deger": 131.659,
+      "kaynak": "FRED",
+      "as_of_itibariyla_biliniyor": true
+    },
+    "T10Y2Y": {
+      "aciklama": "10y-2y eğri",
+      "son_gozlem": "2026-09-11",
+      "yas_gun": 3,
+      "deger": 0.33,
+      "kaynak": "FRED",
+      "as_of_itibariyla_biliniyor": true
+    },
+    "T10YIE": {
+      "aciklama": "10y breakeven enflasyon",
+      "son_gozlem": "2026-09-11",
+      "yas_gun": 3,
+      "deger": 2.36,
+      "kaynak": "FRED",
+      "as_of_itibariyla_biliniyor": true
+    },
+    "T5YIE": {
+      "aciklama": "5y breakeven enflasyon",
+      "son_gozlem": "2026-09-11",
+      "yas_gun": 3,
+      "deger": 2.4,
+      "kaynak": "FRED",
+      "as_of_itibariyla_biliniyor": true
+    },
+    "VIXCLS": {
+      "aciklama": "VIX kapanış",
+      "son_gozlem": "2026-09-11",
+      "yas_gun": 3,
+      "deger": 15.84,
+      "kaynak": "FRED",
+      "as_of_itibariyla_biliniyor": true
+    },
+    "WALCL": {
+      "aciklama": "Fed bilançosu toplam varlık",
+      "son_gozlem": "2026-09-09",
+      "yas_gun": 5,
+      "deger": 6740619.0,
+      "kaynak": "FRED",
+      "as_of_itibariyla_biliniyor": true
+    }
+  }
+}

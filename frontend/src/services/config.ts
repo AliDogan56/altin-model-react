@@ -15,5 +15,6 @@ const resolveBase = (): string => {
 
 export const marketApi = () => `${resolveBase()}/market-service`;
 export const modelApi = () => `${resolveBase()}/model-service`;
+export const commentaryApi = () => `${resolveBase()}/commentary-service`;
 
 export const HAREM_WS = 'wss://hrmsocketonly.haremaltin.com';

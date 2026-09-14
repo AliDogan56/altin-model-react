@@ -26,6 +26,10 @@ if [ ! -x backend/model-service/.venv/bin/python ]; then
   echo "Model servisi ortamı bulunamadı. README kurulum adımlarını uygulayın."
   exit 1
 fi
+if [ ! -x backend/commentary-service/.venv/bin/python ]; then
+  echo "Yorum servisi ortamı bulunamadı. README kurulum adımlarını uygulayın."
+  exit 1
+fi
 
 backend/market-service/.venv/bin/python backend/market-service/run.py "$PROFILE" &
 MARKET_SERVICE_PID=$!
@@ -33,7 +37,9 @@ backend/api-gateway/.venv/bin/python backend/api-gateway/run.py "$PROFILE" &
 API_GATEWAY_PID=$!
 backend/model-service/.venv/bin/python backend/model-service/run.py "$PROFILE" &
 MODEL_SERVICE_PID=$!
-trap 'kill "$API_GATEWAY_PID" "$MARKET_SERVICE_PID" "$MODEL_SERVICE_PID" 2>/dev/null || true' EXIT INT TERM
+backend/commentary-service/.venv/bin/python backend/commentary-service/run.py "$PROFILE" &
+COMMENTARY_SERVICE_PID=$!
+trap 'kill "$API_GATEWAY_PID" "$MARKET_SERVICE_PID" "$MODEL_SERVICE_PID" "$COMMENTARY_SERVICE_PID" 2>/dev/null || true' EXIT INT TERM
 
 NODE_BIN="${NODE_BIN:-$(command -v node || true)}"
 if [ -z "$NODE_BIN" ] && [ -x "/Users/alidogan/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node" ]; then

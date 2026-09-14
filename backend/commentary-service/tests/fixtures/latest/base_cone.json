@@ -1,0 +1,36 @@
+{
+  "as_of": "2026-09-14",
+  "spot_tarih": "2026-09-11",
+  "spot": 4386.25,
+  "yontem": "Sıfır sürüklenme; günlük log getiri σ son 63 gün (ddof=0); lognormal; P10/P90 = ±1,2816σ√h.",
+  "sigma_gunluk_pct": 1.464,
+  "sigma_yillik_pct_63g": 23.25,
+  "sigma_yillik_pct_252g": 27.48,
+  "gorus": "yok",
+  "ufuklar": {
+    "1_ay": {
+      "islem_gunu": 21,
+      "sigma_pct": 6.71,
+      "p10": 4024.81,
+      "p50": 4386.25,
+      "p90": 4780.15,
+      "bant_80_pct": 8.98
+    },
+    "3_ay": {
+      "islem_gunu": 63,
+      "sigma_pct": 11.62,
+      "p10": 3779.24,
+      "p50": 4386.25,
+      "p90": 5090.75,
+      "bant_80_pct": 16.06
+    },
+    "6_ay": {
+      "islem_gunu": 126,
+      "sigma_pct": 16.44,
+      "p10": 3553.12,
+      "p50": 4386.25,
+      "p90": 5414.73,
+      "bant_80_pct": 23.45
+    }
+  }
+}

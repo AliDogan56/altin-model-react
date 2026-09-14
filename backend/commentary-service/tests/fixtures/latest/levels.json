@@ -1,0 +1,466 @@
+{
+  "as_of": "2026-09-14",
+  "son_bar": "2026-09-11",
+  "referans": {
+    "vadeli_kapanis": 4366.2,
+    "spot_esdeger": 4369.26,
+    "basis": 1.0007,
+    "atr14": 72.7,
+    "tolerans": 36.35,
+    "test_marji": 21.81
+  },
+  "not": "Seviyeler GC=F vadeli seride hesaplanır; spot_esdeger = vadeli × basis (LBMA PM / vadeli kapanış, 20 günlük medyan). Günlük hesap son tamamlanan kapanışa aittir; canlı fiyata göre konum `canli` bloğundadır.",
+  "direnc": [
+    {
+      "vadeli": 4406.42,
+      "spot_esdeger": 4409.51,
+      "uzaklik_pct": 0.92,
+      "puan": 1.731,
+      "kaynak_sayisi": 3,
+      "kaynaklar": [
+        "salinim",
+        "yuvarlak_100",
+        "haftalik_pivot_R1"
+      ],
+      "temas": 1
+    },
+    {
+      "vadeli": 4456.45,
+      "spot_esdeger": 4459.57,
+      "uzaklik_pct": 2.07,
+      "puan": 2.842,
+      "kaynak_sayisi": 3,
+      "kaynaklar": [
+        "yuvarlak_50",
+        "salinim",
+        "haftalik_pivot_R2"
+      ],
+      "temas": 2
+    },
+    {
+      "vadeli": 4518.52,
+      "spot_esdeger": 4521.69,
+      "uzaklik_pct": 3.49,
+      "puan": 5.396,
+      "kaynak_sayisi": 6,
+      "kaynaklar": [
+        "yuvarlak_100",
+        "haftalik_pivot_R3",
+        "salinim",
+        "sma200",
+        "sma40h",
+        "yuvarlak_50"
+      ],
+      "temas": 2
+    }
+  ],
+  "destek": [
+    {
+      "vadeli": 4281.77,
+      "spot_esdeger": 4284.77,
+      "uzaklik_pct": -1.93,
+      "puan": 7.371,
+      "kaynak_sayisi": 6,
+      "kaynaklar": [
+        "sma50",
+        "salinim",
+        "haftalik_pivot_S2",
+        "sma10h",
+        "yuvarlak_100",
+        "salinim"
+      ],
+      "temas": 5
+    },
+    {
+      "vadeli": 4220.27,
+      "spot_esdeger": 4223.23,
+      "uzaklik_pct": -3.34,
+      "puan": 3.086,
+      "kaynak_sayisi": 4,
+      "kaynaklar": [
+        "yuvarlak_100",
+        "salinim",
+        "haftalik_pivot_S3",
+        "yuvarlak_50"
+      ],
+      "temas": 2
+    },
+    {
+      "vadeli": 4151.61,
+      "spot_esdeger": 4154.52,
+      "uzaklik_pct": -4.91,
+      "puan": 1.07,
+      "kaynak_sayisi": 2,
+      "kaynaklar": [
+        "yuvarlak_50",
+        "salinim"
+      ],
+      "temas": 1
+    }
+  ],
+  "test_edilen": [
+    {
+      "vadeli": 4362.45,
+      "spot_esdeger": 4365.5,
+      "uzaklik_pct": -0.09,
+      "puan": 7.141,
+      "kaynak_sayisi": 7,
+      "kaynaklar": [
+        "haftalik_pivot_S1",
+        "yuvarlak_50",
+        "sma100",
+        "salinim",
+        "haftalik_pivot_P",
+        "aylik_pivot_P",
+        "fib_0.618"
+      ],
+      "temas": 4
+    }
+  ],
+  "fibonacci_salinimi": {
+    "yon": "yukselis",
+    "dip": {
+      "tarih": "2025-09-15",
+      "fiyat": 3635.1
+    },
+    "tepe": {
+      "tarih": "2026-01-29",
+      "fiyat": 5586.2
+    }
+  },
+  "merdiven": [
+    {
+      "vadeli": 3913.7,
+      "spot_esdeger": 3916.44,
+      "uzaklik_pct": -10.36,
+      "puan": 0.305,
+      "kaynak_sayisi": 1,
+      "kaynaklar": [
+        "salinim"
+      ],
+      "temas": 1
+    },
+    {
+      "vadeli": 3963.33,
+      "spot_esdeger": 3966.11,
+      "uzaklik_pct": -9.23,
+      "puan": 2.421,
+      "kaynak_sayisi": 1,
+      "kaynaklar": [
+        "salinim"
+      ],
+      "temas": 3
+    },
+    {
+      "vadeli": 4030.12,
+      "spot_esdeger": 4032.95,
+      "uzaklik_pct": -7.7,
+      "puan": 4.816,
+      "kaynak_sayisi": 2,
+      "kaynaklar": [
+        "salinim",
+        "fib_0.786"
+      ],
+      "temas": 5
+    },
+    {
+      "vadeli": 4099.18,
+      "spot_esdeger": 4102.05,
+      "uzaklik_pct": -6.12,
+      "puan": 2.696,
+      "kaynak_sayisi": 2,
+      "kaynaklar": [
+        "aylik_pivot_S1",
+        "salinim"
+      ],
+      "temas": 2
+    },
+    {
+      "vadeli": 4151.61,
+      "spot_esdeger": 4154.52,
+      "uzaklik_pct": -4.91,
+      "puan": 1.07,
+      "kaynak_sayisi": 2,
+      "kaynaklar": [
+        "yuvarlak_50",
+        "salinim"
+      ],
+      "temas": 1
+    },
+    {
+      "vadeli": 4220.27,
+      "spot_esdeger": 4223.23,
+      "uzaklik_pct": -3.34,
+      "puan": 3.086,
+      "kaynak_sayisi": 4,
+      "kaynaklar": [
+        "yuvarlak_100",
+        "salinim",
+        "haftalik_pivot_S3",
+        "yuvarlak_50"
+      ],
+      "temas": 2
+    },
+    {
+      "vadeli": 4281.77,
+      "spot_esdeger": 4284.77,
+      "uzaklik_pct": -1.93,
+      "puan": 7.371,
+      "kaynak_sayisi": 6,
+      "kaynaklar": [
+        "sma50",
+        "salinim",
+        "haftalik_pivot_S2",
+        "sma10h",
+        "yuvarlak_100",
+        "salinim"
+      ],
+      "temas": 5
+    },
+    {
+      "vadeli": 4362.45,
+      "spot_esdeger": 4365.5,
+      "uzaklik_pct": -0.09,
+      "puan": 7.141,
+      "kaynak_sayisi": 7,
+      "kaynaklar": [
+        "haftalik_pivot_S1",
+        "yuvarlak_50",
+        "sma100",
+        "salinim",
+        "haftalik_pivot_P",
+        "aylik_pivot_P",
+        "fib_0.618"
+      ],
+      "temas": 4
+    },
+    {
+      "vadeli": 4406.42,
+      "spot_esdeger": 4409.51,
+      "uzaklik_pct": 0.92,
+      "puan": 1.731,
+      "kaynak_sayisi": 3,
+      "kaynaklar": [
+        "salinim",
+        "yuvarlak_100",
+        "haftalik_pivot_R1"
+      ],
+      "temas": 1
+    },
+    {
+      "vadeli": 4456.45,
+      "spot_esdeger": 4459.57,
+      "uzaklik_pct": 2.07,
+      "puan": 2.842,
+      "kaynak_sayisi": 3,
+      "kaynaklar": [
+        "yuvarlak_50",
+        "salinim",
+        "haftalik_pivot_R2"
+      ],
+      "temas": 2
+    },
+    {
+      "vadeli": 4518.52,
+      "spot_esdeger": 4521.69,
+      "uzaklik_pct": 3.49,
+      "puan": 5.396,
+      "kaynak_sayisi": 6,
+      "kaynaklar": [
+        "yuvarlak_100",
+        "haftalik_pivot_R3",
+        "salinim",
+        "sma200",
+        "sma40h",
+        "yuvarlak_50"
+      ],
+      "temas": 2
+    },
+    {
+      "vadeli": 4590.02,
+      "spot_esdeger": 4593.24,
+      "uzaklik_pct": 5.13,
+      "puan": 2.646,
+      "kaynak_sayisi": 3,
+      "kaynaklar": [
+        "salinim",
+        "yuvarlak_100",
+        "fib_0.5"
+      ],
+      "temas": 2
+    },
+    {
+      "vadeli": 4662.95,
+      "spot_esdeger": 4666.22,
+      "uzaklik_pct": 6.8,
+      "puan": 1.862,
+      "kaynak_sayisi": 1,
+      "kaynaklar": [
+        "salinim"
+      ],
+      "temas": 2
+    },
+    {
+      "vadeli": 4717.98,
+      "spot_esdeger": 4721.29,
+      "uzaklik_pct": 8.06,
+      "puan": 1.561,
+      "kaynak_sayisi": 2,
+      "kaynaklar": [
+        "salinim",
+        "aylik_pivot_R1"
+      ],
+      "temas": 1
+    },
+    {
+      "vadeli": 4777.15,
+      "spot_esdeger": 4780.5,
+      "uzaklik_pct": 9.41,
+      "puan": 1.26,
+      "kaynak_sayisi": 1,
+      "kaynaklar": [
+        "salinim"
+      ],
+      "temas": 2
+    },
+    {
+      "vadeli": 4854.69,
+      "spot_esdeger": 4858.09,
+      "uzaklik_pct": 11.19,
+      "puan": 2.321,
+      "kaynak_sayisi": 2,
+      "kaynaklar": [
+        "fib_0.382",
+        "salinim"
+      ],
+      "temas": 3
+    }
+  ],
+  "canli": {
+    "fiyat": 4315.09,
+    "test_marji": 21.83,
+    "direnc": [
+      {
+        "vadeli": 4362.45,
+        "spot_esdeger": 4365.5,
+        "uzaklik_pct": -0.09,
+        "puan": 7.141,
+        "kaynak_sayisi": 7,
+        "kaynaklar": [
+          "haftalik_pivot_S1",
+          "yuvarlak_50",
+          "sma100",
+          "salinim",
+          "haftalik_pivot_P",
+          "aylik_pivot_P",
+          "fib_0.618"
+        ],
+        "temas": 4,
+        "canli_uzaklik_pct": 1.17,
+        "canli_uzaklik_dolar": 50.41
+      },
+      {
+        "vadeli": 4406.42,
+        "spot_esdeger": 4409.51,
+        "uzaklik_pct": 0.92,
+        "puan": 1.731,
+        "kaynak_sayisi": 3,
+        "kaynaklar": [
+          "salinim",
+          "yuvarlak_100",
+          "haftalik_pivot_R1"
+        ],
+        "temas": 1,
+        "canli_uzaklik_pct": 2.19,
+        "canli_uzaklik_dolar": 94.42
+      },
+      {
+        "vadeli": 4456.45,
+        "spot_esdeger": 4459.57,
+        "uzaklik_pct": 2.07,
+        "puan": 2.842,
+        "kaynak_sayisi": 3,
+        "kaynaklar": [
+          "yuvarlak_50",
+          "salinim",
+          "haftalik_pivot_R2"
+        ],
+        "temas": 2,
+        "canli_uzaklik_pct": 3.35,
+        "canli_uzaklik_dolar": 144.48
+      }
+    ],
+    "destek": [
+      {
+        "vadeli": 4281.77,
+        "spot_esdeger": 4284.77,
+        "uzaklik_pct": -1.93,
+        "puan": 7.371,
+        "kaynak_sayisi": 6,
+        "kaynaklar": [
+          "sma50",
+          "salinim",
+          "haftalik_pivot_S2",
+          "sma10h",
+          "yuvarlak_100",
+          "salinim"
+        ],
+        "temas": 5,
+        "canli_uzaklik_pct": -0.7,
+        "canli_uzaklik_dolar": -30.32
+      },
+      {
+        "vadeli": 4220.27,
+        "spot_esdeger": 4223.23,
+        "uzaklik_pct": -3.34,
+        "puan": 3.086,
+        "kaynak_sayisi": 4,
+        "kaynaklar": [
+          "yuvarlak_100",
+          "salinim",
+          "haftalik_pivot_S3",
+          "yuvarlak_50"
+        ],
+        "temas": 2,
+        "canli_uzaklik_pct": -2.13,
+        "canli_uzaklik_dolar": -91.86
+      },
+      {
+        "vadeli": 4151.61,
+        "spot_esdeger": 4154.52,
+        "uzaklik_pct": -4.91,
+        "puan": 1.07,
+        "kaynak_sayisi": 2,
+        "kaynaklar": [
+          "yuvarlak_50",
+          "salinim"
+        ],
+        "temas": 1,
+        "canli_uzaklik_pct": -3.72,
+        "canli_uzaklik_dolar": -160.57
+      }
+    ],
+    "test_edilen": [],
+    "bugun_gecilen": [
+      {
+        "vadeli": 4362.45,
+        "spot_esdeger": 4365.5,
+        "uzaklik_pct": -0.09,
+        "puan": 7.141,
+        "kaynak_sayisi": 7,
+        "kaynaklar": [
+          "haftalik_pivot_S1",
+          "yuvarlak_50",
+          "sma100",
+          "salinim",
+          "haftalik_pivot_P",
+          "aylik_pivot_P",
+          "fib_0.618"
+        ],
+        "temas": 4,
+        "canli_uzaklik_pct": 1.17,
+        "canli_uzaklik_dolar": 50.41
+      }
+    ]
+  }
+}

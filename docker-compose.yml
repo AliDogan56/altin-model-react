@@ -25,6 +25,7 @@ services:
       APP_ENV: production
       MODEL_SERVICE_URL: http://model-service:8002
       MARKET_SERVICE_URL: http://market-service:8001
+      COMMENTARY_SERVICE_URL: http://commentary-service:8003
       DATABASE_PATH: /data/gold_platform_production.sqlite3
       CORS_ORIGINS: https://onsaltinanaliz.com,https://www.onsaltinanaliz.com
     volumes:
@@ -34,6 +35,8 @@ services:
       market-service:
         condition: service_healthy
       model-service:
+        condition: service_healthy
+      commentary-service:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"]
@@ -86,6 +89,34 @@ services:
       timeout: 5s
       retries: 5
 
+  # Yorum servisi: fiyat eşiği tetikleyince LLM turu (Gemini/Groq ücretsiz katman) çalışır; API son metni
+  # diskten okur. Anahtarlar .env.secrets'ten (env_file) gelir, repoda değil. Bellek: pandas + numpy ~150 MB.
+  commentary-service:
+    build: ./backend/commentary-service
+    restart: unless-stopped
+    logging: *logging
+    deploy:
+      resources:
+        limits: { memory: 512M, cpus: "1.0", pids: 256 }
+        reservations: { memory: 128M }
+    env_file:
+      - ./backend/commentary-service/.env.secrets
+    environment:
+      APP_ENV: production
+      DATA_DIR: /data
+      DATABASE_PATH: /data/gold_platform_production.sqlite3
+      CORS_ORIGINS: http://api-gateway:8000
+      AUTO_GENERATE: "true"
+      PIPELINE_MODE: full
+    volumes:
+      - gold-commentary:/data
+    networks: [gold-network]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8003/health', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
   web:
     build: ./frontend
     restart: unless-stopped
@@ -108,3 +139,4 @@ networks:
 volumes:
   gold-data:
   gold-models:
+  gold-commentary:

@@ -39,9 +39,11 @@ def get_settings() -> Settings:
                          _csv("MODEL_SERVICE_PREFIXES", "/v1/predict,/v1/snapshots,/v1/learning,/v1/training"))
     backend = ServiceRoute("market-service", os.getenv("MARKET_SERVICE_URL", "http://127.0.0.1:8001").rstrip("/"),
                            _csv("MARKET_SERVICE_PREFIXES", "/v1/market"))
+    commentary = ServiceRoute("commentary-service", os.getenv("COMMENTARY_SERVICE_URL", "http://127.0.0.1:8003").rstrip("/"),
+                              _csv("COMMENTARY_SERVICE_PREFIXES", "/v1/commentary"))
     database_default = ROOT.parent / "data" / f"gold_platform_{environment}.sqlite3"
     return Settings(environment, _csv("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173,http://192.168.1.103:5173"),
-                    (model, backend), backend, Path(os.getenv("DATABASE_PATH", database_default)),
+                    (model, backend, commentary), backend, Path(os.getenv("DATABASE_PATH", database_default)),
                     float(os.getenv("UPSTREAM_TIMEOUT_SECONDS", "90")),
                     float(os.getenv("UPSTREAM_SLOW_TIMEOUT_SECONDS", "300")),
                     _csv("UPSTREAM_SLOW_PREFIXES", "/v1/training"))

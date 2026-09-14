@@ -1,0 +1,149 @@
+{
+  "as_of": "2026-09-14",
+  "son_bar": {
+    "gunluk": "2026-09-11",
+    "haftalik": "2026-09-11",
+    "aylik": "2026-08-31"
+  },
+  "yontem": "Gösterge / (2 × son N bar standart sapması), ±1'de doyurulur; ağırlıklı toplam × 100.",
+  "cerceveler": {
+    "gunluk": {
+      "skor": -26.0,
+      "etiket": "düşüş",
+      "pencere": 252,
+      "bar_sayisi": 6532,
+      "bilesenler": {
+        "rsi14_merkezli": {
+          "deger": -2.113096,
+          "skor": -0.077,
+          "agirlik": 0.15
+        },
+        "macd_hist": {
+          "deger": -0.006469,
+          "skor": -0.606,
+          "agirlik": 0.15
+        },
+        "macd_hist_egim3": {
+          "deger": -0.000515,
+          "skor": -0.069,
+          "agirlik": 0.1
+        },
+        "roc10": {
+          "deger": -0.052823,
+          "skor": -0.522,
+          "agirlik": 0.15
+        },
+        "ema20_konum": {
+          "deger": -0.010373,
+          "skor": -0.147,
+          "agirlik": 0.1
+        },
+        "ema50_konum": {
+          "deger": 0.002447,
+          "skor": 0.021,
+          "agirlik": 0.1
+        },
+        "ema20_egim5": {
+          "deger": -0.003083,
+          "skor": -0.09,
+          "agirlik": 0.1
+        },
+        "adx14_yonlu": {
+          "deger": -0.191806,
+          "skor": -0.311,
+          "agirlik": 0.1
+        },
+        "bollinger_pctb_merkezli": {
+          "deger": -0.254615,
+          "skor": -0.389,
+          "agirlik": 0.05
+        }
+      }
+    },
+    "haftalik": {
+      "skor": 13.5,
+      "etiket": "nötr",
+      "pencere": 156,
+      "bar_sayisi": 1359,
+      "bilesenler": {
+        "rsi14_merkezli": {
+          "deger": -0.362733,
+          "skor": -0.017,
+          "agirlik": 0.2
+        },
+        "macd_hist": {
+          "deger": 0.004907,
+          "skor": 0.285,
+          "agirlik": 0.2
+        },
+        "roc13": {
+          "deger": 0.035872,
+          "skor": 0.195,
+          "agirlik": 0.2
+        },
+        "sma10_konum": {
+          "deger": 0.018883,
+          "skor": 0.224,
+          "agirlik": 0.15
+        },
+        "sma40_konum": {
+          "deger": -0.038277,
+          "skor": -0.219,
+          "agirlik": 0.15
+        },
+        "adx14_yonlu": {
+          "deger": 0.201041,
+          "skor": 0.419,
+          "agirlik": 0.1
+        }
+      }
+    },
+    "aylik": {
+      "skor": 1.0,
+      "etiket": "nötr",
+      "pencere": 120,
+      "bar_sayisi": 313,
+      "bilesenler": {
+        "getiri_12_1": {
+          "deger": 0.165645,
+          "skor": 0.491,
+          "agirlik": 0.3
+        },
+        "roc3": {
+          "deger": -0.028374,
+          "skor": -0.18,
+          "agirlik": 0.15
+        },
+        "roc6": {
+          "deger": -0.152834,
+          "skor": -0.651,
+          "agirlik": 0.15
+        },
+        "sma10_konum": {
+          "deger": -0.011229,
+          "skor": -0.072,
+          "agirlik": 0.15
+        },
+        "macd_hist": {
+          "deger": -0.009193,
+          "skor": -0.378,
+          "agirlik": 0.15
+        },
+        "rsi14_merkezli": {
+          "deger": 14.375993,
+          "skor": 0.546,
+          "agirlik": 0.1
+        }
+      }
+    }
+  },
+  "hizalanma": {
+    "durum": "karisik",
+    "aciklama": "Çerçeveler hemfikir değil ya da nötr; yön iddiası zayıf.",
+    "isaretler": {
+      "gunluk": -1,
+      "haftalik": 0,
+      "aylik": 0
+    }
+  }
+}

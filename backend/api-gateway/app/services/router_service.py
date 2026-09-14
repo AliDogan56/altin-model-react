@@ -7,7 +7,7 @@ class RouterService:
             gateway_prefix = f"/{route.name}"
             if path == gateway_prefix or path.startswith(f"{gateway_prefix}/"):
                 return route
-        raise KeyError("URL, servis adıyla başlamalıdır: /market-service veya /model-service")
+        raise KeyError("URL, servis adıyla başlamalıdır: /market-service, /model-service veya /commentary-service")
 
     @staticmethod
     def upstream_path(path: str, route: ServiceRoute) -> str:

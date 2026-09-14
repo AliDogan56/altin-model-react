@@ -1,6 +1,7 @@
 node_modules/
 dist/
 backend/.venv/
+backend/*/.venv/
 backend/data/*.sqlite3*
 # Dış kaynak önbelleği: yerel çalıştırmada oluşan çalışma zamanı verisi
 backend/data/cache/
@@ -18,3 +19,7 @@ frontend/dist-local/
 
 # Yerel eğitim artefaktları (MODEL_DIR); canlıda volume, repoda değil
 backend/model-service/models/
+
+# commentary-service gizli anahtarları ve çalışma verisi
+backend/commentary-service/.env.secrets
+backend/commentary-service/data/

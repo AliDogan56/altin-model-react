@@ -1,0 +1,70 @@
+{
+  "as_of": "2026-09-14",
+  "spot_lbma_pm": {
+    "tarih": "2026-09-11",
+    "fiyat": 4386.25,
+    "degisim_pct": {
+      "1g": 0.48,
+      "5g": -0.66,
+      "21g": -0.91,
+      "63g": 0.71,
+      "126g": -14.5,
+      "252g": 20.15
+    }
+  },
+  "vadeli_gcf": {
+    "son_tamamlanan_bar": "2026-09-11",
+    "kapanis": 4366.2001953125,
+    "atr14": 72.7,
+    "atr14_pct": 1.67
+  },
+  "basis": 1.0007,
+  "basis_not": "20 günlük medyan(LBMA PM / GC=F kapanış)",
+  "canli": {
+    "fiyat": 4315.09,
+    "kaynak": "PAXG-USD (spot izleyen)",
+    "fikse_gore_pct": -1.62,
+    "fikse_gore_dolar": -71.16,
+    "onceki_kapanisa_gore_pct": -0.48,
+    "hareket_atr_kati": -0.98,
+    "atr_spot": 72.75
+  },
+  "canli_zaman_utc": "2026-09-14T17:36:57+00:00",
+  "canli_ilk_direnc": 4365.5,
+  "canli_ilk_destek": 4284.77,
+  "momentum": {
+    "gunluk": {
+      "skor": -26.0,
+      "etiket": "düşüş"
+    },
+    "haftalik": {
+      "skor": 13.5,
+      "etiket": "nötr"
+    },
+    "aylik": {
+      "skor": 1.0,
+      "etiket": "nötr"
+    }
+  },
+  "hizalanma": "karisik",
+  "dow": "yukselis",
+  "ilk_direnc_spot": 4409.51,
+  "ilk_destek_spot": 4284.77,
+  "makro_son": {
+    "PCEPI": 131.659,
+    "M2SL": 23218.0,
+    "CPIAUCSL": 334.131,
+    "CPILFESL": 337.765,
+    "DTWEXBGS": 118.073,
+    "DCOILWTICO": 97.26,
+    "WALCL": 6740619.0,
+    "DGS2": 4.56,
+    "DGS10": 4.95,
+    "DFII10": 2.55,
+    "T5YIE": 2.4,
+    "T10Y2Y": 0.33,
+    "T10YIE": 2.36,
+    "VIXCLS": 15.84
+  },
+  "uyarilar": []
+}

@@ -1,21 +1,24 @@
 # Proje İndeksi
 
 Ons altın (XAU/USD) tahmin ve analiz platformu. React SPA + API Gateway + Market Service +
-Model Service. Tahmin, eğitim ve hata ölçümü **yalnız XAU/USD günlük serisine** dayanır;
+Model Service + Commentary Service (LLM yorum, 2026-09-14). Tahmin, eğitim ve hata ölçümü **yalnız XAU/USD günlük serisine** dayanır;
 PAXG/Binance kaynağı ve eski fallback modeli projeden tamamen çıkarılmıştır.
 
-Son tarama: 2026-08-21. Aşağıdaki her sayı o gün ölçüldü.
+Son tam tarama: **2026-09-14**. Bu dosya 7 Eylül'de teknik analiz taşımasıyla birlikte
+`8443c0f` sürümüne geri döndü; o günden sonra eklenen bölümler tarihlidir, tarihsiz sayılar
+21 Ağustos ölçümüdür ve 14 Eylül'de doğrulananlar ayrıca işaretlidir.
 
 ## Akış
 
 ```
-Tarayıcı → web nginx (:8080) → api-gateway (:8000) → market-service (:8001)
-                                                   → model-service  (:8002)
+Tarayıcı → web nginx (:8080) → api-gateway (:8000) → market-service     (:8001)
+                                                   → model-service      (:8002)
+                                                   → commentary-service (:8003)
 Canlı ONS / USDTRY / ziynet: tarayıcıdan doğrudan Harem Socket.IO
 ```
 
-Gateway yalnız yol adına bakar: `/market-service/*` ve `/model-service/*` öneki soyulup
-ilgili servise iletilir (`api-gateway/app/services/router_service.py`).
+Gateway yalnız yol adına bakar: `/market-service/*`, `/model-service/*` ve
+`/commentary-service/*` öneki soyulup ilgili servise iletilir (`api-gateway/app/services/router_service.py`).
 
 ### Uçlar
 
@@ -24,13 +27,17 @@ ilgili servise iletilir (`api-gateway/app/services/router_service.py`).
 | market | `GET /v1/market/xau` | xaus.com günlük OHLC, 300 sn önbellek, **yedek kaynaklı** |
 | market | `GET /v1/market/fred?id=` | FRED CSV (curl_cffi ile), 900 sn önbellek, son 800 gün |
 | market | `GET /v1/market/news` | Google News RSS, 10 başlık |
-| market | `GET /v1/market/xau/intraday` | Yahoo 5 günlük 5 dakikalık mumlar, 60 sn önbellek |
-| market | `GET /v1/market/xau/momentum` | gün içi momentum, seviye merdiveni ve kırılım gücü |
+| market | `GET /v1/market/xau/intraday` | Yahoo 5 günlük 5 dakikalık mumlar, 60 sn önbellek; vadeli akış 60 dk susarsa spot izleyen yedek (`fallback`, `primary_age_minutes`) |
+| market | `GET /v1/market/xau/momentum` | gün içi momentum, seviye merdiveni ve kırılım gücü; `feed` bloğu hangi akıştan hesaplandığını söyler |
 | model | `GET /v1/features/latest` | **tahmin girdilerinin tek kaynağı** — eğitim setiyle birebir |
 | model | `POST /v1/predict` | `{price, features}` → getiri, bant, `feature_effects`, `weights`, `confident`, `clipped_features` |
 | model | `GET /v1/learning/metrics` | aktif model + katman dışı metrikler |
 | model | `POST /v1/training/run` | elle yeniden eğitim |
 | model | `GET /v1/learning/job` | saatlik job durumu |
+| commentary | `GET /v1/commentary/latest` | son okuyucu için Türkçe yorum; **üretim tetiklemez**, diskten okur (1–4 ms) |
+| commentary | `GET /v1/commentary/latest/text` | aynı içerik düz metin |
+| commentary | `GET /v1/commentary/job` | fiyat izleme işi: son kontrol/karar/üretim, hata, LLM zincirleri |
+| commentary | `POST /v1/commentary/regenerate` | yönetici (`COMMENTARY_ADMIN_TOKEN`), sonraki döngüde zorla üretim |
 
 Model-service'te SQLite yok; `db.py` ve `gold_repository.py` kaldırıldı. Snapshot/observations
 tabloları ve `/v1/snapshots` ucu artık mevcut değil.
@@ -105,28 +112,32 @@ Artık ikisinde de yedek var: `query1.finance.yahoo.com/.../GC=F?range=5y&interv
   uymayan artefakt yüklenmez ve `/v1/learning/job` içinde `rejected_artifacts` olarak raporlanır
 - Docker imajı build sırasında sürümlenen CSV'den yedek modeli üretir
 
-### Aktif modelin karnesi (`xauusd-mlp-20260821T164355Z`)
+### Aktif modelin karnesi (canlı, 14 Eylül 2026: `xauusd-mlp-20260903T201722Z`)
 
-| Ufuk | Etiketli satır | OOF satır | MAE | Yön | Sıfır bazına karşı beceri | Ağırlık |
-|---|---|---|---|---|---|---|
-| 7g | 1192 | 537 | %2,32 | %63,5 | %3,9 | 0,92 |
-| 14g | 1187 | 535 | %3,17 | %62,4 | %1,9 | **0,13** |
-| 30g | 1175 | 529 | %4,22 | %70,1 | %26,3 | 0,64 |
+| Ufuk | OOF satır | MAE | Yön | MSE beceri | error80 | Ağırlık | Görüş |
+|---|---|---|---|---|---|---|---|
+| 7g | 537 | %2,43 | — | %0,0 | %3,6 | **0,00** | yok |
+| 14g | 535 | %3,16 | %62,1 | %2,1 | %4,9 | 0,14 | yok (<0,2) |
+| 30g | 529 | %4,53 | %70,1 | %17,0 | %7,3 | 0,37 | var |
 
-Bant genişlikleri (error80): %3,5 / %4,9 / %6,8. 14 günlük ufkun ağırlığı çok düşük —
-model orada neredeyse hiçbir şey söylemiyor, bu bilinçli ve doğru davranış.
+3 Eylül soğuk açılışında eğitilen artefakt; **7 günlük ufuk kapalı** (aynı verinin yeniden
+eğitimi ağırlığı 0,92'den 0,00'a düşürdü — 7g becerisi eğitim tohum/kesitine bu kadar
+duyarlı). Arayüz varsayılanı 30 gün olduğu için sayfa açılışında görüş var. 21 Ağustos
+artefaktının tablosu (7g 0,92 / 14g 0,13 / 30g 0,64) git geçmişinde.
 
 ## Frontend
 
-`frontend/src/` — katmanlı, App.tsx monoliti kaldırıldı. En büyük dosya 383 satır.
+`frontend/src/` — katmanlı, App.tsx monoliti kaldırıldı. En büyük dosya `features/chart/ForecastChart.tsx`
+406 satır, ardından `MomentumSection.tsx` 201 (14 Eylül ölçümü).
 
 ```
 lib/        saf yardımcılar (math, format, meta) — React bilmez
 domain/     saf iş mantığı; model.json'u import etmez, artefakt parametre olarak geçer
 services/   ağ katmanı (api/, realtime/, config, http)
 features/   ekran bölümleri + veri kancaları (parametre formu kaldırıldı)
-components/ paylaşılan bileşenler (SiteNav, SiteFooter, Collapsible, LegalModal)
-pages/      DashboardPage, ArticlePage, GuideHubPage, PanelHubPage
+components/ paylaşılan bileşenler (SiteNav, SiteFooter, Collapsible, LegalModal, ErrorBoundary, Spinner, ThemeToggle)
+components/ui/  DataTimestamp, InfoTooltip, SegmentedControl, TabIcon
+pages/      DashboardRoute (sağlayıcı + panel, tembel), DashboardPage, ArticlePage, GuideHubPage, PanelHubPage, SitePageView
 app/        App (react-router), routes.ts, ScrollToTop, useDocumentMeta
 content/    tek kaynak: makaleler, panel özellikleri, parametre grupları, site metinleri
 ```
@@ -169,7 +180,7 @@ content/    tek kaynak: makaleler, panel özellikleri, parametre grupları, site
   değil, **başlıklar için ayrı bir display yüz**. Sıra platformun kendi arayüz yüzünü
   önceler ve hepsi Türkçe diyakritikleri karşılar. Doğrulandı: sıfır font ağ isteği,
   375 ve 780 px'te HTML kırpılması 0, gövde taşması 0
-- **İki tema var, varsayılan aydınlık.** Palet `styles/_tokens.scss` içinde **56 token**
+- **İki tema var, varsayılan aydınlık.** Palet `styles/_tokens.scss` içinde **74 token** (14 Eylül sayımı)
   olarak tanımlı; aydınlık palet `:root`'ta, koyu palet `:root[data-theme="dark"]`'ta ve
   ikisi birebir aynı anahtarları taşır. Sistem tercihine göre otomatik geçiş **yok** —
   varsayılanın aydınlık olması ürün kararı. Seçim `localStorage['oaa-theme']`'de saklanır;
@@ -197,11 +208,10 @@ content/    tek kaynak: makaleler, panel özellikleri, parametre grupları, site
   durumu effect içinde güncelleyen kancada sonsuz render döngüsü yaratıyor
   (React #185, "Maximum update depth exceeded"); grafik ilk yüklemede bu yüzden patladı.
   `hold.test.ts` bunu nesne kimliğiyle doğrular
-- **Spinner nerede dönüyor**: panel başlığındaki ONS ve USD/TL kartları (akış canlı
-  değilken durum noktasının yerini alır), yenile düğmesi, tahmin kartları, grafik vade
-  kartı, ziynet bölümü, bülten haberleri, TL getirisi, işlem bölgeleri ve ayrıntı
-  bölümlerinin yer tutucusu. Model servisi çevrimdışıysa ayrıntı yer tutucusu spinner
-  yerine durumu yazar — sonsuza kadar dönen gösterge yanıltıcı olurdu
+- **Spinner nerede dönüyor** (14 Eylül sayımı, sekmeli düzen sonrası daraldı): rota
+  yüklenirken `App` yedeği, TL getirisi ve işlem bölgeleri. Panel başlığı spinner kullanmaz;
+  boş değeri "—" ve `DataTimestamp` durumuyla ("Veri bekleniyor / Canlı / Gecikmeli veri")
+  anlatır. Model servisi çevrimdışıysa `terminal-status` satırı durumu yazar
 - **Kontrast ölçülüyor.** Her iki temada tüm görünür metinler WCAG AA'ya göre denetlendi
   (anasayfa 418, rehber 132, kurumsal 59 öge): sıfır hata. Aydınlık temada `--text-dim`,
   `--gold`, `--teal`, `--blue` bu denetim sonucu koyulaştırıldı
@@ -266,10 +276,8 @@ content/    tek kaynak: makaleler, panel özellikleri, parametre grupları, site
   tamamlanmış sayılır; `computePivots(candles, today)` ile test edilebilir
 - **Dikey ölçek** (`domain/chart/scale.ts`): belirsizlik bandı çekirdek serileri ezmesin diye
   pay sınırıyla dahil edilir (çekirdek en az %50), taşan uç kırpılır
-- Panel sırası — **ana görünüm**: tahmin kartları, ziynet, grafik (özet kartlar ve
-  destek-direnç açıklaması grafiğin **altında**); **ayrıntılar**: isabet karnesi, teknik
-  göstergeler, pivot, parametre katkısı, TL getirisi, bülten, işlem bölgeleri
-  (hepsi `Collapsible` içinde)
+- Panel yerleşimi **sekmeli çalışma alanı** (bkz. "Sekmeli çalışma alanı" bölümü); eski
+  "ana görünüm + Ayrıntılar akordiyonu" düzeni yok
 - **Vade her yerde `horizonDays`'e bağlı.** Tahmin kartları, grafik, parametre katkısı,
   işlem bölgeleri ve TL getirisi aynı ufku gösterir. TL kartı 3/6/9 **ay** sunuyor ve
   30 günlük tahmini `days/30` kadar üstel olarak uzatıyordu (9 ayda bant ±%32); artık
@@ -436,12 +444,10 @@ arayüzde ayrı bir not olarak yazılır.
 - Bölüm "Ayrıntılar" içinde `Collapsible`; panel özelliği `altin-momentum-gucu`,
   çapa `feature-momentum`. `altin-destek-direnc` rehberi (başlığı zaten "Destek, Direnç
   ve Momentum") buraya bağlanır
-- **Momentum grafiğe çizilmez.** Hedef ve test edilen seviye grafikte mavi çizgi-nokta
-  deseniyle işaretlenmişti; pivot merdiveni zaten çizili olduğu için grafik kalabalıklaştı
-  ve geri alındı. Momentum artık grafiğin **altındaki özet kartlarda**, "Yukarıda ilk
-  direnç"in hemen yanında duruyor (`.snapshot-card.momentum-card`, dizgi 4 → 5 sütun;
-  mobilde 2 sütunda direnç kartıyla aynı satıra düşüyor). Kenarlık yönü kodlar:
-  yukarı yeşil, aşağı kırmızı, yönsüz nötr — mavi kullanılamaz, "Şu anki fiyat" kartı almış
+- **Momentum grafiğe çizilmez** (denendi, kalabalıklaştı, geri alındı). 5 Eylül'den beri özet,
+  Genel bakış sekmesinin sağ rayında `MomentumSummary` (güç ölçeği + yön + eğilim + `DataTimestamp`,
+  15 dk sonra "gecikmeli", yedek akış notu); tam bölüm Teknik analiz sekmesinde. Yön rengi:
+  yukarı yeşil, aşağı kırmızı, yönsüz nötr. Eski `.snapshot-card.momentum-card` yok
 - **Seviyeler tek kaynaktan: panelin pivot merdiveni.** Hem özet kart hem Ayrıntılar'daki
   momentum bölümü `pivotLadder`'ı ve kartların fiyatını kullanır; momentum servisi yalnız
   **yön, güç, trend ve seansın beklenen hareketini** sağlar. Önce ikisi servisin kendi
@@ -558,10 +564,10 @@ indiriyordu. Sayfa türleri artık `app/App.tsx` içinde `React.lazy` ile ayrı 
 `pages/DashboardRoute.tsx` (sağlayıcı + panel, socket.io burada), `ArticlePage`,
 `GuideHubPage`, `PanelHubPage`, `SitePageView`.
 
-| sayfa | önce | sonra |
-|---|---|---|
-| rehber makalesi | 145 KB | **~99 KB** (giriş 96 + makale 1,3 + footer 1,1) |
-| panel / anasayfa | 145 KB | 144 KB (giriş 96 + panel 48) |
+| sayfa | önce | sonra (4 Eylül) | 14 Eylül |
+|---|---|---|---|
+| rehber makalesi | 145 KB | **~99 KB** (giriş 96 + makale 1,3 + footer 1,1) | giriş 96 + makale 1,3 |
+| panel / anasayfa | 145 KB | 144 KB (giriş 96 + panel 48) | 152 KB (giriş 96 + panel 56; CSS 24) |
 
 Giriş paketindeki 96 KB React 19 + react-router + ortak kabuk (SiteNav, LegalModal,
 makale indeksi); panele ait hiçbir şey kalmadı (imza dizeleriyle doğrulandı).
@@ -786,6 +792,32 @@ bayrak yok, unutulamaz.
   görünür, `/panel/altin-pivot-seviyeleri` bölümü 72 px'e oturuyor; 1280 px'te `sticky`, `top:60px`,
   taşma 0
 
+## Sekmeli çalışma alanı ("terminal" yerleşimi, 2026-09-05; 14 Eylül'de koddan yeniden indekslendi)
+
+`DashboardPage` (137 satır) beş sekmeli bir çalışma alanı: **01 Genel bakış** (tahmin kartları +
+grafik; sağda "ray": ilk destek/direnç, `PriceLadder` merdiveni, `MomentumSummary`; altta
+`OverviewInsights`) · **02 Teknik analiz** (trend, pivot + momentum, göstergeler) · **03 Model**
+(katkı, karne; vade seçici) · **04 Piyasalar** (ziynet, bülten) · **05 Senaryolar** (TL getirisi,
+işlem bölgeleri; vade seçici). Altta `terminal-status` satırı (model bağlantısı, yasal uyarı).
+
+- Sekme `?view=` sorgu parametresinde; rol `tablist/tab/tabpanel`, ok tuşları ve Home/End
+  çalışır. Panel içeriği **ziyaret edildiğinde** bağlanır (`visited` kümesi), sonra `hidden`
+  ile saklanır — bir sekmeye dönmek yeniden yüklemez
+- `/panel/:slug` ve `#feature-*` çapaları `ANCHOR_VIEW` ile doğru sekmeye çözülür
+  (`feature-pivot` → technical, `feature-karne` → model…); görünmeyen düğüm için kaydırma atlanır
+- `Collapsible` bir `AnalysisPresentation` bağlamı okur: çalışma alanında `'section'` değerini
+  alır ve **düz bölüm** olarak render olur (akordiyon yok); bağlam dışında eski akordiyon durur
+- `PanelHeader` **piyasa özeti**: `h1` "Ons altın" + `XAU / USD`, büyük canlı fiyat (Harem),
+  günlük kapanış hareketi, dört yuvalı `dl` (USD/TRY sabit + üç seçilebilir yuva, bkz.
+  "Başlık kartının üç yuvası seçilebilir"), `DataTimestamp` ve Yenile. `demoted` ile `h1` → `h2`
+- `PanelIntro` (panel sayfalarının anlatısı) çalışma alanının **altında**, `SeoContent`'ten önce;
+  ön render sırası aynı değil (bkz. bilinen sorunlar)
+- Stil: `_terminal.scss` + `_terminal-tables/-analysis/-charts/-editorial.scss` (**995 satır**,
+  14 Eylül) `index.scss`'in **en sonunda** `@use` edilir; eski modüllerin üstüne yazılan bir
+  **override katmanı**. Mobile-first; kırılma noktaları 380/420/560/640/900/1024 px.
+  `_tokens.scss` 74 token, iki tema aynı anahtarları taşır
+- Mobilde sekmeler ikonlu alt gezinme çubuğu (ayrıntı yukarıda, SEO bölümündeki madde)
+
 ## Hız sınırı ve dokunma hedefleri (2026-09-03)
 
 - **API hız sınırı konteyner nginx'inde** (`frontend/nginx.conf`), Python bağımlılığı yok.
@@ -829,10 +861,88 @@ bayrak yok, unutulamaz.
   değişmedi: masaüstünde `gap` 9→2, mobilde 11→4, ikisinde de eski toplam
   (26 / 28 px). **Sonuç 18 → 0**, gövde taşması 0
 
+## Yorum servisi (commentary-service, 2026-09-14)
+
+Bağımsız `altin-analiz-masasi` projesinden taşındı; platform kalıplarına (config/database/
+controllers/services, `run.py` profilleri, gateway öneki, compose sağlık ve sınırlar) uyar.
+Ayrıntı: `backend/commentary-service/README.md`.
+
+- **İstek başına üretim yok.** `commentary_job_service` 5 dakikada bir canlı fiyata bakar
+  (PAXG spot vekili, yoksa GC=F); `regeneration_policy.should_regenerate` saf fonksiyondur:
+  fiyat son üretimden **%0,5** oynadıysa **ve** en az **60 dk** geçtiyse üret; **240 dk**
+  geçtiyse fiyat oynamasa da tazele; ilk üretim ve yönetici `force` her zaman geçer.
+  Üretim `asyncio.to_thread` içinde koşar, API bloklanmaz.
+- **Beş LLM rolü, sıralı yedek zinciri** (`llm.toml`): teknik ve takvim Groq
+  (`openai/gpt-oss-120b`, `reasoning_effort=low`, 8k TPM sınırı), makro / baş analist /
+  metin yazarı Gemini (`gemini-3.6-flash`, yedek `3.5-flash-lite`). Sağlayıcı türleri
+  `anthropic` (isteğe bağlı SDK) / `openai_compatible` / `mock`. Ölçüm: tam tur ≈ 23 bin
+  token, ≈ 3,5 dk, 0 dolar (ücretsiz katman). Claude Code ajan turu 436 bin token idi.
+- **Sayılar yalnız betikten gelir.** `snapshot_service` LBMA fiks, Yahoo, FRED, CFTC, fed
+  funds vadelisi ve takvimi `DATA_DIR/latest/*.json` paketine yazar; `output_audit`
+  metindeki her sayının pakette olmasını (yuvarlama payıyla) ve yasak jargonu (ATR, Fed,
+  FOMC, VIX…) denetler; ihlalde tek düzeltme turu, yine ihlalde üretim hata verir ve
+  eski sürüm yayında kalır.
+- **Türkçe anahtarlar bilinçli:** istem paketleri ve LLM şemaları Türkçe (model Türkçe
+  yazar, denetim aynı anahtarları okur); dış sözleşme (`api_models.CommentaryOut`) ve
+  tüm tanımlayıcılar İngilizce.
+- **Açılış doğrulaması:** `llm.toml` zincirindeki her sağlayıcının anahtarı ortamda yoksa
+  servis `RuntimeError` ile **kalkmaz**. Anahtarlar `backend/commentary-service/.env.secrets`
+  (git dışı; `run.py` yükler, compose `env_file`). Doğrulama betiği:
+  `scripts/check_llm.py [--ping]`.
+- **Sürümler diskte:** `DATA_DIR/versions/<UTC damgası>/commentary.json`, `current`
+  sembolik bağı atomik değişir (`os.replace`), `KEEP_VERSIONS` (20) ötesi silinir;
+  `DATA_DIR/ledger/commentary_runs.csv` her turun token ve süre kaydı. Compose'da
+  `gold-commentary:/data` volume'u.
+- Sürümler platformla aynı: fastapi 0.141.1, uvicorn 0.52.4, pydantic 2.13.4, numpy 2.5.2,
+  httpx 0.28.1, curl_cffi 0.16.1, pytest 9.1.1; ek olarak pandas 3.0.5 (teknik hesaplar).
+- **Arayüz entegrasyonu (2026-09-14): sağ altta sabit "AI yorumu" düğmesi + animasyonlu pencere**
+  (`features/commentary/CommentaryDock.tsx`, `useCommentary.ts`, `services/api/commentary.ts`,
+  `content/commentary.ts`, `styles/_commentary.scss`). Düğme mobilde alt sekme çubuğunun 12 px
+  üstünde (`bottom: 65 + 12 px + güvenli alan`), masaüstünde 24/24 px; kıvılcım ikonu, altın ışıltı
+  halkası (3 nefes, sonra durur; okunmamış sürümde sürekli + kırmızı rozet). Pencere `?yorum=1`
+  sorgusunda (paylaşılabilir, geri tuşu kapatır); mobilde alttan yükselir, 640 px'ten itibaren
+  ortada açılır; odak tuzağı, Esc ve arka plan kapatır, kapanınca odak düğmeye döner, gövde
+  kaydırması kilitlenir. Metin blokları `--i` sırasıyla 70 ms gecikmeli belirir; `prefers-reduced-motion`
+  hepsini kapatır. Kanca 10 dakikada bir ve açılışta tazeler; `404` = "hazırlanıyor" durumu, ağ
+  hatasında eldeki yorum kalır. `parseCommentary` şemayı doğrular, `usage`/model adlarını taşımaz;
+  `live.source` sözlükle "spot izleyen seri"/"vadeli altın"a çevrilir (üçüncü taraf adı kuralı).
+  Okunan sürüm `localStorage['oaa-commentary-seen']`.
+  **Canlı fiyat açılış anınındır, üretim anının değil** (`drift.ts`): kartta "Canlı fiyat" Harem
+  kotasyonu (`DataTimestamp` ile), "Yorum yazılırken" servisin `live.price`'ı ve o zamandan beri
+  yüzde fark; fark %0,5'i (servisin `TRIGGER_MOVE_PCT`) aşınca "masa bir sonraki kontrolde yeniden
+  yazar, metindeki sayılar yazıldığı anın sayılarıdır" notu. Metnin içindeki fiyatlar değiştirilemez,
+  LLM çıktısıdır. Üretim sıklığı sabit değil: 5 dk'da bir kontrol, ≥%0,5 hareket **ve** ≥60 dk →
+  yeniden yaz; 240 dk dolunca fiyat oynamasa da yaz; yani pratikte 1–4 saatte bir, tur ≈3,5 dk.
+  **Sesli okuma** (`features/commentary/speech.ts` + `useSpeech.ts`): tarayıcının `speechSynthesis`'i,
+  sunucu yok; pencere başlığında Dinle / Duraklat / Devam et / Durdur, okunan blok `is-speaking` ile
+  vurgulanır, pencere kapanınca susar. Metin bölüm bölüm okunur (tek uzun utterance bazı tarayıcılarda
+  15 sn'de kesiliyor). Ses seçimi yerel `tr-TR` > uzak `tr-TR` > başka `tr` > tarayıcı varsayılanı
+  `lang=tr-TR` ile. Destek yoksa düğme hiç görünmez. Ölçüldü (gömülü tarayıcı, 0 ses kurulu):
+  durum makinesi çalışıyor; gerçek ses cihaza bağlı, iOS'ta ilk okuma dokunuşla başlamalı — düğme
+  bunu sağlar. `frontend/nginx.conf` proxy deseni
+  commentary-service'i kapsar. Ölçüldü (yerel dist + üretimsiz yerel servis): 375 px'te düğme
+  683–735, çubuk 747; pencere 788 px, taşma 0, konsol hatası 0; 1280 px'te 691×743 ortada.
+- **14 Eylül taraması (kod okunarak doğrulandı):** ortam değişkenleri `CHECK_INTERVAL_SECONDS`
+  300, `TRIGGER_MOVE_PCT` 0,5, `MIN_INTERVAL_MINUTES` 60, `MAX_AGE_MINUTES` 240 (0 = kapalı),
+  `PIPELINE_MODE` full|fast (fast = yalnız metin yazarı, son `brif.json` ile), `KEEP_VERSIONS` 20,
+  `LLM_PAUSE_SECONDS` 4. Beş rol sırayla: teknik → takvim/haber → makro → baş analist → metin
+  yazarı; her rolün zinciri `llm.toml`'da, hata olunca sıradaki sağlayıcıya geçilir, kısa/kesik
+  yanıtta bir tekrar, bozuk JSON'da bir onarım çağrısı. `regenerate` yalnız bayrak koyar, üretim
+  sonraki döngüde ve **`AUTO_GENERATE=false` iken hiç** koşmaz. `run_cycle` üretim hatasını
+  yutar; hata yalnız `/v1/commentary/job` içindeki `last_error`'da görünür ve başarısız zorlama
+  her döngüde yeniden denenir. SQLite yalnız `service_registry` kalp atışı içindir. Testler ağa
+  ve gerçek anahtara çıkmaz (`conftest` geçici `DATA_DIR`, sahte LLM). **Henüz commit edilmedi
+  ve canlıda yok** (sunucu `4ff2dcb`, dört konteyner); dağıtım için aşağıdaki bilinen sorunlar
+  önce kapanmalı.
+
 ## Dağıtım
 
-- `docker-compose.yml`: api-gateway, market-service, model-service, web. Yalnız `web`
-  dışarı açık (`127.0.0.1:8080`), TLS host nginx'te (`deploy/nginx/onsaltinanaliz.com.conf`)
+- `docker-compose.yml`: api-gateway, market-service, model-service, commentary-service, web. Yalnız `web`
+  dışarı açık (`127.0.0.1:8080`), TLS host nginx'te (`deploy/nginx/onsaltinanaliz.com.conf`).
+  **Dikkat (14 Eylül):** `api-gateway` artık `commentary-service`'in `service_healthy` olmasına
+  bağlı; yorum servisi anahtar eksikliğiyle kalkmazsa gateway de kalkmaz. Canlıya bu compose'la
+  çıkmadan önce `.env.secrets` sunucuda olmalı ve `frontend/nginx.conf` proxy deseni
+  (`^/(market-service|model-service)`) commentary-service'i de kapsamalı — bugün kapsamıyor
 - **Sıkıştırma konteyner nginx'inde** (`frontend/nginx.conf`), host'ta değil. Host'ta
   `gzip on;` vardı ama `gzip_types` yorumdaydı; nginx varsayılanı yalnız `text/html`
   olduğu için JS ve CSS **ham gidiyordu** (ölçüldü: JS 759,8 KB, CSS 72,4 KB,
@@ -882,8 +992,9 @@ bayrak yok, unutulamaz.
 ## Test
 
 ```
-frontend: 24 dosya, 190 test (vitest: domain + lib + app/routes + services + content + features)
-backend : model-service 46 test, market-service 48 test (pytest)
+frontend: 27 dosya, 199 test (vitest: domain + lib + app/routes + services + content + features)
+backend : model-service 106 · market-service 58 · api-gateway 5 · commentary-service 22 (pytest)
+tsc --noEmit temiz; build: giriş 301 KB ham / 96 KB gzip, panel parçası 179 / 56, CSS 138 / 24 (14 Eylül)
 ```
 
 Vitest bu Node sürümünde `.bin/vitest` sarmalayıcısıyla çalışmıyor:
@@ -906,6 +1017,28 @@ sebepleri git geçmişinde (`90c4f4c` içindeki `docs/technical/VALIDATION.md`).
 
 ## Bilinen sorunlar ve temizlik borcu
 
+0. **14 Eylül taramasında görülenler (yorum servisi çalışma ağacında, commit edilmemiş):**
+   - ~~Arayüz entegrasyonu ve nginx proxy deseni~~ aynı gün kapatıldı (yukarıdaki "Arayüz entegrasyonu")
+   - `api-gateway` compose'da `commentary-service: service_healthy` bekliyor; yorum servisi
+     `llm.toml` zincirindeki bir anahtar eksikse `RuntimeError` ile kalkmaz → **gateway de kalkmaz**
+   - İstem başlığı uyuşmazlığı: `commentary_pipeline.SKIPPED_SECTIONS` `"Çıktılar"`ı atıyor ama
+     `technical_analyst.md` ve `calendar_news_scout.md` tekil `## Çıktı` kullanıyor; o bölümler
+     modele gidiyor ve eski ajan istemlerinden kalan "`reports/latest/*.md` yaz" talimatını
+     taşıyor. Beş istem dosyasının frontmatter'ı da (`tools:`, `model: opus/sonnet`) eski
+     Claude Code alt-ajan biçiminde
+   - `output_audit._eslesir`: 31 ve altı, 2020–2030 arası ve 50/52/100/200/250 değerleri
+     denetimsiz kabul ediliyor; "yüzde 30" gibi uydurma küçük yüzdeler geçer
+   - `PROMPTS_DIR`, `LLM_CONFIG_PATH`'in dizininden türetiliyor; o değişken başka yere
+     gösterilirse istemler sessizce bulunamaz. `.env.local` hiç yüklenmiyor (`local` → `localhost`
+     takma adı), ölü dosya. `news_service.son_haberler` ölü kod; `freshness_service`, `base_cone`,
+     `forecast_ledger` için özel test yok. `.venv` (168 MB) ve `data/` çalışma ağacında, ikisi de
+     `.gitignore`'da
+   - `frontend/src/components/TickSparkline.tsx` hiçbir yerde kullanılmıyor (ölü dosya)
+   - Ön render ile render ayrışması sürüyor: ön render `h1` "Canlı Ons Altın Tahmin ve Senaryo
+     Analiz Paneli", React `h1` "Ons altın"; panel sayfalarında `PanelIntro` ön render'da üstte,
+     render'da altta
+   - Terminal katmanı 12 px altı puntoları geri getirdi (`.market-ticker dt` 11 px, `small` 10 px);
+     4 Eylül'deki "12 px altı 0" ölçümü artık geçerli değil
 1. **Harem `kapanis` alanı güvenilmez.** Ziynet kartlarındaki günlük yüzde bundan hesaplanıyor
    ve bayat kapanışla yanlış çıkabiliyor; mevcut asimetrik guard bazı ürünleri kaçırıyor.
    Ayrıntı: [[altin-fred-parse-ve-harem-kapanis]]
@@ -953,6 +1086,8 @@ backend/model-service/.venv/bin/python backend/model-service/scripts/build_xau_d
 backend/model-service/.venv/bin/python -c "from app.services.trainer import train_model; print(train_model())"
 backend/model-service/.venv/bin/python -m pytest backend/model-service/tests
 backend/model-service/.venv/bin/python backend/model-service/scripts/export_frontend_fallback.py
+backend/commentary-service/.venv/bin/python backend/commentary-service/scripts/check_llm.py --ping
+backend/commentary-service/.venv/bin/python -m pytest backend/commentary-service/tests
 cd frontend && node node_modules/vitest/vitest.mjs run
 docker compose up -d --build
 ```

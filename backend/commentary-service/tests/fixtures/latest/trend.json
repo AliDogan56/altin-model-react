@@ -1,0 +1,173 @@
+{
+  "as_of": "2026-09-14",
+  "son_bar": "2026-09-11",
+  "fiyat": 4366.2,
+  "fiyat_spot_esdeger": 4369.26,
+  "basis": 1.0007,
+  "not": "Vadeli seride hesaplanır; *_spot alanları = vadeli × basis.",
+  "atr14": 72.7,
+  "tolerans": 36.35,
+  "dow": {
+    "durum": "yukselis",
+    "aciklama": "Yüksek tepe ve yüksek dip."
+  },
+  "ortalamalar": {
+    "fiyat_sma50_pct": 2.35,
+    "fiyat_sma200_pct": -3.55,
+    "sma50_ustunde_sma200": false,
+    "sma50": 4265.95,
+    "sma200": 4526.81,
+    "sma50_spot": 4268.94,
+    "sma200_spot": 4529.98
+  },
+  "adx14": 19.2,
+  "trend_cizgileri": {
+    "destek": {
+      "tur": "destek_cizgisi",
+      "noktalar": [
+        {
+          "tarih": "2026-06-30",
+          "fiyat": 3962.5
+        },
+        {
+          "tarih": "2026-07-29",
+          "fiyat": 4017.9
+        }
+      ],
+      "temas": 3,
+      "kirildi": false,
+      "egim_bar_basina": 2.77,
+      "egim_gunluk_pct": 0.0675,
+      "bugunku_deger": 4103.77,
+      "5_bar_sonra": 4117.62,
+      "fiyatin_uzakligi_pct": 6.395,
+      "bugunku_deger_spot": 4106.64,
+      "5_bar_sonra_spot": 4120.5
+    },
+    "direnc": {
+      "tur": "direnc_cizgisi",
+      "noktalar": [
+        {
+          "tarih": "2026-05-29",
+          "fiyat": 4591.8
+        },
+        {
+          "tarih": "2026-08-24",
+          "fiyat": 4670.9
+        }
+      ],
+      "temas": 2,
+      "kirildi": false,
+      "egim_bar_basina": 1.3407,
+      "egim_gunluk_pct": 0.0286,
+      "bugunku_deger": 4688.33,
+      "5_bar_sonra": 4695.03,
+      "fiyatin_uzakligi_pct": -6.871,
+      "bugunku_deger_spot": 4691.61,
+      "5_bar_sonra_spot": 4698.32
+    }
+  },
+  "regresyon_kanali": {
+    "60": {
+      "pencere": 60,
+      "egim_gunluk_pct": 0.1998,
+      "egim_yillik_pct": 65.36,
+      "r2": 0.56,
+      "sigma_pct": 3.067,
+      "konum_sigma": -0.93,
+      "orta": 4492.41,
+      "ust_1s": 4632.31,
+      "alt_1s": 4356.74,
+      "ust_2s": 4776.57,
+      "alt_2s": 4225.16
+    },
+    "120": {
+      "pencere": 120,
+      "egim_gunluk_pct": -0.0853,
+      "egim_yillik_pct": -19.36,
+      "r2": 0.271,
+      "sigma_pct": 4.856,
+      "konum_sigma": 0.9,
+      "orta": 4180.33,
+      "ust_1s": 4388.32,
+      "alt_1s": 3982.2,
+      "ust_2s": 4606.66,
+      "alt_2s": 3793.46
+    },
+    "250": {
+      "pencere": 250,
+      "egim_gunluk_pct": 0.0271,
+      "egim_yillik_pct": 7.08,
+      "r2": 0.052,
+      "sigma_pct": 8.337,
+      "konum_sigma": -0.5,
+      "orta": 4551.41,
+      "ust_1s": 4947.1,
+      "alt_1s": 4187.36,
+      "ust_2s": 5377.2,
+      "alt_2s": 3852.44
+    }
+  },
+  "gecersizleme": {
+    "son_dip": {
+      "tarih": "2026-09-02",
+      "fiyat": 4292.2,
+      "fiyat_spot": 4295.21
+    },
+    "son_tepe": {
+      "tarih": "2026-08-24",
+      "fiyat": 4670.9,
+      "fiyat_spot": 4674.17
+    }
+  },
+  "son_salinimlar": [
+    {
+      "tarih": "2026-06-17",
+      "fiyat": 4377.0,
+      "fiyat_spot": 4380.07,
+      "tur": "tepe"
+    },
+    {
+      "tarih": "2026-06-30",
+      "fiyat": 3962.5,
+      "fiyat_spot": 3965.28,
+      "tur": "dip"
+    },
+    {
+      "tarih": "2026-07-06",
+      "fiyat": 4199.7,
+      "fiyat_spot": 4202.64,
+      "tur": "tepe"
+    },
+    {
+      "tarih": "2026-07-17",
+      "fiyat": 3964.2,
+      "fiyat_spot": 3966.98,
+      "tur": "dip"
+    },
+    {
+      "tarih": "2026-07-22",
+      "fiyat": 4152.1,
+      "fiyat_spot": 4155.01,
+      "tur": "tepe"
+    },
+    {
+      "tarih": "2026-07-29",
+      "fiyat": 4017.9,
+      "fiyat_spot": 4020.71,
+      "tur": "dip"
+    },
+    {
+      "tarih": "2026-08-24",
+      "fiyat": 4670.9,
+      "fiyat_spot": 4674.17,
+      "tur": "tepe"
+    },
+    {
+      "tarih": "2026-09-02",
+      "fiyat": 4292.2,
+      "fiyat_spot": 4295.21,
+      "tur": "dip"
+    }
+  ]
+}

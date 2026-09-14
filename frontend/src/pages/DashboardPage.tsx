@@ -12,6 +12,7 @@ import { openLegal, PAGE_META } from '../content/site';
 import { useDocumentMeta } from '../app/useDocumentMeta';
 import BulletinSection from '../features/bulletin/BulletinSection';
 import ChartSection from '../features/chart/ChartSection';
+import CommentaryDock from '../features/commentary/CommentaryDock';
 import { useDashboard } from '../features/dashboard/DashboardContext';
 import PanelHeader from '../features/dashboard/PanelHeader';
 import PanelIntro from '../features/dashboard/PanelIntro';
@@ -130,6 +131,7 @@ function DashboardPage({ focus }: { focus?: string }) {
     <div className="terminal-status"><span><i className={modelReady ? 'ready' : ''} aria-hidden="true"/>{modelReady ? 'Model bağlantısı açık' : modelStatus === 'fallback' ? 'Model servisi çevrimdışı' : 'Model bekleniyor'}</span><span>XAU/USD · 7 / 14 / 30 günlük model</span><button className="link-btn" type="button" onClick={openLegal}>İstatistiksel senaryo · yatırım tavsiyesi değildir</button></div>
     {feature?.sections?.length ? <PanelIntro feature={feature}/> : null}
     <SeoContent/>
+    <Boundary><CommentaryDock/></Boundary>
     <SiteFooter/>
   </main>;
 }
