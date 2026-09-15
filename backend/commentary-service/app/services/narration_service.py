@@ -24,6 +24,11 @@ import httpx
 log = logging.getLogger(__name__)
 
 NARRATION_FILE = "commentary.mp3"
+NARRATION_LEDGER = "narration_runs.csv"
+
+
+class QuotaExhausted(RuntimeError):
+    """Sağlayıcı 429 verdi ve denemeler bitti: çağıran soğuma süresine girer."""
 NARRATION_META = "narration.json"
 GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
 STYLE = ("Sen sakin ve güven veren bir finans haber anlatıcısısın. Aşağıdaki Türkçe metni doğal konuşma "
@@ -66,9 +71,11 @@ def synthesize_pcm(text: str, *, api_key: str, model: str, voice: str, timeout: 
                                  "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": voice}}}}}
     url = GEMINI_URL.format(model=model)
     last: Exception | None = None
+    quota_hit = False
     for attempt in range(attempts):
         try:
             response = httpx.post(url, params={"key": api_key}, json=body, timeout=timeout)
+            quota_hit = response.status_code == 429
             if response.status_code in (429, 503) and attempt < attempts - 1:
                 wait = float(response.headers.get("retry-after") or 15 * (attempt + 1))
                 log.warning("TTS %s; %.0f sn sonra yeniden", response.status_code, wait)
@@ -83,6 +90,8 @@ def synthesize_pcm(text: str, *, api_key: str, model: str, voice: str, timeout: 
             last = error
             if attempt < attempts - 1:
                 time.sleep(5)
+    if quota_hit:
+        raise QuotaExhausted(f"TTS kotası (429): {last}")
     raise RuntimeError(f"TTS üretilemedi: {last}")
 
 
@@ -113,6 +122,28 @@ def narrate(version_dir: Path, item: dict, *, api_key: str, model: str, voice: s
             "segments": estimate_times(segments, duration), "estimated": True}
     (version_dir / NARRATION_META).write_text(json.dumps(meta, ensure_ascii=False, indent=2))
     return meta
+
+
+def append_ledger(ledger_dir: Path, version: str, ok: bool, seconds: float, size: int, error: str = "") -> None:
+    """Her deneme (başarılı ya da değil) kota harcar; bütçe bu defterden sayılır."""
+    import csv
+    ledger_dir.mkdir(parents=True, exist_ok=True)
+    path = ledger_dir / NARRATION_LEDGER
+    new = not path.exists()
+    with open(path, "a", newline="") as handle:
+        writer = csv.writer(handle)
+        if new:
+            writer.writerow(["attempted_at", "version", "ok", "seconds", "bytes", "error"])
+        writer.writerow([time.strftime("%Y%m%dT%H%M%SZ", time.gmtime()), version, int(ok), round(seconds, 1), size, error[:200]])
+
+
+def read_ledger(ledger_dir: Path) -> list[dict]:
+    import csv
+    path = ledger_dir / NARRATION_LEDGER
+    if not path.exists():
+        return []
+    with open(path, newline="") as handle:
+        return list(csv.DictReader(handle))
 
 
 def read_meta(version_dir: Path) -> dict | None:

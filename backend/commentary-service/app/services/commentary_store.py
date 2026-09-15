@@ -63,6 +63,13 @@ class CommentaryStore:
         self._append_run(item)
         return item
 
+    def runs(self) -> list[dict]:
+        """Metin üretim defteri (bütçe sayacı buradan okur)."""
+        if not RUNS_CSV.exists():
+            return []
+        with open(RUNS_CSV, newline="") as handle:
+            return list(csv.DictReader(handle))
+
     def version_dir(self, version: str):
         return VERSIONS_DIR / version
 

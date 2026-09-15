@@ -69,26 +69,41 @@ class AnthropicProvider(Provider):
         return text, TokenUsage(usage.input_tokens, usage.output_tokens, getattr(usage, "cache_read_input_tokens", 0) or 0, response.stop_reason)
 
 
+# Sağlayıcının şemayı kendisinin zorlaması (json_schema) istemden ~500–1.300 karakter şema metnini kaldırır ve onarım
+# çağrılarını bitirir; desteklemeyen uç 400 verir, o zaman json_object + istemde şema (eski yol). Karar sağlayıcı
+# başına hatırlanır ki her çağrıda bir 400 yenmesin.
+_SCHEMA_MODE: dict[str, str] = {}
+
+
 class OpenAICompatibleProvider(Provider):
+    def _bodies(self, system, user, schema, max_tokens, model, extra):
+        base = {"model": model, "max_tokens": max_tokens, "temperature": 0.3}
+        base.update(self.config.extra or {}); base.update(extra or {})
+        if not schema:
+            return [(dict(base, messages=[{"role": "system", "content": system}, {"role": "user", "content": user}]), "none")]
+        strict = dict(base, messages=[{"role": "system", "content": system + "\n\nYANIT BİÇİMİ: Yalnız geçerli JSON döndür; şema sağlayıcıya verildi."}, {"role": "user", "content": user}],
+                      response_format={"type": "json_schema", "json_schema": {"name": "cikti", "schema": schema}})
+        loose = dict(base, messages=[{"role": "system", "content": system + "\n\nYANIT BİÇİMİ: Yalnız geçerli JSON döndür, açıklama ve kod çiti ekleme. Şema:\n" + json.dumps(schema, ensure_ascii=False)}, {"role": "user", "content": user}],
+                     response_format={"type": "json_object"})
+        plain = dict(loose); plain.pop("response_format")
+        order = {"json_schema": [(strict, "json_schema"), (loose, "json_object"), (plain, "plain")],
+                 "json_object": [(loose, "json_object"), (plain, "plain")], "plain": [(plain, "plain")]}
+        return order[_SCHEMA_MODE.get(self.config.name, "json_schema")]
+
     def complete(self, system, user, schema, max_tokens, model, extra=None):
-        if schema:
-            system += "\n\nYANIT BİÇİMİ: Yalnız geçerli JSON döndür, açıklama ve kod çiti ekleme. Şema:\n" + json.dumps(schema, ensure_ascii=False)
-        body = {"model": model, "max_tokens": max_tokens, "temperature": 0.3,
-                "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}]}
-        body.update(self.config.extra or {})
-        body.update(extra or {})
-        if schema:
-            body["response_format"] = {"type": "json_object"}
         headers = {"Content-Type": "application/json"}
         if self.config.api_key:
             headers["Authorization"] = f"Bearer {self.config.api_key}"
         url = self.config.base_url.rstrip("/") + "/chat/completions"
+        bodies = self._bodies(system, user, schema, max_tokens, model, extra)
         with httpx.Client(timeout=180) as client:
             response = None
+            body, mode = bodies[0]
             for attempt in range(4):  # ücretsiz katmanlar dakika/gün sınırında 429 döner: bekle, yeniden dene
                 response = client.post(url, json=body, headers=headers)
-                if response.status_code == 400 and schema and "response_format" in body:
-                    body.pop("response_format")  # bazı uçlar json_object desteklemez
+                while response.status_code == 400 and schema and len(bodies) > 1:
+                    bodies = bodies[1:]; body, mode = bodies[0]   # bu uç bu biçimi desteklemiyor: bir gevşek biçime in
+                    _SCHEMA_MODE[self.config.name] = mode
                     response = client.post(url, json=body, headers=headers)
                 if response.status_code in (429, 503) and attempt < 3:
                     try:

@@ -6,7 +6,10 @@ from __future__ import annotations
 
 import re
 
-YASAK = ["ATR", "SMA", "EMA", "RSI", "MACD", "ADX", "VIX", "DXY", "Dow", "FOMC", "Fed ", "Fed'", "Fed,", "TIPS", "COT", "GVZ", "PAXG", "GC=F", "LBMA"]
+YASAK = ["ATR", "SMA", "EMA", "RSI", "MACD", "ADX", "VIX", "DXY", "Dow", "FOMC", "Fed", "TIPS", "COT", "GVZ", "PAXG", "LBMA"]
+# Tam kelime: "Dowding" ya da "FedWatch" içindeki parça yakalanmaz; "Fed'in", "Fed." yakalanır (ölçüldü: "Dow" alt dizesi
+# bir turda gereksiz düzeltme çağrısı yedi). GC=F ayrı: "=" kelime sınırı vermez.
+YASAK_RX = re.compile(r"\b(" + "|".join(re.escape(y) for y in YASAK) + r")\b|GC=F")
 SAYI_RX = re.compile(r"\d{1,3}(?:\.\d{3})+(?:,\d+)?|\d+(?:,\d+)?")
 
 
@@ -52,15 +55,27 @@ def _eslesir(v: float, havuz: set[float]) -> bool:
     return False
 
 
-def audit_text(metin: str, paket) -> list[str]:
+def _tr(v: float) -> str:
+    return f"{v:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+
+
+def _canli_gecer(metin: str, fiyat: float) -> bool:
+    """Canlı fiyat metinde geçiyor mu: tam, bir ondalık ya da tam sayıya yuvarlanmış biçim (Türkçe ayraçlarla)."""
+    adaylar = {_tr(fiyat), _tr(round(fiyat, 1)).rstrip("0").rstrip(","), f"{round(fiyat):,}".replace(",", ".")}
+    return any(a and a in metin for a in adaylar)
+
+
+def audit_text(metin: str, paket, live_price: float | None = None) -> list[str]:
     havuz = girdi_sayilari(paket)
     sorunlar = []
     yabanci = sorted({m for m in SAYI_RX.findall(metin) if (v := _to_float(m)) is not None and not _eslesir(v, havuz)})
     if yabanci:
         sorunlar.append("girdide olmayan sayılar: " + ", ".join(yabanci))
-    yasak = [y for y in YASAK if y in metin]
+    yasak = sorted({m.group(0) for m in YASAK_RX.finditer(metin)})
     if yasak:
-        sorunlar.append("yasak terimler: " + ", ".join(y.strip(" ',") for y in yasak))
+        sorunlar.append("yasak terimler: " + ", ".join(yasak))
+    if live_price and yabanci == [] and SAYI_RX.search(metin) and not _canli_gecer(metin, live_price):
+        sorunlar.append(f"şu anki fiyat metinde yok: canlı fiyat {_tr(live_price)} dolar girişte ve manşette geçmeli")
     if re.search(r"\b(bir|iki|üç|dört|beş|altı|yedi|sekiz|dokuz|on|yüz|bin)\s+nokta\s+", metin):
         sorunlar.append("sayılar sözcükle ve 'nokta' ile yazılmış; rakamla ve virgülle yazılmalı")
     return sorunlar

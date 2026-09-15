@@ -5,9 +5,12 @@ from __future__ import annotations
 import datetime as dt
 
 
-def should_regenerate(state: dict, now: dt.datetime, price: float | None, move_pct: float, min_interval_minutes: int, max_age_minutes: int) -> tuple[bool, str]:
+def should_regenerate(state: dict, now: dt.datetime, price: float | None, move_pct: float, min_interval_minutes: int, max_age_minutes: int,
+                      *, runs_today: int = 0, max_runs_per_day: int = 0) -> tuple[bool, str]:
     if state.get("force"):
         return True, "force"
+    if max_runs_per_day and runs_today >= max_runs_per_day:
+        return False, f"günlük metin sınırı doldu ({runs_today}/{max_runs_per_day})"
     last = state.get("last_generation")
     if not last:
         return True, "first_generation"

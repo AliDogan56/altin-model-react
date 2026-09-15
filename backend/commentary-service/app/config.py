@@ -39,6 +39,13 @@ class Settings:
     tts_model: str = "gemini-3.1-flash-tts-preview"
     tts_voice: str = "Kore"
     tts_bitrate_kbps: int = 48
+    max_text_runs_per_day: int = 12
+    max_narrations_per_day: int = 8
+    narrate_min_interval_minutes: int = 90
+    narrate_retry_minutes: int = 15
+    narrate_cooldown_minutes: int = 60
+    quota_reset_tz: str = "America/Los_Angeles"
+    full_run_max_age_minutes: int = 240
 
 
 def get_settings() -> Settings:
@@ -69,13 +76,20 @@ def get_settings() -> Settings:
         int(os.getenv("MIN_INTERVAL_MINUTES", "60")),
         int(os.getenv("MAX_AGE_MINUTES", "240")),
         mode,
-        int(os.getenv("LLM_PAUSE_SECONDS", "4")),
+        int(os.getenv("LLM_PAUSE_SECONDS", "1")),
         int(os.getenv("KEEP_VERSIONS", "20")),
         os.getenv("COMMENTARY_ADMIN_TOKEN", ""),
         os.getenv("AUTO_NARRATE", "true").lower() == "true",
         os.getenv("TTS_MODEL", "gemini-3.1-flash-tts-preview"),
         os.getenv("TTS_VOICE", "Kore"),
         int(os.getenv("TTS_BITRATE_KBPS", "48")),
+        int(os.getenv("MAX_TEXT_RUNS_PER_DAY", "12")),
+        int(os.getenv("MAX_NARRATIONS_PER_DAY", "8")),
+        int(os.getenv("NARRATE_MIN_INTERVAL_MINUTES", "90")),
+        int(os.getenv("NARRATE_RETRY_MINUTES", "15")),
+        int(os.getenv("NARRATE_COOLDOWN_MINUTES", "60")),
+        os.getenv("QUOTA_RESET_TZ", "America/Los_Angeles"),
+        int(os.getenv("FULL_RUN_MAX_AGE_MINUTES", "240")),
     )
 
 

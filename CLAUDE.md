@@ -926,6 +926,18 @@ Ayrıntı: `backend/commentary-service/README.md`.
   ile `<audio>` olarak çalar, `timeupdate` ile okunan bölümü vurgular; ses yoksa ya da yüklenemezse
   aynı düğme cihaz sentezleyicisine düşer. Doğrulandı (yerel): MP3 1,2 MB 12 ms'de geldi, cihaz
   sentezleyicisi hiç çalışmadı, vurgu 9. saniyede manşetten özete geçti, duraklat/devam/durdur çalıştı.
+  **Kota bütçesi** (2026-09-15, `app/services/budget.py`): sağlayıcı sınırlarına güvenilmez, servis
+  kendi sayar. Ölçüldü: Groq gpt-oss-120b 1.000 istek/gün, 8.000 token/dk (yanıt başlıkları);
+  Gemini ücretsiz katman sayıları yalnız AI Studio panosunda, önizleme modellerinde dar. Canlıda ilk
+  12 saatte 6 metin üretildi (≈12/gün). Ayarlar (`.env.*`): `MAX_TEXT_RUNS_PER_DAY` 12 (metin; aşılınca
+  karar "günlük metin sınırı doldu", `force` geçer), `MAX_NARRATIONS_PER_DAY` 8 ve
+  `NARRATE_MIN_INTERVAL_MINUTES` 90 (ses), `NARRATE_RETRY_MINUTES` 15 (sesi olmayan yayındaki sürüm her
+  kontrolde bu aralıkla yeniden denenir — `retry_narration_if_missing`), `NARRATE_COOLDOWN_MINUTES` 60
+  (TTS 429 → `QuotaExhausted` → soğuma), `QUOTA_RESET_TZ` America/Los_Angeles (Gemini günlük sayaç
+  Pasifik gece yarısında sıfırlanır; Groq için de tutucu). Sayaçlar defterlerden: metin
+  `ledger/commentary_runs.csv`, ses `ledger/narration_runs.csv` (başarısız deneme de sayılır, kota
+  harcar). `/v1/commentary/job` → `budget` bloğu (bugünkü sayılar, izin, engel sebebi, soğuma) ve
+  `last_narration_skip`. Ses bütçe yüzünden atlanınca metin yine yayınlanır, arayüz cihaz sesine düşer.
   **Sesli okuma, cihaz yedeği** (`features/commentary/speech.ts` + `useSpeech.ts`): tarayıcının `speechSynthesis`'i,
   sunucu yok; pencere başlığında Dinle / Duraklat / Devam et / Durdur, okunan blok `is-speaking` ile
   vurgulanır, pencere kapanınca susar. Metin bölüm bölüm okunur (tek uzun utterance bazı tarayıcılarda
@@ -935,6 +947,28 @@ Ayrıntı: `backend/commentary-service/README.md`.
   bunu sağlar. `frontend/nginx.conf` proxy deseni
   commentary-service'i kapsar. Ölçüldü (yerel dist + üretimsiz yerel servis): 375 px'te düğme
   683–735, çubuk 747; pencere 788 px, taşma 0, konsol hatası 0; 1280 px'te 691×743 ortada.
+- **Kalite ve token turu (2026-09-15, iki aşama):** ölçüm canlı 6 turda tur başı 22,4k giriş / 5k çıkış,
+  LLM süresi ortalama 145 sn (temiz turda 38 sn; farkı 429 bekleyişleri, denetim düzeltme turu ve roller arası 4 sn
+  sabit duraklar), ardışık sürüm benzerliği %9–17 (aynı piyasa her saat sıfırdan yazılıyordu), teknik ve takvim notu
+  eski ajan talimatını ("reports/latest/…md yaz") yankılıyor, baş analistin yön/güven kuralları ile anlatıcının
+  bölüm tablosu atılan `## Çıktılar` başlığında kaldığı için modele hiç gitmiyordu; manşette saat, seviye
+  cümlesinde yön hatası, "ADX = korku ölçüsü" uydurması görüldü.
+  **1. aşama, istem ve denetim:** beş istem çalışma zamanı için yeniden yazıldı (araç/dosya kalıntısı yok, kurallar
+  modele giden bölümlerde, anlatıcıya bölüm başına kelime bütçesi + sayısız üslup örneği, manşet/özette saat yasağı,
+  tekrar yasağı, seviye-yön kuralı); ortak kurallar tek `NO_TOOLS_NOTE`; teknik role 11 satırlık gösterge sözlüğü
+  (`SOZLUK`); yasak terim denetimi tam kelime (`YASAK_RX`, "Dowding"/"FedWatch" takılmaz); kaynak kodları pakete
+  girmeden sadeleşir (`plain_source`: PAXG → "spot izleyen seri"); yeni denetim kuralı: metinde sayı varsa canlı
+  fiyat da geçmeli; bölüm bütçesinin %70 altı düzeltme turu ister (`budget_problems`).
+  **2. aşama, zincir ve plan:** takvim gözcüsü JSON döner (`TAKVIM_SCHEMA`), baş analist kırpılmış teknik not +
+  takvim JSON + makro kart okur, anlatıcı 4 başlık alır; sağlayıcıya `json_schema` (400'de `json_object` + istemde
+  şema, sağlayıcı başına hatırlanır `_SCHEMA_MODE`); `LLM_PAUSE_SECONDS` 4 → 1; **tur planlayıcı**
+  (`run_planner.py`): fiyat dışı girdilerin parmak izi (takvim, faiz, enflasyon, pozisyon, makro seri, ilk 6 başlık)
+  değişmediyse ve son tam tur `FULL_RUN_MAX_AGE_MINUTES` (240) içindeyse yalnız anlatıcı yeniden yazar (hızlı tur);
+  3+ yeni başlık ya da herhangi bir girdi değişimi tam tur; parmak izi `latest/run_log.json`'da, yeniden başlatmada
+  okunur; `/job` → `last_run_plan`. Brif `yazildi_utc` taşır, 20 dk'dan eskiyse anlatıcıya "fiyatlar eski olabilir"
+  notu gider. **Aynı girdiyle ölçüm:** tam tur 19.024 → **17.763** giriş token, 198 → **50 sn**, düzeltme turu
+  0; hızlı tur **4.529 giriş / 35 sn**. Metin 302 kelime (hedef 380+, model JSON kipinde kısa yazıyor; %70 emniyeti
+  ağır kısalmayı yakalar). Testler 40.
 - **14 Eylül taraması (kod okunarak doğrulandı):** ortam değişkenleri `CHECK_INTERVAL_SECONDS`
   300, `TRIGGER_MOVE_PCT` 0,5, `MIN_INTERVAL_MINUTES` 60, `MAX_AGE_MINUTES` 240 (0 = kapalı),
   `PIPELINE_MODE` full|fast (fast = yalnız metin yazarı, son `brif.json` ile), `KEEP_VERSIONS` 20,
@@ -1008,7 +1042,7 @@ Ayrıntı: `backend/commentary-service/README.md`.
 
 ```
 frontend: 27 dosya, 200 test (vitest: domain + lib + app/routes + services + content + features)
-backend : model-service 106 · market-service 58 · api-gateway 5 · commentary-service 29 (pytest)
+backend : model-service 106 · market-service 58 · api-gateway 5 · commentary-service 40 (pytest)
 tsc --noEmit temiz; build: giriş 301 KB ham / 96 KB gzip, panel parçası 179 / 56, CSS 138 / 24 (14 Eylül)
 ```
 
@@ -1036,13 +1070,9 @@ sebepleri git geçmişinde (`90c4f4c` içindeki `docs/technical/VALIDATION.md`).
    - ~~Arayüz entegrasyonu ve nginx proxy deseni~~ aynı gün kapatıldı (yukarıdaki "Arayüz entegrasyonu")
    - `api-gateway` compose'da `commentary-service: service_healthy` bekliyor; yorum servisi
      `llm.toml` zincirindeki bir anahtar eksikse `RuntimeError` ile kalkmaz → **gateway de kalkmaz**
-   - İstem başlığı uyuşmazlığı: `commentary_pipeline.SKIPPED_SECTIONS` `"Çıktılar"`ı atıyor ama
-     `technical_analyst.md` ve `calendar_news_scout.md` tekil `## Çıktı` kullanıyor; o bölümler
-     modele gidiyor ve eski ajan istemlerinden kalan "`reports/latest/*.md` yaz" talimatını
-     taşıyor. Beş istem dosyasının frontmatter'ı da (`tools:`, `model: opus/sonnet`) eski
-     Claude Code alt-ajan biçiminde
+   - ~~İstem başlığı uyuşmazlığı ve eski ajan kalıntıları~~ 15 Eylül'de kapatıldı (istemler yeniden yazıldı)
    - `output_audit._eslesir`: 31 ve altı, 2020–2030 arası ve 50/52/100/200/250 değerleri
-     denetimsiz kabul ediliyor; "yüzde 30" gibi uydurma küçük yüzdeler geçer
+     denetimsiz kabul ediliyor; "yüzde 30" gibi uydurma küçük yüzdeler geçer (açık)
    - `PROMPTS_DIR`, `LLM_CONFIG_PATH`'in dizininden türetiliyor; o değişken başka yere
      gösterilirse istemler sessizce bulunamaz. `.env.local` hiç yüklenmiyor (`local` → `localhost`
      takma adı), ölü dosya. `news_service.son_haberler` ölü kod; `freshness_service`, `base_cone`,
