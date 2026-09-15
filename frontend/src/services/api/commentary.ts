@@ -21,7 +21,7 @@ export type Commentary = {
 export type NarrationSegment = { id: string; start: number; end: number };
 export type Narration = { voice: string; durationSeconds: number; segments: NarrationSegment[]; estimated: boolean };
 
-export type CommentaryResult = { kind: 'ready'; data: Commentary } | { kind: 'pending' };
+export type CommentaryResult = { kind: 'ready'; data: Commentary; etag: string | null } | { kind: 'pending' } | { kind: 'unchanged' };
 
 const str = (v: unknown): string | null => typeof v === 'string' ? v : null;
 const num = (v: unknown): number | null => typeof v === 'number' && Number.isFinite(v) ? v : null;
@@ -63,10 +63,13 @@ export const parseCommentary = (raw: unknown): Commentary | null => {
 export const commentaryAudioUrl = (version: string): string =>
   `${commentaryApi()}/v1/commentary/latest/audio?v=${encodeURIComponent(version)}`;
 
-export const fetchCommentary = async (signal?: AbortSignal): Promise<CommentaryResult> => {
-  const r = await fetch(`${commentaryApi()}/v1/commentary/latest`, { signal });
+/** `etag` verilirse sunucu değişmemiş yorum için 304 döner (sıfır gövde); yoklama bu yüzden ucuz. */
+export const fetchCommentary = async (signal?: AbortSignal, etag?: string | null): Promise<CommentaryResult> => {
+  const headers: Record<string, string> = etag ? { 'If-None-Match': etag } : {};
+  const r = await fetch(`${commentaryApi()}/v1/commentary/latest`, { signal, headers });
+  if (r.status === 304) return { kind: 'unchanged' };
   if (r.status === 404) return { kind: 'pending' };
   if (!r.ok) throw new Error(`commentary: ${r.status}`);
   const data = parseCommentary(await r.json());
-  return data ? { kind: 'ready', data } : { kind: 'pending' };
+  return data ? { kind: 'ready', data, etag: r.headers.get('etag') } : { kind: 'pending' };
 };

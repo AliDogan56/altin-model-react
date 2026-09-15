@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import DataTimestamp from '../../components/ui/DataTimestamp';
 import Spinner from '../../components/Spinner';
@@ -12,6 +12,7 @@ import { useCommentary } from './useCommentary';
 import { speechChunks } from './speech';
 import { useNarration } from './useNarration';
 import { useSpeech } from './useSpeech';
+import { ageLabel, ageMinutes, shouldMarkSeen } from './unread';
 
 const FOCUSABLE = 'button, a[href], [tabindex]:not([tabindex="-1"])';
 const PARAM = 'yorum';
@@ -31,7 +32,12 @@ export function SparkIcon() {
  * Esc ve arka plana dokunma kapatır, kapanınca odak düğmeye döner.
  */
 export default function CommentaryDock() {
-  const { status, data, unread, refresh, markSeen } = useCommentary();
+  const { status, data, unread, arrived, refresh, markSeen, dismissArrived } = useCommentary();
+  const bodyRef = useRef<HTMLDivElement>(null);
+  const [openedAt, setOpenedAt] = useState<number | null>(null);
+  const [scrolled, setScrolled] = useState(0);
+  const isFast = data?.runMode === 'fast';
+  const age = ageLabel(ageMinutes(data?.generatedAt));
   const { harem } = useDashboard();
   const livePrice = harem.satis ?? null;
   const drift = data ? driftSinceGeneration(livePrice, data.live?.price) : null;
@@ -56,7 +62,7 @@ export default function CommentaryDock() {
 
   useEffect(() => {
     if (!open) return;
-    void refresh(); markSeen();
+    void refresh(); setOpenedAt(Date.now()); setScrolled(0);
     const node = sheet.current;
     const focusable = () => Array.from(node?.querySelectorAll<HTMLElement>(FOCUSABLE) ?? []);
     const frame = requestAnimationFrame(() => focusable()[0]?.focus());
@@ -73,14 +79,36 @@ export default function CommentaryDock() {
     return () => { cancelAnimationFrame(frame); document.removeEventListener('keydown', onKey); document.body.style.overflow = previous; synth.stop(); narration.stop(); opener.current?.focus(); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
-  useEffect(() => { if (open) markSeen(); }, [open, markSeen]);
+  /* Okundu: pencere 5 sn açık kaldı, metnin yarısı geçildi ya da dinleme başladı — bir saniyelik açıp kapama sayılmaz. */
+  useEffect(() => {
+    if (!open || !unread) return;
+    const check = () => { if (openedAt && shouldMarkSeen({ openMs: Date.now() - openedAt, scrolledRatio: scrolled, listened: speech.state !== 'idle' })) markSeen(); };
+    check();
+    const timer = window.setInterval(check, 1000);
+    return () => window.clearInterval(timer);
+  }, [open, unread, openedAt, scrolled, speech.state, markSeen]);
+  /* Sayfa açıkken gelen yeni sürüm: balon 8 sn görünür, sonra kendiliğinden kapanır. */
+  useEffect(() => {
+    if (!arrived || open) return;
+    const timer = window.setTimeout(dismissArrived, 8000);
+    return () => window.clearTimeout(timer);
+  }, [arrived, open, dismissArrived]);
+  const onBodyScroll = () => {
+    const el = bodyRef.current; if (!el) return;
+    const ratio = el.scrollHeight <= el.clientHeight ? 1 : (el.scrollTop + el.clientHeight) / el.scrollHeight;
+    setScrolled(current => Math.max(current, ratio));
+  };
 
   return <>
-    <button ref={opener} type="button" className={`ai-fab${unread ? ' has-new' : ''}`} onClick={() => setOpen(true)}
-      aria-haspopup="dialog" aria-expanded={open} aria-label={unread ? `${T.button} · ${T.newBadge}` : T.button}>
-      <span className="ai-fab-glow" aria-hidden="true"/><SparkIcon/><span className="ai-fab-label">{T.button}</span>
+    <button ref={opener} type="button" className={`ai-fab${unread ? ' has-new' : ''}`} onClick={() => { dismissArrived(); setOpen(true); }}
+      aria-haspopup="dialog" aria-expanded={open} aria-label={unread ? `${T.button} · ${isFast ? T.updatedLabel : T.newLabel}${age ? ` · ${age}` : ''}` : T.button}>
+      <span className="ai-fab-glow" aria-hidden="true"/><SparkIcon/>
+      <span className="ai-fab-label">{T.button}</span>
       {unread && <span className="ai-fab-badge" aria-hidden="true"/>}
     </button>
+    <div className="ai-live" aria-live="polite" aria-atomic="true">{arrived && !open ? T.liveAnnounce : ''}</div>
+    {arrived && !open && <div className="ai-toast" role="status"><SparkIcon/><span>{isFast ? T.arrivedUpdated : T.arrivedToast}</span>
+      <button type="button" className="ai-toast-open" onClick={() => { dismissArrived(); setOpen(true); }}>Oku</button></div>}
     {open && <div className="ai-modal" role="dialog" aria-modal="true" aria-labelledby="ai-modal-title">
       <div className="ai-backdrop" onClick={() => setOpen(false)}/>
       <div className="ai-sheet" ref={sheet}>
@@ -99,7 +127,7 @@ export default function CommentaryDock() {
           </div>
         </header>
         {speech.state !== 'idle' && <p className="ai-speech-status" role="status">{speech.state === 'paused' ? T.pausedStatus : useNarrator ? T.narratingStatus : T.speakingStatus}</p>}
-        <div className="ai-body">
+        <div className="ai-body" ref={bodyRef} onScroll={onBodyScroll}>
           {status === 'loading' && <p className="ai-state"><Spinner size="sm"/> {T.loading}</p>}
           {status === 'pending' && <p className="ai-state">{T.pending}</p>}
           {status === 'error' && <p className="ai-state">{T.error}</p>}

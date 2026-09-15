@@ -906,7 +906,22 @@ Ayrıntı: `backend/commentary-service/README.md`.
   hepsini kapatır. Kanca 10 dakikada bir ve açılışta tazeler; `404` = "hazırlanıyor" durumu, ağ
   hatasında eldeki yorum kalır. `parseCommentary` şemayı doğrular, `usage`/model adlarını taşımaz;
   `live.source` sözlükle "spot izleyen seri"/"vadeli altın"a çevrilir (üçüncü taraf adı kuralı).
-  Okunan sürüm `localStorage['oaa-commentary-seen']`.
+  **Okunmamış yorum (2026-09-15, yalnız tarayıcı):** `features/commentary/unread.ts` saf kural — son
+  **görülen yorumun üretim zamanı** `localStorage['oaa-commentary-seen-at']`'ta (cihaz saati değil, saat
+  kayması etkilemez); sunucudaki yorumun `generated_at`'i ondan büyükse yeni. İlk ziyarette damga yoktur ve
+  rozet **yanar** (kullanıcı kararı: yeni okuyucu yorumun varlığını görsün); ilk okumadan sonra yalnız daha
+  yeni üretimler yeni sayılır. **Düğme etiketi değişmez** ("AI yorumu" kalır; kullanıcı kararı — etiket
+  değişince düğme tanınmaz oluyordu); yeni durumu **rozet** anlatır: sağ üstte 18 px kırmızı nokta
+  (`--red`, 3 px yüzey çerçevesi, `--red-fill` halesi) ve dışarı yayılan `ai-ping` halkası
+  (`prefers-reduced-motion`'da halka yok, nokta kalır), altın zemin + ışıltı; erişilebilir ad
+  "AI yorumu · Yeni yorum · 12 dk" (hızlı turda "Güncellendi"). Okundu sayılma: pencere 5 sn açık kaldı **ya da** metnin yarısı
+  geçildi **ya da** dinleme başladı (`shouldMarkSeen`), bir saniyelik açıp kapama sayılmaz. Yoklama 2 dk'da
+  bir ve sekme görünür olunca (`If-None-Match` gönderilir; sunucu ETag vermediği için bugün hep 200, 5,6 KB).
+  Sayfa açıkken yeni sürüm gelince düğmenin üstünde 8 sn'lik balon ("Masa yeni bir yorum yazdı · Oku") ve
+  `aria-live` duyurusu; `storage` olayıyla diğer sekmelerin rozeti de söner. Ölçüldü (375 px): ilk ziyaret
+  ve eski damgada etiket "AI yorumu", rozet 18×18 px düğmenin sağ üst köşesinde, iki temada okunur, taşma 0;
+  açılıştan 6 sn sonra damga güncel ve rozet söndü; sahte yeni
+  sürümde balon 631 px'te düğmenin üstünde, "Oku" pencereyi açıp balonu kapattı.
   **Canlı fiyat açılış anınındır, üretim anının değil** (`drift.ts`): kartta "Canlı fiyat" Harem
   kotasyonu (`DataTimestamp` ile), "Yorum yazılırken" servisin `live.price`'ı ve o zamandan beri
   yüzde fark; fark %0,5'i (servisin `TRIGGER_MOVE_PCT`) aşınca "masa bir sonraki kontrolde yeniden
@@ -1041,7 +1056,7 @@ Ayrıntı: `backend/commentary-service/README.md`.
 ## Test
 
 ```
-frontend: 27 dosya, 200 test (vitest: domain + lib + app/routes + services + content + features)
+frontend: 28 dosya, 203 test (vitest: domain + lib + app/routes + services + content + features)
 backend : model-service 106 · market-service 58 · api-gateway 5 · commentary-service 40 (pytest)
 tsc --noEmit temiz; build: giriş 301 KB ham / 96 KB gzip, panel parçası 179 / 56, CSS 138 / 24 (14 Eylül)
 ```

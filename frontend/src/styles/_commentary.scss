@@ -6,8 +6,20 @@
 .ai-fab-label { position:relative; z-index:1; }
 /* Işıltı halkası: altın ton, 3 tur nefes alır, sonra durur (dikkat çeker ama yorulmaz). */
 .ai-fab-glow { position:absolute; inset:-1px; border-radius:inherit; background:radial-gradient(circle at 22% 50%, rgb(var(--gold-fill-rgb) / .35), transparent 60%); opacity:0; animation:ai-breathe 2.4s ease-in-out 3; pointer-events:none; }
-.ai-fab-badge { position:absolute; top:-3px; right:-3px; width:12px; height:12px; border-radius:50%; background:var(--red-fill); border:2px solid var(--surface); }
+/* Okunmamış yorum noktası: etiket değişmez (kullanıcı kararı), nokta belirgin — 18 px, canlı kırmızı, beyaz çerçeve,
+   dışarı doğru yayılan halka (hareket azaltmada halka yok, nokta kalır). */
+.ai-fab-badge { position:absolute; top:-6px; right:-6px; width:18px; height:18px; border-radius:50%; background:var(--red); border:3px solid var(--surface); box-shadow:0 0 0 2px var(--red-fill); }
+.ai-fab-badge::after { content:""; position:absolute; inset:-3px; border-radius:50%; border:2px solid var(--red-fill); animation:ai-ping 1.6s ease-out infinite; }
+@keyframes ai-ping { 0% { transform:scale(.7); opacity:.9; } 100% { transform:scale(1.9); opacity:0; } }
 .ai-fab.has-new .ai-fab-glow { animation-iteration-count:infinite; }
+.ai-fab.has-new { border-color:var(--gold-line-strong); background:var(--gold-bg); }
+.ai-fab-label small { font-size:12px; font-weight:500; color:var(--muted); }
+.ai-live { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
+/* Sayfa açıkken yeni sürüm gelince düğmenin üstünde beliren balon; 8 sn sonra kendiliğinden kapanır. */
+.ai-toast { position:fixed; right:16px; bottom:calc(65px + 12px + 60px + env(safe-area-inset-bottom)); z-index:35; display:inline-flex; align-items:center; gap:10px; max-width:calc(100vw - 32px); padding:10px 12px 10px 12px; border:1px solid var(--gold-line); border-radius:var(--radius-md); background:var(--surface); color:var(--text-strong); font-size:13px; box-shadow:0 10px 28px rgb(var(--shadow-rgb) / var(--shadow-a3)); animation:ai-toast-in .28s cubic-bezier(.2,.8,.2,1) both; }
+.ai-toast .ai-spark { width:20px; height:20px; color:var(--gold); flex:none; }
+.ai-toast-open { min-height:32px; padding:0 12px; border:0; border-radius:999px; background:var(--gold-fill); color:var(--on-gold, #fff); font:inherit; font-size:13px; font-weight:700; cursor:pointer; }
+@keyframes ai-toast-in { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
 .ai-spark-minor { opacity:.55; }
 @keyframes ai-breathe { 0%,100% { opacity:0; transform:scale(1); } 50% { opacity:1; transform:scale(1.04); } }
 
@@ -53,6 +65,7 @@
 @keyframes ai-twinkle { 0%,100% { transform:rotate(0) scale(1); } 50% { transform:rotate(12deg) scale(1.08); } }
 @media (min-width:640px) {
   .ai-fab { right:24px; bottom:24px; }
+  .ai-toast { right:24px; bottom:92px; }
   .ai-modal { align-items:center; padding:24px; }
   .ai-sheet { max-height:min(86vh,820px); border-radius:var(--radius-lg); animation-name:ai-pop; }
   .ai-body { padding:20px 24px 24px; }
@@ -60,6 +73,7 @@
 }
 @keyframes ai-pop { from { opacity:0; transform:translateY(14px) scale(.96); } to { opacity:1; transform:none; } }
 @media (prefers-reduced-motion:reduce) {
-  .ai-fab-glow, .ai-head-title .ai-spark, .ai-backdrop, .ai-sheet, .ai-article > * { animation:none; }
+  .ai-fab-glow, .ai-head-title .ai-spark, .ai-backdrop, .ai-sheet, .ai-article > *, .ai-toast, .ai-fab-badge::after { animation:none; }
+  .ai-fab-badge::after { display:none; }
   .ai-fab.has-new .ai-fab-glow { opacity:.8; }
 }
