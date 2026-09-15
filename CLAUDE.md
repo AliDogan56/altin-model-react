@@ -937,7 +937,9 @@ Ayrıntı: `backend/commentary-service/README.md`.
   özet, veri kartı `dl.yorum-facts` — yazıldığı fiyat, resmi fiks, saat —, yapay zekâ masası şeffaflık
   paragrafı, bölümler `h2`, sorumluluk notu, panel ve rehber bağlantıları + React'in hidrasyonda eşzamanlı
   okuduğu `#yorum-verisi` JSON'u, `usage`/`durations_seconds` hariç), `lastmod` (W3C tarih; sitemap'teki
-  `/yorum` girdisinin `<lastmod>`'u da SSI ile canlı, `location = /sitemap.xml` `ssi_types application/xml`).
+  `/yorum` girdisinin `<lastmod>`'u da SSI ile canlı, `location = /sitemap.xml` `ssi_types text/xml application/xml` —
+  **tuzak:** nginx `.xml`'i `text/xml` sunar; ilk dağıtımda yalnız `application/xml` yazıldığı için direktif ham
+  XML yorumu olarak çıktı ve lastmod boş kaldı, ikinci dağıtımda düzeltildi).
   LLM metni `html.escape` ile, JSON `<` ile kaçırılır. Yorum yokken parçalar yine 200 döner (SSI hata
   metni basmasın) ama `noindex`; başlık kabukta olduğu için servis düşerse sayfa başlıksız kalmaz, yalnız
   açıklamasız. React tarafı `pages/CommentaryPage.tsx` (rota `/yorum`, ayrı parça): `useCommentary(initial)`
