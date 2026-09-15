@@ -35,6 +35,10 @@ class Settings:
     llm_pause_seconds: int
     keep_versions: int
     admin_token: str = ""
+    auto_narrate: bool = True
+    tts_model: str = "gemini-3.1-flash-tts-preview"
+    tts_voice: str = "Kore"
+    tts_bitrate_kbps: int = 48
 
 
 def get_settings() -> Settings:
@@ -68,6 +72,10 @@ def get_settings() -> Settings:
         int(os.getenv("LLM_PAUSE_SECONDS", "4")),
         int(os.getenv("KEEP_VERSIONS", "20")),
         os.getenv("COMMENTARY_ADMIN_TOKEN", ""),
+        os.getenv("AUTO_NARRATE", "true").lower() == "true",
+        os.getenv("TTS_MODEL", "gemini-3.1-flash-tts-preview"),
+        os.getenv("TTS_VOICE", "Kore"),
+        int(os.getenv("TTS_BITRATE_KBPS", "48")),
     )
 
 

@@ -22,6 +22,22 @@ class OfficialFix(BaseModel):
     price: float
 
 
+class NarrationSegment(BaseModel):
+    id: str
+    start: float
+    end: float
+
+
+class NarrationOut(BaseModel):
+    voice: str
+    model: str
+    duration_seconds: float
+    bitrate_kbps: int
+    bytes: int
+    segments: list[NarrationSegment]
+    estimated: bool = True
+
+
 class CommentaryOut(BaseModel):
     version: str
     as_of: str
@@ -38,3 +54,4 @@ class CommentaryOut(BaseModel):
     usage: dict
     durations_seconds: dict
     disclaimer: str
+    narration: NarrationOut | None = None

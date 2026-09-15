@@ -3,16 +3,22 @@ from __future__ import annotations
 
 import asyncio
 import datetime as dt
+import logging
+import os
 import time
 import traceback
 
 from ..config import settings
 from .commentary_pipeline import run_fast_pipeline, run_full_pipeline
 from .commentary_store import commentary_store
+from .narration_service import narrate
 from .live_price_service import current_price
 from .llm_config import load_llm_settings
 from .regeneration_policy import should_regenerate
 from .snapshot_service import build_snapshot
+
+
+log = logging.getLogger(__name__)
 
 
 class CommentaryJobService:
@@ -24,6 +30,7 @@ class CommentaryJobService:
         self.last_generation_price = None
         self.last_result = None
         self.last_error = None
+        self.last_narration_error = None
         self.generating = False
         self._force = False
         self._task = None
@@ -40,7 +47,17 @@ class CommentaryJobService:
         generated = time.time()
         durations = {"data": round(data_done - started, 1), "llm": round(generated - data_done, 1), "total": round(generated - started, 1)}
         item = commentary_store.save(anchor_output, snapshot, reason, durations)
-        return {"version": item["version"], "durations_seconds": durations, "usage": item["usage"], "headline": item["headline"]}
+        result = {"version": item["version"], "durations_seconds": durations, "usage": item["usage"], "headline": item["headline"], "narration": None}
+        # Ses metinden sonra ve ondan bağımsız: TTS düşerse metin yayında kalır, hata ayrı raporlanır.
+        if settings.auto_narrate:
+            try:
+                result["narration"] = narrate(commentary_store.version_dir(item["version"]), item, api_key=os.getenv("GEMINI_API_KEY", ""),
+                                              model=settings.tts_model, voice=settings.tts_voice, bitrate_kbps=settings.tts_bitrate_kbps)
+                self.last_narration_error = None
+            except Exception as error:  # noqa: BLE001
+                self.last_narration_error = f"{type(error).__name__}: {error}"
+                log.warning("Sesli anlatım üretilemedi: %s", error)
+        return result
 
     def run_cycle(self) -> dict:
         now = dt.datetime.now(dt.UTC).replace(microsecond=0)
@@ -88,7 +105,7 @@ class CommentaryJobService:
                 "trigger": {"move_pct": settings.trigger_move_pct, "min_interval_minutes": settings.min_interval_minutes, "max_age_minutes": settings.max_age_minutes},
                 "last_check": self.last_check, "last_check_price": self.last_check_price, "last_decision": self.last_decision,
                 "last_generation": self.last_generation, "last_generation_price": self.last_generation_price, "generating": self.generating,
-                "last_result": self.last_result, "last_error": self.last_error, "force_pending": self._force,
+                "last_result": self.last_result, "last_error": self.last_error, "last_narration_error": self.last_narration_error, "force_pending": self._force,
                 "published_version": latest["version"] if latest else None, "published_age_seconds": latest["age_seconds"] if latest else None,
                 "llm": load_llm_settings().describe()}
 

@@ -18,6 +18,8 @@ export const COMMENTARY_TEXT = {
   legal: 'İstatistiksel yorum · yatırım tavsiyesi değildir',
   listen: 'Dinle', pause: 'Duraklat', resume: 'Devam et', stop: 'Durdur',
   speakingStatus: 'Yorum cihazın sesiyle okunuyor; okunan bölüm vurgulanır.',
+  narratingStatus: 'Anlatıcı sesiyle okunuyor; okunan bölüm vurgulanır.',
+  narrationLoading: 'Ses yükleniyor',
   pausedStatus: 'Okuma duraklatıldı.',
 } as const;
 

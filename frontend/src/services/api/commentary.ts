@@ -15,7 +15,12 @@ export type Commentary = {
   version: string; asOf: string; generatedAt: string; ageSeconds: number | null; runMode: string; triggerReason: string | null;
   live: CommentaryLive | null; officialFix: { date: string; price: number } | null;
   title: string; headline: string; summary: string; sections: CommentarySection[]; disclaimer: string;
+  narration: Narration | null;
 };
+/** Sunucuda üretilmiş anlatıcı sesi; bölüm zamanları karakter oranıyla tahmin (`estimated`). */
+export type NarrationSegment = { id: string; start: number; end: number };
+export type Narration = { voice: string; durationSeconds: number; segments: NarrationSegment[]; estimated: boolean };
+
 export type CommentaryResult = { kind: 'ready'; data: Commentary } | { kind: 'pending' };
 
 const str = (v: unknown): string | null => typeof v === 'string' ? v : null;
@@ -36,15 +41,27 @@ export const parseCommentary = (raw: unknown): Commentary | null => {
   const l = obj(d.live); const price = l && num(l.price);
   const fix = obj(d.official_fix); const fixDate = fix && str(fix.date), fixPrice = fix && num(fix.price);
   const trigger = obj(d.trigger);
+  const n = obj(d.narration); const duration = n && num(n.duration_seconds);
+  const segments: NarrationSegment[] = [];
+  if (n && Array.isArray(n.segments)) for (const raw of n.segments) {
+    const s = obj(raw); const id = s && str(s.id), start = s && num(s.start), end = s && num(s.end);
+    if (id && start != null && end != null) segments.push({ id, start, end });
+  }
+  const narration: Narration | null = n && duration != null && duration > 0
+    ? { voice: str(n.voice) ?? '', durationSeconds: duration, segments, estimated: n.estimated !== false } : null;
   return {
     version, asOf: str(d.as_of) ?? '', generatedAt: str(d.generated_at) ?? '', ageSeconds: num(d.age_seconds), runMode: str(d.run_mode) ?? '',
     triggerReason: trigger ? str(trigger.reason) : null,
     live: l && price != null ? { price, source: str(l.source) ?? '', timeUtc: str(l.time_utc), changeVsFixPct: num(l.change_vs_fix_pct),
       changeVsFixUsd: num(l.change_vs_fix_usd), changeVsPrevClosePct: num(l.change_vs_prev_close_pct) } : null,
     officialFix: fixDate && fixPrice != null ? { date: fixDate, price: fixPrice } : null,
-    title, headline, summary, sections, disclaimer,
+    title, headline, summary, sections, disclaimer, narration,
   };
 };
+
+/** Sürüm sorguda: aynı adres yeni yorumda değişsin, tarayıcı eskisini önbellekten çalmasın. */
+export const commentaryAudioUrl = (version: string): string =>
+  `${commentaryApi()}/v1/commentary/latest/audio?v=${encodeURIComponent(version)}`;
 
 export const fetchCommentary = async (signal?: AbortSignal): Promise<CommentaryResult> => {
   const r = await fetch(`${commentaryApi()}/v1/commentary/latest`, { signal });

@@ -22,6 +22,13 @@ describe('parseCommentary', () => {
     expect(out.sections).toHaveLength(2);
     expect(JSON.stringify(out)).not.toContain('gemini');
   });
+  it('anlatım meta okunur; yoksa ya da süresi sıfırsa null', () => {
+    expect(parseCommentary(gecerli)!.narration).toBeNull();
+    const out = parseCommentary({ ...gecerli, narration: { voice: 'Kore', model: 'x', duration_seconds: 201.5, bitrate_kbps: 48, bytes: 1, estimated: true,
+      segments: [{ id: 'headline', start: 0, end: 9 }, { id: 'giris', start: 9, end: 30 }, { id: 'bozuk' }] } })!;
+    expect(out.narration).toEqual({ voice: 'Kore', durationSeconds: 201.5, estimated: true, segments: [{ id: 'headline', start: 0, end: 9 }, { id: 'giris', start: 9, end: 30 }] });
+    expect(parseCommentary({ ...gecerli, narration: { voice: 'Kore', duration_seconds: 0, segments: [] } })!.narration).toBeNull();
+  });
   it('zorunlu alan eksikse ya da bölüm yoksa null', () => {
     expect(parseCommentary(null)).toBeNull();
     expect(parseCommentary({ ...gecerli, headline: 1 })).toBeNull();

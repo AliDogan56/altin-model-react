@@ -6,9 +6,11 @@ import { COMMENTARY_STALE_MS, COMMENTARY_TEXT as T, liveSourceLabel } from '../.
 import { openLegal } from '../../content/site';
 import { money2, pct, shortDate } from '../../lib/format';
 import { useDashboard } from '../dashboard/DashboardContext';
+import type { SpeechState } from './useSpeech';
 import { driftSinceGeneration } from './drift';
 import { useCommentary } from './useCommentary';
 import { speechChunks } from './speech';
+import { useNarration } from './useNarration';
 import { useSpeech } from './useSpeech';
 
 const FOCUSABLE = 'button, a[href], [tabindex]:not([tabindex="-1"])';
@@ -37,7 +39,13 @@ export default function CommentaryDock() {
   const open = params.get(PARAM) === '1';
   const sheet = useRef<HTMLDivElement>(null);
   const chunks = useMemo(() => data ? speechChunks(data) : [], [data]);
-  const speech = useSpeech(chunks);
+  const synth = useSpeech(chunks);
+  const narration = useNarration(data?.version ?? null, data?.narration ?? null);
+  /* Anlatıcı sesi varsa o, yoksa ya da yüklenemezse cihazın sentezleyicisi; düğme ve durum makinesi aynı. */
+  const useNarrator = narration.available;
+  const speech = useNarrator
+    ? { supported: true, state: narration.state, current: narration.current, play: narration.play, pause: narration.pause, stop: narration.stop }
+    : { supported: synth.supported, state: synth.state as SpeechState | 'loading', current: synth.current, play: synth.play, pause: synth.pause, stop: synth.stop };
   const opener = useRef<HTMLButtonElement>(null);
 
   const setOpen = (next: boolean) => {
@@ -62,7 +70,7 @@ export default function CommentaryDock() {
     };
     document.addEventListener('keydown', onKey);
     const previous = document.body.style.overflow; document.body.style.overflow = 'hidden';
-    return () => { cancelAnimationFrame(frame); document.removeEventListener('keydown', onKey); document.body.style.overflow = previous; speech.stop(); opener.current?.focus(); };
+    return () => { cancelAnimationFrame(frame); document.removeEventListener('keydown', onKey); document.body.style.overflow = previous; synth.stop(); narration.stop(); opener.current?.focus(); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
   useEffect(() => { if (open) markSeen(); }, [open, markSeen]);
@@ -80,7 +88,9 @@ export default function CommentaryDock() {
           <div className="ai-head-title"><SparkIcon/><div><span className="ai-kicker">{T.kicker}</span><h2 id="ai-modal-title">{T.title}</h2></div></div>
           <div className="ai-head-actions">
             {speech.supported && data && <>
-              {speech.state === 'speaking'
+              {speech.state === 'loading'
+                ? <button type="button" className="ai-listen" disabled aria-label={T.narrationLoading}><span aria-hidden="true">…</span> {T.narrationLoading}</button>
+                : speech.state === 'speaking'
                 ? <button type="button" className="ai-listen" onClick={speech.pause} aria-label={T.pause}><span aria-hidden="true">❚❚</span> {T.pause}</button>
                 : <button type="button" className="ai-listen" onClick={speech.play} aria-label={speech.state === 'paused' ? T.resume : T.listen}><span aria-hidden="true">▶</span> {speech.state === 'paused' ? T.resume : T.listen}</button>}
               {speech.state !== 'idle' && <button type="button" className="ai-listen ai-listen-stop" onClick={speech.stop} aria-label={T.stop}><span aria-hidden="true">■</span></button>}
@@ -88,7 +98,7 @@ export default function CommentaryDock() {
             <button type="button" className="ai-close" onClick={() => setOpen(false)} aria-label={T.close}>×</button>
           </div>
         </header>
-        {speech.state !== 'idle' && <p className="ai-speech-status" role="status">{speech.state === 'paused' ? T.pausedStatus : T.speakingStatus}</p>}
+        {speech.state !== 'idle' && <p className="ai-speech-status" role="status">{speech.state === 'paused' ? T.pausedStatus : useNarrator ? T.narratingStatus : T.speakingStatus}</p>}
         <div className="ai-body">
           {status === 'loading' && <p className="ai-state"><Spinner size="sm"/> {T.loading}</p>}
           {status === 'pending' && <p className="ai-state">{T.pending}</p>}

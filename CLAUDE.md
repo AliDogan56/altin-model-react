@@ -913,7 +913,20 @@ Ayrıntı: `backend/commentary-service/README.md`.
   yazar, metindeki sayılar yazıldığı anın sayılarıdır" notu. Metnin içindeki fiyatlar değiştirilemez,
   LLM çıktısıdır. Üretim sıklığı sabit değil: 5 dk'da bir kontrol, ≥%0,5 hareket **ve** ≥60 dk →
   yeniden yaz; 240 dk dolunca fiyat oynamasa da yaz; yani pratikte 1–4 saatte bir, tur ≈3,5 dk.
-  **Sesli okuma** (`features/commentary/speech.ts` + `useSpeech.ts`): tarayıcının `speechSynthesis`'i,
+  **Anlatıcı sesi sunucuda üretilir** (2026-09-15, `app/services/narration_service.py`): kullanıcı
+  cihaz sentezleyicisini "doğal değil, vurgular bozuk" diye reddetti. Metin üretildikten sonra
+  **bir kez** Gemini konuşma modeliyle (`TTS_MODEL` gemini-3.1-flash-tts-preview, `TTS_VOICE` Kore,
+  anlatıcı yönergesi `STYLE`) seslendirilir; 24 kHz PCM `lameenc` ile 48 kbps mono MP3'e sıkıştırılıp
+  sürüm klasörüne `commentary.mp3` + `narration.json` olarak yazılır (ffmpeg imajda yok). Tek istek,
+  bölüm zamanları karakter oranıyla **tahmin** (`estimated: true`). Ölçüldü: 2.697 karakter → 201 sn ses,
+  1,18 MB, üretim 116 sn; 394 karakterlik örnek 17 sn. Ses metinden bağımsız: TTS düşerse metin yayında
+  kalır, hata `job.last_narration_error`'da. `AUTO_NARRATE=false` kapatır; 429/503'te `retry-after`
+  ile 3 deneme. Uçlar: `/latest` yanıtına `narration` (ses, süre, bölüm zamanları), `/latest/audio`
+  MP3 (`ETag` = sürüm, 1 gün önbellek), ses yoksa 404. Arayüz (`useNarration.ts`) sesi `?v=<sürüm>`
+  ile `<audio>` olarak çalar, `timeupdate` ile okunan bölümü vurgular; ses yoksa ya da yüklenemezse
+  aynı düğme cihaz sentezleyicisine düşer. Doğrulandı (yerel): MP3 1,2 MB 12 ms'de geldi, cihaz
+  sentezleyicisi hiç çalışmadı, vurgu 9. saniyede manşetten özete geçti, duraklat/devam/durdur çalıştı.
+  **Sesli okuma, cihaz yedeği** (`features/commentary/speech.ts` + `useSpeech.ts`): tarayıcının `speechSynthesis`'i,
   sunucu yok; pencere başlığında Dinle / Duraklat / Devam et / Durdur, okunan blok `is-speaking` ile
   vurgulanır, pencere kapanınca susar. Metin bölüm bölüm okunur (tek uzun utterance bazı tarayıcılarda
   15 sn'de kesiliyor). Ses seçimi yerel `tr-TR` > uzak `tr-TR` > başka `tr` > tarayıcı varsayılanı
@@ -931,9 +944,11 @@ Ayrıntı: `backend/commentary-service/README.md`.
   sonraki döngüde ve **`AUTO_GENERATE=false` iken hiç** koşmaz. `run_cycle` üretim hatasını
   yutar; hata yalnız `/v1/commentary/job` içindeki `last_error`'da görünür ve başarısız zorlama
   her döngüde yeniden denenir. SQLite yalnız `service_registry` kalp atışı içindir. Testler ağa
-  ve gerçek anahtara çıkmaz (`conftest` geçici `DATA_DIR`, sahte LLM). **Henüz commit edilmedi
-  ve canlıda yok** (sunucu `4ff2dcb`, dört konteyner); dağıtım için aşağıdaki bilinen sorunlar
-  önce kapanmalı.
+  ve gerçek anahtara çıkmaz (`conftest` geçici `DATA_DIR`, sahte LLM). **Canlıda (2026-09-14, `ff12f0d`):** beş konteyner sağlıklı; ilk üretim açılıştan 185 sn
+  sonra bitti (LLM 181 sn). `.env.secrets` sunucuda `chmod 600`, repoda değil — GitHub'ın anahtar
+  koruması bu dosyayı içeren bir push'u reddetti, dosya scp ile taşındı. Dağıtımda `up --no-deps`
+  kullanıldı: gateway compose'da yorum servisine bağlı olduğu için anahtar eksikken tam `up` gateway'i
+  de düşürür. Prompt başlığı ve denetim eşiği bulguları açık.
 
 ## Dağıtım
 
@@ -992,8 +1007,8 @@ Ayrıntı: `backend/commentary-service/README.md`.
 ## Test
 
 ```
-frontend: 27 dosya, 199 test (vitest: domain + lib + app/routes + services + content + features)
-backend : model-service 106 · market-service 58 · api-gateway 5 · commentary-service 22 (pytest)
+frontend: 27 dosya, 200 test (vitest: domain + lib + app/routes + services + content + features)
+backend : model-service 106 · market-service 58 · api-gateway 5 · commentary-service 29 (pytest)
 tsc --noEmit temiz; build: giriş 301 KB ham / 96 KB gzip, panel parçası 179 / 56, CSS 138 / 24 (14 Eylül)
 ```
 

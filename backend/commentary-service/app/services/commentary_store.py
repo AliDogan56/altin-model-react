@@ -10,6 +10,7 @@ import shutil
 
 from ..config import settings
 from ..market_constants import LEDGER_DIR, VERSIONS_DIR
+from .narration_service import NARRATION_FILE, read_meta
 
 DISCLAIMER = "Bu metin masanın o anki okumasıdır, yatırım tavsiyesi değildir."
 RUNS_CSV = LEDGER_DIR / "commentary_runs.csv"
@@ -21,6 +22,7 @@ class CommentaryStore:
         if not link.exists():
             return None
         item = json.loads((link.resolve() / "commentary.json").read_text())
+        item["narration"] = read_meta(link.resolve())   # ses üretilmediyse None; arayüz cihaz sesine düşer
         try:
             item["age_seconds"] = int((dt.datetime.now(dt.UTC) - dt.datetime.fromisoformat(item["generated_at"])).total_seconds())
         except (KeyError, ValueError):
@@ -60,6 +62,17 @@ class CommentaryStore:
             shutil.rmtree(old, ignore_errors=True)
         self._append_run(item)
         return item
+
+    def version_dir(self, version: str):
+        return VERSIONS_DIR / version
+
+    def latest_audio(self):
+        """Son sürümün MP3 yolu; ses henüz yoksa None."""
+        link = VERSIONS_DIR / "current"
+        if not link.exists():
+            return None
+        path = link.resolve() / NARRATION_FILE
+        return path if path.exists() else None
 
     @staticmethod
     def _append_run(item: dict) -> None:

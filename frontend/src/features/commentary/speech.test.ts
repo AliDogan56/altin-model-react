@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { pickTurkishVoice, speechChunks } from './speech';
 
 const voice = (lang: string, localService = true, name = lang) => ({ lang, localService, name, default: false, voiceURI: name }) as SpeechSynthesisVoice;
-const data = { version: 'v', asOf: '', generatedAt: '', ageSeconds: null, runMode: 'full', triggerReason: null, live: null, officialFix: null,
+const data = { version: 'v', asOf: '', generatedAt: '', ageSeconds: null, runMode: 'full', triggerReason: null, live: null, officialFix: null, narration: null,
   title: 'T', headline: 'Manşet.', summary: 'Özet.', sections: [{ id: 'giris', title: 'Giriş', text: 'Metin.' }], disclaimer: 'D' };
 
 describe('sesli okuma', () => {
