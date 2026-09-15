@@ -10,14 +10,16 @@ export const POLL_MS = 2 * 60 * 1000;
  * Son yorumu tutar; "yeni" kararı `unread.ts`: yorumun üretim zamanı, son görülen yorumun üretim
  * zamanından büyükse yeni. Sayfa açıkken yeni sürüm gelirse `arrived` bir kez dolar (balon için).
  */
-export const useCommentary = () => {
-  const [status, setStatus] = useState<CommentaryStatus>('loading');
-  const [data, setData] = useState<Commentary | null>(null);
+export const useCommentary = (initial: Commentary | null = null) => {
+  /* `initial`: /yorum sayfasının HTML'ine gömülü yorum (sunucu SSI ile basar); organik inişte
+     ilk render metinle başlar, ağ isteği yalnız tazeler. */
+  const [status, setStatus] = useState<CommentaryStatus>(initial ? 'ready' : 'loading');
+  const [data, setData] = useState<Commentary | null>(initial);
   const [seenAt, setSeenAt] = useState<string | null>(readSeenAt);
   const [arrived, setArrived] = useState<string | null>(null);   // sayfa açıkken gelen yeni sürüm
   const inflight = useRef<AbortController | null>(null);
   const etag = useRef<string | null>(null);
-  const known = useRef<string | null>(null);
+  const known = useRef<string | null>(initial?.version ?? null);
 
   const refresh = useCallback(async () => {
     inflight.current?.abort();

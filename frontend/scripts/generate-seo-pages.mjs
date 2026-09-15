@@ -42,7 +42,11 @@ const withPreload = (html, source) => {
   return html.replace('</head>', `    ${links.join('\n    ')}\n  </head>`);
 };
 const ROUTE = { panel: 'src/pages/DashboardRoute.tsx', article: 'src/pages/ArticlePage.tsx',
-  guideHub: 'src/pages/GuideHubPage.tsx', panelHub: 'src/pages/PanelHubPage.tsx', site: 'src/pages/SitePageView.tsx' };
+  guideHub: 'src/pages/GuideHubPage.tsx', panelHub: 'src/pages/PanelHubPage.tsx', site: 'src/pages/SitePageView.tsx',
+  commentary: 'src/pages/CommentaryPage.tsx' };
+/* Günün AI yorumu; her ön render edilmiş altbilgiden bağlanır ki 40+ sayfa ona iç bağlantı versin. */
+const YORUM_LINK = '<a href="/yorum">Bugünkü AI yorumu</a>';
+const YORUM_TITLE = 'Ons Altın Yorumu Bugün';   // content/site.ts PAGE_META.commentary ve commentary_page.PAGE_TITLE ile aynı
 
 const categories = [...new Set(articles.map(article => article.category))];
 const byCategory = category => articles.filter(article => article.category === category);
@@ -91,6 +95,14 @@ const panelJump = article => {
   return feature ? `<p class="article-jump"><a href="/panel/${escapeHtml(feature.slug)}">${escapeHtml(feature.title)} →</a> <small>canlı veride, hesaplanmış hâliyle</small></p>` : '';
 };
 
+/* Panel dışı canlı sayfaya ikinci çağrı kartı (ör. yorum rehberi → /yorum); ArticlePage ile aynı işaretleme. */
+const liveCta = article => article.liveCta ? `<aside class="article-cta">
+          <p>${escapeHtml(article.liveCta.eyebrow)}</p>
+          <h2>${escapeHtml(article.liveCta.title)}</h2>
+          <p>${escapeHtml(article.liveCta.summary)}</p>
+          <p><a class="article-cta-link" href="${escapeHtml(article.liveCta.href)}">${escapeHtml(article.liveCta.cta)} →</a></p>
+        </aside>` : '';
+
 const panelCta = article => {
   const feature = panelBySlug.get(article.panel);
   if (!feature) return '';
@@ -125,10 +137,11 @@ const articleBody = (article, related) => `<main class="seo-prerender" data-seo-
         <section><h2>Özet: ${escapeHtml(article.keyword)}</h2><ul>${article.points.map(point => `<li>${escapeHtml(point)}</li>`).join('')}</ul></section>
         <section><h2>Sık sorulan sorular</h2>${article.faq.map(item => `<h3>${escapeHtml(item.q)}</h3><p>${escapeHtml(item.a)}</p>`).join('')}</section>
         ${panelCta(article)}
+        ${liveCta(article)}
         <p><small>Son güncelleme: ${escapeHtml(article.updated)}</small></p>
       </article>
       <nav aria-label="İlgili rehberler"><h2>İlgili Ons Altın Rehberleri</h2><ul>${related.map(item => `<li><a href="/rehber/${escapeHtml(item.id)}">${escapeHtml(item.title)}</a></li>`).join('')}</ul></nav>
-      <footer>${LEGAL}<p>Projenin yaratıcısı: <a href="${linkedInUrl}" rel="me">Ali Doğan — LinkedIn</a></p><nav aria-label="Footer bağlantıları"><a href="/">Canlı ons paneli</a> · <a href="/#rehberler">Altın rehberleri</a> · <a href="/sitemap.xml">Sitemap</a></nav></footer>
+      <footer>${LEGAL}<p>Projenin yaratıcısı: <a href="${linkedInUrl}" rel="me">Ali Doğan — LinkedIn</a></p><nav aria-label="Footer bağlantıları"><a href="/">Canlı ons paneli</a> · ${YORUM_LINK} · <a href="/#rehberler">Altın rehberleri</a> · <a href="/sitemap.xml">Sitemap</a></nav></footer>
     </main>`;
 
 for (const [index, article] of articles.entries()) {
@@ -207,7 +220,7 @@ for (const [index, feature] of features.entries()) {
         <p><a href="/">Canlı panelde bu bölümü aç</a></p>
       </article>
       <nav aria-label="Diğer panel bölümleri"><h2>Panelin diğer bölümleri</h2><ul>${others.map(item => `<li><a href="/panel/${escapeHtml(item.slug)}">${escapeHtml(item.title)}</a></li>`).join('')}</ul></nav>
-      <footer>${LEGAL}<nav aria-label="Footer bağlantıları"><a href="/">Canlı ons paneli</a> · <a href="/rehber">Altın rehberleri</a> · <a href="/sitemap.xml">Sitemap</a></nav></footer>
+      <footer>${LEGAL}<nav aria-label="Footer bağlantıları"><a href="/">Canlı ons paneli</a> · ${YORUM_LINK} · <a href="/rehber">Altın rehberleri</a> · <a href="/sitemap.xml">Sitemap</a></nav></footer>
     </main>`;
   const schema = { '@context': 'https://schema.org', '@graph': [
     { '@type': 'WebPage', name: feature.title, description: feature.summary, url, inLanguage: 'tr-TR',
@@ -305,7 +318,7 @@ const homeFallback = `<main class="seo-prerender" data-seo-page="home">
       <section id="rehberler"><h2>Ons Altın Analizi ve Tahmin Rehberleri</h2><p>Canlı fiyatı doğru okumak, modeli değerlendirmek ve altını etkileyen ekonomik göstergeleri anlamak için hazırlanan ${articles.length} rehber. Tümü <a href="/rehber">Altın Rehberi</a> sayfasında.</p>
         ${categories.map(category => `<section><h3>${escapeHtml(category)}</h3><ul>${byCategory(category).map(article => `<li><a href="/rehber/${escapeHtml(article.id)}"><strong>${escapeHtml(article.title)}</strong></a> — ${escapeHtml(article.summary)}</li>`).join('')}</ul></section>`).join('\n        ')}
       </section>
-      <footer>${LEGAL}<p>Projenin yaratıcısı: <a href="${linkedInUrl}" rel="me">Ali Doğan — LinkedIn</a></p><nav aria-label="Footer bağlantıları"><a href="/sitemap.xml">Sitemap</a></nav></footer>
+      <footer>${LEGAL}<p>Projenin yaratıcısı: <a href="${linkedInUrl}" rel="me">Ali Doğan — LinkedIn</a></p><nav aria-label="Footer bağlantıları">${YORUM_LINK} · <a href="/sitemap.xml">Sitemap</a></nav></footer>
     </main>`;
 
 const homeItemList = {
@@ -361,12 +374,41 @@ for (const page of sitePages) {
   await writeFile(join(root, 'dist', page.slug, 'index.html'), withPreload(html, ROUTE.site));
 }
 
+/* ---- /yorum: günün AI yorumu ----
+   İçerik derlemede bilinmez (1–4 saatte bir yeniden yazılır). Burada yalnız kabuk
+   basılır; iki SSI direktifi nginx'te her istekte yorum servisinin parçalarıyla
+   doldurulur (frontend/nginx.conf `location = /yorum`, backend `commentary_page.py`).
+   Başlık ve canonical statik: servis düşerse sayfa başlıksız kalmasın. Açıklama,
+   paylaşım etiketleri ve Article şeması head parçasından; makale ve React'in
+   hidrasyonda eşzamanlı okuduğu JSON (`#yorum-verisi`) gövde parçasından gelir.
+   Statik açıklama/og etiketleri kaldırılır ki parçayla çift basılmasın. */
+const yorumBody = `<main class="seo-prerender" data-seo-page="yorum">
+      <nav aria-label="İçerik yolu"><a href="/">Ana Sayfa</a> / ${YORUM_TITLE}</nav>
+      <!--# include virtual="/_yorum/body" -->
+      <nav aria-label="İlgili sayfalar"><h2>İlgili sayfalar</h2><ul><li><a href="/rehber/ons-altin-yorum">Ons altın yorumu nasıl okunur</a></li><li><a href="/panel/altin-momentum-gucu">Gün içi momentum ve kırılım gücü</a></li><li><a href="/panel/altin-pivot-seviyeleri">Pivot seviyeleri</a></li><li><a href="/">Canlı ons paneli</a></li></ul></nav>
+      <footer>${LEGAL}<nav aria-label="Footer bağlantıları"><a href="/">Canlı ons paneli</a> · <a href="/rehber">Altın rehberleri</a> · <a href="/sitemap.xml">Sitemap</a></nav></footer>
+    </main>`;
+const dropMeta = (html, key, property = false) =>
+  html.replace(new RegExp(`\\s*<meta\\s+${property ? 'property' : 'name'}="${key}"[^>]*>`, 'i'), '');
+let yorumHtml = dropSchema(dropSchema(rawBaseHtml, 'ItemList'), 'WebApplication')
+  .replace(/<title>[^<]*<\/title>/i, `<title>${escapeHtml(YORUM_TITLE)} | Ons Altın Analiz</title>`)
+  .replace('<div id="root"></div>', `<div id="root">${yorumBody}</div>`)
+  .replace('</head>', `    <!--# include virtual="/_yorum/head" -->\n  </head>`);
+for (const key of ['description', 'keywords', 'twitter:title', 'twitter:description']) yorumHtml = dropMeta(yorumHtml, key);
+for (const key of ['og:type', 'og:title', 'og:description', 'og:url']) yorumHtml = dropMeta(yorumHtml, key, true);
+yorumHtml = replaceAttribute(yorumHtml, 'link\\s+rel="canonical"', 'href', `${siteUrl}/yorum`);
+await mkdir(join(root, 'dist/yorum'), { recursive: true });
+await writeFile(join(root, 'dist/yorum/index.html'), withPreload(yorumHtml, ROUTE.commentary));
+
+/* `lastmodSsi` taşıyan girdinin tarihi nginx SSI ile servisten gelir (sitemap.xml
+   için `ssi_types application/xml`); statik `lastmod` yalnız yedek. */
+const lastmodOf = route => route.lastmodSsi ? `<!--# include virtual="${route.lastmodSsi}" -->` : route.lastmod;
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${(await siteRoutes(today)).map(route => `  <url><loc>${siteUrl}${route.path}</loc><lastmod>${route.lastmod}</lastmod><changefreq>${route.changefreq}</changefreq><priority>${route.priority}</priority></url>`).join('\n')}
+${(await siteRoutes(today)).map(route => `  <url><loc>${siteUrl}${route.path}</loc><lastmod>${lastmodOf(route)}</lastmod><changefreq>${route.changefreq}</changefreq><priority>${route.priority}</priority></url>`).join('\n')}
 </urlset>
 `;
 
 await writeFile(join(root, 'dist/index.html'), withPreload(homeHtml, ROUTE.panel));
 await writeFile(join(root, 'dist/sitemap.xml'), sitemap);
-console.log(`${articles.length} rehber + dizin + ${features.length} panel + ${sitePages.length} kurumsal sayfa, ön render edilmiş anasayfa ve sitemap oluşturuldu.`);
+console.log(`${articles.length} rehber + dizin + ${features.length} panel + ${sitePages.length} kurumsal sayfa + /yorum kabuğu, ön render edilmiş anasayfa ve sitemap oluşturuldu.`);

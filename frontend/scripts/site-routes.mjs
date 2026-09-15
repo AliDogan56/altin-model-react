@@ -14,6 +14,10 @@ export const siteRoutes = async (today = new Date().toISOString().slice(0, 10)) 
   const pages = await read('site-pages.json');
   return [
     { path: '/', lastmod: today, changefreq: 'daily', priority: '1.0' },
+    /* Günün AI yorumu 1–4 saatte bir yeniden yazılır; lastmod derlemede bilinemez.
+       Sitemap'te bu girdinin tarihi nginx SSI ile yorum servisinden alınır
+       (`lastmodSsi`, generate-seo-pages.mjs); `lastmod` yalnız yedek. */
+    { path: '/yorum', lastmod: today, lastmodSsi: '/_yorum/lastmod', changefreq: 'hourly', priority: '0.9' },
     { path: '/rehber', lastmod: today, changefreq: 'weekly', priority: '0.9' },
     { path: '/panel', lastmod: today, changefreq: 'weekly', priority: '0.9' },
     /* Yalnız kendi anlatısı olan panel sayfası sitemap'e girer. Bölümsüz bir

@@ -18,12 +18,16 @@ export type ArticleSummary = {
   summary: string; category: string; updated: string; panel: string;
 };
 
+/** Makale sonunda ikinci çağrı kartı: panel dışı bir canlı sayfaya (ör. /yorum) bağlantı. */
+export type SeoCta = { href: string; eyebrow: string; title: string; summary: string; cta: string };
+
 export type SeoArticle = {
   id: string; keyword: string; title: string; seoTitle?: string; updated: string;
   summary: string; intro: string; category: string;
   sections: SeoSection[]; points: string[]; faq: SeoFaq[];
   /** Makalenin canlı karşılığı olan panel bölümünün slug'ı. */
   panel: string;
+  liveCta?: SeoCta;
 };
 
 export type PanelFeature = {

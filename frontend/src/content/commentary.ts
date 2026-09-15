@@ -26,6 +26,17 @@ export const COMMENTARY_TEXT = {
   narratingStatus: 'Anlatıcı sesiyle okunuyor; okunan bölüm vurgulanır.',
   narrationLoading: 'Ses yükleniyor',
   pausedStatus: 'Okuma duraklatıldı.',
+  /* /yorum sayfası. Şeffaflık paragrafı sunucu parçasıyla (`commentary_page.DISCLOSURE`) aynı. */
+  fullPage: 'Yorumu tam sayfada oku',
+  pendingTitle: 'Bugünkü ons altın yorumu hazırlanıyor',
+  pageEyebrow: 'Ons altın yorumu',
+  disclosure: 'Bu metni beş rolden oluşan bir yapay zekâ masası yazdı: teknik analist, takvim ve haber gözcüsü, makro analist, baş analist ve anlatıcı. Metindeki her sayı o an ölçülmüş veri paketinden gelir ve yayımlanmadan önce paketle karşılaştırılır. Masa fiyatı beş dakikada bir kontrol eder; fiyat yarım yüzdeden fazla oynadıysa ya da dört saat geçtiyse metni yeniden yazar.',
+  liveOnPanel: 'Canlı fiyat ve model görüşü panelde.',
+  guideEyebrow: 'Yorumu nasıl okumalı',
+  guideTitle: 'Ons altın yorumu: bugün model ne diyor?',
+  guideSummary: 'Bir yorumun taşıması gereken üç sayı, bu sitedeki görüşün dayandığı ölçümler ve okurken üç uyarı işareti.',
+  guideLink: 'Rehberi aç',
+  updatedAt: 'Son güncelleme',
 } as const;
 
 /** Servisin `live.source` alanı kaynak kodu taşır; arayüzde ad değil çerçeve yazılır. */

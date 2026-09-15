@@ -15,7 +15,7 @@ export const openLegal = () => window.dispatchEvent(new Event('legal:open'));
 
 /* Bölümler artık Panel açılır menüsünde; ayrı '#tahmin' bağlantısı hem gereksizdi
    hem de kartların id'si feature-tahmin olduğu için çalışmıyordu. */
-export const NAV_SECTIONS: [string, string][] = [['/', 'Canlı Panel']];
+export const NAV_SECTIONS: [string, string][] = [['/', 'Canlı Panel'], ['/yorum', 'AI Yorumu']];
 
 /** Türkçe arama için harf katlama: 'İ' ve aksanlar eşleşmeyi bozuyordu. */
 export const fold = (value: string) => value.toLocaleLowerCase('tr').replace(/[\u0300-\u036f]/g, '');
@@ -35,5 +35,12 @@ export const PAGE_META = {
     title: 'Canlı Altın Paneli Özellikleri',
     description: 'Canlı altın panelindeki tahmin, grafik, ziynet fiyatları, teknik gösterge ve pivot bölümleri.',
     path: '/panel',
+  },
+  /* Başlık sabit: sunucu tarafı parça (`commentary_page.PAGE_TITLE`) ile aynı olmalı.
+     Tarih görünür üst yazıda ve şemanın dateModified alanında. */
+  commentary: {
+    title: 'Ons Altın Yorumu Bugün',
+    description: 'Yapay zekâ masasının günlük ons altın yorumu; fiyat oynadıkça yeniden yazılır, sayıları veri paketiyle denetlenir.',
+    path: '/yorum',
   },
 } as const;

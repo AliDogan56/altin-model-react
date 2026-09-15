@@ -39,3 +39,10 @@ main.app { animation:app-enter .3s cubic-bezier(.22,.61,.36,1); }
   main.app { animation:none; }
   .seo-prerender::before { animation:none; }
 }
+
+/* /yorum ön render'ı: sunucu parçasındaki veri kartı (yazıldığı fiyat, fiks, saat). */
+.seo-prerender .yorum-facts { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px 16px; margin:0 0 16px; padding:12px 14px; border:1px solid var(--gold-line-soft); border-radius:12px; background:var(--gold-bg); }
+.seo-prerender .yorum-facts div { margin:0; }
+.seo-prerender .yorum-facts dt { font-size:12px; color:var(--muted); }
+.seo-prerender .yorum-facts dd { margin:2px 0 0; font-weight:600; color:var(--text-strong); font-variant-numeric:tabular-nums; }
+.seo-prerender .yorum-facts small { display:block; font-size:12px; color:var(--muted); }

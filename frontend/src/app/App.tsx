@@ -22,6 +22,7 @@ const ArticlePage = lazy(() => import('../pages/ArticlePage'));
 const GuideHubPage = lazy(() => import('../pages/GuideHubPage'));
 const PanelHubPage = lazy(() => import('../pages/PanelHubPage'));
 const SitePageView = lazy(() => import('../pages/SitePageView'));
+const CommentaryPage = lazy(() => import('../pages/CommentaryPage'));
 
 const LoadingPage = ({ label }: { label: string }) =>
   <main className="app article-page"><div className="article-loading"><Spinner size="lg" label={label}/></div></main>;
@@ -83,6 +84,7 @@ function App() {
         <Routes>
           {SITE_PAGES.map(page =>
             <Route key={page.slug} path={`/${page.slug}`} element={<SitePageView page={page}/>}/>)}
+          <Route path="/yorum" element={<CommentaryPage/>}/>
           <Route path="/rehber" element={<GuideHubPage/>}/>
           <Route path="/rehber/:id" element={<GuideRoute/>}/>
           <Route path="/panel" element={<PanelHubPage/>}/>

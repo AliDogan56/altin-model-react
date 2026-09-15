@@ -77,3 +77,17 @@
   .ai-fab-badge::after { display:none; }
   .ai-fab.has-new .ai-fab-glow { opacity:.8; }
 }
+
+/* ---- /yorum sayfası (2026-09-15) ----
+   Makale kabuğu (`standalone-article`) + pencerenin veri kartı ve dinleme düğmeleri.
+   Bölümler `.standalone-body > section` kutularıdır; okunan bölüm altın zeminle vurgulanır. */
+.ai-page-tools { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:0 0 16px; }
+.ai-page-tools .ai-speech-status { margin:0; padding:0; border:0; background:none; font-size:12px; color:var(--muted); }
+.ai-page .ai-facts { margin-bottom:18px; }
+.ai-page .ai-disclosure { margin:0 0 8px; padding:12px 14px; border-left:3px solid var(--gold-fill); background:var(--surface-2); font-size:13px; line-height:1.6; color:var(--text); }
+.ai-page .ai-disclosure a { color:var(--gold); }
+.ai-page header p.is-speaking, .ai-page .standalone-body > section.is-speaking { background:var(--gold-bg); border-color:var(--gold-line-strong); border-radius:var(--radius-sm); }
+.ai-page .ai-disclaimer { margin:24px 0 0; }
+.ai-page .ai-state { display:inline-flex; align-items:center; gap:8px; }
+.ai-page-link { margin:14px 0 0; font-size:13px; }
+.ai-page-link a { color:var(--gold); font-weight:700; text-decoration:none; }

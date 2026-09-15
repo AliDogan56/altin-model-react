@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import DataTimestamp from '../../components/ui/DataTimestamp';
 import Spinner from '../../components/Spinner';
 import { COMMENTARY_STALE_MS, COMMENTARY_TEXT as T, liveSourceLabel } from '../../content/commentary';
@@ -145,6 +145,8 @@ export default function CommentaryDock() {
               <h3>{section.title}</h3><p>{section.text}</p>
             </section>)}
             <p className="ai-disclaimer" style={{ '--i': data.sections.length + 3 } as React.CSSProperties}>{data.disclaimer} <button type="button" className="link-btn" onClick={openLegal}>{T.legal}</button></p>
+            {/* Aynı metnin dizine açık sayfası; rota değişince pencere kendiliğinden kapanır. */}
+            <p className="ai-page-link" style={{ '--i': data.sections.length + 4 } as React.CSSProperties}><Link to="/yorum">{T.fullPage} <span aria-hidden="true">→</span></Link></p>
           </article>}
         </div>
       </div>

@@ -5891,7 +5891,7 @@
     "keyword": "ons altın yorum",
     "title": "Ons Altın Yorumu: Bugün Model Ne Diyor?",
     "seoTitle": "Ons Altın Yorumu",
-    "updated": "2026-09-01",
+    "updated": "2026-09-15",
     "category": "Tahmin ve Teknik Analiz",
     "panel": "ons-altin-tahmini",
     "summary": "Ons altın yorumlarının çoğu denetlenemez. Bir yorumun taşıması gereken üç sayı, bizim ölçülmüş karnemiz ve bugünkü canlı görüşün nerede durduğu.",
@@ -5902,7 +5902,7 @@
       "Bu sitedeki görüş modelin çıktısıdır ve karnesi açıkça yayımlanır.",
       "30 günlük yön isabeti 529 bağımsız günde %72,6 ölçüldü.",
       "Model 14 günlük vadede neredeyse hiç görüş bildirmiyor; ağırlığı 0,08.",
-      "Güncel görüş bu sayfada değil, sürekli güncellenen panelde durur."
+      "Günün yorumu ayrı sayfada, yapay zekâ masası tarafından yazılır ve fiyat oynadıkça yenilenir; modelin vade görüşü panelde durur."
     ],
     "sections": [
       {
@@ -6029,11 +6029,12 @@
         }
       },
       {
-        "heading": "Bugünkü görüş bu sayfada değil",
+        "heading": "Bugünkü yorum nerede: yapay zekâ masası",
         "paragraphs": [
-          "Bu sayfa yöntemi anlatır, güncel rakamı değil. Bir yorumun tazeliği önemlidir ve sabit bir makale bunu sağlayamaz; yayımlandığı gün doğru olan sayı bir hafta sonra yanıltıcı olur.",
-          "Güncel görüş panelde durur ve fiyat aktıkça yeniden hesaplanır: seçtiğiniz vadedeki beklenen getiri, belirsizlik bandı, tahmine hangi göstergenin ne kadar katkı verdiği ve gün içi momentumun yönü. Aşağıdaki bağlantı doğrudan oraya götürür.",
-          "Bu sayfanın işi, oraya bakarken neye dikkat edeceğinizi bilmenizi sağlamak."
+          "Bu sayfa yöntemi anlatır, günün rakamını değil. Bir yorumun tazeliği önemlidir ve sabit bir makale bunu sağlayamaz; yayımlandığı gün doğru olan sayı bir hafta sonra yanıltıcı olur. Günün yorumu bu yüzden ayrı bir sayfada durur ve fiyat hareket ettikçe yeniden yazılır.",
+          "O metni beş rolden oluşan bir yapay zekâ masası yazar: teknik analist, takvim ve haber gözcüsü, makro analist, baş analist ve metni kaleme alan anlatıcı. Metindeki her sayı o an ölçülmüş veri paketinden gelir ve yayımlanmadan önce paketle karşılaştırılır; pakette olmayan bir sayı metne giremez. Yorumun yazıldığı andaki fiyat metnin üstünde açıkça yazar.",
+          "Masa fiyatı beş dakikada bir kontrol eder. Fiyat yarım yüzdeden fazla oynadıysa ve en az bir saat geçtiyse, ya da dört saat dolduysa metni yeniden yazar. Yani okuduğunuz yorum en fazla birkaç saat önce yazılmıştır; bu makalenin sağlayamadığı tazelik oradadır.",
+          "Modelin görüşü ise panelde durur: seçtiğiniz vadedeki beklenen getiri, belirsizlik bandı ve tahmine hangi göstergenin ne kadar katkı verdiği fiyat aktıkça yeniden hesaplanır. Yorum bugünü okur, model önümüzdeki haftaları; ikisini birlikte okumak gerekir."
         ]
       }
     ],
@@ -6048,7 +6049,7 @@
       },
       {
         "q": "Bu sitedeki yorum kime ait?",
-        "a": "Bir kişiye değil, ons altını tahmin eden bir modele. Modelin isabeti hiç görmediği günler üzerinde ölçülür ve sayılar sitede yayımlanır."
+        "a": "İki kaynağa. Günün yorumunu beş rollü bir yapay zekâ masası yazar; metindeki her sayı ölçülmüş veri paketiyle denetlenir. Vade görüşü ise ons altını tahmin eden modele aittir; modelin isabeti hiç görmediği günler üzerinde ölçülür ve sayılar sitede yayımlanır."
       },
       {
         "q": "Modelin yön isabeti ne kadar?",
@@ -6068,8 +6069,15 @@
       },
       {
         "q": "Güncel yorumu nerede görebilirim?",
-        "a": "Panelde. Bu sayfa yöntemi anlatır; beklenen getiri, belirsizlik bandı, gösterge katkıları ve gün içi momentum fiyat aktıkça panelde yeniden hesaplanır."
+        "a": "Bugünkü yorum sayfasında; metin fiyat hareket ettikçe yeniden yazılır ve yazıldığı andaki fiyatı taşır. Beklenen getiri, belirsizlik bandı ve gösterge katkıları ise panelde fiyat aktıkça yeniden hesaplanır."
       }
-    ]
+    ],
+    "liveCta": {
+      "href": "/yorum",
+      "eyebrow": "Günün yorumunu oku",
+      "title": "Bugünkü ons altın yorumu",
+      "summary": "Yapay zekâ masasının son metni; fiyat oynadıkça yeniden yazılır, sayıları veri paketiyle denetlenir.",
+      "cta": "Yorumu aç"
+    }
   }
 ]

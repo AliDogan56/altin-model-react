@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.responses import FileResponse, PlainTextResponse
+from fastapi.responses import FileResponse, HTMLResponse, PlainTextResponse
 
 from ..models.api_models import CommentaryOut
+from ..services import commentary_page
 from ..services.commentary_job_service import commentary_job_service
 from ..services.commentary_store import commentary_store
 from .admin_auth import require_admin
@@ -38,6 +39,28 @@ def latest_audio():
     version = path.parent.name
     return FileResponse(path, media_type="audio/mpeg", filename=f"ons-ai-yorumu-{version}.mp3",
                         headers={"ETag": f'"{version}"', "Cache-Control": "public, max-age=86400", "X-Commentary-Version": version})
+
+
+"""
+`/yorum` sayfasının parçaları. Web nginx'i sayfa kabuğuna bunları SSI ile ekler
+(`frontend/nginx.conf`, `location ^~ /_yorum/`); dışarıdan doğrudan çağrılmaları
+gerekmez. Yorum yokken de 200 dönerler: SSI hata metni basmasın, sayfa `noindex` alsın.
+"""
+
+
+@router.get("/latest/page/head", response_class=HTMLResponse)
+def latest_page_head() -> str:
+    return commentary_page.page_head(commentary_store.latest())
+
+
+@router.get("/latest/page/body", response_class=HTMLResponse)
+def latest_page_body() -> str:
+    return commentary_page.page_body(commentary_store.latest())
+
+
+@router.get("/latest/page/lastmod", response_class=PlainTextResponse)
+def latest_page_lastmod() -> str:
+    return commentary_page.lastmod(commentary_store.latest())
 
 
 @router.get("/job")

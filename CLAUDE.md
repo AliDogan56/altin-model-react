@@ -38,6 +38,7 @@ Gateway yalnız yol adına bakar: `/market-service/*`, `/model-service/*` ve
 | commentary | `GET /v1/commentary/latest/text` | aynı içerik düz metin |
 | commentary | `GET /v1/commentary/job` | fiyat izleme işi: son kontrol/karar/üretim, hata, LLM zincirleri |
 | commentary | `POST /v1/commentary/regenerate` | yönetici (`COMMENTARY_ADMIN_TOKEN`), sonraki döngüde zorla üretim |
+| commentary | `GET /v1/commentary/latest/page/{head,body,lastmod}` | `/yorum` sayfasının SSI parçaları (web nginx çağırır); yorum yokken de 200, `noindex` |
 
 Model-service'te SQLite yok; `db.py` ve `gold_repository.py` kaldırıldı. Snapshot/observations
 tabloları ve `/v1/snapshots` ucu artık mevcut değil.
@@ -592,8 +593,8 @@ makale indeksi); panele ait hiçbir şey kalmadı (imza dizeleriyle doğrulandı
 - 37 rehber makalesi (`data/seo-articles.json`), 12 panel özelliği (`data/panel-features.json`),
   4 kurumsal sayfa (`data/site-pages.json`: hakkımızda, yazar, iletişim, gizlilik)
 - `scripts/generate-seo-pages.mjs` build sonrası: 37 rehber + `/rehber` dizini + 5 dizine açık panel
-  sayfası + `/panel` dizini + 4 kurumsal sayfa + ön render edilmiş anasayfa +
-  **49 URL'lik sitemap**
+  sayfası + `/panel` dizini + 4 kurumsal sayfa + ön render edilmiş anasayfa + `/yorum` kabuğu (içerik
+  SSI ile, bkz. yorum servisi bölümü) + **50 URL'lik sitemap**
 - **Güven sayfaları (E-E-A-T).** YMYL kategorisinde Google'ın aradığı sinyaller sitede hiç
   yoktu. Dört sayfa `SitePageView` şablonuyla render edilir, ön render edilir ve her ön
   render edilmiş footer'dan (`LEGAL` sabiti) linklenir. Article şemasının `author`'ı artık
@@ -922,6 +923,37 @@ Ayrıntı: `backend/commentary-service/README.md`.
   ve eski damgada etiket "AI yorumu", rozet 18×18 px düğmenin sağ üst köşesinde, iki temada okunur, taşma 0;
   açılıştan 6 sn sonra damga güncel ve rozet söndü; sahte yeni
   sürümde balon 631 px'te düğmenin üstünde, "Oku" pencereyi açıp balonu kapattı.
+  **Dizine açık `/yorum` sayfası (2026-09-15, SEO):** yorum yalnız pencerede ve tarayıcıda olduğu için
+  Google'ın gördüğü bir URL'i yoktu; "ons altın yorum" sorgusunda 11,5. sırada duran rehberin son bölümü
+  bile "bugünkü görüş bu sayfada değil" diyordu. Metin 1–4 saatte bir değiştiği için derleme anındaki ön
+  render işe yaramaz; çözüm **nginx SSI**: `generate-seo-pages.mjs` yalnız kabuğu basar
+  (`dist/yorum/index.html`: sabit başlık "Ons Altın Yorumu Bugün", canonical, içerik yolu, ilgili sayfalar,
+  yasal altbilgi, `CommentaryPage` parçasına modulepreload) ve iki `<!--# include virtual="/_yorum/…" -->`
+  bırakır; `nginx.conf` `location = /yorum` (`ssi on`, `ssi_silent_errors on`) bunları `location ^~ /_yorum/`
+  (`internal`, gateway üzerinden `…/latest/page/`, `Accept-Encoding ""` — gzip'li gövde yapıştırılmasın)
+  ile her istekte doldurur. Parçalar `app/services/commentary_page.py`: `head` (açıklama = özetin kelime
+  sınırında 155 karakteri, og/twitter, `article:modified_time`, Article + BreadcrumbList şeması; yazar
+  Organization), `body` (`<article>`: üst yazı "Ons altın yorumu · 15 Eylül 2026, 15:54", `h1` manşet,
+  özet, veri kartı `dl.yorum-facts` — yazıldığı fiyat, resmi fiks, saat —, yapay zekâ masası şeffaflık
+  paragrafı, bölümler `h2`, sorumluluk notu, panel ve rehber bağlantıları + React'in hidrasyonda eşzamanlı
+  okuduğu `#yorum-verisi` JSON'u, `usage`/`durations_seconds` hariç), `lastmod` (W3C tarih; sitemap'teki
+  `/yorum` girdisinin `<lastmod>`'u da SSI ile canlı, `location = /sitemap.xml` `ssi_types application/xml`).
+  LLM metni `html.escape` ile, JSON `<` ile kaçırılır. Yorum yokken parçalar yine 200 döner (SSI hata
+  metni basmasın) ama `noindex`; başlık kabukta olduğu için servis düşerse sayfa başlıksız kalmaz, yalnız
+  açıklamasız. React tarafı `pages/CommentaryPage.tsx` (rota `/yorum`, ayrı parça): `useCommentary(initial)`
+  gömülü JSON'la başlar, `standalone-article` kabuğu + pencerenin veri kartı ve Dinle düğmeleri; canlı
+  Harem fiyatı yok (panel sağlayıcısı dışında), 5 sn sonra okundu damgası yazılır. Saf yardımcılar
+  `features/commentary/page.ts` (`turkishDateTime`, `pageDescription` — sunucuyla aynı kural, 2 test).
+  İç bağlantı: menü "AI Yorumu", altbilgi "Bugünkü AI yorumu", her ön render edilmiş altbilgi (37 rehber
+  + 12 panel + anasayfa), pencerede "Yorumu tam sayfada oku", `ons-altin-yorum` rehberinin son bölümü
+  yeniden yazıldı ("Bugünkü yorum nerede: yapay zekâ masası") + `liveCta` kartı (`SeoArticle.liveCta`,
+  ArticlePage ve üretici aynı işaretleme), iki SSS cevabı güncellendi, `updated` 2026-09-15. Sitemap 50 URL,
+  `/yorum` `hourly` 0,9. Doğrulandı: sunucuda geçici konteynerde `nginx -t` (compose ağı, SSI modülü var);
+  yerelde SSI taklidiyle (`proxy9.py`) 375 px'te taşma 0, hidrasyon sonrası `.seo-prerender` yok, şema
+  Article + BreadcrumbList, konsol hatası 0. **Dağıtım sırası: önce commentary-service, sonra web** —
+  ters sırada SSI parçaları 404 alır ve sayfa boş kabuk olarak çıkar. Günlük arşiv (`/yorum/2026-09-15`)
+  bilinçli olarak yapılmadı: ölçekli içerik riski ve `KEEP_VERSIONS` 20; 4 haftalık Search Console
+  ölçümünden sonra değerlendirilecek.
   **Canlı fiyat açılış anınındır, üretim anının değil** (`drift.ts`): kartta "Canlı fiyat" Harem
   kotasyonu (`DataTimestamp` ile), "Yorum yazılırken" servisin `live.price`'ı ve o zamandan beri
   yüzde fark; fark %0,5'i (servisin `TRIGGER_MOVE_PCT`) aşınca "masa bir sonraki kontrolde yeniden
@@ -1056,8 +1088,8 @@ Ayrıntı: `backend/commentary-service/README.md`.
 ## Test
 
 ```
-frontend: 28 dosya, 203 test (vitest: domain + lib + app/routes + services + content + features)
-backend : model-service 106 · market-service 58 · api-gateway 5 · commentary-service 40 (pytest)
+frontend: 29 dosya, 205 test (vitest: domain + lib + app/routes + services + content + features)
+backend : model-service 106 · market-service 58 · api-gateway 5 · commentary-service 47 (pytest)
 tsc --noEmit temiz; build: giriş 301 KB ham / 96 KB gzip, panel parçası 179 / 56, CSS 138 / 24 (14 Eylül)
 ```
 

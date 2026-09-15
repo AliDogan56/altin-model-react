@@ -54,6 +54,13 @@ function ArticlePage({article}:{article:SeoArticle}) {
           <Link className="article-cta-link" to={`/panel/${feature.slug}`}>
             Panelde aç <span aria-hidden="true">→</span></Link>
         </aside>}
+      {article.liveCta && <aside className="article-cta">
+          <span className="article-cta-eyebrow">{article.liveCta.eyebrow}</span>
+          <b>{article.liveCta.title}</b>
+          <p>{article.liveCta.summary}</p>
+          <Link className="article-cta-link" to={article.liveCta.href}>
+            {article.liveCta.cta} <span aria-hidden="true">→</span></Link>
+        </aside>}
       <p className="article-updated"><small>Son güncelleme: {article.updated}</small></p>
     </div>
     <nav className="related-guides" aria-label="Diğer altın rehberleri"><h2>Diğer rehberler</h2><div>{SEO_ARTICLES.filter(item=>item.id!==article.id).slice(0,4).map(item=><Link to={`/rehber/${item.id}`} key={item.id}><small>{item.keyword}</small><b>{item.title}</b><span aria-hidden="true">→</span></Link>)}</div></nav>
