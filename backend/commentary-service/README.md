@@ -69,6 +69,9 @@ Anthropic sağlayıcısı isteğe bağlıdır: yalnız `llm.toml`'da kullanılı
 
 İlk üretim her zaman yapılır. Ölçüm: tam tur Gemini + Groq ücretsiz katmanda ≈ 23 bin token, ≈ 3,5 dk, 0 dolar.
 
+Yeniden başlatmada iş, son üretim zamanı ve fiyatını yayındaki sürümden okur (`_seed_from_store`); deploy tam tur
+tetiklemez, karar yine %0,5 hareket / 60 dk / 240 dk kurallarıyla verilir.
+
 ## Yorumcu gözcüsü (2026-09-16)
 
 Türkiye'deki tanınmış altın yorumcularının son 72 saatte (`COMMENTATOR_WINDOW_HOURS`) **habere yansıyan** sözlerini
@@ -84,7 +87,8 @@ token; haber yolu sıfır ek altyapı.
   vade, ana iddia, dayanak (kaynak + saat), haber sayısı; yanında sayım (izlenen, konuşan, yön dağılımı, baskın yön). **Sayısal hedefler masaya gitmez**: özet cümlesinden çıkarılır (`strip_numbers`, "… dolara"),
   yalnız kayıttaki `sayisal_hedefler` alanında durur. Masanın kuralı "sayılar yalnız veri paketinden gelir".
 - Baş analist brife `piyasa_sesleri` (en fazla iki cümle, "haberlere yansıyan tanınmış yorumcular", ayrışma varsa
-  o da) yazar; anlatıcı bunu "Büyük resim" bölümünde tek cümleyle, ad vermeden aktarır. Anlatıcıya giden brifteki sayılar da temizlenir, denetim havuzuna girmez.
+  o da) yazar; anlatıcı bunu **sekizinci bölüm** olarak yazar: `sesler` / "Piyasa ne diyor", büyük resim ile takvim
+  arasında, 30–45 kelime, ad vermeden. Brif boşsa bölüm yazılmaz (yedi bölüm); eksik ya da fazla bölüm düzeltme turu ister. Anlatıcıya giden brifteki sayılar da temizlenir, denetim havuzuna girmez.
 - Ad denetimi: metinde izleme listesindeki bir ad geçerse düzeltme turu; yorumcular toplu anılır.
   24 saatten eski özet masaya gitmez. Yorumcu görüşü değişince tur planlayıcı tam tur ister.
 - `/v1/commentary/job` → `commentators` bloğu (son tazeleme, hata, özet). Testler `tests/test_commentators.py`.

@@ -1034,7 +1034,10 @@ Ayrıntı: `backend/commentary-service/README.md`.
   (görüş değişince tam tur). **Adsız aktarım (kullanıcı kararı: tek ismi öne çıkarmamak):** masaya giden görünüm
   `for_desk` etiketli (`Yorumcu 1..n`, liste sırası) + `desk_summary` (izlenen, konuşan, yön dağılımı, baskın yön);
   baş analist brife zorunlu `piyasa_sesleri` (sayım sözcükle, "haberlere yansıyan tanınmış yorumcular", tek kişi
-  konuştuysa ayrışma yok), anlatıcı "Büyük resim"de tek cümle, yalnız brifteki yön; `attribution_problems` metinde
+  konuştuysa ayrışma yok); anlatıcı önce "Büyük resim"de tek cümle yazıyordu, kullanıcı canlıda fark edemedi →
+  **sekizinci bölüm** `sesler` / "Piyasa ne diyor" (büyük resim ile takvim arasında, 30–45 kelime; `OPSIYONEL_BOLUM`,
+  `BOLUM_SIRA`, `section_problems`: brif doluysa bölüm şart, boşsa yasak; normalleyici 7 ya da 8 bölüm kabul eder ve
+  sırayı sabitler; sese ~15 sn ekler; arayüz ve sayfa bölümleri genel okuduğu için değişmedi); `attribution_problems` metinde
   listedeki bir ad geçerse düzeltme ister. Kayıtta ad durur (tekilleştirme, ileride yorumcu karnesi).
   **Sayı sızıntısı iki yerde kapatıldı:** ilk gerçek turda gözcü `ana_iddia`ya "4.400 dolara" yazdı; `strip_numbers`
   özetten sayıyı "…" yapar ve anlatıcıya giden brifin `piyasa_sesleri`si de temizlenir — aksi hâlde brif denetim
@@ -1055,6 +1058,12 @@ Ayrıntı: `backend/commentary-service/README.md`.
   tur atma, gözcü tek başına (Groq) ucuz. İkinci aşama (isteğe bağlı): yorumcu karnesi (yön
   çağrılarını 7/30 gün sonra puanlama; isabeti ölçülen yorumcu makro karta duyarlılık sürücüsü olabilir), günde
   bir YouTube videosunu Gemini'ye vermek, `/yorum` sayfasında "piyasadaki sesler" kartı — yapılmadı.
+- **Yeniden başlatma artık tam tur atmıyor (2026-09-16):** son üretim zamanı ve fiyatı yalnız bellekteydi; her
+  deploy'da ilk döngü "first_generation" deyip tam tur atıyor, bir metin turu ve çoğu zaman bir ses harcıyordu (16
+  Eylül'de üç kez; bir seferinde yeni metin 90 dk'lık ses aralığına takılıp 7 dk sessiz kaldı). `_seed_from_store`
+  açılışta yayındaki sürümün `generated_at` ve `live.price` değerini okur; sürüm yoksa ya da bozuksa ilk döngü yine
+  ilk üretimdir. Yaş 240 dk'yı aştıysa politika zaten "azami yaş doldu" der. Ses atlama mesajı aşağı yuvarlanır
+  (89,6 dk "90 dk geçti (< 90)" yazıyordu). Testler `test_restart_state.py` (3).
 - **14 Eylül taraması (kod okunarak doğrulandı):** ortam değişkenleri `CHECK_INTERVAL_SECONDS`
   300, `TRIGGER_MOVE_PCT` 0,5, `MIN_INTERVAL_MINUTES` 60, `MAX_AGE_MINUTES` 240 (0 = kapalı),
   `PIPELINE_MODE` full|fast (fast = yalnız metin yazarı, son `brif.json` ile), `KEEP_VERSIONS` 20,
@@ -1128,7 +1137,7 @@ Ayrıntı: `backend/commentary-service/README.md`.
 
 ```
 frontend: 29 dosya, 205 test (vitest: domain + lib + app/routes + services + content + features)
-backend : model-service 106 · market-service 58 · api-gateway 5 · commentary-service 57 (pytest)
+backend : model-service 106 · market-service 58 · api-gateway 5 · commentary-service 60 (pytest)
 tsc --noEmit temiz; build: giriş 301 KB ham / 96 KB gzip, panel parçası 179 / 56, CSS 138 / 24 (14 Eylül)
 ```
 

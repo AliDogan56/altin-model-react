@@ -51,7 +51,7 @@ def narration_allowed(*, now: dt.datetime, attempts_today: int, max_per_day: int
     if last_ok is not None:
         since = (now - last_ok).total_seconds() / 60
         if since < min_interval_minutes:
-            return False, f"son sesten {since:.0f} dk geçti (< {min_interval_minutes})"
+            return False, f"son sesten {int(since)} dk geçti (< {min_interval_minutes})"   # aşağı yuvarla: 89,6 dk "90 dk geçti (< 90)" yazıyordu
     if last_attempt is not None and (now - last_attempt).total_seconds() / 60 < retry_minutes:
         return False, f"yeniden deneme aralığı dolmadı ({retry_minutes} dk)"
     return True, ""

@@ -46,6 +46,7 @@ class CommentaryJobService:
         self.last_commentator_error = None
         self.last_commentator_summary = None
         self._load_run_log()
+        self._seed_from_store()
         self.generating = False
         self._force = False
         self._task = None
@@ -62,6 +63,21 @@ class CommentaryJobService:
                 self.last_full_at = dt.datetime.fromisoformat(log_data["last_full_at"])
         except (OSError, ValueError):
             pass
+
+    def _seed_from_store(self) -> None:
+        """Yeniden başlatmada son üretim zamanı ve fiyatı **yayındaki sürümden** okunur.
+
+        Önceden yalnız bellekteydi: her deploy'da ilk döngü "first_generation" deyip tam tur atıyor, bir metin
+        turu ve çoğu zaman bir ses harcıyordu (16 Eylül'de üç kez görüldü; bir seferinde yeni metin 90 dakikalık
+        ses aralığına takılıp yedi dakika sessiz kaldı). Sürüm yoksa ilk tur yine ilk üretimdir."""
+        try:
+            latest = commentary_store.latest()
+        except Exception:  # noqa: BLE001 — bozuk sürüm açılışı durdurmasın; ilk döngü üretir
+            return
+        if not latest or not latest.get("generated_at"):
+            return
+        self.last_generation = latest["generated_at"]
+        self.last_generation_price = (latest.get("live") or {}).get("price")
 
     def _save_run_log(self, fingerprint: dict, mode: str, plan_reason: str) -> None:
         LATEST_DIR.mkdir(parents=True, exist_ok=True)

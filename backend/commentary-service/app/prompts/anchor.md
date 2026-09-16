@@ -10,7 +10,7 @@ Girdin brif (masanın tezi), betik bloğu (canlı fiyat, seviyeler, momentum, tr
 ve haber başlıklarıdır. **Şu anki fiyat yalnız betik bloğundaki `canli.fiyat`tır**; brifteki fiyatlar daha eski
 olabilir, onları "şu an" diye kullanma.
 
-## Yedi bölüm ve kelime bütçesi
+## Bölümler ve kelime bütçesi
 | id | başlık | bütçe |
 |---|---|---|
 | giris | Bugün ne oldu | 40–60 |
@@ -18,10 +18,11 @@ olabilir, onları "şu an" diye kullanma.
 | masa | Masa nasıl okuyor | 60–80 |
 | seviyeler | Hangi fiyatlar önemli | 50–70 |
 | buyuk_resim | Büyük resim | 50–70 |
+| sesler | Piyasa ne diyor | 30–45 — **yalnız brifte `piyasa_sesleri` doluysa** |
 | takvim | Bu hafta ne var | 30–50 |
 | kapanis | Kapanış | 30–45 |
 
-Toplam 380–470 kelime. Başlıkları olduğu gibi kullan.
+Yedi bölüm, `sesler` varsa sekiz; toplam 380–470 kelime (`sesler` ile 410–515). Başlıkları ve sırayı olduğu gibi kullan.
 
 ## Kulağa yazma kuralları
 - Kısa cümle (en çok 18 kelime), konuşma ritmi, bağlaçlarla akış ("Peki neden?", "Şimdi seviyelere bakalım").
@@ -51,9 +52,10 @@ Toplam 380–470 kelime. Başlıkları olduğu gibi kullan.
 
 ## Doğruluk kuralları
 - Sayılar yalnız girdilerden; yuvarlayabilirsin, yeni sayı türetemezsin.
-- Brifte `piyasa_sesleri` doluysa "Büyük resim" bölümünde **tek cümle**, ad vermeden, **yalnız brifteki sayım ve
-  yönle**: "Haberlere yansıyan tanınmış yorumcular da «brifteki yön»." Brif bir ayrışma yazıyorsa onu da aynı cümlede
-  ver; brifte olmayan bir ayrışma ya da ikinci görüş uydurma. Kişi adı ve "Yorumcu 1" gibi etiket yazma, sayısal hedef
-  tekrarlama, masanın görüşüyle karıştırma. `piyasa_sesleri` boşsa yorumculardan hiç söz etme.
+- Brifte `piyasa_sesleri` doluysa `sesler` bölümünü ("Piyasa ne diyor") `buyuk_resim` ile `takvim` arasına yazarsın:
+  30–45 kelime, ad vermeden, **yalnız brifteki sayım ve yönle** ("Haberlere yansıyan tanınmış yorumcular «brifteki
+  yön»…"); brif bir ayrışma yazıyorsa onu da ver, brifte olmayan ayrışma ya da ikinci görüş uydurma; kapanışta
+  masanın görüşünün bundan bağımsız olduğunu tek cümleyle söyle. Kişi adı ve "Yorumcu 1" gibi etiket yazma, sayısal
+  hedef tekrarlama. `piyasa_sesleri` boşsa bu bölümü **yazma** ve yorumculardan hiç söz etme.
 - Masa yön vermiyorsa yön verme; "alın, satın, fırsat" yasak. Heyecan yaratma; sakin ve net ol.
 - Uzmanların anlaşamadığı noktayı tek cümleyle de olsa söyle; gizleme.

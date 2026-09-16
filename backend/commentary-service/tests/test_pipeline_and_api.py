@@ -36,7 +36,7 @@ def test_full_pipeline_with_mock_and_store(isolated_dirs):
     llm = mock_llm()
     assert llm.validate("full") == []
     result = commentary_pipeline.run_full_pipeline(llm, log=lambda *_: None)
-    assert result["run_mode"] == "full" and len(result["sections"]) == 7 and set(result["usage"]) == set(ROLES)
+    assert result["run_mode"] == "full" and len(result["sections"]) == 8   # mock brif piyasa_sesleri dolu → sekizinci bölüm and set(result["usage"]) == set(ROLES)
     snapshot = json.loads((FIXTURES / "snapshot.json").read_text())
     store = CommentaryStore()
     item = store.save(result, snapshot, "first_generation", {"data": 1.0, "llm": 2.0, "total": 3.0})
@@ -73,7 +73,7 @@ def test_api_health_latest_job_and_admin(isolated_dirs):
         result = commentary_pipeline.run_fast_pipeline(mock_llm(), log=lambda *_: None)
         CommentaryStore().save(result, json.loads((FIXTURES / "snapshot.json").read_text()), "force", {"total": 0})
         body = client.get("/v1/commentary/latest").json()
-        assert body["run_mode"] == "fast" and len(body["sections"]) == 7 and body["disclaimer"]
+        assert body["run_mode"] == "fast" and len(body["sections"]) == 7   # hızlı tur yedek brifle: yorumcu kaydı yok, sekizinci bölüm atılır and body["disclaimer"]
         assert client.get("/v1/commentary/latest/text").text.startswith(body["title"])
         assert client.get("/ready").status_code == 200
         job = client.get("/v1/commentary/job").json()

@@ -55,7 +55,7 @@ def test_validate_reports_missing_role_and_bad_kind():
 
 def test_mock_provider_schema_and_ask_fallback():
     text, usage = MockProvider(ProviderConfig("m", "mock")).complete("s", "u", SUNUM_SCHEMA, 100, "mock")
-    assert [b["id"] for b in json.loads(text)["bolumler"]] == ["giris", "neden", "masa", "seviyeler", "buyuk_resim", "takvim", "kapanis"]
+    assert [b["id"] for b in json.loads(text)["bolumler"]] == ["giris", "neden", "masa", "seviyeler", "buyuk_resim", "sesler", "takvim", "kapanis"]
     assert usage.finish_reason == "stop" and (usage + TokenUsage(1, 2, 3)).output_tokens == usage.output_tokens + 2
     llm = LlmSettings(providers={"broken": ProviderConfig("broken", "openai_compatible", base_url="http://127.0.0.1:9/v1"), "m": ProviderConfig("m", "mock")},
                       roles={"anchor": RoleConfig("anchor", "broken", "x", fallbacks=[{"provider": "m", "model": "mock-1"}])})

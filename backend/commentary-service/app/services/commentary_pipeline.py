@@ -70,7 +70,7 @@ SUNUM_SCHEMA = {
     "properties": {
         "baslik": {"type": "string"}, "manset": {"type": "string"}, "ozet": {"type": "string"},
         "bolumler": {"type": "array", "items": {"type": "object", "properties": {
-            "id": {"type": "string", "enum": ["giris", "neden", "masa", "seviyeler", "buyuk_resim", "takvim", "kapanis"]},
+            "id": {"type": "string", "enum": ["giris", "neden", "masa", "seviyeler", "buyuk_resim", "sesler", "takvim", "kapanis"]},
             "baslik": {"type": "string"}, "metin": {"type": "string"}}, "required": ["id", "baslik", "metin"], "additionalProperties": False}},
     },
     "required": ["baslik", "manset", "ozet", "bolumler"], "additionalProperties": False,
@@ -200,9 +200,13 @@ def base_package() -> dict:
 
 
 BOLUM_IDS = ["giris", "neden", "masa", "seviyeler", "buyuk_resim", "takvim", "kapanis"]
+# Sekizinci bölüm (2026-09-16): yorumcu gözcüsü kayıt verdiyse "Piyasa ne diyor", büyük resim ile takvim arasında.
+# Tek cümle büyük resmin içinde kayboluyordu (kullanıcı canlıda fark etmedi); kendi başlığıyla görünür olsun.
+OPSIYONEL_BOLUM = "sesler"
+BOLUM_SIRA = BOLUM_IDS[:5] + [OPSIYONEL_BOLUM] + BOLUM_IDS[5:]
 # Kelime bütçesi alt sınırları (anchor.md tablosu); bölüm bunun %70'inin altında kalırsa düzeltme turu ister.
 # Ölçüldü (2026-09-15): bütçesiz ilk sürüm 311 kelime, bütçeli ilk tur 302; model JSON kipinde kısa yazmaya eğilimli.
-BOLUM_MIN = {"giris": 40, "neden": 90, "masa": 60, "seviyeler": 50, "buyuk_resim": 50, "takvim": 30, "kapanis": 30}
+BOLUM_MIN = {"giris": 40, "neden": 90, "masa": 60, "seviyeler": 50, "buyuk_resim": 50, "sesler": 30, "takvim": 30, "kapanis": 30}
 BUTCE_TOLERANS = 0.7
 
 
@@ -210,7 +214,17 @@ def budget_problems(bolumler: list[dict]) -> list[str]:
     kisa = [f"{b['id']} {len(str(b.get('metin', '')).split())} kelime (en az {BOLUM_MIN[b['id']]})" for b in bolumler
             if b.get("id") in BOLUM_MIN and len(str(b.get("metin", "")).split()) < BOLUM_MIN[b["id"]] * BUTCE_TOLERANS]
     return [f"bölümler bütçenin çok altında: {', '.join(kisa)}; bütçeye uygun uzunlukta yeniden yaz"] if kisa else []
-BOLUM_BASLIK = {"giris": "Bugün ne oldu", "neden": "Neden düştü / yükseldi", "masa": "Masa nasıl okuyor", "seviyeler": "Hangi fiyatlar önemli", "buyuk_resim": "Büyük resim", "takvim": "Bu hafta ne var", "kapanis": "Kapanış"}
+BOLUM_BASLIK = {"giris": "Bugün ne oldu", "neden": "Neden düştü / yükseldi", "masa": "Masa nasıl okuyor", "seviyeler": "Hangi fiyatlar önemli", "buyuk_resim": "Büyük resim", "sesler": "Piyasa ne diyor", "takvim": "Bu hafta ne var", "kapanis": "Kapanış"}
+
+
+def section_problems(bolumler: list[dict], wants_sesler: bool) -> list[str]:
+    """`sesler` bölümü yalnız brifte `piyasa_sesleri` doluysa yazılır; eksikse ya da fazlaysa düzeltme turu ister."""
+    has = any(b.get("id") == OPSIYONEL_BOLUM for b in bolumler)
+    if wants_sesler and not has:
+        return ["brifte piyasa_sesleri dolu: 'sesler' (Piyasa ne diyor) bölümü eksik; buyuk_resim ile takvim arasına 30–45 kelimelik bu bölümü ekle"]
+    if not wants_sesler and has:
+        return ["yorumcu kaydı yokken 'sesler' bölümü yazılmış; bu bölümü kaldır ve yorumculardan söz etme"]
+    return []
 
 
 def _normalize_anchor_output(sj: dict) -> dict:
@@ -226,10 +240,13 @@ def _normalize_anchor_output(sj: dict) -> dict:
         bid = str(b.get("id") or (BOLUM_IDS[i] if i < len(BOLUM_IDS) else f"b{i}"))
         metin = b.get("metin") or b.get("icerik") or b.get("içerik") or b.get("text") or b.get("paragraf") or b.get("content") or ""
         bol.append({"id": bid, "baslik": str(b.get("baslik") or b.get("başlık") or b.get("title") or BOLUM_BASLIK.get(bid, bid)), "metin": str(metin)})
-    out["bolumler"] = bol
+    ids = [b["id"] for b in bol]
     eksik = [b["id"] for b in bol if not b["metin"].strip()]
-    if len(bol) != 7 or eksik:
-        raise ValueError(f"bölüm yapısı hatalı: {len(bol)} bölüm, boş: {eksik}")
+    eksik_zorunlu = [i for i in BOLUM_IDS if i not in ids]
+    fazla = [i for i in ids if i not in BOLUM_SIRA]
+    if eksik or eksik_zorunlu or fazla or len(ids) != len(set(ids)):
+        raise ValueError(f"bölüm yapısı hatalı: {len(bol)} bölüm, boş: {eksik}, eksik: {eksik_zorunlu}, tanımsız: {fazla}")
+    out["bolumler"] = sorted(bol, key=lambda b: BOLUM_SIRA.index(b["id"]))   # yedi zorunlu + isteğe bağlı 'sesler', sabit sıra
     return out
 
 
@@ -305,13 +322,16 @@ def run_full_pipeline(llm: LlmSettings, log=print, prepared: dict | None = None)
 
 
 def write_anchor_text(llm: LlmSettings, package: dict, brief: dict, headlines: list, usage: dict, log=print, commentators: list | None = None) -> dict:
-    """Son alıcı metni: yedi bölüm; sayı/jargon denetiminden geçmezse tek düzeltme turu, yine geçmezse hata.
+    """Son alıcı metni: yedi bölüm, yorumcu kaydı varsa sekiz; sayı/jargon denetiminden geçmezse tek düzeltme turu, yine geçmezse hata.
     `commentators`: yorumcu gözcüsünün bugünkü kayıtları; metinde izleme listesindeki bir ad geçiyorsa kaydı olmalı."""
     configured_names = [p["ad"] for p in commentator_service.load_commentators()]
     attribution = lambda metin: commentator_service.attribution_problems(metin, commentators or [], configured_names)  # noqa: E731
     # Yorumcu cümlesindeki sayı anlatıcıya gitmez ve denetim havuzuna girmez; aksi hâlde baş analistin
     # yorumcudan aktardığı hedef "girdideki sayı" sayılır ve metne sızardı.
     brief = {**brief, "piyasa_sesleri": commentator_service.strip_numbers(str(brief.get("piyasa_sesleri") or ""))}
+    wants_sesler = bool(brief["piyasa_sesleri"].strip())
+    sections_note = ("sekiz bölüm: yedi standart bölüm artı 'sesler' / Piyasa ne diyor, buyuk_resim ile takvim arasında, 30–45 kelime" if wants_sesler
+                     else "yedi bölüm; yorumcu kaydı yok, 'sesler' bölümü yazma")
     audit_package = {"brif": brief, "betik": {k: package.get(k) for k in ("canli", "canli_zaman_utc", "saat_turkiye", "resmi_fiks", "seviyeler_canli", "momentum", "hizalanma", "trend", "vadeli", "faiz_beklentisi", "enflasyon", "takvim", "pozisyon")}, "haberler": _short_headlines(headlines, 4)}
     brief_note = ""
     if brief.get("yazildi_utc") and package.get("simdi_utc"):
@@ -321,26 +341,34 @@ def write_anchor_text(llm: LlmSettings, package: dict, brief: dict, headlines: l
                 brief_note = f" Brif {age_min} dakika önce yazıldı; içindeki fiyatlar eski olabilir, şu anki fiyat yalnız betik bloğundaki canli.fiyat."
         except ValueError:
             pass
-    user = "Brif (masanın tezi):" + brief_note + "\n" + json.dumps(audit_package["brif"], ensure_ascii=False) + "\n\nBetik çıktıları:\n" + json.dumps(audit_package["betik"], ensure_ascii=False) + "\n\nHaber başlıkları:\n" + json.dumps(audit_package["haberler"], ensure_ascii=False) + "\n\nSon alıcı metnini JSON olarak yaz: baslik, manset, ozet, bolumler (yedi bölüm; sayılar rakamla, manşet ve özet dahil)."
+    user = "Brif (masanın tezi):" + brief_note + "\n" + json.dumps(audit_package["brif"], ensure_ascii=False) + "\n\nBetik çıktıları:\n" + json.dumps(audit_package["betik"], ensure_ascii=False) + "\n\nHaber başlıkları:\n" + json.dumps(audit_package["haberler"], ensure_ascii=False) + "\n\nSon alıcı metnini JSON olarak yaz: baslik, manset, ozet, bolumler (" + sections_note + "; sayılar rakamla, manşet ve özet dahil)."
     live_price = (package.get("canli") or {}).get("fiyat")
     text, used, model = ask(llm, "anchor", role_prompt("anchor"), user, SUNUM_SCHEMA)
     _save("anchor-raw.txt", text)
+    def drop_stray_sesler(out: dict) -> dict:
+        # Brif yorumcu kaydı vermediyse anlatıcının yine de yazdığı 'sesler' bölümü dayanaksızdır: turu düşürmek yerine
+        # bölüm atılır (şema zorlamayan sağlayıcı ve sahte sağlayıcı her bölümü üretir).
+        if not wants_sesler and any(b["id"] == OPSIYONEL_BOLUM for b in out["bolumler"]):
+            log("anchor: brif yorumcu kaydı vermedi, 'sesler' bölümü atıldı")
+            out["bolumler"] = [b for b in out["bolumler"] if b["id"] != OPSIYONEL_BOLUM]
+        return out
+
     try:
-        output = _normalize_anchor_output(parse_json(text))
+        output = drop_stray_sesler(_normalize_anchor_output(parse_json(text)))
         structure_problems = []
     except ValueError as error:
         output = parse_json(text); structure_problems = [str(error) + " — her bölüm için 'id', 'baslik', 'metin' anahtarlarını kullan"]
     flat = " ".join([str(output.get("baslik", "")), str(output.get("manset", "")), str(output.get("ozet", ""))] + [str(b.get("metin", "")) for b in (output.get("bolumler") or []) if isinstance(b, dict)])
-    problems = structure_problems + audit_text(flat, audit_package, live_price=live_price) + attribution(flat) + (budget_problems(output.get("bolumler") or []) if not structure_problems else [])
+    problems = structure_problems + audit_text(flat, audit_package, live_price=live_price) + attribution(flat) + (budget_problems(output.get("bolumler") or []) + section_problems(output.get("bolumler") or [], wants_sesler) if not structure_problems else [])
     total = used
     if problems:
         log(f"anchor denetim: {problems}; düzeltme isteniyor")
         text2, used2, _ = ask(llm, "anchor", role_prompt("anchor"), user + "\n\nÖNCEKİ DENEMENDE ŞU KURAL İHLALLERİ VARDI, DÜZELTEREK YENİDEN YAZ:\n- " + "\n- ".join(problems) + "\n\nÖnceki metin:\n" + json.dumps(output, ensure_ascii=False), SUNUM_SCHEMA)
         _save("anchor-raw-2.txt", text2)
-        output = _normalize_anchor_output(parse_json(text2))
+        output = drop_stray_sesler(_normalize_anchor_output(parse_json(text2)))
         total = used + used2
         flat = " ".join([output["baslik"], output["manset"], output["ozet"]] + [b["metin"] for b in output["bolumler"]])
-        problems = audit_text(flat, audit_package, live_price=live_price) + attribution(flat)
+        problems = audit_text(flat, audit_package, live_price=live_price) + attribution(flat) + section_problems(output["bolumler"], wants_sesler)
         if problems:
             raise RuntimeError(f"anchor metni denetimi geçemedi: {problems}")
     usage["anchor"] = {**total.as_dict(), "model": model}; log(f"anchor ok {model}")
