@@ -1047,12 +1047,12 @@ Ayrıntı: `backend/commentary-service/README.md`.
   temkinli…", adlar metinde yok, 4.400 yok. Testler `test_commentators.py` (12); `ROLES`'e `commentator_scout`
   eklendi, mock `llm.toml` üreten testler rolü tanımlar. `llm.toml`: Groq gpt-oss-120b, Gemini yedek, 900 token.
   Dağıtım yalnız commentary-service (Dockerfile `yorumcular.toml` kopyalar). **Gemini kotası ölçüldü (16 Eylül):**
-  `gemini-3.6-flash` ücretsiz katmanda **günde 20 istek** (`generate_content_free_tier_requests, limit: 20`; 429 bir
-  dakika sonra da sürdü, yani günlük; Pasifik gece yarısında sıfırlanır). Tam tur bu modele 3–6 çağrı yapar (makro,
-  baş analist, anlatıcı + onarım/düzeltme), yani günde en fazla 4–6 tam tur; sonrası sessizce `3.5-flash-lite`
-  yedeğine düşer. `MAX_TEXT_RUNS_PER_DAY` 12 bu sınırla uyumlu değil. Yerel doğrulama turları üretimle **aynı
-  anahtarı** kullanır: 16 Eylül'de dört yerel tur + bir canlı tur kotayı doldurdu, canlı o gün yedek modele düştü.
-  Yerel tam tur atma; gözcü tek başına (Groq) ucuz. İkinci aşama (isteğe bağlı): yorumcu karnesi (yön
+  `gemini-3.6-flash` ücretsiz katmanda `generate_content_free_tier_requests, limit: 20` ile 429 verdi; pencere
+  belirsiz: "retry in 57 s" dedi ama bir dakika sonra da kapalıydı, 10:23 UTC'deki canlı tam turda baş analist ve
+  anlatıcı yine 3.6-flash'ı kullanabildi, makro analist o anda `3.5-flash-lite` yedeğine düştü. Yani günlük sabit
+  kota değil, kısa pencereli ve yoğunlukta kapanan bir sınır; zincirdeki yedek sessizce devreye giriyor. Yerel
+  doğrulama turları üretimle **aynı anahtarı** kullanır (16 Eylül'de dört yerel tur bu 429'u tetikledi); yerel tam
+  tur atma, gözcü tek başına (Groq) ucuz. İkinci aşama (isteğe bağlı): yorumcu karnesi (yön
   çağrılarını 7/30 gün sonra puanlama; isabeti ölçülen yorumcu makro karta duyarlılık sürücüsü olabilir), günde
   bir YouTube videosunu Gemini'ye vermek, `/yorum` sayfasında "piyasadaki sesler" kartı — yapılmadı.
 - **14 Eylül taraması (kod okunarak doğrulandı):** ortam değişkenleri `CHECK_INTERVAL_SECONDS`
