@@ -69,6 +69,26 @@ Anthropic sağlayıcısı isteğe bağlıdır: yalnız `llm.toml`'da kullanılı
 
 İlk üretim her zaman yapılır. Ölçüm: tam tur Gemini + Groq ücretsiz katmanda ≈ 23 bin token, ≈ 3,5 dk, 0 dolar.
 
+## Yorumcu gözcüsü (2026-09-16)
+
+Türkiye'deki tanınmış altın yorumcularının son 72 saatte (`COMMENTATOR_WINDOW_HOURS`) **habere yansıyan** sözlerini
+masaya "piyasadaki sesler" olarak verir; metin **ad vermez**, yorumcuları toplu anar (kullanıcı kararı: tek ismi öne
+çıkarmamak). Liste üç isim: İslam Memiş, Mehmet Ali Yıldırımtürk, Atilla Yeşilada. Liste `yorumcular.toml` (`[[yorumcu]] ad, sorgu`); kaynak Google News RSS (isim + altın).
+Video ya da altyazı çekilmez: YouTube bulut IP'lerini engelliyor, Gemini'ye video vermek tur başına 90–200 bin
+token; haber yolu sıfır ek altyapı.
+
+- Ayrı döngü: iş her `COMMENTATOR_REFRESH_MINUTES` (360; 0 = kapalı) dakikada bir RSS'i çeker, başlıkları kelime
+  kümesi benzerliğiyle tekilleştirir (aynı söz on sitede çıkıyor), `commentator_scout` rolüyle **tek** LLM çağrısı
+  yapar ve `latest/yorumcular.json` yazar. Ölçüldü: 8 başlık, 1,9k giriş / 450 çıkış token, 2,3 sn (Groq).
+- Masaya giden kayıt adsızdır: etiket (`Yorumcu 1..n`, liste sırası), yön (`yukselis/dusus/temkinli/karisik/belirsiz`),
+  vade, ana iddia, dayanak (kaynak + saat), haber sayısı; yanında sayım (izlenen, konuşan, yön dağılımı, baskın yön). **Sayısal hedefler masaya gitmez**: özet cümlesinden çıkarılır (`strip_numbers`, "… dolara"),
+  yalnız kayıttaki `sayisal_hedefler` alanında durur. Masanın kuralı "sayılar yalnız veri paketinden gelir".
+- Baş analist brife `piyasa_sesleri` (en fazla iki cümle, "haberlere yansıyan tanınmış yorumcular", ayrışma varsa
+  o da) yazar; anlatıcı bunu "Büyük resim" bölümünde tek cümleyle, ad vermeden aktarır. Anlatıcıya giden brifteki sayılar da temizlenir, denetim havuzuna girmez.
+- Ad denetimi: metinde izleme listesindeki bir ad geçerse düzeltme turu; yorumcular toplu anılır.
+  24 saatten eski özet masaya gitmez. Yorumcu görüşü değişince tur planlayıcı tam tur ister.
+- `/v1/commentary/job` → `commentators` bloğu (son tazeleme, hata, özet). Testler `tests/test_commentators.py`.
+
 ## Testler
 
 ```bash

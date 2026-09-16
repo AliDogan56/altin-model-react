@@ -8,7 +8,7 @@ from pathlib import Path
 
 from ..config import settings
 
-ROLES = ("technical_analyst", "calendar_news_scout", "macro_analyst", "chief_analyst", "anchor")
+ROLES = ("technical_analyst", "calendar_news_scout", "macro_analyst", "chief_analyst", "anchor", "commentator_scout")
 PROVIDER_KINDS = ("anthropic", "openai_compatible", "mock")
 
 

@@ -1,0 +1,20 @@
+# Yorumcu gözcüsünün izlediği isimler (editoryal liste, 2026-09-16). Masa adları **yazmaz**: metin "haberlere yansıyan
+# tanınmış yorumcular" der (kullanıcı kararı: tek ismi öne çıkarmamak). Adlar yalnız arama sorgusu, tekilleştirme ve
+# ileride yorumcu karnesi içindir.
+# Kaynak: Google News RSS, `sorgu` ile arama; yorumcunun TV ve video sözleri saatler içinde habere yansır.
+# Video ya da altyazı çekilmez (YouTube bulut IP'lerini engelliyor; Gemini'ye video vermek tur başına 90–200 bin token).
+# Seçim ölçümle (15–16 Eylül 2026, 30 günde "isim + altın" başlığı): İslam Memiş ~100+, Atilla Yeşilada 22,
+# Mehmet Ali Yıldırımtürk 5 (haftada 1–3, tamamı altın), Selçuk Geçer 4 (yedek aday). Diğer adaylar (Enver Erkan,
+# Özgür Demirtaş, Tuncay Turşucu, Cüneyt Paksoy…) altın hakkında 30 günde 0–4 başlıkla elendi.
+
+[[yorumcu]]
+ad = "İslam Memiş"
+sorgu = "İslam Memiş altın"
+
+[[yorumcu]]
+ad = "Mehmet Ali Yıldırımtürk"
+sorgu = "Mehmet Ali Yıldırımtürk altın"
+
+[[yorumcu]]
+ad = "Atilla Yeşilada"
+sorgu = "Atilla Yeşilada altın"

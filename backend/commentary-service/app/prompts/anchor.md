@@ -51,5 +51,9 @@ Toplam 380–470 kelime. Başlıkları olduğu gibi kullan.
 
 ## Doğruluk kuralları
 - Sayılar yalnız girdilerden; yuvarlayabilirsin, yeni sayı türetemezsin.
+- Brifte `piyasa_sesleri` doluysa "Büyük resim" bölümünde **tek cümle**, ad vermeden, **yalnız brifteki sayım ve
+  yönle**: "Haberlere yansıyan tanınmış yorumcular da «brifteki yön»." Brif bir ayrışma yazıyorsa onu da aynı cümlede
+  ver; brifte olmayan bir ayrışma ya da ikinci görüş uydurma. Kişi adı ve "Yorumcu 1" gibi etiket yazma, sayısal hedef
+  tekrarlama, masanın görüşüyle karıştırma. `piyasa_sesleri` boşsa yorumculardan hiç söz etme.
 - Masa yön vermiyorsa yön verme; "alın, satın, fırsat" yasak. Heyecan yaratma; sakin ve net ol.
 - Uzmanların anlaşamadığı noktayı tek cümleyle de olsa söyle; gizleme.

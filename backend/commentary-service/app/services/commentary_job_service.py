@@ -19,6 +19,7 @@ from ..market_constants import LEDGER_DIR
 from .live_price_service import current_price
 from .llm_config import load_llm_settings
 from .regeneration_policy import should_regenerate
+from . import commentator_service
 from .snapshot_service import build_snapshot
 
 
@@ -41,6 +42,9 @@ class CommentaryJobService:
         self.last_full_at = None
         self.last_fingerprint = None
         self.last_run_plan = None
+        self.last_commentator_refresh = None      # yorumcu gözcüsü: son tazeleme (UTC), hata ve özet
+        self.last_commentator_error = None
+        self.last_commentator_summary = None
         self._load_run_log()
         self.generating = False
         self._force = False
@@ -68,7 +72,7 @@ class CommentaryJobService:
         started = time.time()
         snapshot = build_snapshot()
         prepared = prepare_inputs()
-        fingerprint = input_fingerprint(prepared["package"], prepared["headlines"])
+        fingerprint = input_fingerprint(prepared["package"], prepared["headlines"], prepared.get("commentators"))
         now = dt.datetime.now(dt.UTC)
         mode, plan_reason = plan_run(configured_mode=settings.pipeline_mode, force=reason == "force", brief_exists=(LATEST_DIR / "brif.json").exists(),
                                      prev=self.last_fingerprint, cur=fingerprint, last_full_at=self.last_full_at, now=now,
@@ -155,8 +159,28 @@ class CommentaryJobService:
         if latest and latest.get("narration") is None and settings.auto_narrate:
             self.maybe_narrate(latest)
 
+    def refresh_commentators_if_due(self, now: dt.datetime) -> None:
+        """Yorumcu gözcüsü: `COMMENTATOR_REFRESH_MINUTES` aralığıyla (0 = kapalı) RSS + tek LLM çağrısı; hata üretimi durdurmaz,
+        15 dk sonra yeniden denenir. Üretimden önce koşar ki ilk tur da özeti görsün."""
+        interval = settings.commentator_refresh_minutes
+        if interval <= 0:
+            return
+        if self.last_commentator_refresh and (now - self.last_commentator_refresh) < dt.timedelta(minutes=interval):
+            return
+        try:
+            digest = commentator_service.refresh(load_llm_settings(), now=now)
+            self.last_commentator_refresh, self.last_commentator_error = now, None
+            self.last_commentator_summary = {"yorumcu": len(digest["yorumcular"]), "kaynak": len(digest["kaynaklar"]), "ozet": digest["ozet_cumle"],
+                                             "model": digest.get("model")}
+            log.info("yorumcu gözcüsü: %s", self.last_commentator_summary)
+        except Exception as error:  # noqa: BLE001
+            self.last_commentator_error = f"{type(error).__name__}: {error}"
+            self.last_commentator_refresh = now - dt.timedelta(minutes=max(interval - 15, 0))
+            log.warning("yorumcu gözcüsü başarısız: %s", error)
+
     def run_cycle(self) -> dict:
         now = dt.datetime.now(dt.UTC).replace(microsecond=0)
+        self.refresh_commentators_if_due(now)
         price = current_price()
         state = {"last_generation": self.last_generation, "last_generation_price": self.last_generation_price, "force": self._force}
         decision, reason = should_regenerate(state, now, price, settings.trigger_move_pct, settings.min_interval_minutes, settings.max_age_minutes,
@@ -207,6 +231,9 @@ class CommentaryJobService:
                 "last_narration_skip": self.last_narration_skip, "budget": self.budget(), "force_pending": self._force,
                 "last_run_plan": self.last_run_plan, "last_full_at": self.last_full_at.isoformat() if self.last_full_at else None,
                 "full_run_max_age_minutes": settings.full_run_max_age_minutes,
+                "commentators": {"refresh_minutes": settings.commentator_refresh_minutes,
+                                 "last_refresh": self.last_commentator_refresh.isoformat() if self.last_commentator_refresh else None,
+                                 "last_error": self.last_commentator_error, "summary": self.last_commentator_summary},
                 "published_version": latest["version"] if latest else None, "published_age_seconds": latest["age_seconds"] if latest else None,
                 "llm": load_llm_settings().describe()}
 

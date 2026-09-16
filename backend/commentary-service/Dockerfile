@@ -4,7 +4,7 @@ WORKDIR /app
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 COPY app ./app
-COPY llm.toml calendar.toml ./
+COPY llm.toml calendar.toml yorumcular.toml ./
 # Veri (fiyat CSV'leri, anlık görüntü, yorum sürümleri) volume'da; imajda üretim yapılmaz.
 RUN mkdir -p /data
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8003"]

@@ -15,7 +15,7 @@ EMPTY_INPUTS = {"faiz_beklentisi": {"veri": "yok"}, "enflasyon": {"veri": "yok"}
 
 
 def mock_llm() -> LlmSettings:
-    return LlmSettings(providers={"m": ProviderConfig("m", "mock")}, roles={r: RoleConfig(r, "m", "mock-1") for r in ROLES}, pause_seconds=0)
+    return LlmSettings(providers={"m": ProviderConfig("m", "mock")}, roles={r: RoleConfig(r, "m", "mock-1") for r in ROLES + ("commentator_scout",)}, pause_seconds=0)   # gözcü zincirde değil, yalnız doğrulamada
 
 
 @pytest.fixture

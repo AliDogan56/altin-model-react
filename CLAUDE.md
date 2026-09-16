@@ -1018,6 +1018,43 @@ Ayrıntı: `backend/commentary-service/README.md`.
   notu gider. **Aynı girdiyle ölçüm:** tam tur 19.024 → **17.763** giriş token, 198 → **50 sn**, düzeltme turu
   0; hızlı tur **4.529 giriş / 35 sn**. Metin 302 kelime (hedef 380+, model JSON kipinde kısa yazıyor; %70 emniyeti
   ağır kısalmayı yakalar). Testler 40.
+- **Yorumcu gözcüsü (2026-09-16, altıncı rol, zincir dışı, adsız):** kullanıcı "ünlü altın yorumcularının son
+  sözleri masaya özet olarak gelsin, videolara da bakabilir mi" diye sordu. Yapılabilirlik ölçümü: yorumcuların
+  TV/YouTube sözleri saatler içinde onlarca habere dönüşüyor (Google News RSS, "İslam Memiş altın": 48 saatte 13,
+  7 günde 27 başlık); YouTube altyazısı bulut IP'lerinden engelli (Hetzner dahil, konut proxy gerekir); Gemini'ye
+  YouTube URL'i vermek ücretsiz katmanda günde 8 saat ama düşük çözünürlükte saniyede ~100 token, 15 dk video ≈ 90k
+  token = masanın bir günlük tüketimi. Karar: **haber yolu**, video yok.
+  Uygulama: `yorumcular.toml` (üç isim: İslam Memiş, Mehmet Ali Yıldırımtürk, Atilla Yeşilada; seçim 30 günlük
+  "isim + altın" başlık sayısıyla: ~100+ / 5 / 22, Selçuk Geçer 4 yedek aday, Enver Erkan/Özgür Demirtaş/Turşucu/
+  Paksoy 0–4 ile elendi), `app/services/commentator_service.py` (RSS → pencere `COMMENTATOR_WINDOW_HOURS` 72 →
+  kelime kümesi Jaccard ≥ 0,6 tekilleştirme, **Türkçe küçültme `İ→i` şart**: Python `lower()` "VERDİ"yi "verdi̇"
+  yapıyor, kopyalar eşleşmiyordu → `commentator_scout` rolü tek çağrı, `YORUMCU_SCHEMA` → `latest/yorumcular.json`),
+  iş döngüsünde `refresh_commentators_if_due` (`COMMENTATOR_REFRESH_MINUTES` 360, hata 15 dk sonra yeniden; üretimden
+  önce koşar), `prepare_inputs` → `commentators` (24 sa'ten eski özet gitmez), parmak izine `yorumcular` girdi
+  (görüş değişince tam tur). **Adsız aktarım (kullanıcı kararı: tek ismi öne çıkarmamak):** masaya giden görünüm
+  `for_desk` etiketli (`Yorumcu 1..n`, liste sırası) + `desk_summary` (izlenen, konuşan, yön dağılımı, baskın yön);
+  baş analist brife zorunlu `piyasa_sesleri` (sayım sözcükle, "haberlere yansıyan tanınmış yorumcular", tek kişi
+  konuştuysa ayrışma yok), anlatıcı "Büyük resim"de tek cümle, yalnız brifteki yön; `attribution_problems` metinde
+  listedeki bir ad geçerse düzeltme ister. Kayıtta ad durur (tekilleştirme, ileride yorumcu karnesi).
+  **Sayı sızıntısı iki yerde kapatıldı:** ilk gerçek turda gözcü `ana_iddia`ya "4.400 dolara" yazdı; `strip_numbers`
+  özetten sayıyı "…" yapar ve anlatıcıya giden brifin `piyasa_sesleri`si de temizlenir — aksi hâlde brif denetim
+  havuzunda olduğu için yorumcunun hedefi "girdideki sayı" sayılıp metne sızardı. **İstem örneği sızıntısı:** anlatıcı
+  istemdeki somut örnek cümleyi ("biri kısa vadede yükseliş bekliyor") tek yorumcu konuşmuşken olduğu gibi kopyaladı;
+  örnek yer tutucuya çevrildi ("«brifteki yön»") ve "brifte olmayan ayrışma uydurma" kuralı eklendi. Yön kararı
+  başlıkların çoğunluğundan (aynı 8 başlıkta iki turda temkinli/yukselis salınımı görüldü). Ölçüldü (yerel, gerçek
+  LLM): gözcü 8 başlık, ~1,9k giriş / 350–480 çıkış token, 2–3 sn (Groq); tam tur 53–120 sn (bütçe düzeltme
+  turu varsa iki anlatıcı çağrısı), 18–24k giriş token; metin: "Haberlere yansıyan tanınmış yorumcular da bu hafta
+  temkinli…", adlar metinde yok, 4.400 yok. Testler `test_commentators.py` (12); `ROLES`'e `commentator_scout`
+  eklendi, mock `llm.toml` üreten testler rolü tanımlar. `llm.toml`: Groq gpt-oss-120b, Gemini yedek, 900 token.
+  Dağıtım yalnız commentary-service (Dockerfile `yorumcular.toml` kopyalar). **Gemini kotası ölçüldü (16 Eylül):**
+  `gemini-3.6-flash` ücretsiz katmanda **günde 20 istek** (`generate_content_free_tier_requests, limit: 20`; 429 bir
+  dakika sonra da sürdü, yani günlük; Pasifik gece yarısında sıfırlanır). Tam tur bu modele 3–6 çağrı yapar (makro,
+  baş analist, anlatıcı + onarım/düzeltme), yani günde en fazla 4–6 tam tur; sonrası sessizce `3.5-flash-lite`
+  yedeğine düşer. `MAX_TEXT_RUNS_PER_DAY` 12 bu sınırla uyumlu değil. Yerel doğrulama turları üretimle **aynı
+  anahtarı** kullanır: 16 Eylül'de dört yerel tur + bir canlı tur kotayı doldurdu, canlı o gün yedek modele düştü.
+  Yerel tam tur atma; gözcü tek başına (Groq) ucuz. İkinci aşama (isteğe bağlı): yorumcu karnesi (yön
+  çağrılarını 7/30 gün sonra puanlama; isabeti ölçülen yorumcu makro karta duyarlılık sürücüsü olabilir), günde
+  bir YouTube videosunu Gemini'ye vermek, `/yorum` sayfasında "piyasadaki sesler" kartı — yapılmadı.
 - **14 Eylül taraması (kod okunarak doğrulandı):** ortam değişkenleri `CHECK_INTERVAL_SECONDS`
   300, `TRIGGER_MOVE_PCT` 0,5, `MIN_INTERVAL_MINUTES` 60, `MAX_AGE_MINUTES` 240 (0 = kapalı),
   `PIPELINE_MODE` full|fast (fast = yalnız metin yazarı, son `brif.json` ile), `KEEP_VERSIONS` 20,
@@ -1091,7 +1128,7 @@ Ayrıntı: `backend/commentary-service/README.md`.
 
 ```
 frontend: 29 dosya, 205 test (vitest: domain + lib + app/routes + services + content + features)
-backend : model-service 106 · market-service 58 · api-gateway 5 · commentary-service 47 (pytest)
+backend : model-service 106 · market-service 58 · api-gateway 5 · commentary-service 57 (pytest)
 tsc --noEmit temiz; build: giriş 301 KB ham / 96 KB gzip, panel parçası 179 / 56, CSS 138 / 24 (14 Eylül)
 ```
 

@@ -14,11 +14,13 @@ import time
 
 import pandas as pd
 
+from ..config import settings
 from ..market_constants import LATEST_DIR, MACRO_CSV, MARKET_CSV, PROMPTS_DIR
 from . import market_inputs_service as market_inputs
 from .llm_config import LlmSettings
 from .llm_gateway import TokenUsage, ask, parse_json
 from .output_audit import audit_text
+from . import commentator_service
 
 NO_TOOLS_NOTE = """
 
@@ -94,8 +96,9 @@ BRIF_SCHEMA = {
         "takvim_one_cikan": {"type": "array", "items": {"type": "string"}},
         "bugun": {"type": "object", "properties": {"cumle": {"type": "string"}}, "required": ["cumle"], "additionalProperties": False},
         "piyasa_anlatisi": {"type": "object", "properties": {"ozet": {"type": "string"}, "altina_etkisi": {"type": "string"}, "masanin_gorusu": {"type": "string"}}, "required": ["ozet", "altina_etkisi", "masanin_gorusu"], "additionalProperties": False},
+        "piyasa_sesleri": {"type": "string"},   # yorumcu gözcüsü kaydı varsa en fazla iki cümle, yoksa boş dize
     },
-    "required": ["baslik", "tez", "yon", "guven", "ana_noktalar", "riskler", "celiskiler", "veri_uyarilari", "takvim_one_cikan", "bugun", "piyasa_anlatisi"], "additionalProperties": False,
+    "required": ["baslik", "tez", "yon", "guven", "ana_noktalar", "riskler", "celiskiler", "veri_uyarilari", "takvim_one_cikan", "bugun", "piyasa_anlatisi", "piyasa_sesleri"], "additionalProperties": False,
 }
 
 
@@ -249,7 +252,9 @@ def prepare_inputs() -> dict:
     """Bir turun paylaşılan girdileri: paket (betik + piyasa girdileri) ve başlıklar. Planlayıcı da bunu okur."""
     package = base_package()
     package.update(market_inputs.collect_market_inputs())
-    return {"package": package, "headlines": market_inputs.fetch_headlines()}
+    # Yorumcu gözcüsü ayrı döngüde tazeler; burada yalnız disk okunur (24 saatten eski özet masaya gitmez).
+    return {"package": package, "headlines": market_inputs.fetch_headlines(),
+            "commentators": commentator_service.for_desk(commentator_service.read_digest())}
 
 
 def _truncate(s: str | None, n: int = 1800) -> str:
@@ -262,6 +267,7 @@ def run_full_pipeline(llm: LlmSettings, log=print, prepared: dict | None = None)
     usage: dict[str, dict] = {}
     prepared = prepared or prepare_inputs()
     package, headlines = prepared["package"], prepared["headlines"]
+    commentators = prepared.get("commentators") or []
     inputs = {k: package.get(k) for k in ("faiz_beklentisi", "enflasyon", "takvim", "pozisyon")}
     log(f"girdiler: faiz {(inputs['faiz_beklentisi'] or {}).get('toplanti_ayi_kontrati')}, pozisyon {(inputs['pozisyon'] or {}).get('net_uzun')}, takvim {len((inputs['takvim'] or {}).get('olaylar', []))} olay, haber {len(headlines)}")
     pause = lambda: time.sleep(llm.pause_seconds) if llm.pause_seconds else None  # noqa: E731
@@ -289,17 +295,23 @@ def run_full_pipeline(llm: LlmSettings, log=print, prepared: dict | None = None)
     _save("not-makro.md", macro_note); usage["macro_analyst"] = {**used.as_dict(), "model": model}; log(f"macro ok {model}")
 
     # 4) Baş analist → brif.json (teknik not kırpık, takvim JSON, makro kart)
-    text, used, model = ask(llm, "chief_analyst", role_prompt("chief_analyst"), "Betik paketi:\n" + json.dumps(package, ensure_ascii=False) + "\n\n--- teknik not ---\n" + _truncate(_md("not-teknik.md"), 1400) + "\n\n--- takvim ve haber (JSON) ---\n" + json.dumps(takvim, ensure_ascii=False) + "\n\n--- makro skor kartı ---\n" + json.dumps({k: macro_card.get(k) for k in ("piyasa_anlatisi", "suruculer")}, ensure_ascii=False) + "\n\nBrifi JSON olarak döndür (şemadaki alanlar; rol tanımındaki sınırlar). Şu an = canlı blok; seviyeler canlıya göre.", BRIF_SCHEMA)
+    text, used, model = ask(llm, "chief_analyst", role_prompt("chief_analyst"), "Betik paketi:\n" + json.dumps(package, ensure_ascii=False) + "\n\n--- teknik not ---\n" + _truncate(_md("not-teknik.md"), 1400) + "\n\n--- takvim ve haber (JSON) ---\n" + json.dumps(takvim, ensure_ascii=False) + "\n\n--- makro skor kartı ---\n" + json.dumps({k: macro_card.get(k) for k in ("piyasa_anlatisi", "suruculer")}, ensure_ascii=False) + "\n\n--- yorumcular (gözcü; haber başlıklarından, son " + str(settings.commentator_window_hours) + " saat; adsız, sayısal hedefler bilerek verilmedi) ---\n" + (json.dumps({"ozet": commentator_service.desk_summary(commentators, len(commentator_service.load_commentators())), "kayitlar": commentators}, ensure_ascii=False) if commentators else "veri yok") + "\n\nBrifi JSON olarak döndür (şemadaki alanlar; rol tanımındaki sınırlar). Şu an = canlı blok; seviyeler canlıya göre.", BRIF_SCHEMA)
     brief = parse_json(text); brief["as_of"] = package["as_of"]; brief["yazildi_utc"] = package.get("simdi_utc")
     _save("brif.json", json.dumps(brief, ensure_ascii=False, indent=2)); usage["chief_analyst"] = {**used.as_dict(), "model": model}; log(f"chief ok {model}")
 
-    result = write_anchor_text(llm, package, brief, headlines, usage, log)
+    result = write_anchor_text(llm, package, brief, headlines, usage, log, commentators=commentators)
     result["run_mode"] = "full"
     return result
 
 
-def write_anchor_text(llm: LlmSettings, package: dict, brief: dict, headlines: list, usage: dict, log=print) -> dict:
-    """Son alıcı metni: yedi bölüm; sayı/jargon denetiminden geçmezse tek düzeltme turu, yine geçmezse hata."""
+def write_anchor_text(llm: LlmSettings, package: dict, brief: dict, headlines: list, usage: dict, log=print, commentators: list | None = None) -> dict:
+    """Son alıcı metni: yedi bölüm; sayı/jargon denetiminden geçmezse tek düzeltme turu, yine geçmezse hata.
+    `commentators`: yorumcu gözcüsünün bugünkü kayıtları; metinde izleme listesindeki bir ad geçiyorsa kaydı olmalı."""
+    configured_names = [p["ad"] for p in commentator_service.load_commentators()]
+    attribution = lambda metin: commentator_service.attribution_problems(metin, commentators or [], configured_names)  # noqa: E731
+    # Yorumcu cümlesindeki sayı anlatıcıya gitmez ve denetim havuzuna girmez; aksi hâlde baş analistin
+    # yorumcudan aktardığı hedef "girdideki sayı" sayılır ve metne sızardı.
+    brief = {**brief, "piyasa_sesleri": commentator_service.strip_numbers(str(brief.get("piyasa_sesleri") or ""))}
     audit_package = {"brif": brief, "betik": {k: package.get(k) for k in ("canli", "canli_zaman_utc", "saat_turkiye", "resmi_fiks", "seviyeler_canli", "momentum", "hizalanma", "trend", "vadeli", "faiz_beklentisi", "enflasyon", "takvim", "pozisyon")}, "haberler": _short_headlines(headlines, 4)}
     brief_note = ""
     if brief.get("yazildi_utc") and package.get("simdi_utc"):
@@ -319,7 +331,7 @@ def write_anchor_text(llm: LlmSettings, package: dict, brief: dict, headlines: l
     except ValueError as error:
         output = parse_json(text); structure_problems = [str(error) + " — her bölüm için 'id', 'baslik', 'metin' anahtarlarını kullan"]
     flat = " ".join([str(output.get("baslik", "")), str(output.get("manset", "")), str(output.get("ozet", ""))] + [str(b.get("metin", "")) for b in (output.get("bolumler") or []) if isinstance(b, dict)])
-    problems = structure_problems + audit_text(flat, audit_package, live_price=live_price) + (budget_problems(output.get("bolumler") or []) if not structure_problems else [])
+    problems = structure_problems + audit_text(flat, audit_package, live_price=live_price) + attribution(flat) + (budget_problems(output.get("bolumler") or []) if not structure_problems else [])
     total = used
     if problems:
         log(f"anchor denetim: {problems}; düzeltme isteniyor")
@@ -328,7 +340,7 @@ def write_anchor_text(llm: LlmSettings, package: dict, brief: dict, headlines: l
         output = _normalize_anchor_output(parse_json(text2))
         total = used + used2
         flat = " ".join([output["baslik"], output["manset"], output["ozet"]] + [b["metin"] for b in output["bolumler"]])
-        problems = audit_text(flat, audit_package, live_price=live_price)
+        problems = audit_text(flat, audit_package, live_price=live_price) + attribution(flat)
         if problems:
             raise RuntimeError(f"anchor metni denetimi geçemedi: {problems}")
     usage["anchor"] = {**total.as_dict(), "model": model}; log(f"anchor ok {model}")
@@ -346,6 +358,6 @@ def run_fast_pipeline(llm: LlmSettings, log=print, prepared: dict | None = None)
     prepared = prepared or prepare_inputs()
     package, headlines = prepared["package"], prepared["headlines"]
     brief = _j("brif.json") or {"tez": "Masanın son derin analizi yok; yalnız betik çıktılarıyla anlat, yön verme.", "yon": "belirsiz", "guven": "dusuk"}
-    result = write_anchor_text(llm, package, brief, headlines, {}, log)
+    result = write_anchor_text(llm, package, brief, headlines, {}, log, commentators=prepared.get("commentators") or [])
     result["run_mode"] = "fast"
     return result

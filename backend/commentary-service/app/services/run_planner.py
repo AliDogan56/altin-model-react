@@ -15,8 +15,9 @@ HEADLINE_WINDOW = 6
 NEW_HEADLINES_FOR_FULL = 3
 
 
-def input_fingerprint(package: dict, headlines: list[dict]) -> dict:
-    """Fiyat ve zaman dışındaki girdilerin özeti; karşılaştırılabilir, JSON'a yazılabilir."""
+def input_fingerprint(package: dict, headlines: list[dict], commentators: list[dict] | None = None) -> dict:
+    """Fiyat ve zaman dışındaki girdilerin özeti; karşılaştırılabilir, JSON'a yazılabilir.
+    `commentators`: yorumcu gözcüsünün masaya verdiği kayıtlar; yön ya da ana iddia değişince tam tur gerekir."""
     faiz = {k: v for k, v in (package.get("faiz_beklentisi") or {}).items() if k not in ("tarih", "kaynak", "nasil_anilir")}
     return {
         "takvim": (package.get("takvim") or {}).get("olaylar"),
@@ -25,6 +26,7 @@ def input_fingerprint(package: dict, headlines: list[dict]) -> dict:
         "pozisyon": package.get("pozisyon"),
         "makro_son": package.get("makro_son"),
         "basliklar": sorted((h.get("baslik") or "")[:120] for h in headlines[:HEADLINE_WINDOW]),
+        "yorumcular": sorted(f"{c.get('etiket') or c.get('ad')}|{c.get('yon')}|{(c.get('ana_iddia') or '')[:80]}" for c in (commentators or [])),
     }
 
 
@@ -35,7 +37,7 @@ def fingerprint_hash(fp: dict) -> str:
 def inputs_changed(prev: dict | None, cur: dict) -> tuple[bool, str]:
     if not prev:
         return True, "önceki tam turun parmak izi yok"
-    for key in ("takvim", "faiz", "enflasyon", "pozisyon", "makro_son"):
+    for key in ("takvim", "faiz", "enflasyon", "pozisyon", "makro_son", "yorumcular"):
         if json.dumps(prev.get(key), sort_keys=True, default=str) != json.dumps(cur.get(key), sort_keys=True, default=str):
             return True, f"{key} değişti"
     new = set(cur.get("basliklar") or []) - set(prev.get("basliklar") or [])

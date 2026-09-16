@@ -60,6 +60,14 @@ model = "openai/gpt-oss-120b"
 max_tokens = 1200
 fallbacks = [ { provider = "gemini", model = "gemini-3.5-flash-lite" }, { provider = "gemini", model = "gemini-3.6-flash" } ]
 
+# Yorumcu gözcüsü üretim zincirinde değil; ayrı tazeleme döngüsünde (COMMENTATOR_REFRESH_MINUTES) günde birkaç kez
+# koşar, ~2k giriş token. Groq'ta hızlı; Gemini yedek.
+[llm.roles.commentator_scout]
+provider = "groq"
+model = "openai/gpt-oss-120b"
+max_tokens = 900
+fallbacks = [ { provider = "gemini", model = "gemini-3.5-flash-lite" }, { provider = "gemini", model = "gemini-3.6-flash" } ]
+
 [llm.roles.macro_analyst]
 provider = "gemini"
 model = "gemini-3.6-flash"

@@ -46,6 +46,10 @@ class Settings:
     narrate_cooldown_minutes: int = 60
     quota_reset_tz: str = "America/Los_Angeles"
     full_run_max_age_minutes: int = 240
+    # Yorumcu gözcüsü: izleme listesi, tazeleme aralığı (dk) ve haber penceresi (saat). 0 aralık = kapalı.
+    commentators_path: Path = ROOT / "yorumcular.toml"
+    commentator_refresh_minutes: int = 360
+    commentator_window_hours: int = 72
 
 
 def get_settings() -> Settings:
@@ -90,6 +94,9 @@ def get_settings() -> Settings:
         int(os.getenv("NARRATE_COOLDOWN_MINUTES", "60")),
         os.getenv("QUOTA_RESET_TZ", "America/Los_Angeles"),
         int(os.getenv("FULL_RUN_MAX_AGE_MINUTES", "240")),
+        Path(os.getenv("COMMENTATORS_PATH", ROOT / "yorumcular.toml")),
+        int(os.getenv("COMMENTATOR_REFRESH_MINUTES", "360")),
+        int(os.getenv("COMMENTATOR_WINDOW_HOURS", "72")),
     )
 
 

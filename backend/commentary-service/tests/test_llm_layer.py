@@ -36,7 +36,7 @@ def test_parse_rss_and_json():
 def test_llm_settings_load_validate_and_chain(tmp_path, monkeypatch):
     cfg = tmp_path / "llm.toml"
     cfg.write_text('[llm.providers.m]\nkind = "mock"\n[llm.providers.g]\nkind = "openai_compatible"\nbase_url = "https://x/v1"\napi_key_env = "G_KEY"\n'
-                   + "".join(f'[llm.roles.{r}]\nprovider = "m"\nmodel = "mock-1"\n' for r in ("technical_analyst", "calendar_news_scout", "macro_analyst", "chief_analyst"))
+                   + "".join(f'[llm.roles.{r}]\nprovider = "m"\nmodel = "mock-1"\n' for r in ("technical_analyst", "calendar_news_scout", "macro_analyst", "chief_analyst", "commentator_scout"))
                    + '[llm.roles.anchor]\nprovider = "m"\nmodel = "mock-1"\nfallbacks = [ { provider = "g", model = "llama" } ]\n')
     monkeypatch.delenv("G_KEY", raising=False)
     llm = load_llm_settings(cfg)
